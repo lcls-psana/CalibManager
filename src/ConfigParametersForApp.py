@@ -53,8 +53,8 @@ class ConfigParametersForApp ( ConfigParameters ) :
     #char_shrink    = u'\u25B6' # solid right-head triangle
     #char_shrink    = u'\u25B7' # open right-head triangle 
 
-    list_of_queues = ['psnehprioq', 'psfehprioq', 'psanaq',    'psnehq',    'psfehq']
-    list_of_farms  = ['psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
+    list_of_queues = ['psnehhiprioq', 'psfehiprioq', 'psnehprioq', 'psfehprioq', 'psanaq',    'psnehq',    'psfehq']
+    list_of_farms  = ['psnehfarm',    'psfehfarm',   'psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
     dict_of_queue_farm = dict(zip(list_of_queues, list_of_farms))
 
     list_of_instr     = ['AMO', 'SXR', 'XPP', 'XCS', 'CXI', 'MEC']
@@ -110,7 +110,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.commandlinecalib  = None
         #self.thread_check_new_xtc_files = None
 
-        if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psnehprioq')
+        if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psnehhiprioq')
 
 #-----------------------------
 

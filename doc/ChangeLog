@@ -12,9 +12,13 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2015-10-01 Mikhail S. Dubrovin
+Tag: V00-00-98
+- ConfigParametersForApp.py - add queues psnehhiprioq (default), psfehhiprioq (PSAS-6)
+	
 2015-08-07 Mikhail S. Dubrovin
 Tag: V00-00-97
-- ConfigParametersForApp.py - add type pixel_bkgd and pixel_mask in the list of types for all detectors
+- ConfigParametersForApp.py - add type pixel_bkgd and pixel_mask in the list of types for all detectors (PSAS-6)
 - GUIFileManagerSingleControl.py - make persistent path to source file.
 	
 2015-07-02 Mikhail S. Dubrovin
