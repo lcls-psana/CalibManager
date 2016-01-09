@@ -12,6 +12,10 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2015-10-06 Mikhail S. Dubrovin
+Tag: V00-01-00
+- ConfigParametersForApp.py - add MFX to the list of instruments.
+	
 2015-10-06 Christopher O'Grady
 Tag: V00-00-99
 - Remove restriction on using calibman for 'tut' expts (e.g. xpptut15)
