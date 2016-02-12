@@ -171,7 +171,7 @@ class ConfigFileGenerator :
                 #print self.ind, self.source, self.fname_ave, self.fname_rms
 
                 #list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', 'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000', \
-                #                  'OrcaFl40', 'Epix', 'Epix10k', 'Epix100a', 'Fccd960', 'Andor', 'Acqiris']
+                #                  'OrcaFl40', 'Epix', 'Epix10k', 'Epix100a', 'Fccd960', 'Andor', 'Andor3d', 'Acqiris']
                 #if   det_name == cp.list_of_dets[0] : self.add_cfg_module_peds_aver_cspad('cspad_mod.CsPadPedestals')
                 #elif det_name == cp.list_of_dets[1] : self.add_cfg_module_peds_aver_cspad('cspad_mod.CsPad2x2Pedestals')
                 if   det_name == cp.list_of_dets[0] : self.add_cfg_module_peds_aver_cspad_with_mask('CSPadPixCoords.CSPadNDArrProducer')
@@ -190,8 +190,9 @@ class ConfigFileGenerator :
                 elif det_name == cp.list_of_dets[12]: self.add_cfg_module_peds_aver_epix()
                 elif det_name == cp.list_of_dets[13]: self.add_cfg_module_peds_aver_camera(out_dtype='int')
                 elif det_name == cp.list_of_dets[14]: self.add_cfg_module_peds_aver_andor()
-                elif det_name == cp.list_of_dets[15]: self.add_cfg_module_peds_aver_acqiris()
-                elif det_name == cp.list_of_dets[16]: self.print_warning()
+                elif det_name == cp.list_of_dets[15]: self.add_cfg_module_peds_aver_andor3d()
+                elif det_name == cp.list_of_dets[16]: self.add_cfg_module_peds_aver_acqiris()
+                elif det_name == cp.list_of_dets[17]: self.print_warning()
                 else : logger.warning('UNKNOWN DETECTOR: %s' % det_name, __name__)
 
         if self.ind > 0 : return True
@@ -290,6 +291,7 @@ class ConfigFileGenerator :
                          'FNAME_PEDS_AVE'       : self.fname_ave,
                          'FNAME_PEDS_RMS'       : self.fname_rms,
                          'FNAME_HOTPIX_MASK'    : self.fname_mask,
+                         'FTYPE'                : str(ftype),
                          'THR_RMS_HOTPIX_MIN'   : str( cp.mask_rms_thr_min.value() ),
                          'THR_RMS_HOTPIX'       : str( cp.mask_rms_thr.value() ),
                          'THR_MIN_HOTPIX'       : str( cp.mask_min_thr.value() ),
@@ -312,6 +314,7 @@ class ConfigFileGenerator :
                          'FNAME_PEDS_AVE'       : self.fname_ave,
                          'FNAME_PEDS_RMS'       : self.fname_rms,
                          'FNAME_HOTPIX_MASK'    : self.fname_mask,
+                         'FTYPE'                : str(ftype),
                          'THR_RMS_HOTPIX_MIN'   : str( cp.mask_rms_thr_min.value() ),
                          'THR_RMS_HOTPIX'       : str( cp.mask_rms_thr.value() ),
                          'THR_MIN_HOTPIX'       : str( cp.mask_min_thr.value() ),
@@ -371,6 +374,30 @@ class ConfigFileGenerator :
 
     def add_cfg_module_peds_aver_andor (self, module='ImgAlgos.AndorImageProducer', ftype='metatxt', out_dtype='asdata') :
         self.path_in  = apputils.AppDataPath('CalibManager/scripts/psana-module-peds-aver-andor.cfg').path()
+        mod_img_rec = '%s:%i' % (module, self.ind)
+        mod         = '%s:%i' % ('ImgAlgos.NDArrAverage', self.ind)
+        self.d_subs   = {
+                         'MODULE_IMG_REC'       : mod_img_rec,
+                         'DETINFO'              : self.source, # str( cp.bat_det_info.value() ),
+                         'KEY_TRANSIT'          : 'img-%i' % self.ind,
+                         'OUT_DATA_TYPE'        : out_dtype,
+                         'MODULE_AVERAGE'       : mod,
+                         'FNAME_PEDS_AVE'       : self.fname_ave,
+                         'FNAME_PEDS_RMS'       : self.fname_rms,
+                         'FNAME_HOTPIX_MASK'    : self.fname_mask,
+                         'FTYPE'                : str(ftype),
+                         'THR_RMS_HOTPIX_MIN'   : str( cp.mask_rms_thr_min.value() ),
+                         'THR_RMS_HOTPIX'       : str( cp.mask_rms_thr.value() ),
+                         'THR_MIN_HOTPIX'       : str( cp.mask_min_thr.value() ),
+                         'THR_MAX_HOTPIX'       : str( cp.mask_max_thr.value() )
+                         }
+
+        self.add_module_in_cfg ('%s %s' % (mod_img_rec, mod))
+
+#-----------------------------
+
+    def add_cfg_module_peds_aver_andor3d (self, module='ImgAlgos.Andor3dNDArrProducer', ftype='metatxt', out_dtype='asdata') :
+        self.path_in  = apputils.AppDataPath('CalibManager/scripts/psana-module-peds-aver-andor3d.cfg').path()
         mod_img_rec = '%s:%i' % (module, self.ind)
         mod         = '%s:%i' % ('ImgAlgos.NDArrAverage', self.ind)
         self.d_subs   = {

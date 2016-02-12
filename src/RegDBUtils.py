@@ -85,7 +85,6 @@ def list_of_sources_for_det (det_name='CSPAD') :
     """
     pattern = det_name.lower() + '-'
     lst = [src.replace("|",":").replace("-",".") for src in experiment_info.unique_detector_names() if src.lower().find(pattern) != -1]
-    #lst = [src.replace("|",":").replace("-",".") for src in experiment_info.unique_detector_names() if src.lower().find(pattern) != -1 and src.find('NoDet') == -1]
     #for i, det in enumerate(lst) : print '%4d : %s' %(i, det)
     return lst
 
@@ -294,7 +293,8 @@ if __name__ == "__main__" :
     #det_name = 'cspad2x2'
     #det_name = 'epix'
     #det_name = 'epix100a'
-    det_name = 'andor'
+    #det_name = 'andor'
+    det_name = 'dualandor'
     #det_name = 'epix10k'
     #det_name = 'princeton'
     #det_name = 'pnccd'

@@ -12,6 +12,11 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2016-02-11 Mikhail S. Dubrovin
+Tag: V00-01-01
+- ConfigFileGenerator.py - add self.add_cfg_module_peds_aver_andor3d
+- ConfigParametersForApp.py - add support for andor3d
+
 2015-10-06 Mikhail S. Dubrovin
 Tag: V00-01-00
 - ConfigParametersForApp.py - add MFX to the list of instruments.
