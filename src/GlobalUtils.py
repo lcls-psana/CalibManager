@@ -1055,19 +1055,29 @@ def ready_to_start(check_bits=0777, fatal_bits=0777) :
         status, msg = check_token(do_print=False)
         if not status :
             get_afs_token(do_print=True)
-
             status, msg = check_token(do_print=False)
             if not status :
                 print 'WARNING: AFS token is missing. To get one use commands: kinit; aklog'
                 if fatal_bits & 4 : return False
 	        else              : print 'Continue without AFS token...'
 
+    if check_bits & 8 : 
+        host = get_hostname()
+        if not 'psana' in host :
+            print 'WARNING:  Your are on host %s which may not have access to data.' % host
+            print 'SOLUTION: Use one of "psana" hosts (ssh psana).'
+            return False
+
+    if check_bits & 16 : 
+        user = get_enviroment(env='USER')
+        if user in ('amoopr', 'cxiopr', 'diaopr', 'mecopr', 'mfxopr', 'mobopr', 'monopr') :
+            print 'WARNING:  Account "%s" may not have permission to write files in the calib directory.' % user
+            print 'SOLUTION: Run this application under account of user - member of experimental group.'
+            return False
+
     return True
 
 #---------------------------------
-
-
-#----------------------------------
 
 def text_status_of_queues(lst_of_queues=['psanaq', 'psnehq', 'psfehq', 'psnehprioq', 'psfehprioq']):
     """Checks status of queues"""

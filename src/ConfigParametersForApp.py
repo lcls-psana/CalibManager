@@ -273,6 +273,9 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.fname_prefix      = self.declareParameter( name='FILE_NAME_PREFIX',      val_def='clb-',         type='str' )
         self.save_cp_at_exit   = self.declareParameter( name='SAVE_CONFIG_AT_EXIT',   val_def=True,           type='bool')
 
+        # ConfigFileGenerator.py
+        self.smd_is_on         = self.declareParameter( name='SMD_IS_ON', val_def=True, type='bool')
+
         # GUIGeometry.py
         self.current_geometry_tab = self.declareParameter( name='CURRENT_GEOMETRY_TAB',    val_def='Metrology',     type='str' )
         self.fname_metrology_xlsx = self.declareParameter( name='FNAME_METROLOGY_XLSX',    val_def='*.xlsx',        type='str' )
