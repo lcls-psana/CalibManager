@@ -3,49 +3,35 @@
 #  $Id$
 #
 # Description:
-#  Module GUIFileBrowser ...
-#
+#   GUIFileBrowser ...
 #------------------------------------------------------------------------
 
 """GUI for File Browser"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
 from FileNameManager        import fnm
 import GlobalUtils          as     gu
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIFileBrowser ( QtGui.QWidget ) :
-    """GUI File Browser"""
+#------------------------------
 
-    def __init__ ( self, parent=None, list_of_files=['Empty list'], selected_file=None, is_editable=True) :
+class GUIFileBrowser(QtGui.QWidget) :
+    """GUI for File Browser"""
+
+    def __init__(self, parent=None, list_of_files=['Empty list'], selected_file=None, is_editable=True) :
 
         QtGui.QWidget.__init__(self, parent)
 
         self.setGeometry(200, 400, 900, 500)
         self.setWindowTitle('GUI File Browser')
-        self.setFrame()
         try : self.setWindowIcon(cp.icon_browser)
         except : pass
 
@@ -59,11 +45,11 @@ class GUIFileBrowser ( QtGui.QWidget ) :
 
         self.is_editable = is_editable
 
-        self.box_file      = QtGui.QComboBox( self ) 
+        self.box_file      = QtGui.QComboBox(self) 
         self.setListOfFiles(list_of_files)
 
         self.hboxM = QtGui.QHBoxLayout()
-        self.hboxM.addWidget( self.box_txt )
+        self.hboxM.addWidget(self.box_txt)
 
         self.hboxF = QtGui.QHBoxLayout()
         self.hboxF.addWidget(self.tit_file)
@@ -83,10 +69,10 @@ class GUIFileBrowser ( QtGui.QWidget ) :
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
         
-        self.connect( self.but_brow,  QtCore.SIGNAL('clicked()'), self.onBrow )
-        self.connect( self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave )
-        self.connect( self.but_close, QtCore.SIGNAL('clicked()'), self.onClose )
-        self.connect( self.box_file, QtCore.SIGNAL('currentIndexChanged(int)'), self.onBox  )
+        self.connect(self.but_brow,  QtCore.SIGNAL('clicked()'), self.onBrow)
+        self.connect(self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave)
+        self.connect(self.but_close, QtCore.SIGNAL('clicked()'), self.onClose)
+        self.connect(self.box_file, QtCore.SIGNAL('currentIndexChanged(int)'), self.onBox)
  
         self.startFileBrowser(selected_file)
 
@@ -95,37 +81,26 @@ class GUIFileBrowser ( QtGui.QWidget ) :
 
         #self.guifilebrowser = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         #self           .setToolTip('This GUI is intended for run control and monitoring.')
         self.but_close .setToolTip('Close this window.')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
     def setStyle(self):
-        self.           setStyleSheet (cp.styleBkgd)
-        self.tit_status.setStyleSheet (cp.styleTitle)
-        self.tit_file  .setStyleSheet (cp.styleTitle)
-        self.tit_file  .setFixedWidth (25)
-        self.tit_file  .setAlignment  (QtCore.Qt.AlignRight)
-        self.box_file  .setStyleSheet (cp.styleButton) 
-        self.but_brow  .setStyleSheet (cp.styleButton)
-        self.but_brow  .setFixedWidth (60)
-        self.but_save  .setStyleSheet (cp.styleButton)
-        self.but_close .setStyleSheet (cp.styleButton)
-        self.box_txt   .setReadOnly   (not self.is_editable)
-        self.box_txt   .setStyleSheet (cp.styleWhiteFixed) 
+        self.           setStyleSheet(cp.styleBkgd)
+        self.tit_status.setStyleSheet(cp.styleTitle)
+        self.tit_file  .setStyleSheet(cp.styleTitle)
+        self.tit_file  .setFixedWidth(25)
+        self.tit_file  .setAlignment (QtCore.Qt.AlignRight)
+        self.box_file  .setStyleSheet(cp.styleButton) 
+        self.but_brow  .setStyleSheet(cp.styleButton)
+        self.but_brow  .setFixedWidth(60)
+        self.but_save  .setStyleSheet(cp.styleButton)
+        self.but_close .setStyleSheet(cp.styleButton)
+        self.box_txt   .setReadOnly  (not self.is_editable)
+        self.box_txt   .setStyleSheet(cp.styleWhiteFixed) 
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
 
     def setListOfFiles(self, list):
@@ -140,15 +115,15 @@ class GUIFileBrowser ( QtGui.QWidget ) :
         self.parent = parent
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -273,13 +248,13 @@ class GUIFileBrowser ( QtGui.QWidget ) :
         #self.tit_status.setText('Status: ' + list_of_states[status_index] + msg)
         self.tit_status.setText(msg)
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUIFileBrowser ()
     widget.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

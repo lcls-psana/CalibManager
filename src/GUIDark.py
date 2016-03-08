@@ -4,25 +4,17 @@
 #
 # Description:
 #  Module GUIDark...
-#
 #------------------------------------------------------------------------
 
-"""GUI works with dark run"""
+"""GUI works with dark runs"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#-------------------
-#  Import modules --
-#-------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
@@ -31,16 +23,15 @@ from GUIStatus              import *
 from GUIDarkControlBar      import *
 from GUIDarkList            import *
 
-#-----------------------------
+#------------------------------
 
-class GUIDark ( QtGui.QWidget ) :
-    """GUI works with dark run"""
+class GUIDark(QtGui.QWidget) :
+    """GUI works with dark runs"""
 
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(200, 400, 800, 300)
         self.setWindowTitle('Dark run processing')
-        self.setFrame()
 
         self.guistatus   = GUIStatus(self)
         self.guidarkcbar = GUIDarkControlBar(self)
@@ -75,8 +66,7 @@ class GUIDark ( QtGui.QWidget ) :
 
 
     def setStyle(self):
-
-        self.setContentsMargins (QtCore.QMargins(-5,-5,-5,2))
+        self.setContentsMargins (QtCore.QMargins(-5,-5,-5, 2))
         self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         #self.vsplit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Ignored)
         #self.setMinimumSize(790,210)
@@ -87,29 +77,21 @@ class GUIDark ( QtGui.QWidget ) :
         #self.vsplit.moveSplitter(300, self.vsplit.indexOf(self.vwidg))
         #self.setBaseSize(750,700)
         #self.setStyleSheet(cp.styleBkgd)
-
-  
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name)
-        self.frame.setGeometry(self.rect())
         #print 'GUIDark resizeEvent: %s' % str(self.size())
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -127,11 +109,10 @@ class GUIDark ( QtGui.QWidget ) :
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUIDark ()
     widget.show()
     app.exec_()
 
-#-----------------------------
 #-----------------------------

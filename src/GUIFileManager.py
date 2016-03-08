@@ -3,51 +3,33 @@
 #  $Id$
 #
 # Description:
-#  Module GUIFileManager...
-#
+#  GUIFileManager...
 #------------------------------------------------------------------------
 
-"""GUI sets path to files"""
+"""GUI wrapper for Single and Group file managers"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from GUIFileManagerSingle   import *
 from GUIFileManagerGroup    import *
 from Logger                 import logger
-#from BatchJobPedestals      import bjpeds
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIFileManager ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIFileManager(QtGui.QWidget) :
     """GUI with tabs for file management"""
 
-    #----------------
-    #  Constructor --
-    #----------------
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(1, 1, 600, 200)
         self.setWindowTitle('File Manager')
-        self.setFrame()
 
         self.lab_title  = QtGui.QLabel('File Manager')
         self.lab_status = QtGui.QLabel('Status: ')
@@ -77,41 +59,18 @@ class GUIFileManager ( QtGui.QWidget ) :
 
         cp.guifilemanager = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         #msg = 'Edit field'
         #self.but_close .setToolTip('Close this window.')
         pass
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
     def setStyle(self):
-        self.          setStyleSheet (cp.styleBkgd)
-
-        self.lab_title.setStyleSheet (cp.styleTitleBold)
+        self.          setStyleSheet(cp.styleBkgd)
+        self.lab_title.setStyleSheet(cp.styleTitleBold)
         self.lab_title .setAlignment(QtCore.Qt.AlignCenter)
-        #self.setMinimumWidth (600)
-        #self.setMaximumWidth (700)
-        #self.setMinimumHeight(300)
-        #self.setMaximumHeight(400)
-        #self.setFixedWidth (700)
-        #self.setFixedHeight(400)
-        #self.setFixedHeight(330)
-        #self.setFixedSize(550,350)
-        #self.setFixedSize(600,360)
-        #self.setMinimumSize(600,360)
         self.setMinimumSize(600,200)
-        #self.setMinimumSize(750,760)
-
         #self.lab_status.setVisible(False)
         self.lab_title.setVisible(False)
 
@@ -181,18 +140,20 @@ class GUIFileManager ( QtGui.QWidget ) :
     def setParent(self,parent) :
         self.parent = parent
 
-    def resizeEvent(self, e):
-        logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+    #def resizeEvent(self, e):
+        #logger.debug('resizeEvent', __name__) 
         #print __name__ + ' config: self.size():', self.size()
         #self.setMinimumSize( self.size().width(), self.size().height()-40 )
+        #pass
 
-    def moveEvent(self, e):
+
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent: new pos:' + str(self.position), __name__)
-        pass
+        #pass
+
 
     def closeEvent(self, event):
         logger.debug('closeEvent', __name__)
@@ -211,6 +172,7 @@ class GUIFileManager ( QtGui.QWidget ) :
 
         cp.guifilemanager = None
 
+
     def onClose(self):
         logger.debug('onClose', __name__)
         self.close()
@@ -225,11 +187,10 @@ class GUIFileManager ( QtGui.QWidget ) :
         #self.lab_status.setText('Status: ' + list_of_states[status_index] + msg)
         self.lab_status.setText(msg)
 
-
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUIFileManager ()
     widget.show()

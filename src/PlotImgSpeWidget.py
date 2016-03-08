@@ -4,7 +4,6 @@
 #
 # Description:
 #  Module PlotImgSpeWidget...
-#
 #------------------------------------------------------------------------
 
 """Plots image and spectrum for 2d numpy array.
@@ -12,22 +11,15 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$ 
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
 import os
 import random
@@ -40,14 +32,9 @@ if __name__ == "__main__" :
     import matplotlib
     matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
 
-#import matplotlib
-#if matplotlib.get_backend() != 'Qt4Agg' : matplotlib.use('Qt4Agg')
-
-#from   matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from   matplotlib.ticker import MaxNLocator, NullFormatter
-#from   matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 from PyQt4 import QtGui, QtCore
 
@@ -161,7 +148,6 @@ class PlotImgSpeWidget (QtGui.QWidget) :
         self.cid_digi_motion  = self.canvas.mpl_connect('motion_notify_event',  self.onMouseMotion)
 
         self.initParameters()
-        self.setFrame()
 
         self.fig.clear()        
 
@@ -170,6 +156,7 @@ class PlotImgSpeWidget (QtGui.QWidget) :
         self.axcb = self.fig.add_axes([0.15, 0.03, 0.78, 0.028])
   
         if self.arr is not None : self.on_draw()
+        #self.setContentsMargins(-9,-9,-9,-9)
 
 
     def connectZoomMode(self):
@@ -205,39 +192,33 @@ class PlotImgSpeWidget (QtGui.QWidget) :
         self.ypressabs = 0
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken )
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
     def getCanvas(self):
         return self.canvas
+
 
     def get_axim(self):
         return self.axim
 
+
     def get_imsh(self):
         return self.imsh
+
 
     def get_xy_img_center(self):
         xmin,xmax,ymin,ymax = self.imsh.get_extent()
         return abs(ymin-ymax)/2, abs(xmax-xmin)/2  # return in terms of row, column ????
 
+
     def get_img_shape(self):
         return self.arr.shape
 
-    def resizeEvent(self, e):
-        #print 'resizeEvent' 
-        self.frame.setGeometry(self.rect())
+
+    #def resizeEvent(self, e):
+    #    #print 'resizeEvent' 
 
 
     def closeEvent(self, event): # is called for self.close() or when click on "x"
         #print 'PlotImgSpeWidget: closeEvent'
-        pass
         plt.close(self.fig.number)
 
 
@@ -252,10 +233,12 @@ class PlotImgSpeWidget (QtGui.QWidget) :
         self.arr = arr_rot_n90(arr, self.rot_ang_n90)
         self.on_draw()
 
+
     def subtract_from_image_array(self, arr_sub):
         arr_sub_rot = arr_rot_n90(arr_sub, self.rot_ang_n90)
         self.arr -= arr_sub_rot
         self.on_draw()
+
 
     def processDraw(self) :
         #fig = event.canvas.figure
@@ -573,7 +556,6 @@ class PlotImgSpeWidget (QtGui.QWidget) :
             QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
 
 
-
     def processAxesLeaveEvent(self, event) :
         #print 'AxesLeaveEvent'
         try : self.curstext.remove()
@@ -587,7 +569,6 @@ class PlotImgSpeWidget (QtGui.QWidget) :
 
 
     def onMouseMotion(self, event) :
-
         if event.inaxes == self.axhi :
             self.drawXCoordinateOfCoursor(event)
             self.drawVerticalLineThroughCoursor(event)
@@ -646,6 +627,7 @@ class PlotImgSpeWidget (QtGui.QWidget) :
             self.ypressabs = event.y
             self.fig.myZoomIsOn = True
             QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
+
 
     def mousePressOnHistogram(self, event) :
         #print 'PressOnHistogram'
@@ -769,22 +751,13 @@ def get_array2d_for_test() :
 
 #-----------------------------
 
-def main():
-
+if __name__ == "__main__" :
     app = QtGui.QApplication(sys.argv)
-
     w = PlotImgSpeWidget(None, get_array2d_for_test())
     #w = PlotImgSpeWidget(None)
     #w.set_image_array( get_array2d_for_test() )
     w.move(QtCore.QPoint(50,50))
     w.show()    
-
     app.exec_()
-        
-#-----------------------------
-#  In case someone decides to run this module
-#
-if __name__ == "__main__" :
-    main()
 
 #-----------------------------

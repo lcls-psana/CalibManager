@@ -9,13 +9,6 @@
 
 """Brief one-line description of the module.
 
-Following paragraphs provide detailed description of the module, its
-contents and usage. This is a template module (or module template:)
-which will be used by programmers to create new Python modules.
-This is the "library module" as opposed to executable module. Library
-modules provide class definitions or function definitions, but these
-scripts cannot be run by themselves.
-
 This software was developed for the LCLS project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
@@ -24,12 +17,8 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
-
 #--------------------------------
 #  Imports of standard modules --
 #--------------------------------
@@ -78,7 +67,6 @@ def foo ( x ) :
         return None
     return (None,)
 
-
 #---------------------
 #  Class definition --
 #---------------------
@@ -91,9 +79,6 @@ class Template ( object ) :
     which can be private or public. It is good idea to define constructor 
     for your class (in Python there is only one constructor). Put your 
     public methods after constructor, and private methods after public.
-
-    @see BaseClass
-    @see OtherClass
     """
 
     #--------------------
@@ -111,8 +96,8 @@ class Template ( object ) :
         Explanation of what it does. So it does that and that, and also 
         that, but only if x is equal to that and y is not None.
 
-        @param x   first parameter
-        @param y   second parameter
+        - x   first parameter
+        - y   second parameter
         """
 
         # call ctor for base class explicitly
@@ -131,9 +116,9 @@ class Template ( object ) :
         """Brief description of method.
 
         Explanation of what it does.
-        @param x   first parameter
-        @param y   second parameter
-        @return    return value
+        - x   first parameter
+        - y   second parameter
+        - return    return value
         """
     	if self.__x > x :
             return self.y
@@ -175,8 +160,8 @@ class Template ( object ) :
         """Brief description of method.
 
         Explanation of what it does.
-        @param y   second parameter
-        @return    return value
+        - param y   second parameter
+        - return    return value
         """
         return y**2
 
@@ -184,7 +169,4 @@ class Template ( object ) :
 #  In case someone decides to run this module
 #
 if __name__ == "__main__" :
-
-    # In principle we can try to run test suite for this module,
-    # have to think about it later. Right now just abort.
     sys.exit ( "Module is not supposed to be run as main module" )

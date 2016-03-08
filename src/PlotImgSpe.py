@@ -12,42 +12,30 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$ 
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
 import os
 import random
 import numpy as np
 
-# For self-run debugging:
 if __name__ == "__main__" :
     import matplotlib
     matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
 
 #if matplotlib.get_backend() != 'Qt4Agg' : matplotlib.use('Qt4Agg')
-
 #import matplotlib.pyplot as plt
-
-
 #from matplotlib.figure import Figure
 from PyQt4 import QtGui, QtCore
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
-#-----------------------------
-# Imports for other modules --
+
 #-----------------------------
 
 #import ImgSpeNavToolBar     as imgtb
@@ -58,20 +46,16 @@ from ConfigParametersForApp import cp
 import GlobalUtils          as     gu
 
 #---------------------
-#  Class definition --
-#---------------------
 
-#class PlotImgSpe (QtGui.QMainWindow) :
-class PlotImgSpe (QtGui.QWidget) :
+#class PlotImgSpe(QtGui.QMainWindow) :
+class PlotImgSpe(QtGui.QWidget) :
     """Plots image and spectrum for 2d array"""
-
 
     def __init__(self, parent=None, arr=None, ifname='', ofname='./fig.png', title='Plot 2d array', orient=0, y_is_flip=False, is_expanded=False, verb=False, fexmod=False ):
         #QtGui.QMainWindow.__init__(self, parent)
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(20, 40, 700, 800)
         self.setWindowTitle(title)
-        self.setFrame()
 
         if      arr is not None : self.arr = arr
         elif ifname != '' \
@@ -82,8 +66,8 @@ class PlotImgSpe (QtGui.QWidget) :
 
         self.ext_ref = None
 
-        self.widgimage   = imgwidg.PlotImgSpeWidget(self, self.arr, orient, y_is_flip)
-        self.widgbuts    = imgbuts.PlotImgSpeButtons(self, self.widgimage, ifname, ofname, None, is_expanded, fexmod, verb)
+        self.widgimage = imgwidg.PlotImgSpeWidget(self, self.arr, orient, y_is_flip)
+        self.widgbuts  = imgbuts.PlotImgSpeButtons(self, self.widgimage, ifname, ofname, None, is_expanded, fexmod, verb)
         #self.mpl_toolbar = imgtb.ImgSpeNavToolBar(self.widgimage, self)
  
         #---------------------
@@ -100,6 +84,8 @@ class PlotImgSpe (QtGui.QWidget) :
         #self.main_frame.setLayout(vbox)
         #self.setCentralWidget(self.main_frame)
         #---------------------
+        self.setContentsMargins(-9,-9,-9,-9)
+        #cp.plotimgspe = self
 
 
     def set_image_array(self,arr,title='Plot 2d array'):
@@ -112,19 +98,9 @@ class PlotImgSpe (QtGui.QWidget) :
         self.setWindowTitle(title)
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
-    def resizeEvent(self, e):
-        #print 'resizeEvent' 
-        self.frame.setGeometry(self.rect())
-        pass
+    #def resizeEvent(self, e):
+    #    #print 'resizeEvent' 
+    #    pass
 
 
     def closeEvent(self, event): # is called for self.close() or when click on "x"
@@ -134,17 +110,6 @@ class PlotImgSpe (QtGui.QWidget) :
 
         try    : self.widgbuts.close()
         except : pass
-
-        #try    : self.mpl_toolbar.close()
-        #except : pass
-
-        #try    : del cp.plotimgspe # suicide... of object #1
-        #except : pass
-
-        #try    : del cp.plotimgspe_g # suicide... of object #2
-        #except : pass
-
-        #print 'Close application'
 
         cp.plotimgspe = None
 
@@ -161,23 +126,15 @@ def get_array2d_for_test() :
     arr.shape = (rows,cols)
     return arr
 
+#-----------------------------
 
-def main():
-
+if __name__ == "__main__" :
     app = QtGui.QApplication(sys.argv)
-
-    #w  = PlotImgSpe(None, get_array2d_for_test())
-    w  = PlotImgSpe(None, expand=False)
-    w.set_image_array( get_array2d_for_test() )
+    #w = PlotImgSpe(None, get_array2d_for_test())
+    w = PlotImgSpe(None, is_expanded=False)
+    w.set_image_array(get_array2d_for_test())
     w.move(QtCore.QPoint(50,50))
     w.show()
-
     app.exec_()
-        
-#-----------------------------
-#  In case someone decides to run this module
-#
-if __name__ == "__main__" :
-    main()
 
 #-----------------------------

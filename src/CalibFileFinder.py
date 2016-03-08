@@ -3,8 +3,7 @@
 #  $Id$
 #
 # Description:
-#  Module CalibFileFinder...
-#
+#   CalibFileFinder...
 #------------------------------------------------------------------------
 
 """Python analog of the module PSCalib/CalibFileFinder
@@ -16,23 +15,15 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from Logger                   import logger
-#import GlobalUtils            as     gu
 
-#-----------------------------
+#------------------------------
 
 class CalibFile() :
     """Calib file name, run range, etc
@@ -100,8 +91,6 @@ class CalibFile() :
                     
 #----------------------------------
 #----------------------------------
-#----------------------------------
-#----------------------------------
 
 class CalibFileFinder() :
     """Calib file name, run range, etc
@@ -122,7 +111,6 @@ class CalibFileFinder() :
             print msg
             logger.error(msg, __name__)
             return None
-
 
 #----------------------------------
 
@@ -198,13 +186,11 @@ def dict_calib_file_actual_run_range(list_of_cfiles) :
     return dict_fname_range
 
 #----------------------------------
-#----------------------------------
-#----------------------------------
-#----------------------------------
-#
 #  Test of class CalibFile
-#
+#----------------------------------
+
 if __name__ == "__main__" :
+    import sys
 
     list_of_files = ['220-230.data', '220-end.data', '221-240.data', '528-end.data', '222-end.data', '659-800.data', '373-end.data', '79-end.data', '45-end.data'] 
 
@@ -217,12 +203,9 @@ if __name__ == "__main__" :
         list_of_calib_files.append(calib_file)
         calib_file.print_member_data()
 
-
     print '\nSorted list of calibration files'
     for cfile in sorted(list_of_calib_files) :
         cfile.print_member_data()
-
-
 
     print '\n\nTest class CalibFileFinder'
     #cff = CalibFileFinder("/reg/d/psdm/CXI/cxitut13/calib/CsPad::CalibV1/CxiDs1.0:Cspad.0/", "offset_corr")
@@ -230,8 +213,6 @@ if __name__ == "__main__" :
     cff.print_member_data()
     runnum = 232
     print 'For run %d: %s' % (runnum, cff.find_calib_file(runnum))
-
-
 
     print '\n\nTest methods for run ranges:'
     list_of_cfiles = list_of_sorted_calib_files_from_list_of_files(list_of_files)

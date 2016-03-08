@@ -3,28 +3,21 @@
 #  $Id$
 #
 # Description:
-#  Module GUIFileManagerGroup...
+#  GUIFileManagerGroup...
 #
 #------------------------------------------------------------------------
 
-"""GUI works with dark run"""
+"""GUI for Group File Manager"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#-------------------
-#  Import modules --
-#-------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
-from CalibManager.Frame     import Frame
+#from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
 from Logger                 import logger
 
@@ -33,24 +26,23 @@ from GUIFileManagerGroupControl import *
 from GUIDirTree                 import *
 from GUIExpCalibDir             import *
 
-#-----------------------------
+#------------------------------
 
-#class GUIFileManagerGroup ( QtGui.QWidget ) :
-class GUIFileManagerGroup ( Frame ) :
-    """GUI works with dark run"""
+#class GUIFileManagerGroup(Frame) :
+class GUIFileManagerGroup(QtGui.QWidget) :
+    """GUI for Group File Manager"""
 
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
         QtGui.QWidget.__init__(self, parent)
-        Frame.__init__(self, parent, mlw=1)
+        #Frame.__init__(self, parent, mlw=1)
 
         self.setGeometry(200, 400, 800, 300)
         self.setWindowTitle('Group File Manager')
-        #self.setFrame()
 
-        self.guistatus   = GUIStatus(self)
+        self.guistatus = GUIStatus(self)
         self.guifilemanagergroupcontrol = GUIFileManagerGroupControl(self)
-        self.guidirtree      = GUIDirTree(None, cp.calib_dir_src.value())
-        self.guiexpcalibdir  = GUIExpCalibDir()
+        self.guidirtree     = GUIDirTree(None, cp.calib_dir_src.value())
+        self.guiexpcalibdir = GUIExpCalibDir()
         #self.guisrcfile  = QtGui.QTextEdit('Source file GUI is not implemented.') # GUIDark(self)
         
         #self.hbox = QtGui.QHBoxLayout() 
@@ -109,28 +101,18 @@ class GUIFileManagerGroup ( Frame ) :
         #self.setStyleSheet(cp.styleBkgd)
 
   
-#    def setFrame(self):
-#        self.frame = QtGui.QFrame(self)
-#        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-#        self.frame.setLineWidth(0)
-#        self.frame.setMidLineWidth(1)
-#        self.frame.setGeometry(self.rect())
-#        self.frame.setVisible(False)
-
-
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name)
-        #self.frame.setGeometry(self.rect())
         #print 'GUIFileManagerGroup resizeEvent: %s' % str(self.size())
-        pass
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def resetFields(self) :
@@ -156,14 +138,13 @@ class GUIFileManagerGroup ( Frame ) :
 
         cp.guifilemanagergroup = None
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUIFileManagerGroup ()
     widget.show()
     app.exec_()
 
-#-----------------------------
-#-----------------------------
+#------------------------------

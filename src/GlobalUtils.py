@@ -3,14 +3,13 @@
 #  $Id$
 #
 # Description:
-#  Module GlobalUtils...
-#
+#   GlobalUtils...
 #------------------------------------------------------------------------
 
 """Contains Global Utilities
 
-This software was developed for the SIT project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
+This software was developed for the SIT project.
+If you use all or part of it, please give an appropriate acknowledgment.
 
 @see RelatedModule
 
@@ -19,16 +18,10 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 import pwd
 import socket
@@ -52,22 +45,7 @@ from GUIPopupRadioList import *
 import PyCSPadImage.CSPAD2x2ImageUtils as cspad2x2img
 import PyCSPadImage.CSPADImageUtils    as cspadimg
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
-#from PkgPackage.PkgModule import PkgClass
-
 from CalibFileFinder import *
-
-#------------------------
-# Exported definitions --
-#------------------------
-
-#----------------------------------
-#----------------------------------
-#----------------------------------
-#----------------------------------
-#----------------------------------        
 
 #-----------------------------
 
@@ -96,11 +74,10 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
     """
     list_out = []
     for item in list_in :
-        list_out.append( fmt % item )
+        list_out.append(fmt % item)
     return list_out
 
 #-----------------------------
-
 
 def create_directory(dir) : 
     if os.path.exists(dir) :
@@ -149,7 +126,6 @@ def get_list_of_files_in_dir_for_part_fname(dir, pattern='-r0022'):
     return sorted(list_of_files)
 
 
-
 def print_list_of_files_in_dir(dirname, path_or_fname) :
     dname, fname = os.path.split(path_or_fname)     # i.e. ('work_corana', 'img-xcs-r0015-b0000.bin')
     print 'print_list_of_files_in_dir():  directory:' + dirname + '  fname:' + fname
@@ -169,9 +145,9 @@ def get_path_owner(path) :
     #print ' uid = %s   user_name  = %s' % (uid, user_name)
     return user_name
 
+
 def get_path_mode(path) :
     return os.stat(path).st_mode
-
 
 #----------------------------------
 
@@ -216,7 +192,6 @@ def send_msg_with_att_to_elog(inst='AMO', expt='amodaq09', run='825', tag='TAG1'
 
     logger.info(msg_in_log, __name__)
     return msg_id
-    
 
 #----------------------------------
 
@@ -270,7 +245,6 @@ def send_msg_with_att_to_elog_v0(inst='AMO', expt='amodaq09', run='825', tag='TA
     else         : return out
 
 #----------------------------------
-
 
 #def batch_job_submit(command, queue='psnehq', log_file='batch-log.txt') : # for example, command ='ls -l'
 #    p = subprocess.Popen(['bsub', '-q', queue, '-o', log_file, command], stdout=subprocess.PIPE) #, stdin=subprocess.STDIN, stderr=subprocess.PIPE
@@ -380,7 +354,6 @@ def remove_file(path) :
     p = subprocess.Popen(['rm', path], stdout=subprocess.PIPE)
     p.wait() # short time waiting untill submission is done, 
 
-
 #----------------------------------
 
 def load_textfile(path) :
@@ -405,7 +378,7 @@ def save_textfile(text, path, mode='w') :
 
 #----------------------------------
 
-def xtc_fname_parser_helper( part, prefix ) :    
+def xtc_fname_parser_helper(part, prefix) :    
     """In parsing the xtc file name, this function extracts the string after expected prefix, i.e. 'r0123' -> '0123'"""
     if len(part)>1 and part[0] == prefix :
         try :
@@ -527,14 +500,10 @@ def list_of_calib_files_with_run_range(list_of_files) :
 
     for range in sorted(list_out) :
         print range
-        
-
 
         #beg = begin_run_from_calib_fname(file)
         #if beg is None : continue
         #dic_num_file[beg] = fname
-
-
 
 #----------------------------------
 # assumes: path = .../<inst>/<experiment>/calib
@@ -590,7 +559,6 @@ def get_text_content_of_calib_dir_for_detector(path, det='cspad', subdir='CsPad:
         if os.path.isdir(path_to_child) : txt += get_text_content_of_calib_dir_for_detector(path_to_child, det, subdir, level=level+1, calib_type=calib_type)
              
     return txt
-
 
 #----------------------------------
 
@@ -750,7 +718,7 @@ def selectFromListInPopupMenu(list):
     """Shows the list as a pop-up menu and returns the selected item as a string or None"""
     popupMenu = QtGui.QMenu()
     for item in list :
-        popupMenu.addAction( item )
+        popupMenu.addAction(item)
 
     item_selected = popupMenu.exec_(QtGui.QCursor.pos())
 
@@ -775,7 +743,6 @@ def changeCheckBoxListInPopupMenu(list, win_title='Set check boxes'):
     else                                    :
         logger.error('Unknown response...', __name__)
         return 2
-
 
 #----------------------------------
 
@@ -884,7 +851,7 @@ def printStyleInfo(widg):
     qpalette   = qstyle.standardPalette()
     qcolor_bkg = qpalette.color(1)
     #r,g,b,alp  = qcolor_bkg.getRgb()
-    msg = 'Background color: r,g,b,alpha = %d,%d,%d,%d' % ( qcolor_bkg.getRgb() )
+    msg = 'Background color: r,g,b,alpha = %d,%d,%d,%d' % (qcolor_bkg.getRgb())
     logger.debug(msg)
 
 
@@ -907,7 +874,7 @@ def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 
 def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):       
 
-    path = str( QtGui.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter) )
+    path = str(QtGui.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter))
     dname, fname = os.path.split(path)
     if dname == '' or fname == '' :
         logger.info('Input directiry name or file name is empty... keep file path unchanged...')
@@ -974,7 +941,7 @@ def help_dialog_box(parent=None, text='Help message goes here', title='Help') :
         messbox = QtGui.QMessageBox(parent, windowTitle=title,
                                            text=text,
                                            standardButtons=QtGui.QMessageBox.Close)
-        messbox.setStyleSheet (cp.styleBkgd)
+        #messbox.setStyleSheet (cp.styleBkgd)
         messbox.setWindowModality (QtCore.Qt.NonModal)
         messbox.setModal (False)
         #clicked = messbox.exec_() # For MODAL dialog
@@ -1190,7 +1157,6 @@ def is_good_lustre_version() :
 
     except :
         return True
-    
 
 #----------------------------------
 
@@ -1208,6 +1174,7 @@ def is_good_lustre_version() :
 #  In case someone decides to run this module
 #
 if __name__ == "__main__" :
+    import sys
 
     print 'Time (sec) :', int( get_time_sec() )
 
@@ -1268,6 +1235,6 @@ if __name__ == "__main__" :
 
     print 'CalibManager package revision: "%s"' % get_pkg_version()
      
-    sys.exit ( "End of test" )
+    sys.exit("End of test")
 
 #----------------------------------

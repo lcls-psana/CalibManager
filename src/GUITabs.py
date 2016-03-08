@@ -1,11 +1,9 @@
-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
 #  Module GUITabs...
-#
 #------------------------------------------------------------------------
 
 """GUI for tabs.
@@ -13,31 +11,18 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 
@@ -51,29 +36,21 @@ from GUIFileManager       import *
 from GUIGeometry          import * 
 
 #---------------------
-#  Class definition --
-#---------------------
-class GUITabs ( QtGui.QWidget ) :
+class GUITabs(QtGui.QWidget) :
     """GUI for tabs support in GUIMain.
-
-    @see BaseClass
-    @see OtherClass
     """
-
     list_of_tabs = [ 'Dark'
-                    ,'Gain'
                     ,'ROI'
                     ,'Geometry'
                     ,'File Manager'
                     ,'Configuration'
                     ]
-
+                    #,'Gain'
 
     orientation = 'H'
     #orientation = 'V'
 
-
-    def __init__ (self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None) :
 
         self.name = 'GUITabs'
         self.myapp = app
@@ -86,16 +63,6 @@ class GUITabs ( QtGui.QWidget ) :
         self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
-
-        self.setFrame()
-
-        #self.butELog    .setIcon(cp.icon_mail_forward)
-        #self.butFile    .setIcon(cp.icon_save)
-        #self.butExit    .setIcon(cp.icon_exit)
-        #self.butLogger  .setIcon(cp.icon_logger)
-        #self.butFBrowser.setIcon(cp.icon_browser)
-        #self.butSave    .setIcon(cp.icon_save_cfg)
-        #self.butStop    .setIcon(cp.icon_stop)
 
         self.gui_win = None
 
@@ -123,40 +90,16 @@ class GUITabs ( QtGui.QWidget ) :
         #print 'End of init'
         
     #-------------------
-    # Private methods --
-    #-------------------
 
     def showToolTips(self):
         pass
         #self.butExit.setToolTip('Close all windows and \nexit this program') 
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
     def setStyle(self):
-        pass
-        #self.adjustSize()
-        #self.        setStyleSheet(cp.styleBkgd)
-        #self.butSave.setStyleSheet(cp.styleButton)
-        #self.butExit.setStyleSheet(cp.styleButton)
-        #self.butELog.setStyleSheet(cp.styleButton)
-        #self.butFile.setStyleSheet(cp.styleButton)
-
-        #self.butELog    .setVisible(False)
-        #self.butFBrowser.setVisible(False)
-        #self.butExit.setText('')
-        #self.butExit.setFlat(True)
-
         self.setMinimumHeight(250)
         #self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
  
 
     def makeTabBar(self,mode=None) :
@@ -204,21 +147,21 @@ class GUITabs ( QtGui.QWidget ) :
             #self.setStatus(0, 'Status: processing for pedestals')
             
         elif cp.current_tab.value() == self.list_of_tabs[1] :
-            self.gui_win = QtGui.QTextEdit('') # Gain is not implemented.') # GUIDark(self)
-
-        elif cp.current_tab.value() == self.list_of_tabs[2] :
             self.gui_win = GUIROIMask(self)
 
-        elif cp.current_tab.value() == self.list_of_tabs[3] :
+        elif cp.current_tab.value() == self.list_of_tabs[2] :
             self.gui_win = GUIGeometry(self)
 
-        elif cp.current_tab.value() == self.list_of_tabs[4] :
+        elif cp.current_tab.value() == self.list_of_tabs[3] :
             #self.gui_win = QtGui.QTextEdit('File manager is not implemented.')
             self.gui_win = GUIFileManager(self)
 
-        elif cp.current_tab.value() == self.list_of_tabs[5] :
+        elif cp.current_tab.value() == self.list_of_tabs[4] :
             self.gui_win = GUIConfig(self)
             #self.setStatus(0, 'Status: processing for data')
+
+        #elif cp.current_tab.value() == self.list_of_tabs[5] :
+        #    self.gui_win = QtGui.QTextEdit('') # Gain is not implemented.'
 
         self.hboxW.addWidget(self.gui_win)
         self.gui_win.setVisible(True)
@@ -233,18 +176,17 @@ class GUITabs ( QtGui.QWidget ) :
         self.guiSelector()
 
 
-    def resizeEvent(self, e):
-        self.frame.setGeometry(self.rect())
+    #def resizeEvent(self, e):
+        #self.frame.setGeometry(self.rect())
         #logger.debug('resizeEvent', self.name) 
-        #print 'GUITabs resizeEvent: %s' % str(self.size())
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -262,14 +204,13 @@ class GUITabs ( QtGui.QWidget ) :
         self.close()
 
 #-----------------------------
-#-----------------------------
-#-----------------------------
-#  In case someone decides to run this module
-#
+
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUITabs()
     ex.move(QtCore.QPoint(50,50))
     ex.show()
     app.exec_()
+
 #-----------------------------

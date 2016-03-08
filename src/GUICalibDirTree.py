@@ -3,34 +3,24 @@
 #  $Id$
 #
 # Description:
-#  Module GUICalibDirTree...
-#
+#   GUICalibDirTree...
 #------------------------------------------------------------------------
 
-"""GUI works with dark run"""
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#-------------------
-#  Import modules --
-#-------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
 from FileNameManager        import fnm
 
-#-----------------------------
+#------------------------------
 
-class GUICalibDirTree (QtGui.QWidget):
+class GUICalibDirTree(QtGui.QWidget):
 
     calib_types_cspad = [
         'center'
@@ -95,14 +85,8 @@ class GUICalibDirTree (QtGui.QWidget):
         self.setGeometry(100, 100, 200, 600)
         self.setWindowTitle('Item selection tree')
 
-        self.setFrame()
-
         cp.setIcons()
  
-        #self.icon_folder_open   = QtGui.QIcon("icons/folder_open.gif")
-        #self.icon_folder_closed = QtGui.QIcon("icons/folder_closed.gif")
-        #self.icon_table         = QtGui.QIcon("icons/table.gif")
-
         self.fill_calib_dir_tree()
 
         #self.view = QtGui.QListView()
@@ -210,6 +194,7 @@ class GUICalibDirTree (QtGui.QWidget):
         msg = 'Item with full name %s, is at state %s' % ( self.getFullNameFromItem(item),  state)
         #print msg
         logger.info(msg, __name__)       
+
         
     def itemExpanded(self, ind): 
         item = self.model.itemFromIndex(ind)
@@ -217,11 +202,13 @@ class GUICalibDirTree (QtGui.QWidget):
         msg = 'Item expanded: %s' % item.text()  
         logger.info(msg, __name__)       
 
+
     def itemCollapsed(self, ind):
         item = self.model.itemFromIndex(ind)
         item.setIcon(cp.icon_folder_closed)
         msg = 'Item collapsed: %s' % item.text()  
         logger.info(msg, __name__)       
+
 
     def itemSelected(self, selected, deselected):
         selected_txt = self.getFullNameFromIndex(selected)
@@ -245,39 +232,31 @@ class GUICalibDirTree (QtGui.QWidget):
 
 
     def setStyle(self):
-        pass
         #self.setMinimumSize(100,400)
         self.setMinimumWidth(150)
         self.setMaximumWidth(500)
         self.setMinimumHeight(500)
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        self.frame.setGeometry(self.rect())
+        #pass
 
-    def moveEvent(self, e):
+
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
-
+        #pass
  
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-    widget = GUICalibDirTree ()
+    widget = GUICalibDirTree()
     widget.show()
     app.exec_()
 

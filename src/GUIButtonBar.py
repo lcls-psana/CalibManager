@@ -4,60 +4,40 @@
 #  $Id$
 #
 # Description:
-#  Module GUIButtonBar...
+#   GUIButtonBar...
 #
 #------------------------------------------------------------------------
 
-"""Renders the main GUI for the CalibManager.
+"""GUIButtonBar.
 
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
-
-@see RelatedModule
 
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 
 from GUILogger            import *
 from Logger               import logger
 from FileNameManager      import fnm
-#from GUIConfig            import * 
-#from GUIDark              import * 
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIButtonBar ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIButtonBar(QtGui.QWidget) :
     """Main GUI for main button bar.
-
-    @see BaseClass
-    @see OtherClass
     """
-    def __init__ (self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIButtonBar'
         self.myapp = app
@@ -70,15 +50,13 @@ class GUIButtonBar ( QtGui.QWidget ) :
         self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
-
-        self.setFrame()
  
-        self.butSave        = QtGui.QPushButton('Save')
-        self.butExit        = QtGui.QPushButton('Exit')
-        self.butFile        = QtGui.QPushButton(u'GUI \u2192 &File')
-        self.butELog        = QtGui.QPushButton(u'GUI \u2192 &ELog')
-        self.butLogger      = QtGui.QPushButton('Logger')
-        self.butFBrowser    = QtGui.QPushButton('File Browser')
+        self.butSave     = QtGui.QPushButton('Save')
+        self.butExit     = QtGui.QPushButton('Exit')
+        self.butFile     = QtGui.QPushButton(u'GUI \u2192 &File')
+        self.butELog     = QtGui.QPushButton(u'GUI \u2192 &ELog')
+        self.butLogger   = QtGui.QPushButton('Logger')
+        self.butFBrowser = QtGui.QPushButton('File Browser')
 
         self.butELog    .setIcon(cp.icon_mail_forward)
         self.butFile    .setIcon(cp.icon_save)
@@ -89,22 +67,22 @@ class GUIButtonBar ( QtGui.QWidget ) :
         #self.butStop    .setIcon(cp.icon_stop)
 
         self.hboxB = QtGui.QHBoxLayout() 
-        self.hboxB.addWidget(self.butLogger     )
-        self.hboxB.addWidget(self.butFBrowser   )
-        self.hboxB.addWidget(self.butFile       )
-        self.hboxB.addWidget(self.butELog       )
+        self.hboxB.addWidget(self.butLogger  )
+        self.hboxB.addWidget(self.butFBrowser)
+        self.hboxB.addWidget(self.butFile    )
+        self.hboxB.addWidget(self.butELog    )
         self.hboxB.addStretch(1)     
-        self.hboxB.addWidget(self.butSave       )
-        self.hboxB.addWidget(self.butExit       )
+        self.hboxB.addWidget(self.butSave    )
+        self.hboxB.addWidget(self.butExit    )
 
         self.setLayout(self.hboxB)
 
-        self.connect(self.butExit       ,  QtCore.SIGNAL('clicked()'), self.onExit        )
-        self.connect(self.butLogger     ,  QtCore.SIGNAL('clicked()'), self.onLogger      )
-        self.connect(self.butSave       ,  QtCore.SIGNAL('clicked()'), self.onSave        )
-        self.connect(self.butFile       ,  QtCore.SIGNAL('clicked()'), self.onFile        )
-        #self.connect(self.butELog       ,  QtCore.SIGNAL('clicked()'), self.onELog        )
-        #self.connect(self.butFBrowser   ,  QtCore.SIGNAL('clicked()'), self.onFBrowser    )
+        self.connect(self.butExit     ,  QtCore.SIGNAL('clicked()'), self.onExit    )
+        self.connect(self.butLogger   ,  QtCore.SIGNAL('clicked()'), self.onLogger  )
+        self.connect(self.butSave     ,  QtCore.SIGNAL('clicked()'), self.onSave    )
+        self.connect(self.butFile     ,  QtCore.SIGNAL('clicked()'), self.onFile    )
+        #self.connect(self.butELog    ,  QtCore.SIGNAL('clicked()'), self.onELog    )
+        #self.connect(self.butFBrowser,  QtCore.SIGNAL('clicked()'), self.onFBrowser)
 
         self.showToolTips()
         self.setStyle()
@@ -118,16 +96,13 @@ class GUIButtonBar ( QtGui.QWidget ) :
         
         #print 'End of init'
         
-    #-------------------
-    # Private methods --
-    #-------------------
 
     def printStyleInfo(self):
         qstyle     = self.style()
         qpalette   = qstyle.standardPalette()
         qcolor_bkg = qpalette.color(1)
         #r,g,b,alp  = qcolor_bkg.getRgb()
-        msg = 'Background color: r,g,b,alpha = %d,%d,%d,%d' % ( qcolor_bkg.getRgb() )
+        msg = 'Background color: r,g,b,alpha = %d,%d,%d,%d' % (qcolor_bkg.getRgb())
         logger.debug(msg)
 
 
@@ -140,16 +115,7 @@ class GUIButtonBar ( QtGui.QWidget ) :
         self.butLogger.setToolTip('On/Off logger widow')
         self.butFBrowser.setToolTip('On/Off file browser')
         #self.butStop.setToolTip('Not implemented yet...')
-
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
+        
 
     def setStyle(self):
         self.        setStyleSheet(cp.styleBkgd)
@@ -166,17 +132,17 @@ class GUIButtonBar ( QtGui.QWidget ) :
         #self.butExit.setFlat(True)
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        self.frame.setGeometry(self.rect())
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -187,7 +153,6 @@ class GUIButtonBar ( QtGui.QWidget ) :
 
         #try    : del cp.guimain
         #except : pass
-
 
 
     def onExit(self):
@@ -203,11 +168,11 @@ class GUIButtonBar ( QtGui.QWidget ) :
         logger.debug('onFile', self.name)
         path  = fnm.path_gui_image()
         #dir, fname = os.path.split(path)
-        path  = str( QtGui.QFileDialog.getSaveFileName(self,
-                                                       caption='Select file to save the GUI',
-                                                       directory = path,
-                                                       filter = '*.png'
-                                                       ) )
+        path  = str(QtGui.QFileDialog.getSaveFileName(self,
+                                                      caption='Select file to save the GUI',
+                                                      directory = path,
+                                                      filter = '*.png'
+                                                      ))
         if path == '' :
             logger.debug('Saving is cancelled.', self.name)
             return
@@ -235,7 +200,7 @@ class GUIButtonBar ( QtGui.QWidget ) :
         #cp.saveParametersInFile( cp.fname_cp.value() )
 
 
-    def onLogger (self):       
+    def onLogger(self):       
         logger.debug('onLogger', self.name)
         try    :
             cp.guilogger.close()
@@ -247,7 +212,7 @@ class GUIButtonBar ( QtGui.QWidget ) :
             cp.guilogger.show()
 
 
-    def onFBrowser (self):       
+    def onFBrowser(self):       
         logger.debug('onFBrowser', self.name)
         try    :
             cp.guifilebrowser.close()
@@ -260,11 +225,8 @@ class GUIButtonBar ( QtGui.QWidget ) :
     def onStop(self):       
         logger.debug('onStop - not implemented yet...', self.name)
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
+#------------------------------
+
     #def mousePressEvent(self, event):
     #    print 'event.x, event.y, event.button =', str(event.x()), str(event.y()), str(event.button())         
 
@@ -291,12 +253,13 @@ class GUIButtonBar ( QtGui.QWidget ) :
             #print 'event.key() = Home'
             pass
 
-#-----------------------------
-#  In case someone decides to run this module
-#
+#------------------------------
+
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIButtonBar()
     ex.show()
     app.exec_()
-#-----------------------------
+
+#------------------------------

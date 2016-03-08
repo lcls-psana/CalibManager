@@ -3,47 +3,32 @@
 #  $Id$
 #
 # Description:
-#  Module GUIDarkListItemRun ...
-#
+#   GUIDarkListItemRun ...
 #------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
-
 #--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
 
 from PyQt4 import QtGui, QtCore
 import time   # for sleep(sec)
 from time import time 
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
 from BatchJobPedestals      import *
-#from FileDeployer           import *
 import FileDeployer         as     fdmets
 from BatchLogScanParser     import blsp # Just in order to instatiate it
 from GUIRange               import *
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIDarkListItemRun ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIDarkListItemRun(QtGui.QWidget) :
     """GUI sets the source dark run number, validity range, and starts calibration of pedestals"""
 
-    def __init__ ( self, parent=None, str_run_number='0000', str_run_type='Type N/A', comment='', xtc_in_dir=True) :
+    def __init__(self, parent=None, str_run_number='0000', str_run_type='Type N/A', comment='', xtc_in_dir=True) :
 
         self.t0_sec = time()
 
@@ -53,7 +38,6 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
         self.setWindowTitle('GUI Dark Run Item')
         #try : self.setWindowIcon(cp.icon_help)
         #except : pass
-        self.setFrame()
 
         #self.list_of_runs   = None
         self.parent = parent
@@ -69,39 +53,31 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
 
         self.create_or_use_butch_object()
 
-        self.lab_run  = QtGui.QLabel('Run')
+        self.lab_run = QtGui.QLabel('Run')
 
-        self.guirange  = GUIRange(None, str_run_number, 'end')
+        self.guirange = GUIRange(None, str_run_number, 'end')
 
-        #self.lab_rnum = QtGui.QPushButton( self.str_run_number )
-        self.lab_rnum = QtGui.QLabel( self.str_run_number )
-        self.lab_type = QtGui.QLabel( self.str_run_type + '  ' + comment)
-        self.but_go   = QtGui.QPushButton( 'Go' )
-        self.but_depl = QtGui.QPushButton( 'Deploy' )
-
-        #self.but_stop.setVisible(False)
+        self.lab_rnum = QtGui.QLabel(self.str_run_number)
+        self.lab_type = QtGui.QLabel(self.str_run_type + '  ' + comment)
+        self.but_go   = QtGui.QPushButton('Go')
+        self.but_depl = QtGui.QPushButton('Deploy')
 
         self.hbox = QtGui.QHBoxLayout()
         self.hbox.addWidget(self.lab_run)
         self.hbox.addWidget(self.lab_rnum)
         #self.hbox.addStretch(1)     
         self.hbox.addWidget(self.guirange)
-        #self.hbox.addWidget(self.lab_from)
-        #self.hbox.addWidget(self.edi_from)
-        #self.hbox.addWidget(self.lab_to)
-        #self.hbox.addWidget(self.edi_to)
         #self.hbox.addSpacing(150)     
         self.hbox.addStretch(1)     
         self.hbox.addWidget(self.but_go)
         self.hbox.addWidget(self.but_depl)
         self.hbox.addStretch(1)     
         self.hbox.addWidget(self.lab_type)
-        #self.hbox.addWidget(self.but_stop)
 
         self.setLayout(self.hbox)
 
-        self.connect( self.but_go,   QtCore.SIGNAL('clicked()'),         self.onButGo )
-        self.connect( self.but_depl, QtCore.SIGNAL('clicked()'),         self.onButDeploy )
+        self.connect(self.but_go,   QtCore.SIGNAL('clicked()'), self.onButGo)
+        self.connect(self.but_depl, QtCore.SIGNAL('clicked()'), self.onButDeploy)
    
         self.showToolTips()
 
@@ -131,22 +107,13 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
         self.but_go  .setToolTip('Begin data processing for calibration.')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
-
     def setFieldsEnabled(self, is_enabled=True):
 
         logger.debug('Set fields enabled: %s' %  is_enabled, __name__)
 
         #self.lab_rnum .setEnabled(is_enabled)
-        self.but_go   .setEnabled(is_enabled)
-        self.but_depl .setEnabled(is_enabled)
+        self.but_go  .setEnabled(is_enabled)
+        self.but_depl.setEnabled(is_enabled)
 
         self.guirange.setFieldsEnable(is_enabled)
 
@@ -157,16 +124,16 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
 
     def setStyle(self):
         self.setMinimumSize(600,35)
-        self.           setStyleSheet (cp.styleBkgd)
-        #self.           setStyleSheet (cp.styleYellowish)
+        self.setStyleSheet(cp.styleBkgd)
+        #self.setStyleSheet(cp.styleYellowish)
 
         self.lab_run .setStyleSheet(cp.styleLabel)
         self.but_depl.setStyleSheet(cp.styleButtonGood)
 
         #self.lab_rnum .setFixedWidth(60)        
-        self.lab_type .setMinimumWidth(250)
-        self.but_go   .setFixedWidth(60)        
-        self.but_depl .setFixedWidth(60)
+        self.lab_type.setMinimumWidth(250)
+        self.but_go  .setFixedWidth(60)        
+        self.but_depl.setFixedWidth(60)
 
         #self.but_go.setEnabled(self.str_run_number != 'None' and self.lab_rnum.isEnabled())
 
@@ -192,17 +159,16 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
             #self.but_go.setText('Go')
 
 
-
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
         #self.box_txt.setGeometry(self.contentsRect())
-
+        #pass
+    
         
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -223,26 +189,22 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
         self.close()
 
 
-
     def exportLocalPars(self):
-        """Export local parameters to configuration current"""
+        """Exports local parameters to configuration current"""
         cp.str_run_number.setValue(self.str_run_number)
-        #cp.str_run_from  .setValue(self.str_run_from  )
-        #cp.str_run_to    .setValue(self.str_run_to    )
+        #cp.str_run_from.setValue(self.str_run_from)
+        #cp.str_run_to  .setValue(self.str_run_to)
 
- 
 
     def onButGo(self):
+        logger.debug('onButGo', __name__)
         self.exportLocalPars()
         self.but_depl.setVisible(False)
-
-        logger.info('onButGo', __name__)
-
         but = self.but_go
         but.setStyleSheet(cp.styleDefault)
 
-        if   but.text() == 'Go' : 
-            logger.info('onButGo for run %s' % self.str_run_number, __name__ )
+        if but.text() == 'Go' : 
+            logger.info('onButGo for run %s' % self.str_run_number, __name__)
             but.setEnabled(False)
             self.bjpeds.start_auto_processing()
             if self.bjpeds.autoRunStage :            
@@ -250,7 +212,7 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
             but.setEnabled(True)
 
         elif but.text() == 'Stop' : 
-            logger.info('onButStop for run %s' % self.str_run_number, __name__ )
+            logger.info('onButStop for run %s' % self.str_run_number, __name__)
             self.bjpeds.stop_auto_processing()
             but.setEnabled(True)
             but.setText('Go')
@@ -273,7 +235,7 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
 
 
     def onButDeploy(self):
-        logger.debug('onButDeploy', __name__ )
+        logger.debug('onButDeploy', __name__)
 
         fdmets.deploy_calib_files(self.str_run_number, self.strRunRange(), mode='calibman-dark', ask_confirm=True)
 
@@ -282,7 +244,6 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
 
     def strRunRange(self):
         return self.guirange.getRange()
-
 
 #---------
 # deployment stuff from here moved to FileDeployer
@@ -298,15 +259,14 @@ class GUIDarkListItemRun ( QtGui.QWidget ) :
         self.setFieldsEnabled(cp.det_name.value() != '' and self.xtc_in_dir)
         #self.setStatusStyleOfButtons()
 
-
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     w = GUIDarkListItemRun(parent=None, str_run_number='0016')
     w.setFieldsEnabled(True)
     w.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

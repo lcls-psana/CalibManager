@@ -3,41 +3,28 @@
 #  $Id$
 #
 # Description:
-#  Module GUIDarkListItemAdd ...
-#
+#   GUIDarkListItemAdd ...
 #------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
 import GlobalUtils          as     gu
 from GUIDarkMoreOpts        import *
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIDarkListItemAdd ( QtGui.QWidget ) :
-    """GUI sets the source dark run number, validity range, and starts calibration of pedestals"""
+#------------------------------
 
-    def __init__ ( self, parent=None, run_number='0000') :
+class GUIDarkListItemAdd(QtGui.QWidget) :
+    """GUI extension of the Dark List Item"""
+
+    def __init__(self, parent=None, run_number='0000') :
 
         QtGui.QWidget.__init__(self, parent)
 
@@ -46,9 +33,8 @@ class GUIDarkListItemAdd ( QtGui.QWidget ) :
 
         self.setGeometry(100, 100, 600, 45)
         self.setWindowTitle('GUI Dark List Item')
-        self.setFrame()
 
-        self.gui_more  = GUIDarkMoreOpts(self, self.run_number)
+        self.gui_more = GUIDarkMoreOpts(self, self.run_number)
         
         self.vbox = QtGui.QVBoxLayout()
         self.vbox.addWidget(self.gui_more)
@@ -65,29 +51,21 @@ class GUIDarkListItemAdd ( QtGui.QWidget ) :
         pass
         #self.lab_rnum.setToolTip('Data run for calibration.')
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
 
     def setStyle(self):
         self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
         self.setStyleSheet(cp.styleBkgd)
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+        #pass
 
         
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -121,7 +99,7 @@ class GUIDarkListItemAdd ( QtGui.QWidget ) :
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     w = GUIDarkListItemAdd(parent=None, run_number='0005')
     w.show()

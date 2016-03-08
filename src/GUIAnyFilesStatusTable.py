@@ -3,38 +3,26 @@
 #  $Id$
 #
 # Description:
-#  Module GUIAnyFilesStatusTable...
-#
+#   GUIAnyFilesStatusTable...
 #------------------------------------------------------------------------
 
 """GUIAnyFilesStatusTable GUI shows the status table for the list of files"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 from ConfigParametersForApp import cp
 from FileNameManager        import fnm
 from Logger                 import logger
 import GlobalUtils          as     gu
 
-#---------------------
-#  Class definition --
-#---------------------
+#------------------------------
+
 class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
     """Status table of files from the list"""
 
@@ -45,7 +33,6 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(50, 100, 600, 500)
         self.setWindowTitle('Files status table')
-        self.setFrame()
 
         self.title = title
 
@@ -63,19 +50,14 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
         self.onStatus()
         #self.connectToThread1()
 
-        
-    #-------------------
-    #  Public methods --
-    #-------------------
-
 
     def connectToThread1(self):
-        try : self.connect   ( cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus )
+        try : self.connect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
         except : logger.warning('connectToThread1 is failed', __name__)
 
 
     def disconnectFromThread1(self):
-        try : self.disconnect( cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus )
+        try : self.disconnect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
         except : pass
 
 
@@ -87,14 +69,6 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
     def showToolTips(self):
         msg = 'GUI sets system parameters.'
         #self.tit_sys_ram_size.setToolTip(msg)
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
 
     def clearTable(self):
@@ -131,20 +105,20 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
         for i, fname in enumerate(list_of_files) :
 
             file_struct = os.path.exists(fname)
-            item_fname  = QtGui.QTableWidgetItem( os.path.basename(fname) )
-            #item_struct = QtGui.QTableWidgetItem( self.dict_status[file_struct] )
-            #item_struct = QtGui.QTableWidgetItem( self.checkNameStructure(fname, self.list_expected) )
-            #item_struct = QtGui.QTableWidgetItem( 'N/A' )
-            item_ctime  = QtGui.QTableWidgetItem( 'N/A' )
-            item_size   = QtGui.QTableWidgetItem( 'N/A' )
-            item_owner  = QtGui.QTableWidgetItem( 'N/A' )
-            item_mode   = QtGui.QTableWidgetItem( 'N/A' )
+            item_fname  = QtGui.QTableWidgetItem(os.path.basename(fname))
+            #item_struct = QtGui.QTableWidgetItem(self.dict_status[file_struct])
+            #item_struct = QtGui.QTableWidgetItem(self.checkNameStructure(fname, self.list_expected))
+            #item_struct = QtGui.QTableWidgetItem('N/A')
+            item_ctime  = QtGui.QTableWidgetItem('N/A')
+            item_size   = QtGui.QTableWidgetItem('N/A')
+            item_owner  = QtGui.QTableWidgetItem('N/A')
+            item_mode   = QtGui.QTableWidgetItem('N/A')
 
-            item_fname.setBackgroundColor (cp.colorTabItem)
-            item_ctime.setBackgroundColor (cp.colorTabItem)
-            item_size .setBackgroundColor (cp.colorTabItem)
-            item_owner.setBackgroundColor (cp.colorTabItem)
-            item_mode .setBackgroundColor (cp.colorTabItem)
+            item_fname.setBackgroundColor(cp.colorTabItem)
+            item_ctime.setBackgroundColor(cp.colorTabItem)
+            item_size .setBackgroundColor(cp.colorTabItem)
+            item_owner.setBackgroundColor(cp.colorTabItem)
+            item_mode .setBackgroundColor(cp.colorTabItem)
 
             #item_struct.setTextAlignment(QtCore.Qt.AlignCenter)
             item_ctime .setTextAlignment(QtCore.Qt.AlignCenter)
@@ -192,10 +166,10 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
             #item_struct.setText( self.dict_status[file_struct] )
 
             if not os.path.exists(fname) : 
-                item_ctime.setText( 'N/A' )
-                item_size .setText( 'N/A' )
-                item_owner.setText( 'N/A' )
-                item_mode .setText( 'N/A' )
+                item_ctime.setText('N/A')
+                item_size .setText('N/A')
+                item_owner.setText('N/A')
+                item_mode .setText('N/A')
                 continue
             
             ctime_sec  = os.path.getctime(fname)
@@ -204,10 +178,10 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
             file_owner = gu.get_path_owner(fname)
             file_mode  = gu.get_path_mode(fname)
 
-            item_ctime.setText( ctime_str )
-            item_size .setText( str(size_byte) )
-            item_owner.setText( str(file_owner) )
-            item_mode .setText( str(oct(file_mode)) )
+            item_ctime.setText(ctime_str)
+            item_size .setText(str(size_byte))
+            item_owner.setText(str(file_owner))
+            item_mode .setText(str(oct(file_mode)))
 
         self.setStyle()
 
@@ -251,15 +225,14 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
         self.setContentsMargins(-9,-9,-9,-9)
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+        #pass
 
-
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -286,19 +259,13 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-
-    dir = './'
-    list_dir = sorted(os.listdir(dir))
-
+    list_dir = sorted(os.listdir('./'))
     print list_dir
-
-    #widget = GUIAnyFilesStatusTable (parent=None, list_of_files=list_dir)
-
+    #widget = GUIAnyFilesStatusTable(parent=None, list_of_files=list_dir)
     widget = GUIAnyFilesStatusTable(parent=None)
     widget.makeTable(list_dir)
-
     widget.show()
     app.exec_()
 

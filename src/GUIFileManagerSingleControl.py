@@ -1,43 +1,28 @@
-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
-#  Module GUIFileManagerSingleControl...
-#
+#  GUIFileManagerSingleControl...
 #------------------------------------------------------------------------
 
-"""Renders the main GUI for the CalibManager.
+"""Sub-GUI for GUIFileManagerSingle.
 
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
-
-@see RelatedModule
 
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#---------------------------------
 __version__ = "$Revision$"
-# $Source$
+#---------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 
@@ -45,7 +30,6 @@ from ConfigParametersForApp import cp
 from Logger                 import logger
 from FileNameManager        import fnm
 
-#from CorAna.MaskEditor import MaskEditor
 import GlobalUtils     as     gu
 import RegDBUtils      as     ru
 from GUIFileBrowser         import *
@@ -53,33 +37,27 @@ from PlotImgSpe             import *
 from FileDeployer           import fd
 from GUIRange               import *
 
-#---------------------
-#  Class definition --
-#---------------------
-#class GUIFileManagerSingleControl ( Frame ) :
-class GUIFileManagerSingleControl ( QtGui.QWidget ) :
-    """Main GUI for main button bar.
+#------------------------------
 
-    @see BaseClass
-    @see OtherClass
+#class GUIFileManagerSingleControl(Frame) :
+class GUIFileManagerSingleControl(QtGui.QWidget) :
+    """Main GUI for main button bar.
     """
     char_expand = cp.char_expand
     #char_expand = '' # down-head triangle
 
-    def __init__ (self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIFileManagerSingleControl'
         self.myapp = app
         QtGui.QWidget.__init__(self, parent)
-        #Frame.__init__(self, parent, mlw=0)
+        #Frame.__init__(self, parent, mlw=1)
 
         self.setGeometry(10, 25, 630, 120)
         self.setWindowTitle('File Manager Select & Action GUI')
         #self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
-
-        #self.setFrame()
 
         #cp.setIcons()
 
@@ -90,8 +68,8 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
  
         self.lab_src        = QtGui.QLabel('for detector')
         self.lab_type       = QtGui.QLabel('calib type')
-        self.but_src        = QtGui.QPushButton(self.source_name + self.char_expand )
-        self.but_type       = QtGui.QPushButton(self.calib_type + self.char_expand )
+        self.but_src        = QtGui.QPushButton(self.source_name + self.char_expand)
+        self.but_type       = QtGui.QPushButton(self.calib_type + self.char_expand)
 
         self.lab_file = QtGui.QLabel('File:')
         self.edi_file = QtGui.QLineEdit ( self.path_fm_selected.value() ) # fnm.path_to_calib_dir() )
@@ -104,51 +82,51 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
         self.but_plot   = QtGui.QPushButton('Plot')
         #self.but_copy  .setIcon(cp.icon_monitor)
 
-        self.but_browse = QtGui.QPushButton( 'Browse' )
+        self.but_browse = QtGui.QPushButton('Browse')
 
         self.hboxB = QtGui.QHBoxLayout() 
         #self.hboxB.addStretch(1)     
-        self.hboxB.addWidget( self.lab_file )
-        self.hboxB.addWidget( self.edi_file )
-        self.hboxB.addWidget( self.but_browse )
+        self.hboxB.addWidget(self.lab_file)
+        self.hboxB.addWidget(self.edi_file)
+        self.hboxB.addWidget(self.but_browse)
         self.hboxB.addStretch(1)     
 
         self.hboxD = QtGui.QHBoxLayout() 
         #self.hboxD.addSpacing(50)
-        self.hboxD.addWidget( self.but_view   )
-        self.hboxD.addWidget( self.but_plot   )
-        self.hboxD.addWidget( self.but_delete )
+        self.hboxD.addWidget(self.but_view)
+        self.hboxD.addWidget(self.but_plot)
+        self.hboxD.addWidget(self.but_delete)
         self.hboxD.addStretch(1)     
 
         self.hboxC = QtGui.QHBoxLayout() 
         #self.hboxC.addStretch(1)     
-        self.hboxC.addWidget( self.but_move )
-        self.hboxC.addWidget( self.but_copy )
-        self.hboxC.addWidget( self.lab_src  )
-        self.hboxC.addWidget( self.but_src  )
-        self.hboxC.addWidget( self.lab_type )
-        self.hboxC.addWidget( self.but_type )
-        self.hboxC.addWidget( self.guirange )
+        self.hboxC.addWidget(self.but_move)
+        self.hboxC.addWidget(self.but_copy)
+        self.hboxC.addWidget(self.lab_src )
+        self.hboxC.addWidget(self.but_src )
+        self.hboxC.addWidget(self.lab_type)
+        self.hboxC.addWidget(self.but_type)
+        self.hboxC.addWidget(self.guirange)
         self.hboxC.addStretch(1)     
 
 
         self.vboxW = QtGui.QVBoxLayout() 
         self.vboxW.addStretch(1)
-        self.vboxW.addLayout( self.hboxB ) 
-        self.vboxW.addLayout( self.hboxD ) 
-        self.vboxW.addLayout( self.hboxC ) 
+        self.vboxW.addLayout(self.hboxB) 
+        self.vboxW.addLayout(self.hboxD) 
+        self.vboxW.addLayout(self.hboxC) 
         self.vboxW.addStretch(1)
         
         self.setLayout(self.vboxW)
 
-        self.connect( self.but_browse, QtCore.SIGNAL('clicked()'), self.onButBrowse ) 
-        self.connect( self.but_move,   QtCore.SIGNAL('clicked()'), self.onButMove   ) 
-        self.connect( self.but_copy,   QtCore.SIGNAL('clicked()'), self.onButCopy   ) 
-        self.connect( self.but_view,   QtCore.SIGNAL('clicked()'), self.onButView   ) 
-        self.connect( self.but_plot,   QtCore.SIGNAL('clicked()'), self.onButPlot   ) 
-        self.connect( self.but_delete, QtCore.SIGNAL('clicked()'), self.onButDelete ) 
-        self.connect( self.but_src,    QtCore.SIGNAL('clicked()'), self.onButSrc    ) 
-        self.connect( self.but_type,   QtCore.SIGNAL('clicked()'), self.onButType   ) 
+        self.connect(self.but_browse, QtCore.SIGNAL('clicked()'), self.onButBrowse) 
+        self.connect(self.but_move,   QtCore.SIGNAL('clicked()'), self.onButMove  ) 
+        self.connect(self.but_copy,   QtCore.SIGNAL('clicked()'), self.onButCopy  ) 
+        self.connect(self.but_view,   QtCore.SIGNAL('clicked()'), self.onButView  ) 
+        self.connect(self.but_plot,   QtCore.SIGNAL('clicked()'), self.onButPlot  ) 
+        self.connect(self.but_delete, QtCore.SIGNAL('clicked()'), self.onButDelete) 
+        self.connect(self.but_src,    QtCore.SIGNAL('clicked()'), self.onButSrc   ) 
+        self.connect(self.but_type,   QtCore.SIGNAL('clicked()'), self.onButType  ) 
   
         self.showToolTips()
         self.setStyle()
@@ -158,9 +136,6 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
         
         #print 'End of init'
         
-    #-------------------
-    # Private methods --
-    #-------------------
 
     def showToolTips(self):
         #pass
@@ -173,14 +148,6 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
         self.but_view  .setToolTip('Launch file browser')
         self.but_plot  .setToolTip('Launch plot browser')
         self.but_delete.setToolTip('Delete selected file\nDelete  is allowed for\nWORK or CALIB directories only')
-
-#    def setFrame(self):
-#        self.frame = QtGui.QFrame(self)
-#        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-#        self.frame.setLineWidth(0)
-#        self.frame.setMidLineWidth(1)
-#        self.frame.setGeometry(self.rect())
-#        self.frame.setVisible(False)
 
 
     def setStyle(self):
@@ -267,17 +234,17 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
     def setParams(self) :
         #if self.path_fm_selected.value() != self.path_fm_selected.value_def() :
         #    self.path_fm_selected.setValue(os.path.dirname(self.path_fm_selected.value()))
-        self.str_run_from     = '0'
-        self.str_run_to       = 'end'
-        self.source_name      = 'Select'
-        self.calib_type       = 'Select'
+        self.str_run_from = '0'
+        self.str_run_to   = 'end'
+        self.source_name  = 'Select'
+        self.calib_type   = 'Select'
 
 
     def resetFields(self) :
         self.setParams()
-        self.edi_file  .setText(self.path_fm_selected.value())
-        self.but_src   .setText(self.source_name + self.char_expand )
-        self.but_type  .setText(self.calib_type + self.char_expand )
+        self.edi_file.setText(self.path_fm_selected.value())
+        self.but_src .setText(self.source_name + self.char_expand)
+        self.but_type.setText(self.calib_type + self.char_expand)
         self.setStyleButtons()
         self.guirange.resetFields()
 
@@ -288,19 +255,18 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
         self.setStyleButtons()
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        #self.frame.setGeometry(self.rect())
         #print 'GUIFileManagerSingleControl resizeEvent: %s' % str(self.size())
-        pass
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -372,7 +338,7 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
                         ]
 
         selected = gu.selectFromListInPopupMenu(list_of_opts)
-        logger.info('selected option: %s' % selected, __name__ )
+        logger.info('selected option: %s' % selected, __name__)
 
         if   selected == list_of_opts[0] : return fnm.path_dir_work()
         elif selected == list_of_opts[1] : return fnm.path_to_calib_dir()
@@ -406,7 +372,7 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
 
     def onButBrowse(self):
         logger.debug('onButBrowse', __name__)
-        path0 = self.selectDirFromPopupMenu( self.str_path() )
+        path0 = self.selectDirFromPopupMenu(self.str_path())
         if path0 is None : return
         if path0 is '' :
             path = path0
@@ -414,7 +380,7 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
             file_filter = 'Files (*.txt *.data *.dat HISTORY)\nAll files (*)'
             path = gu.get_open_fname_through_dialog_box(self, path0, 'Select file', filter=file_filter)
             if path is None or path == '' :
-                logger.debug('File selection is cancelled...', __name__ )
+                logger.debug('File selection is cancelled...', __name__)
                 return
 
         self.edi_file.setText(path)
@@ -432,14 +398,14 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
 
         if len_lst !=1 :
             msg += ' Select THE ONE!'
-            logger.warning(msg, __name__ )
+            logger.warning(msg, __name__)
             return None
 
         return lst[0]
 
 
     def onButType(self):
-        logger.debug('onButType', __name__ )
+        logger.debug('onButType', __name__)
 
         det = self.get_detector_selected()
         if det is None : return
@@ -450,14 +416,14 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
 
         txt = str(selected)
         self.calib_type = txt
-        self.but_type.setText( txt + self.char_expand )
+        self.but_type.setText(txt + self.char_expand)
         logger.debug('Type selected: ' + txt, __name__)
 
         self.setStyleButtons()
 
 
     def onButSrc(self):
-        logger.debug('onButSrc', __name__ )
+        logger.debug('onButSrc', __name__)
 
         det = self.get_detector_selected()
         if det is None : return
@@ -505,12 +471,13 @@ class GUIFileManagerSingleControl ( QtGui.QWidget ) :
             cp.plotimgspe.move(cp.guimain.pos().__add__(QtCore.QPoint(720,120)))
             cp.plotimgspe.show()
 
-#-----------------------------
-#  In case someone decides to run this module
-#
+#------------------------------
+
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIFileManagerSingleControl()
     ex.show()
     app.exec_()
-#-----------------------------
+
+#------------------------------

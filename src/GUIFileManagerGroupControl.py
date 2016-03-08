@@ -4,11 +4,10 @@
 #  $Id$
 #
 # Description:
-#  Module GUIFileManagerGroupControl...
-#
+#  GUIFileManagerGroupControl...
 #------------------------------------------------------------------------
 
-"""Renders the main GUI for the CalibManager.
+"""Sub GUI for Group File Manager.
 
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
@@ -20,24 +19,13 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#---------------------------------
 __version__ = "$Revision$"
-# $Source$
+#---------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 
@@ -53,20 +41,16 @@ from PlotImgSpe             import *
 from FileDeployer           import fd
 from GUIRange               import *
 
-#---------------------
-#  Class definition --
-#---------------------
-#class GUIFileManagerGroupControl ( Frame ) :
-class GUIFileManagerGroupControl ( QtGui.QWidget ) :
-    """Main GUI for main button bar.
+#------------------------------
 
-    @see BaseClass
-    @see OtherClass
+#class GUIFileManagerGroupControl(Frame) :
+class GUIFileManagerGroupControl(QtGui.QWidget) :
+    """Sub GUI for Group File Manager.
     """
     char_expand = cp.char_expand
     #char_expand = '' # down-head triangle
 
-    def __init__ (self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIFileManagerGroupControl'
         self.myapp = app
@@ -78,8 +62,6 @@ class GUIFileManagerGroupControl ( QtGui.QWidget ) :
         #self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
-
-        #self.setFrame()
 
         #cp.setIcons()
 
@@ -126,9 +108,6 @@ class GUIFileManagerGroupControl ( QtGui.QWidget ) :
         
         #print 'End of init'
         
-    #-------------------
-    # Private methods --
-    #-------------------
 
     def showToolTips(self):
         #pass
@@ -138,14 +117,6 @@ class GUIFileManagerGroupControl ( QtGui.QWidget ) :
         self.but_view  .setToolTip('Launch file browser')
         self.but_plot  .setToolTip('Launch plot browser')
         self.but_delete.setToolTip('Delete selected file\nDelete  is allowed for\nWORK or CALIB directories only')
-
-#    def setFrame(self):
-#        self.frame = QtGui.QFrame(self)
-#        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-#        self.frame.setLineWidth(0)
-#        self.frame.setMidLineWidth(1)
-#        self.frame.setGeometry(self.rect())
-#        self.frame.setVisible(False)
 
 
     def setStyle(self):
@@ -209,19 +180,18 @@ class GUIFileManagerGroupControl ( QtGui.QWidget ) :
         self.setStyleButtons()
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        #self.frame.setGeometry(self.rect())
         #print 'GUIFileManagerGroupControl resizeEvent: %s' % str(self.size())
-        pass
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -420,13 +390,13 @@ class GUIFileManagerGroupControl ( QtGui.QWidget ) :
             cp.plotimgspe.move(cp.guimain.pos().__add__(QtCore.QPoint(720,120)))
             cp.plotimgspe.show()
 
-
 #-----------------------------
-#  In case someone decides to run this module
-#
+
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIFileManagerGroupControl()
     ex.show()
     app.exec_()
+
 #-----------------------------

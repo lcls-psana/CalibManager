@@ -3,47 +3,34 @@
 #  $Id$
 #
 # Description:
-#  Module GUIExpCalibDir...
-#
+#  GUIExpCalibDir...
 #------------------------------------------------------------------------
 
 """GUI sets the calib directory from the instrument & experiment or selected non-standard directory."""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
 from Logger                 import logger
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIExpCalibDir ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIExpCalibDir(QtGui.QWidget) :
     """GUI sets the configuration parameters for source calibration directory; exp_name_src and calib_dir_src"""
 
-    char_expand    = cp.char_expand
-    #char_expand    = u' \u25BC' # down-head triangle
-    #char_expand    = '' # down-head triangle
+    char_expand  = cp.char_expand
+    #char_expand  = u' \u25BC' # down-head triangle
+    #char_expand  = '' # down-head triangle
 
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
 
         QtGui.QWidget.__init__(self, parent)
 
@@ -59,13 +46,12 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
 
         self.setGeometry(100, 50, 500, 30)
         self.setWindowTitle('Select source calibration directory')
-        self.setFrame()
  
         self.titExp = QtGui.QLabel('Source of files:')
-        self.butExp = QtGui.QPushButton( self.exp_name_src.value() + self.char_expand )
-        self.butBro = QtGui.QPushButton( 'Browse' )
+        self.butExp = QtGui.QPushButton(self.exp_name_src.value() + self.char_expand)
+        self.butBro = QtGui.QPushButton('Browse')
 
-        self.ediDir = QtGui.QLineEdit( self.calib_dir_src.value() )
+        self.ediDir = QtGui.QLineEdit(self.calib_dir_src.value())
         self.ediDir.setReadOnly(True) 
 
         self.hbox = QtGui.QHBoxLayout() 
@@ -77,8 +63,8 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
 
         self.setLayout(self.hbox)
 
-        self.connect( self.butExp, QtCore.SIGNAL('clicked()'), self.onButExp )
-        self.connect( self.butBro, QtCore.SIGNAL('clicked()'), self.onButBro )
+        self.connect(self.butExp, QtCore.SIGNAL('clicked()'), self.onButExp)
+        self.connect(self.butBro, QtCore.SIGNAL('clicked()'), self.onButBro)
   
         self.showToolTips()
         self.setStyle()
@@ -88,9 +74,6 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
 
         cp.guiexpcalibdir = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         # Tips for buttons and fields:
@@ -99,13 +82,6 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
         self.butBro .setToolTip('Select non-default calibration directory.')
         self.ediDir .setToolTip('Use buttons to change the calib derectory.')
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
     def setStyle(self):
         #self.setStyleSheet(cp.styleYellow)
@@ -153,6 +129,7 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
     def setParent(self,parent) :
         self.parent = parent
 
+
     def closeEvent(self, event):
         logger.info('closeEvent', __name__)
         #print 'closeEvent'
@@ -163,18 +140,19 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
 
         cp.guiexpcalibdir = None
 
+
     def processClose(self):
         #print 'Close button'
         self.close()
 
-    def resizeEvent(self, e):
-        #print 'resizeEvent' 
-        self.frame.setGeometry(self.rect())
 
-    def moveEvent(self, e):
+    #def resizeEvent(self, e):
+        #print 'resizeEvent' 
+
+
+    #def moveEvent(self, e):
         #print 'moveEvent' 
-        pass
-#        cp.posGUIMain = (self.pos().x(),self.pos().y())
+        #cp.posGUIMain = (self.pos().x(),self.pos().y())
 
 
     def onButExp(self):
@@ -205,10 +183,10 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
         #dir, calib = self.calib_dir_src.value().rsplit('/',1)        
         dir, calib = os.path.split(path0)
         #print 'dir, calib =', dir, calib
-        path1 = str( QtGui.QFileDialog.getExistingDirectory(self,
-                                                            'Select non-standard calib directory',
-                                                            dir,
-                                                            QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks) )
+        path1 = str(QtGui.QFileDialog.getExistingDirectory(self,
+                                                           'Select non-standard calib directory',
+                                                           dir,
+                                                           QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks))
 
         if path1 == ''    : return # if nothing is selected
         if path1 == path0 : return # is selected the same directory
@@ -243,9 +221,9 @@ class GUIExpCalibDir ( QtGui.QWidget ) :
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-    widget = GUIExpCalibDir ()
+    widget = GUIExpCalibDir()
     widget.show()
     app.exec_()
 

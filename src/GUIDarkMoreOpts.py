@@ -3,28 +3,16 @@
 #  $Id$
 #
 # Description:
-#  Module GUIDarkMoreOpts ...
-#
+#   GUIDarkMoreOpts ...
 #------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from   ConfigParametersForApp import cp
 from   Logger                 import logger
@@ -34,15 +22,11 @@ from   GUIFileBrowser         import *
 from   PlotImgSpe             import *
 import FileDeployer           as     fdmets
 
-#import PyCSPadImage.CSPAD2x2Image as     cspad2x2img
-#import PyCSPadImage.CSPADImage    as     cspadimg
+#------------------------------
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIDarkMoreOpts ( QtGui.QWidget ) :
-#class GUIDarkMoreOpts ( QtGui.QGroupBox ) :
-    """GUI sets the source dark run number, validity range, and starts calibration of pedestals"""
+#class GUIDarkMoreOpts(QtGui.QGroupBox) :
+class GUIDarkMoreOpts(QtGui.QWidget) :
+    """GUI with extended options for GUIDark"""
 
     char_expand    = cp.char_expand
     #char_expand    = u' \u25BC' # down-head triangle
@@ -50,7 +34,7 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
     dict_status = {True  : 'Created:', 
                    False : 'N/A     '}
                
-    def __init__ ( self, parent=None, run_number='0000' ) :
+    def __init__(self, parent=None, run_number='0000') :
 
         QtGui.QWidget.__init__(self, parent)
         #QtGui.QGroupBox.__init__(self, 'More', parent)
@@ -66,22 +50,20 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
         self.setWindowTitle('GUI Dark Run Go')
         #try : self.setWindowIcon(cp.icon_help)
         #except : pass
-        self.setFrame()
 
         #self.lab_run  = QtGui.QLabel('Dark run')
 
         self.cbx_dark_more = QtGui.QCheckBox('More options')
-        self.cbx_dark_more.setChecked( cp.dark_more_opts.value() )
- 
+        self.cbx_dark_more.setChecked(cp.dark_more_opts.value())
  
         self.lab_show = QtGui.QLabel('Show:')
-        self.but_srcs = QtGui.QPushButton( 'Sources DB' )
-        self.but_sxtc = QtGui.QPushButton( 'Sources XTC' )
-        self.but_flst = QtGui.QPushButton( 'O/Files' )
-        self.but_fxtc = QtGui.QPushButton( 'xtc Files' )
-        self.but_view = QtGui.QPushButton( 'View' )
-        self.but_plot = QtGui.QPushButton( 'Plot' )
-        self.but_show = QtGui.QPushButton( 'Show cmd' )
+        self.but_srcs = QtGui.QPushButton('Sources DB')
+        self.but_sxtc = QtGui.QPushButton('Sources XTC')
+        self.but_flst = QtGui.QPushButton('O/Files')
+        self.but_fxtc = QtGui.QPushButton('xtc Files')
+        self.but_view = QtGui.QPushButton('View')
+        self.but_plot = QtGui.QPushButton('Plot')
+        self.but_show = QtGui.QPushButton('Show cmd')
 
         self.hbox = QtGui.QHBoxLayout()
         self.hbox.addWidget(self.lab_show)
@@ -114,14 +96,14 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
         self.vbox.addStretch(1)     
         self.setLayout(self.vbox)
 
-        self.connect( self.cbx_dark_more  , QtCore.SIGNAL('stateChanged(int)'), self.on_cbx ) 
-        self.connect( self.but_srcs, QtCore.SIGNAL('clicked()'), self.on_but_srcs )
-        self.connect( self.but_sxtc, QtCore.SIGNAL('clicked()'), self.on_but_sxtc )
-        self.connect( self.but_flst, QtCore.SIGNAL('clicked()'), self.on_but_flst )
-        self.connect( self.but_fxtc, QtCore.SIGNAL('clicked()'), self.on_but_fxtc )
-        self.connect( self.but_view, QtCore.SIGNAL('clicked()'), self.on_but_view )
-        self.connect( self.but_plot, QtCore.SIGNAL('clicked()'), self.on_but_plot )
-        self.connect( self.but_show, QtCore.SIGNAL('clicked()'), self.on_but_show )
+        self.connect(self.cbx_dark_more  , QtCore.SIGNAL('stateChanged(int)'), self.on_cbx) 
+        self.connect(self.but_srcs, QtCore.SIGNAL('clicked()'), self.on_but_srcs)
+        self.connect(self.but_sxtc, QtCore.SIGNAL('clicked()'), self.on_but_sxtc)
+        self.connect(self.but_flst, QtCore.SIGNAL('clicked()'), self.on_but_flst)
+        self.connect(self.but_fxtc, QtCore.SIGNAL('clicked()'), self.on_but_fxtc)
+        self.connect(self.but_view, QtCore.SIGNAL('clicked()'), self.on_but_view)
+        self.connect(self.but_plot, QtCore.SIGNAL('clicked()'), self.on_but_plot)
+        self.connect(self.but_show, QtCore.SIGNAL('clicked()'), self.on_but_show)
    
         self.showToolTips()
 
@@ -142,29 +124,19 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
         self.cbx_dark_more.setToolTip('Add more buttons with other options')
         #self..setToolTip('')
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(1)
-        self.frame.setMidLineWidth(0)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
 
     def setFieldsEnabled(self, is_enabled=True):
 
-        logger.info('Set fields enabled: %s' %  is_enabled, __name__)
+        logger.info('Set fields enabled: %s' % is_enabled, __name__)
 
-        #self.but_run  .setEnabled(is_enabled)
-        #self.but_go   .setEnabled(is_enabled)
+        #self.but_run .setEnabled(is_enabled)
+        #self.but_go  .setEnabled(is_enabled)
         #self.but_stop .setEnabled(is_enabled)
 
         self.setStyle()
 
 
     def setStyle(self):
-        #self.setMinimumSize(600,70)
-        #self.setMinimumSize(600,70)
         self.setFixedHeight(35)
         self.setStyleSheet (cp.styleBkgd)
         #self.cbx_dark_more.setFixedHeight(30)
@@ -197,16 +169,16 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
 
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
         #self.box_txt.setGeometry(self.contentsRect())
-
+        #pass
+    
         
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -312,6 +284,11 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
              + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs)
 
 
+    def get_list_of_files_peds_view(self) :
+        return fnm.get_list_of_files_peds_view() \
+             + self.get_list_of_files_peds_for_plot()
+
+
     def on_but_view(self):
         self.exportLocalPars()
 
@@ -322,7 +299,7 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
         except :
             #self.but_view.setStyleSheet(cp.styleButtonGood)
             
-            cp.guifilebrowser = GUIFileBrowser(None, self.get_list_of_files_peds(), fnm.path_peds_scan_psana_cfg())
+            cp.guifilebrowser = GUIFileBrowser(None, self.get_list_of_files_peds_view(), fnm.path_peds_scan_batch_log())
             cp.guifilebrowser.move(self.pos().__add__(QtCore.QPoint(880,40))) # open window with offset w.r.t. parent
             cp.guifilebrowser.show()
 
@@ -370,66 +347,6 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
             #but.setStyleSheet(cp.styleButtonGood)
 
 
-
-
-#    def get_image_array_from_file(self, fname) :
-#        """DEPRICATED: Recognizes detector by file name and returns image array or None
-#        """
-#
-#        arr     = None
-#        img_arr = None
-#
-#        arr = gu.get_array_from_file( fname )
-#        if arr is None :
-#            logger.warning('Array is not retreaved from file...', __name__)
-#            return None
-#
-#        #print 'arr:\n', arr
-#        msg = 'arr.shape: %s' % str(arr.shape)
-#        logger.info(msg, __name__)
-# 
-#        fname_lower = fname.lower()
-#
-#        #print 'fname_lower =', fname_lower
-#        #print 'list_of_dets_lower =', cp.list_of_dets_lower
-#
-#        #self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', 'Opal2000', 'Opal4000', 'Acqiris']
-#
-#        if cp.list_of_dets_lower[0]+'.' in fname_lower : # CSAPD, shape = (5920,388) 
-#            arr.shape = (32*185,388) 
-#            img_arr = cspadimg.get_cspad_raw_data_array_image(arr)
-#
-#        elif cp.list_of_dets_lower[1] in fname_lower : # CSAPD2x2
-#            arr.shape = (185,388,2) 
-#            img_arr = cspad2x2img.get_cspad2x2_non_corrected_image_for_raw_data_array(arr)
-#
-#        elif cp.list_of_dets_lower[2] in fname_lower : # Princeton
-#            img_arr = arr
-#
-#        elif cp.list_of_dets_lower[3] in fname_lower : # pnCCD
-#            img_arr = arr
-#
-#        elif cp.list_of_dets_lower[4] in fname_lower : # Camera
-#            img_arr = arr
-#
-#        elif cp.list_of_dets_lower[5] in fname_lower : # Camera
-#            img_arr = arr
-#
-#        elif cp.list_of_dets_lower[6] in fname_lower : # Camera
-#            img_arr = arr
-#
-#        elif cp.list_of_dets_lower[7] in fname_lower : # Acqiris
-#            img_arr = arr
-#
-#        else :
-#            msg = 'Detector is not recognized in the file name: %s' %  fname
-#            logger.warning(msg, __name__)
-#            return None
-#
-#        return img_arr
-
-
-
     def get_gui_run(self):
         return self.parent.parent.gui_run
 
@@ -461,15 +378,14 @@ class GUIDarkMoreOpts ( QtGui.QWidget ) :
 
         par.setValue( cbx.isChecked() )
         msg = 'check box ' + tit  + ' is set to: ' + str( par.value())
-        logger.debug(msg, __name__ )
+        logger.debug(msg, __name__)
 
         self.setStyle()
-
 
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     w = GUIDarkMoreOpts()
     w.setFieldsEnabled(True)

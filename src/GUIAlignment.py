@@ -4,11 +4,10 @@
 #  $Id$
 #
 # Description:
-#  Module GUIAlignment...
-#
+#   GUIAlignment...
 #------------------------------------------------------------------------
 
-"""Renders the main GUI for the CalibManager.
+"""GUI for detector alignment.
 
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
@@ -19,31 +18,14 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 import numpy as np
 
-# For self-run debugging:
-#if __name__ == "__main__" :
-#    import matplotlib
-#    matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
-
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from CalibManager.Frame                  import Frame
 from CalibManager.ConfigParametersForApp import cp
@@ -51,19 +33,14 @@ from CalibManager.Logger                 import logger
 import CalibManager.GlobalUtils          as     gu
 from CalibManager.PlotImgSpe             import *
 from CalibManager.GUIFileBrowser         import *
-#from CalibManager.FileNameManager        import fnm
 
-#---------------------
-#  Class definition --
-#---------------------
-#class GUIAlignment ( QtGui.QWidget ) :
-class GUIAlignment ( Frame ) : 
+#------------------------------
+
+#class GUIAlignment(QtGui.QWidget ) :
+class GUIAlignment(Frame) :
     """GUI to set parameters for stand-alome detector segments alignment application geo.
-
-    @see BaseClass
-    @see OtherClass
     """
-    def __init__ (self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIAlignment'
         self.myapp = app
@@ -77,27 +54,26 @@ class GUIAlignment ( Frame ) :
 
         cp.setIcons()
 
-        self.setGeometry(10, 25, 725,360)
+        self.setGeometry(10, 25, 725, 250)
         self.setWindowTitle('Detector Alignment')
         #self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
 
-
         self.lab_status = QtGui.QLabel('Status: ')
 
-        self.but_geo_in           = QtGui.QPushButton('  1. Select geometry input file')
-        self.but_geo_out          = QtGui.QPushButton('Output geo file')
-        self.but_geo_img_nda      = QtGui.QPushButton('  2. Select ndarray for image file')
-        self.but_geo              = QtGui.QPushButton('  3. Launch\n  command:')
+        self.but_geo_in      = QtGui.QPushButton('  1. Select geometry input file')
+        self.but_geo_out     = QtGui.QPushButton('Output geo file')
+        self.but_geo_img_nda = QtGui.QPushButton('  2. Select ndarray for image file')
+        self.but_geo         = QtGui.QPushButton('  3. Launch\n  command:')
 
-        self.but_plot             = QtGui.QPushButton('Plot')
-        self.but_view             = QtGui.QPushButton('View')
+        self.but_plot        = QtGui.QPushButton('Plot')
+        self.but_view        = QtGui.QPushButton('View')
 
-        self.edi_geo_in       = QtGui.QLineEdit (self.fname_geo_in.value())
-        self.edi_geo_out      = QtGui.QLineEdit (self.fname_geo_out.value())
-        self.edi_geo_img_nda  = QtGui.QLineEdit (self.fname_geo_img_nda.value())
-        self.edi_geo          = QtGui.QTextEdit ('Command is here')
+        self.edi_geo_in      = QtGui.QLineEdit (self.fname_geo_in.value())
+        self.edi_geo_out     = QtGui.QLineEdit (self.fname_geo_out.value())
+        self.edi_geo_img_nda = QtGui.QLineEdit (self.fname_geo_img_nda.value())
+        self.edi_geo         = QtGui.QTextEdit ('Command is here')
 
         #self.lab_geo        = QtGui.QLabel('Command:') 
         self.lab_log_level  = QtGui.QLabel('Optional arguments:    Log level') 
@@ -155,9 +131,6 @@ class GUIAlignment ( Frame ) :
         
         #print 'End of init'
         
-    #-------------------
-    # Private methods --
-    #-------------------
 
     def showToolTips(self):
         self.but_geo_img_nda.setToolTip('Open file browser dialog window \nand select the file with image data') 
@@ -165,8 +138,7 @@ class GUIAlignment ( Frame ) :
 
 
     def setStyle(self):
-
-        self.setMinimumSize(725,360)
+        self.setMinimumSize(725,250)
         self.setMaximumWidth(800)
         self.lab_status.setMinimumWidth(600) 
 
@@ -213,18 +185,17 @@ class GUIAlignment ( Frame ) :
         self.but_plot.setVisible(False)
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        #self.frame.setGeometry(self.rect())
-        pass
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -313,27 +284,6 @@ class GUIAlignment ( Frame ) :
         self.setStatus(0)
 
 
-#    def select_file_for_plot(self):
-#
-#        list = [ self.fname_roi_img.value() \
-#               , self.fname_roi_mask_img.value() \
-#               , self.fname_roi_mask_nda.value() \
-#               , self.fname_roi_mask_nda_tst.value() \
-#                 ]
-#        fname = gu.selectFromListInPopupMenu(list)
-#        if fname is None :
-#            return None
-#
-#        if not os.path.exists(fname) :
-#            logger.warning('File %s does not exist. There is nothing to plot...' % fname, __name__)
-#            return None
-#
-#        logger.info('Selected file for plot: %s' % fname, __name__)
-#
-#        return fname
-#
-#
-
     def on_but_plot(self):
         logger.info('TBD: on_but_plot', __name__)
 #        try :
@@ -404,11 +354,12 @@ class GUIAlignment ( Frame ) :
         self.lab_status.setText(msg)
 
 #-----------------------------
-#  In case someone decides to run this module
-#
+
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIAlignment()
     ex.show()
     app.exec_()
+
 #-----------------------------

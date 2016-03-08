@@ -3,8 +3,7 @@
 #  $Id$
 #
 # Description:
-#  Module ConfigParametersForApp
-#
+#   ConfigParametersForApp
 #------------------------------------------------------------------------
 
 """ConfigParametersForApp - class supporting configuration parameters for specific application.
@@ -18,29 +17,20 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#---------------------------------
 __version__ = "$Revision$"
 __author__ = "Mikhail S. Dubrovin"
-# $Source$
+#---------------------------------
 
-#----------------------
-#  Import of modules --
-#----------------------
-
-import sys
 from Logger import logger
 from ConfigParameters import *
 from PyQt4 import QtGui, QtCore
 import AppDataPath as apputils # for icons
 
-#-----------------------------
+#----------------------------
 
-class ConfigParametersForApp ( ConfigParameters ) :
+class ConfigParametersForApp(ConfigParameters) :
     """Is intended as a storage for configuration parameters for CorAna project.
-    #@see BaseClass ConfigParameters
-    #@see OtherClass Parameters
     """
     name = 'ConfigParametersForApp'
 
@@ -69,7 +59,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
     dict_bjpeds = {} # dictionary of run_num:BatchJobPedestals objects
     dict_guidarklistitem = {} # dictionary of run_num:GUIDarkListItem objects 
 
-    def __init__ ( self, fname=None ) :
+    def __init__(self, fname=None) :
         """Constructor.
         @param fname  the file name with configuration parameters, if not specified then it will be set to the default value at declaration.
         """
@@ -82,7 +72,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.defineStyles()
 
   
-    def initRunTimeParameters( self ) :
+    def initRunTimeParameters(self) :
         self.iconsAreLoaded    = False
         #self.char_expand = u' \u25BE' # down-head triangle
         self.guilogger         = None
@@ -108,22 +98,19 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.dirtreemodel      = None
         self.maskeditor        = None
         self.commandlinecalib  = None
+        self.plotimgspe        = None
+
         #self.thread_check_new_xtc_files = None
 
         if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psnehhiprioq')
 
-#-----------------------------
+#------------------------------
 
     def setIcons(self) :
 
         if self.iconsAreLoaded : return
 
         self.iconsAreLoaded = True
-
-        #path = './icons/'
-        #path = "%s/icons/" % os.path.dirname(sys.argv[0])
-        #print 'path to icons:', pat
-        #logger.info('Load icons from directory: '+path, self.name)    
 
         path_icon_contents       = apputils.AppDataPath('CalibManager/icons/contents.png'     ).path()
         path_icon_mail_forward   = apputils.AppDataPath('CalibManager/icons/mail-forward.png' ).path()
@@ -150,7 +137,6 @@ class ConfigParametersForApp ( ConfigParameters ) :
         path_icon_table          = apputils.AppDataPath('CalibManager/icons/table.gif'        ).path()
         path_icon_folder_open    = apputils.AppDataPath('CalibManager/icons/folder_open.gif'  ).path()
         path_icon_folder_closed  = apputils.AppDataPath('CalibManager/icons/folder_closed.gif').path()
-
 
         self.icon_contents      = QtGui.QIcon(path_icon_contents     )
         self.icon_mail_forward  = QtGui.QIcon(path_icon_mail_forward )
@@ -197,7 +183,6 @@ class ConfigParametersForApp ( ConfigParameters ) :
         #self.icon_lock          = QtGui.QIcon(path + 'locked-icon.png'   )
         #self.icon_unlock        = QtGui.QIcon(path + 'unlocked-icon.png' )
 
-
         #base_dir = '/usr/share/icons/Bluecurve/24x24/'
         #self.icon_contents      = QtGui.QIcon(base_dir + 'actions/contents.png')
         #self.icon_mail_forward  = QtGui.QIcon(base_dir + '../../gnome/24x24/actions/mail-forward.png')
@@ -223,7 +208,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
 
 #-----------------------------
         
-    def declareAllParameters( self ) :
+    def declareAllParameters(self) :
         # Possible typs for declaration : 'str', 'int', 'long', 'float', 'bool' 
 
         # GUILogger.py
@@ -274,7 +259,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.save_cp_at_exit   = self.declareParameter( name='SAVE_CONFIG_AT_EXIT',   val_def=True,           type='bool')
 
         # ConfigFileGenerator.py
-        self.smd_is_on         = self.declareParameter( name='SMD_IS_ON', val_def=True, type='bool')
+        self.smd_is_on         = self.declareParameter( name='SMD_IS_ON', val_def=False, type='bool')
 
         # GUIGeometry.py
         self.current_geometry_tab = self.declareParameter( name='CURRENT_GEOMETRY_TAB',    val_def='Metrology',     type='str' )
@@ -334,8 +319,8 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.bat_img_rec_mod   = self.declareParameter( name='BATCH_IMG_REC_MODULE',  val_def='ImgAlgos.PrincetonImageProducer',  type='str' )
         self.mask_rms_thr_min  = self.declareParameter( name='MASK_HOT_PIX_MIN_THR_RMS',  val_def=    0,  type='float' )
         self.mask_rms_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_RMS',  val_def=    0,  type='float' )
-        self.mask_min_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MIN',  val_def=    2,  type='float' )
-        self.mask_max_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MAX',  val_def=65000,  type='float' )
+        self.mask_min_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MIN',  val_def=    1,  type='float' )
+        self.mask_max_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MAX',  val_def=32000,  type='float' )
         self.mask_hot_is_used  = self.declareParameter( name='MASK_HOT_PIX_IS_USED',      val_def= True,  type='bool'  )
 
         # For batch jobs
@@ -374,7 +359,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.med_picker     = self.declareParameter( name='MED_PICKER',          val_def= 5,                type='int' )
         self.med_img_fname  = self.declareParameter( name='MED_IMAGE_FNAME',     val_def='./work/plot.png', type='str' )
 
-#-----------------------------
+#------------------------------
     
         self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', \
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000', \
@@ -422,7 +407,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
         self.dict_of_det_calib_types = dict( zip(self.list_of_dets, self.list_of_calib_types) )
         #self.print_dict_of_det_calib_types()
 
-#-----------------------------
+#------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -443,7 +428,7 @@ class ConfigParametersForApp ( ConfigParameters ) :
                            (False, False ,'bool') ]
         self.det_cbx_states_list = self.declareListOfPars( 'DETECTOR_CBX_STATE', det_cbx_states )
 
-#-----------------------------
+#------------------------------
 
         self.const_types_cspad = [
             'center'
@@ -802,30 +787,30 @@ class ConfigParametersForApp ( ConfigParameters ) :
                                                                         ]) )
 
  
-#-----------------------------
+#------------------------------
 
         self.list_of_det_pars = zip(self.list_of_dets, self.list_of_data_types, self.det_cbx_states_list)
 
-#-----------------------------
+#------------------------------
 
-    def list_of_dets_selected( self ) :
+    def list_of_dets_selected(self) :
         return [det for det,state in zip(self.list_of_dets,self.det_cbx_states_list) if state.value()]
 
-#-----------------------------
+#------------------------------
 
-    def print_dict_of_det_data_types ( self ) :
+    def print_dict_of_det_data_types(self) :
         print 'List of detector names and associated types:'
         for det, type in self.dict_of_det_data_types.items():
             print '%10s : %s' % (det, type)
 
-    def print_dict_of_det_calib_types ( self ) :
+    def print_dict_of_det_calib_types(self) :
         print 'List of detector names and associated calibration types:'
         for det, type in self.dict_of_det_calib_types.items():
             print '%10s : %s' % (det, type)
 
-#-----------------------------
+#------------------------------
 
-    def defineStyles( self ) :
+    def defineStyles(self) :
         self.styleYellowish = "background-color: rgb(255, 255, 220); color: rgb(0, 0, 0);" # Yellowish
         self.stylePink      = "background-color: rgb(255, 200, 220); color: rgb(0, 0, 0);" # Pinkish
         self.styleYellowBkg = "background-color: rgb(240, 240, 100); color: rgb(0, 0, 0);" # YellowBkg
@@ -879,34 +864,34 @@ class ConfigParametersForApp ( ConfigParameters ) :
 
         self.styleTitleInFrame = self.styleWhite # self.styleDefault # self.styleWhite # self.styleGray
 
-    def printParsDirectly( self ) :
+    def printParsDirectly(self) :
         logger.info('Direct use of parameter:' + self.fname_ped.name() + ' ' + self.fname_ped.value(), self.name )     
         logger.info('Direct use of parameter:' + self.fname_dat.name() + ' ' + self.fname_dat.value(), self.name )    
 
-    def close( self ) :
+    def close(self) :
 
         if self.save_cp_at_exit.value() :
             fname = self.fname_cp
             logger.info('save configuration parameters in file: %s' % fname, __name__)
             self.saveParametersInFile( fname )
 
-#-----------------------------
+#------------------------------
 
-confpars = ConfigParametersForApp ()
+confpars = ConfigParametersForApp()
 cp = confpars
 
-#-----------------------------
+#------------------------------
 
 def test_ConfigParametersForApp() :
     confpars.printParameters()
     #confpars.printParsDirectly()
     confpars.saveParametersInFile()
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     test_ConfigParametersForApp()
     sys.exit (0)
 
-#-----------------------------
+#------------------------------

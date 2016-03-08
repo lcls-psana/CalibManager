@@ -4,38 +4,25 @@
 #
 # Description:
 #  Module GUIStatusTable...
-#
 #------------------------------------------------------------------------
 
 """GUIStatusTable GUI shows the status table for the list of files"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 from ConfigParametersForApp import cp
 from FileNameManager        import fnm
 from Logger                 import logger
 import GlobalUtils          as     gu
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIStatusTable ( QtGui.QWidget ) :
+#------------------------------
+class GUIStatusTable(QtGui.QWidget) :
     """Status table of files from the list"""
 
     dict_status = {True  : 'Yes',
@@ -45,7 +32,6 @@ class GUIStatusTable ( QtGui.QWidget ) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(50, 100, 750, 500)
         self.setWindowTitle('Files ststus table')
-        self.setFrame()
 
         self.title = title
 
@@ -62,12 +48,7 @@ class GUIStatusTable ( QtGui.QWidget ) :
         
         self.onStatus()
         self.connectToThread1()
-
         
-    #-------------------
-    #  Public methods --
-    #-------------------
-
 
     def connectToThread1(self):
         try : self.connect   ( cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus )
@@ -87,14 +68,6 @@ class GUIStatusTable ( QtGui.QWidget ) :
     def showToolTips(self):
         msg = 'GUI sets system parameters.'
         #self.tit_sys_ram_size.setToolTip(msg)
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
 
     def clearTable(self):
@@ -207,7 +180,6 @@ class GUIStatusTable ( QtGui.QWidget ) :
 
     def checkNameStructure(self, fname, list_expected) :     
         """Checks if the base name of the fname path is in the list_expected and return the status string"""
-
         #print 'fname =', fname
         #print 'list_expected =', list_expected
 
@@ -233,18 +205,18 @@ class GUIStatusTable ( QtGui.QWidget ) :
         #self.setFixedWidth(100)
         #self.table.setFixedHeight(500)
         self.table.setMinimumHeight(300)
-
         self.setContentsMargins(-9,-9,-9,-9)
 
-    def resizeEvent(self, e):
+
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+    #    self.frame.setGeometry(self.rect())
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+    #    pass
 
 
     def closeEvent(self, event):
@@ -268,23 +240,17 @@ class GUIStatusTable ( QtGui.QWidget ) :
         logger.debug('onStatus', __name__)
         self.setTableItems()
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-
-    dir = './'
-    list_dir = sorted(os.listdir(dir))
-
+    list_dir = sorted(os.listdir('./'))
     print list_dir
-
     #widget = GUIStatusTable (parent=None, list_of_files=list_dir)
-
     widget = GUIStatusTable(parent=None)
     widget.makeTable(list_dir)
-
     widget.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

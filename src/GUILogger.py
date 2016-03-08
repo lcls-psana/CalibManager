@@ -3,8 +3,7 @@
 #  $Id$
 #
 # Description:
-#  Module GUILogger
-#
+#   GUILogger
 #------------------------------------------------------------------------
 
 """GUILogger - GUI for logger
@@ -19,31 +18,24 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
-
-#----------------------
-#  Import of modules --
-#----------------------
+#--------------------------------
 
 import os
-import sys
 
 from ConfigParametersForApp import cp
 from Logger import logger
 from PyQt4 import QtGui, QtCore
 
-#-----------------------------
+#------------------------------
 
-class GUILogger ( QtGui.QWidget ) :
+class GUILogger(QtGui.QWidget) :
     """GUI for Logger"""
 
     name = 'GUILogger'
 
-    def __init__ ( self, parent=None, show_buttons=True ) :
+    def __init__(self, parent=None, show_buttons=True) :
 
         QtGui.QWidget.__init__(self, parent)
 
@@ -53,23 +45,21 @@ class GUILogger ( QtGui.QWidget ) :
         self.setWindowTitle('GUI Logger')
         #self.setWindowIcon(cp.icon_logger)
 
-        self.setFrame()
-
         self.box_txt    = QtGui.QTextEdit()
  
-        #self.tit_title  = QtGui.QLabel('Logger')
+        #self.tit_title = QtGui.QLabel('Logger')
         self.tit_status = QtGui.QLabel('Status:')
         self.tit_level  = QtGui.QLabel('Verbosity level:')
         self.but_close  = QtGui.QPushButton('&Close') 
         self.but_save   = QtGui.QPushButton('&Save log-file') 
 
         self.list_of_levels = logger.getListOfLevels()
-        self.box_level      = QtGui.QComboBox( self ) 
+        self.box_level      = QtGui.QComboBox(self) 
         self.box_level.addItems(self.list_of_levels)
-        self.box_level.setCurrentIndex( self.list_of_levels.index(cp.log_level.value()) )
+        self.box_level.setCurrentIndex(self.list_of_levels.index(cp.log_level.value()))
         
         self.hboxM = QtGui.QHBoxLayout()
-        self.hboxM.addWidget( self.box_txt )
+        self.hboxM.addWidget(self.box_txt)
 
         self.hboxB = QtGui.QHBoxLayout()
         self.hboxB.addWidget(self.tit_status)
@@ -86,9 +76,9 @@ class GUILogger ( QtGui.QWidget ) :
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
         
-        self.connect( self.but_close, QtCore.SIGNAL('clicked()'), self.onClose )
-        self.connect( self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave  )
-        self.connect( self.box_level, QtCore.SIGNAL('currentIndexChanged(int)'), self.onBox  )
+        self.connect(self.but_close, QtCore.SIGNAL('clicked()'), self.onClose)
+        self.connect(self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave)
+        self.connect(self.box_level, QtCore.SIGNAL('currentIndexChanged(int)'), self.onBox)
  
         self.startGUILog()
 
@@ -97,9 +87,6 @@ class GUILogger ( QtGui.QWidget ) :
 
         self.guilogger = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         #self           .setToolTip('This GUI is for browsing log messages')
@@ -110,25 +97,16 @@ class GUILogger ( QtGui.QWidget ) :
         self.box_level  .setToolTip('Click on this button and \nselect the level of messages \nwhich will be displayed')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
     def setStyle(self):
-        self.           setStyleSheet (cp.styleBkgd)
-        #self.tit_title.setStyleSheet (cp.styleTitleBold)
-        self.tit_status.setStyleSheet (cp.styleTitle)
-        self.tit_level .setStyleSheet (cp.styleTitle)
-        self.but_close .setStyleSheet (cp.styleButton)
-        self.but_save  .setStyleSheet (cp.styleButton) 
-        self.box_level .setStyleSheet (cp.styleButton) 
+        self.           setStyleSheet(cp.styleBkgd)
+        #self.tit_title.setStyleSheet(cp.styleTitleBold)
+        self.tit_status.setStyleSheet(cp.styleTitle)
+        self.tit_level .setStyleSheet(cp.styleTitle)
+        self.but_close .setStyleSheet(cp.styleButton)
+        self.but_save  .setStyleSheet(cp.styleButton) 
+        self.box_level .setStyleSheet(cp.styleButton) 
         self.box_txt   .setReadOnly(True)
-        self.box_txt   .setStyleSheet (cp.styleWhiteFixed) 
+        self.box_txt   .setStyleSheet(cp.styleWhiteFixed) 
         #self.box_txt   .ensureCursorVisible()
         #self.tit_title.setAlignment(QtCore.Qt.AlignCenter)
         #self.titTitle.setBold()
@@ -139,7 +117,7 @@ class GUILogger ( QtGui.QWidget ) :
         self.but_save  .setVisible(self.show_buttons)
         self.but_close .setVisible(self.show_buttons)
 
-        if not self.show_buttons : self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        if not self.show_buttons : self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
         self.setMinimumHeight(50)
         self.setMinimumSize(300,50)
         #self.setBaseSize(500,200)
@@ -149,15 +127,15 @@ class GUILogger ( QtGui.QWidget ) :
         self.parent = parent
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        self.frame.setGeometry(self.rect())
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -192,11 +170,11 @@ class GUILogger ( QtGui.QWidget ) :
 
     def saveLogInFile(self):
         logger.info('saveLogInFile ' + self.fname_log, self.name)
-        path = str( QtGui.QFileDialog.getSaveFileName(self,
-                                                      caption   = 'Select the file to save log',
-                                                      directory = self.fname_log,
-                                                      filter    = '*.txt'
-                                                      ) )
+        path = str(QtGui.QFileDialog.getSaveFileName(self,
+                                                     caption   = 'Select the file to save log',
+                                                     directory = self.fname_log,
+                                                     filter    = '*.txt'
+                                                     ))
         if path == '' :
             logger.debug('Saving is cancelled.', self.name)
             return 
@@ -270,19 +248,14 @@ class GUILogger ( QtGui.QWidget ) :
         #self.tit_status.setText('Status: ' + list_of_states[status_index] + msg)
         self.tit_status.setText(msg)
 
-#-----------------------------
+#------------------------------
 
-def test_GUILogger() :
+if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUILogger ()
     widget.show()
     app.exec_()
-
-#-----------------------------
-
-if __name__ == "__main__" :
-
-    test_GUILogger()
     sys.exit (0)
 
-#-----------------------------
+#------------------------------

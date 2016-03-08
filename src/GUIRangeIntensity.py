@@ -1,11 +1,9 @@
-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
 #  Module GUIRangeIntensity...
-#
 #------------------------------------------------------------------------
 
 """Intensity range setting GUI
@@ -13,35 +11,23 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
-__version__ = "$Revision$"
-# $Source$
-
 #--------------------------------
-#  Imports
+__version__ = "$Revision$"
 #--------------------------------
 
 from GUIRange import *
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIRangeIntensity ( GUIRange ) :
+#------------------------------
+class GUIRangeIntensity(GUIRange) :
     """Range setting GUI
-    @see BaseClass
-    @see OtherClass
     """
 
-    def __init__ (self, parent=None, str_from=None, str_to=None, txt_from='valid from', txt_to='to') :
+    def __init__(self, parent=None, str_from=None, str_to=None, txt_from='valid from', txt_to='to') :
         GUIRange.__init__(self, parent, str_from, str_to, txt_from, txt_to)
         #super(GUIRangeIntensity,self).__init__(parent, str_from, str_to, txt_from, txt_to)
 
@@ -107,6 +93,7 @@ class GUIRangeIntensity ( GUIRange ) :
 #-----------------------------
 
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     #ex  = GUIRangeIntensity(None, '-12', '345', 'From:', 'To:')
     ex  = GUIRangeIntensity(None, None, None, 'From:', 'To:')

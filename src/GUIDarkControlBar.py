@@ -4,47 +4,31 @@
 #
 # Description:
 #  Module GUIDarkControlBar...
-#
 #------------------------------------------------------------------------
 
-"""GUI sets the instrument, experiment, and run number for signal and dark data"""
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 import GlobalUtils          as     gu
 from GUILogger              import *
 from GUIRange               import *
-#from FileNameManager        import fnm
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIDarkControlBar ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIDarkControlBar(QtGui.QWidget) :
     """GUI sets the configuration parameters for instrument, experiment, and run number"""
 
-    char_expand    = cp.char_expand
-    #char_expand    = u' \u25BC' # down-head triangle
-    #char_expand    = '' # down-head triangle
+    char_expand  = cp.char_expand
+    #char_expand = u' \u25BC' # down-head triangle
+    #char_expand = '' # down-head triangle
 
-    def __init__ ( self, parent=None ) :
+    def __init__(self,parent=None) :
 
         QtGui.QWidget.__init__(self, parent)
 
@@ -60,8 +44,6 @@ class GUIDarkControlBar ( QtGui.QWidget ) :
 
         self.setGeometry(100, 50, 590, 36)
         self.setWindowTitle('Dark Control Bar')
-        self.setFrame()
- 
 
         self.labRuns = QtGui.QLabel('Show runs')
         self.labDets = QtGui.QLabel('  for detectors:')
@@ -71,9 +53,9 @@ class GUIDarkControlBar ( QtGui.QWidget ) :
                                   str(self.dark_list_run_max.value()),\
                                   txt_from='', txt_to=':')
  
-        self.butRuns = QtGui.QPushButton( self.dark_list_show_runs.value() + self.char_expand )
+        self.butRuns = QtGui.QPushButton(self.dark_list_show_runs.value() + self.char_expand)
         self.butRuns.setFixedWidth(90)
-        self.butDets = QtGui.QPushButton( self.dark_list_show_dets.value() + self.char_expand )
+        self.butDets = QtGui.QPushButton(self.dark_list_show_dets.value() + self.char_expand)
         self.butDets.setFixedWidth(110)
         self.butUpdate = QtGui.QPushButton("Update list")
         #self.butRuns.setMaximumWidth(90)
@@ -93,13 +75,13 @@ class GUIDarkControlBar ( QtGui.QWidget ) :
     
         self.setLayout(self.hbox)
 
-        #self.connect( self.ediExp,     QtCore.SIGNAL('editingFinished ()'), self.processEdiExp )
-        self.connect( self.butRuns,     QtCore.SIGNAL('clicked()'),          self.onButRuns  )
-        self.connect( self.butDets,     QtCore.SIGNAL('clicked()'),          self.onButDets  )
-        self.connect( self.butUpdate,   QtCore.SIGNAL('clicked()'),          self.onButUpdate )
-        self.connect( self.cbx_deploy_hotpix, QtCore.SIGNAL('stateChanged(int)'), self.on_cbx ) 
+        #self.connect(self.ediExp,     QtCore.SIGNAL('editingFinished ()'), self.processEdiExp)
+        self.connect(self.butRuns,     QtCore.SIGNAL('clicked()'),          self.onButRuns)
+        self.connect(self.butDets,     QtCore.SIGNAL('clicked()'),          self.onButDets)
+        self.connect(self.butUpdate,   QtCore.SIGNAL('clicked()'),          self.onButUpdate)
+        self.connect(self.cbx_deploy_hotpix, QtCore.SIGNAL('stateChanged(int)'), self.on_cbx) 
 
-        self.connect( self.guirange, QtCore.SIGNAL('update(QString)'), self.updateRunRange )
+        self.connect(self.guirange, QtCore.SIGNAL('update(QString)'), self.updateRunRange)
 
         self.showToolTips()
         self.setStyle()
@@ -112,28 +94,21 @@ class GUIDarkControlBar ( QtGui.QWidget ) :
 
     def showToolTips(self):
         # Tips for buttons and fields:
-        #self           .setToolTip('This GUI deals with the configuration parameters.')
+        #self         .setToolTip('This GUI deals with the configuration parameters.')
         self.butRuns  .setToolTip('Select the type of runs to list')
         self.butDets  .setToolTip('Select the type of dets to list')
         self.butUpdate.setToolTip('Update list of runs')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
-
     def setStyle(self):
         #self.setStyleSheet(cp.styleYellow)
-        self.labRuns.setStyleSheet (cp.styleLabel)
-        self.labDets.setStyleSheet (cp.styleLabel)
+        self.labRuns.setStyleSheet(cp.styleLabel)
+        self.labDets.setStyleSheet(cp.styleLabel)
         self.setStyleButtons()
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
-        self.setMinimumSize(390,28)
+        self.setContentsMargins(QtCore.QMargins(-9,-10,-9,-10)) # L, T, R, B
+        #self.setMinimumSize(390,28)
+        self.setMinimumWidth(562)
+        self.setFixedHeight(30)
  
 
     def setStyleButtons(self):
@@ -170,16 +145,14 @@ class GUIDarkControlBar ( QtGui.QWidget ) :
         self.close()
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #print 'resizeEvent' 
-        self.frame.setGeometry(self.rect())
         #print 'self.rect():', str(self.rect())
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #print 'moveEvent' 
-        pass
-#        cp.posGUIMain = (self.pos().x(),self.pos().y())
+        #cp.posGUIMain = (self.pos().x(),self.pos().y())
 
 
     def updateRunRange(self, text):
@@ -260,7 +233,7 @@ class GUIDarkControlBar ( QtGui.QWidget ) :
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUIDarkControlBar ()
     widget.show()

@@ -1,38 +1,25 @@
-#--------------------------------------------------------------------------
+#------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
 #  Module GUIPopupRadioList...
-#
 #------------------------------------------------------------------------
 
-"""Send message to ELog"""
+"""Popup GUI"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 from Logger import logger
 from ConfigParametersForApp import cp
 
-#---------------------
-#  Class definition --
-#---------------------
+#------------------------------  
 
 class GUIPopupRadioList(QtGui.QDialog) :
     """Gets list of item for checkbox GUI in format [['name1',false], ['name2',true], ..., ['nameN',false]], 
@@ -43,7 +30,6 @@ class GUIPopupRadioList(QtGui.QDialog) :
         QtGui.QDialog.__init__(self,parent)
         #self.setGeometry(20, 40, 500, 200)
         self.setWindowTitle(win_title)
-        self.setFrame()
  
         #self.setModal(True)
         self.dict_of_pars = dict_of_pars
@@ -75,7 +61,6 @@ class GUIPopupRadioList(QtGui.QDialog) :
         self.setStyle()
         self.showToolTips()
 
-#-----------------------------  
 
     def make_radio_buttons(self) :
         self.list_of_rad = []
@@ -90,19 +75,11 @@ class GUIPopupRadioList(QtGui.QDialog) :
             self.connect(rad, QtCore.SIGNAL('clicked()'), self.onRadioButton)
             #if name == pattern : rad.setChecked(True)  
 
-#-----------------------------  
 
     def showToolTips(self):
         self.but_apply.setToolTip('Apply changes to the list')
         self.but_cancel.setToolTip('Use default list')
-        
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
+
 
     def setStyle(self):
         #self.setFixedWidth(200)
@@ -114,12 +91,13 @@ class GUIPopupRadioList(QtGui.QDialog) :
         self.but_apply .setVisible(self.do_confirm) 
         
  
-    def resizeEvent(self, e):
-        #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+    #def resizeEvent(self, e):
+         #logger.debug('resizeEvent', __name__) 
 
-    def moveEvent(self, e):
-        pass
+
+    #def moveEvent(self, e):
+         #pass
+
 
     def closeEvent(self, event):
         logger.debug('closeEvent', __name__)
@@ -162,16 +140,12 @@ class GUIPopupRadioList(QtGui.QDialog) :
         logger.debug('onApply', __name__)  
         self.applySelection()
 
-
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-
-
     dict_of_pars = {'checked':'radio1', 'list':['radio0', 'radio1', 'radio2']}
-
     #w = GUIPopupRadioList (None, dict_of_pars, win_title='Radio buttons', do_confirm=True)
     w = GUIPopupRadioList (None, dict_of_pars, win_title='Radio buttons', do_confirm=False)
     #w.show()
@@ -180,7 +154,6 @@ if __name__ == "__main__" :
     print 'resp=',resp
     print 'QtGui.QDialog.Rejected: ', QtGui.QDialog.Rejected
     print 'QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted
-
     #app.exec_()
 
-#-----------------------------
+#------------------------------

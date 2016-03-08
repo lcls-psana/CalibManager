@@ -3,8 +3,7 @@
 #  $Id$
 #
 # Description:
-#  Module CommandLineCalib...
-#
+#   CommandLineCalib...
 #------------------------------------------------------------------------
 
 """CommandLineCalib is intended for command line calibration of dark runs
@@ -12,22 +11,15 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
 import os
 from time import sleep
@@ -35,7 +27,7 @@ from time import sleep
 from Logger                   import logger
 
 from FileNameManager          import fnm
-from ConfigFileGenerator      import cfg
+#from ConfigFileGenerator      import cfg
 from ConfigParametersForApp   import cp
 
 from BatchJobPedestals        import *
@@ -45,7 +37,7 @@ import FileDeployer           as     fdmets
 from NotificationDBForCL      import *
 
 #------------------------------
-class CommandLineCalib () :
+class CommandLineCalib() :
     """Command line calibration of dark runs
 
     @see FileNameManager, ConfigFileGenerator, ConfigParametersForApp, BatchJobPedestals, BatchLogScanParser, FileDeployer, Logger
@@ -53,7 +45,7 @@ class CommandLineCalib () :
 
     sep = '\n' + 60*'-' + '\n'
 
-    def __init__ (self, args, opts) :
+    def __init__(self, args, opts) :
 
         #print '__name__', __name__ # CalibManager.CommandLineCalib
         cp.commandlinecalib = self 
@@ -310,7 +302,6 @@ class CommandLineCalib () :
                      +'\nAdd "-D" option in the command line to deploy files\n',4)
 
 #------------------------------
-#------------------------------
 
     def save_log_file(self) :
         logfname = fnm.log_file()
@@ -415,6 +406,4 @@ class CommandLineCalib () :
         elif level==3 : logger.error   (msg, __name__)
         else          : logger.info    (msg, __name__)
 
-#------------------------------
-#------------------------------
 #------------------------------

@@ -3,29 +3,23 @@
 #  $Id$
 #
 # Description:
-#  Module BatchJobPedestals...
-#
+#   BatchJobPedestals...
 #------------------------------------------------------------------------
 
 """Deals with batch jobs for dark runs (pedestals)
 
-This software was developed for the LCLS project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
+This software was developed for the LCLS project.
+If you use all or part of it, please give an appropriate acknowledgment.
 
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
+import sys
 
 from BatchJob import *
 from FileNameManager          import fnm
@@ -34,14 +28,11 @@ from ConfigParametersForApp   import cp
 
 #-----------------------------
 
-class BatchJobPedestals (BatchJob) : 
+class BatchJobPedestals(BatchJob) : 
     """Deals with batch jobs for dark runs (pedestals).
     """
 
-    def __init__ (self, run_number) :
-        """
-        @param fname  the file name for output log file
-        """
+    def __init__(self, run_number) :
 
         self.run_number = run_number
 
@@ -99,11 +90,50 @@ class BatchJobPedestals (BatchJob) :
 
 #-----------------------------
 
+    def str_command_for_peds_scan(self) :
+        """Returns str command for scan, for example:
+           event_keys -d exp=mecj5515:run=102:stream=0-79:smd -n 1000 -s 0 -m 1 -p EventKey
+        """
+
+        dsname = fnm.path_to_data_files()       # exp=mecj5515:run=102:stream=0-79:smd
+        evskip = cp.bat_dark_start.value() - 1
+        events = cp.bat_dark_scan.value()
+        logscn = fnm.path_peds_scan_batch_log() # log file name for scan
+        
+        command = 'event_keys -d %s -n %s -s %s -m 1 -p EventKey' % (dsname, str(events), str(evskip))
+        command_seq = command.split()
+
+        msg = 'Scan xtc file(s) using command:\n%s' % command \
+            + '\nand save results in the log-file: %s' % logscn
+        logger.info(msg, __name__)
+        return command
+        
+#-----------------------------
+
     def command_for_peds_scan(self) :
+        self.command_for_peds_scan_v1()
+        #self.command_for_peds_scan_old()
+
+#-----------------------------
+
+    def command_for_peds_scan_v1(self) :
+
+        command = self.str_command_for_peds_scan()
+        logscan = fnm.path_peds_scan_batch_log() # log file name for scan
+        
+        err = gu.subproc_in_log(command.split(), logscan) # , shell=True)
+        if err != '' :
+            logger.error('\nerr: %s' % (err), __name__)
+            self.stop_auto_processing(is_stop_on_button_click=False)
+            logger.warning('Autoprocessing for run %s is stopped due to error at execution of the scan command' % self.str_run_number, __name__)
+        else :
+            logger.info('Scan for run %s is completed' % self.str_run_number, __name__)
+
+#-----------------------------
+
+    def command_for_peds_scan_old(self) :
 
         cfg.make_psana_cfg_file_for_peds_scan()
-
-        #command = 'env'
         command = 'psana -c ' + fnm.path_peds_scan_psana_cfg() + self.opt 
         command_seq = command.split()
 
@@ -121,7 +151,97 @@ class BatchJobPedestals (BatchJob) :
 
 #-----------------------------
 
+    def str_of_sources(self) :
+        """Returns comma separated sources. For example
+           'CxiDg2.0:Cspad2x2.0,CxiEndstation.0:Opal4000.1'
+        """
+        list_of_all_srcs = []
+        for det_name in cp.list_of_dets_selected() :
+            lst_types, lst_srcs, lst_ctypes = cp.blsp.list_of_types_and_sources_for_detector(det_name)
+            #list_path_peds_ave    = gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_srcs)
+            #list_path_peds_rms    = gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_srcs)
+            #list_path_hotpix_mask = gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_srcs)
+            list_of_all_srcs += lst_srcs
+        return ','.join(list_of_all_srcs)
+
+#-----------------------------
+
     def command_for_peds_aver(self) :
+        self.command_for_peds_aver_v1()
+        #self.command_for_peds_aver_old()
+
+#-----------------------------
+
+    def str_command_for_peds_aver(self) :
+        """Returns str command for dark run average, for example:
+           det_ndarr_raw_proc -d exp=mecj5515:run=102:stream=0-79:smd -s MecTargetChamber.0:Cspad.0\
+                              -n 6 -m 0 -f ./work/clb-#exp-#run-peds-#type-#src.txt
+        """
+
+        dsname = fnm.path_to_data_files()       # 'exp=mecj5515:run=102:stream=0-79:smd'
+        evskip = cp.bat_dark_start.value() - 1
+        events = cp.bat_dark_end.value()
+        fntmpl = fnm.path_peds_template()       # './work/clb-#exp-#run-peds-#type-#src.txt'
+        srcs   = self.str_of_sources()          # 'MecTargetChamber.0:Cspad.0,MecTargetChamber.0:Cspad.1'
+        logave = fnm.path_peds_aver_batch_log() # log file name for averaging
+        int_lo = cp.mask_min_thr.value() 
+        int_hi = cp.mask_max_thr.value() 
+        rms_lo = cp.mask_rms_thr_min.value()
+        rms_hi = cp.mask_rms_thr.value()
+
+        command = 'det_ndarr_raw_proc'\
+                + ' -d %s'   % dsname\
+                + ' -s %s'   % srcs\
+                + ' -n %d'   % events\
+                + ' -m %d'   % evskip\
+                + ' -f %s'   % fntmpl\
+                + ' -b %d'   % int_lo\
+                + ' -t %d'   % int_hi\
+                + ' -B %.3f' % rms_lo\
+                + ' -T %.3f' % rms_hi\
+                + ' -F 0.1'\
+                + ' -p 0'\
+                + ' -S 0377'\
+                + ' -v 511'
+
+#  -d DSNAME, --dsname=DSNAME  dataset name, default = None
+#  -s SOURCE, --source=SOURCE  input ndarray file name, default = None
+#  -f OFNAME, --ofname=OFNAME  output file name template, default = nda-#exp-#run-#src-#evts-#type-#date-#time-#fid-#sec-#nsec.txt
+#  -n EVENTS, --events=EVENTS  number of events to collect, default = 10000000
+#  -m EVSKIP, --evskip=EVSKIP  number of events to skip, default = 0
+#  -b INTLOW, --intlow=INTLOW  intensity low limit, default = None
+#  -t INTHIG, --inthig=INTHIG  intensity high limit, default = None
+#  -B RMSLOW, --rmslow=RMSLOW  rms low limit, default = None
+#  -T RMSHIG, --rmshig=RMSHIG  rms high limit, default = None
+#  -F FRACLM, --fraclm=FRACLM  allowed fraction limit, default = 0.1
+#  -p PLOTIM, --plotim=PLOTIM  control bit-word to plot images, default = 0
+#  -v VERBOS, --verbos=VERBOS  control bit-word for verbosity, default = 7
+#  -S SAVEBW, --savebw=SAVEBW  control bit-word to save arrays, default = 255
+
+        msg = 'Avereging xtc file(s) using command:\n%s' % command \
+            + '\nand save results in the log-file: %s' % logave
+        logger.info(msg, __name__)
+
+        return command
+        
+#-----------------------------
+
+    def command_for_peds_aver_v1(self) :
+
+        command = self.str_command_for_peds_aver()
+        logave  = fnm.path_peds_aver_batch_log() # log file name for averaging
+
+        err = gu.subproc_in_log(command.split(), logave) # , shell=True)
+        if err != '' :
+            logger.warning('\nWarning/error message from subprocess:\n%s' % (err), __name__)
+            return False
+        else :
+            logger.info('Avereging for run %s is completed' % self.str_run_number, __name__)
+            return True
+
+#-----------------------------
+
+    def command_for_peds_aver_old(self) :
 
         if not cfg.make_psana_cfg_file_for_peds_aver() :            
             logger.warning('INTERACTIVE JOB IS NOT STARTED !!!', __name__)
@@ -168,6 +288,48 @@ class BatchJobPedestals (BatchJob) :
 #-----------------------------
 
     def submit_batch_for_peds_aver(self) :
+        return self.submit_batch_for_peds_aver_v1()
+        #return self.submit_batch_for_peds_aver_old()
+
+#-----------------------------
+
+    def submit_batch_for_peds_aver_v1(self) :
+        self.exportLocalPars() # export run_number to cp.str_run_number
+
+        if not self.job_can_be_submitted(self.job_id_peds_str, self.time_peds_job_submitted, 'peds') : return        
+        self.time_peds_job_submitted = gu.get_time_sec()
+
+        self.command_for_peds_scan()
+
+        if not self.is_good_lsf() :
+            self.stop_auto_processing(is_stop_on_button_click=False)
+            logger.warning('BATCH JOB IS NOT SUBMITTED !!!', __name__)
+            return False
+
+        #command = 'det_ndarr_raw_proc -d exp=mecj5515:run=102:stream=0-79:smd -s MecTargetChamber.0:Cspad.0\
+        #                      -n 6 -m 0 -f ./work/clb-#exp-#run-peds-#type-#src.txt'
+        command = self.str_command_for_peds_aver()
+        queue        = self.queue.value()
+        bat_log_file = fnm.path_peds_aver_batch_log()
+
+        self.job_id_peds_str, out, err = gu.batch_job_submit(command, queue, bat_log_file)
+        self.procDarkStatus ^= 2 # set bit to 1
+
+        if err != 'Warning: job being submitted without an AFS token.' :
+            #logger.info('This job is running on LCLS NFS, it does not need in AFS, ignore warning and continue.', __name__)
+            return True
+
+        elif err != '' :
+            self.stop_auto_processing(is_stop_on_button_click=False)
+            logger.warning('Autoprocessing for run %s is stopped due to batch submission error!!!' % self.str_run_number, __name__)
+            logger.warning('BATCH JOB IS NOT SUBMITTED !!!', __name__)
+            return False
+
+        return True
+
+#-----------------------------
+
+    def submit_batch_for_peds_aver_old(self) :
         self.exportLocalPars() # export run_number to cp.str_run_number
 
         if not self.job_can_be_submitted(self.job_id_peds_str, self.time_peds_job_submitted, 'peds') : return        
@@ -290,7 +452,6 @@ class BatchJobPedestals (BatchJob) :
         logger.info('on_auto_processing_start()', __name__)
         #self.onRunScan() # scan is not needed if info is available form RegDB
         self.onRunAver()
-        pass
 
 
     def on_auto_processing_stop(self):
@@ -321,8 +482,9 @@ class BatchJobPedestals (BatchJob) :
             logger.info(msg, __name__)
 
             if self.status_bj_scan == 'EXIT' :
-                self.stop_auto_processing( is_stop_on_button_click=False )
-                logger.warning('PROCESSING IS STOPPED for run %s due to status: %s - CHECK LSF!!!' % (self.str_run_number, self.status_bj_scan), __name__)
+                self.stop_auto_processing(is_stop_on_button_click=False)
+                logscan = fnm.path_peds_scan_batch_log() # log file name for averaging
+                logger.warning('PROCESSING IS STOPPED for run %s due to status: %s - CHECK LOG FLIE %s' % (self.str_run_number, self.status_bj_scan, logscan), __name__)
 
             self.status_scan, fstatus_str_scan = self.status_for_peds_scan_files(comment='')
             #print 'self.status_scan, fstatus_str_scan = ', self.status_scan, fstatus_str_scan
@@ -333,7 +495,7 @@ class BatchJobPedestals (BatchJob) :
                 cp.blsp.print_list_of_types_and_sources()
                 
                 if cp.blsp.get_list_of_sources() == [] :
-                    self.stop_auto_processing( is_stop_on_button_click=False )
+                    self.stop_auto_processing(is_stop_on_button_click=False)
                     logger.warning('on_auto_processing_status: Scan for run %s did not find data in xtc file for this detector. PROCESSING IS STOPPED!!!' % self.str_run_number, __name__)
                     return
                 
@@ -346,15 +508,16 @@ class BatchJobPedestals (BatchJob) :
             logger.info(msg, __name__)
 
             if self.status_bj_aver == 'EXIT' :
-                self.stop_auto_processing( is_stop_on_button_click=False )
-                logger.warning('PROCESSING IS STOPPED for run %s due to status: %s - CHECK LSF!!!' % (self.str_run_number,self.status_bj_aver), __name__)
+                logave = fnm.path_peds_aver_batch_log() # log file name for averaging
+                self.stop_auto_processing(is_stop_on_button_click=False)
+                logger.warning('PROCESSING IS STOPPED for run %s due to status: %s - CHECK LOG FLIE %s' % (self.str_run_number,self.status_bj_aver, logave), __name__)
 
             self.status_aver, fstatus_str_aver = self.status_for_peds_aver_files(comment='')
             #print 'self.status_aver, fstatus_str_aver = ', self.status_aver, fstatus_str_aver
 
             if self.status_aver : 
                 logger.info('on_auto_processing_status: Averaging is completed, stop processing for run %s.' % self.str_run_number, __name__)
-                self.stop_auto_processing( is_stop_on_button_click=False )
+                self.stop_auto_processing(is_stop_on_button_click=False)
 
         else :
             msg = 'NONRECOGNIZED PROCESSING STAGE %s for run %s !!!' % (self.autoRunStage,self.str_run_number)
@@ -393,6 +556,6 @@ if __name__ == "__main__" :
     #bjpeds.print_work_files_for_pedestals()
     #bjpeds.check_work_files_for_pedestals()
 
-    sys.exit ( 'End of test for BatchJobPedestals' )
+    sys.exit ('End of test for BatchJobPedestals')
 
 #-----------------------------

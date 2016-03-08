@@ -1,50 +1,37 @@
-# -*- coding: utf-8 -*-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
 #  Module GUIInsExpDirDet...
-#
 #------------------------------------------------------------------------
 
 """GUI sets the calib directory from the instrument & experiment or selected non-standard directory."""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
 from Logger                 import logger
+from GUIPopupSelectExp      import select_experiment_v3
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIInsExpDirDet ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIInsExpDirDet(QtGui.QWidget) :
     """GUI sets the configuration parameters for instrument, experiment, and run number"""
 
-    char_expand    = cp.char_expand
-    #char_expand    = u' \u25BC' # down-head triangle
-    #char_expand    = '' # down-head triangle
+    char_expand  = cp.char_expand
+    #char_expand  = u' \u25BC' # down-head triangle
+    #char_expand  = '' # down-head triangle
 
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
 
         QtGui.QWidget.__init__(self, parent)
 
@@ -60,7 +47,6 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
 
         self.setGeometry(100, 50, 700, 30)
         self.setWindowTitle('Select calibration directory')
-        self.setFrame()
  
         self.list_of_exp    = None
 
@@ -68,12 +54,12 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
         self.titExp  = QtGui.QLabel('Exp:')
         self.titDet  = QtGui.QLabel('Det:')
 
-        self.butIns  = QtGui.QPushButton( self.instr_name.value()    + self.char_expand )
-        self.butExp  = QtGui.QPushButton( self.exp_name.value()      + self.char_expand )
-        self.butDet  = QtGui.QPushButton( self.det_but_title.value() + self.char_expand )
-        self.butBro  = QtGui.QPushButton( 'Browse' )
+        self.butIns  = QtGui.QPushButton(self.instr_name.value()    + self.char_expand)
+        self.butExp  = QtGui.QPushButton(self.exp_name.value()      + self.char_expand)
+        self.butDet  = QtGui.QPushButton(self.det_but_title.value() + self.char_expand)
+        self.butBro  = QtGui.QPushButton('Browse' )
 
-        self.ediDir = QtGui.QLineEdit  ( self.calib_dir.value() )
+        self.ediDir = QtGui.QLineEdit(self.calib_dir.value())
         self.ediDir.setReadOnly(True) 
 
         self.hbox = QtGui.QHBoxLayout() 
@@ -90,12 +76,12 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
 
         self.setLayout(self.hbox)
 
-        #self.connect( self.ediExp,     QtCore.SIGNAL('editingFinished ()'), self.processEdiExp )
-        self.connect( self.butIns,     QtCore.SIGNAL('clicked()'),          self.onButIns  )
-        self.connect( self.butExp,     QtCore.SIGNAL('clicked()'),          self.onButExp )
-        self.connect( self.butBro,     QtCore.SIGNAL('clicked()'),          self.onButBro )
-        self.connect( self.butDet,     QtCore.SIGNAL('clicked()'),          self.onButDet )
-        #self.connect( self.ediDir,     QtCore.SIGNAL('editingFinished()'),  self.onEdiDir )
+        self.connect(self.butIns, QtCore.SIGNAL('clicked()'), self.onButIns)
+        self.connect(self.butExp, QtCore.SIGNAL('clicked()'), self.onButExp)
+        self.connect(self.butBro, QtCore.SIGNAL('clicked()'), self.onButBro)
+        self.connect(self.butDet, QtCore.SIGNAL('clicked()'), self.onButDet)
+        #self.connect(self.ediDir, QtCore.SIGNAL('editingFinished()'), self.onEdiDir)
+        #self.connect(self.ediExp, QtCore.SIGNAL('editingFinished ()'), self.processEdiExp)
   
         self.showToolTips()
         self.setStyle()
@@ -105,9 +91,6 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
 
         cp.guiinsexpdirdet = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         # Tips for buttons and fields:
@@ -118,16 +101,8 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
         self.butDet .setToolTip('Select the detector for calibration.')
         self.ediDir .setToolTip('Use buttons to change the calib derectory.')
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
-    def setStyle(self):
-        
+    def setStyle(self):        
         #self.setStyleSheet(cp.styleYellow)
         self.titIns  .setStyleSheet (cp.styleLabel)
         self.titExp  .setStyleSheet (cp.styleLabel)
@@ -151,7 +126,6 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
         
 
     def setStyleButtons(self):
-
         if self.instr_name.value() == 'Select' :
             self.butIns.setStyleSheet(cp.styleButtonGood)
             self.butExp.setStyleSheet(cp.styleDefault)
@@ -196,6 +170,7 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
     def setParent(self,parent) :
         self.parent = parent
 
+
     def closeEvent(self, event):
         logger.info('closeEvent', __name__)
         #print 'closeEvent'
@@ -204,18 +179,19 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
         #except AttributeError:
         #    pass # silently ignore
 
+
     def processClose(self):
         #print 'Close button'
         self.close()
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #print 'resizeEvent' 
-        self.frame.setGeometry(self.rect())
+        #pass
 
-    def moveEvent(self, e):
+
+    #def moveEvent(self, e):
         #print 'moveEvent' 
-        pass
-#        cp.posGUIMain = (self.pos().x(),self.pos().y())
+        #cp.posGUIMain = (self.pos().x(),self.pos().y())
 
 
     def onButIns(self):
@@ -238,7 +214,8 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
         dir = self.instr_dir.value() + '/' + self.instr_name.value()
         #print 'dir =', dir
         if self.list_of_exp is None : self.list_of_exp=sorted(os.listdir(dir))
-        item_selected = gu.selectFromListInPopupMenu(self.list_of_exp)
+        #item_selected = gu.selectFromListInPopupMenu(self.list_of_exp)
+        item_selected = select_experiment_v3(self.butExp, self.list_of_exp)
         if item_selected is None : return          # selection is cancelled
         #if item_selected == self.exp_name.value() : return # selected the same item 
 
@@ -260,10 +237,10 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
         #dir, calib = self.calib_dir.value().rsplit('/',1)        
         dir, calib = os.path.split(path0)
         #print 'dir, calib =', dir, calib
-        path1 = str( QtGui.QFileDialog.getExistingDirectory(self,
-                                                            'Select non-standard calib directory',
-                                                            dir,
-                                                            QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks) )
+        path1 = str(QtGui.QFileDialog.getExistingDirectory(self,
+                      'Select non-standard calib directory',
+                      dir,
+                      QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontResolveSymlinks))
         if path1 == ''    : return # if nothing is selected
         if path1 == path0 : return # is selected the same directory
         if path1.rsplit('/',1)[1] != 'calib' :
@@ -357,13 +334,13 @@ class GUIInsExpDirDet ( QtGui.QWidget ) :
             #if txt=='Select' : cp.guidarklist.setFieldsEnabled(False)
             #else             : cp.guidarklist.setFieldsEnabled(True)
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-    widget = GUIInsExpDirDet ()
+    widget = GUIInsExpDirDet()
     widget.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

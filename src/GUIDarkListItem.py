@@ -1,34 +1,21 @@
-# -*- coding: utf-8 -*-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
-#  Module GUIDarkListItem ...
-#
+#   GUIDarkListItem ...
 #------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 import unicodedata
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-#from time import time
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
-
+from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
 from Logger                 import logger
 import GlobalUtils          as     gu
@@ -36,12 +23,11 @@ from FileNameManager        import fnm
 
 from GUIDarkListItemRun     import *
 from GUIDarkListItemAdd     import *
-#from GUIAnyFilesStatusTable import *
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIDarkListItem ( QtGui.QWidget ) :
+#------------------------------
+
+#class GUIDarkListItem(QtGui.QWidget) :
+class GUIDarkListItem(Frame) :
     """GUI sets the source dark run number, validity range, and starts calibration of pedestals"""
 
     char_expand    = cp.char_expand.strip()
@@ -56,11 +42,11 @@ class GUIDarkListItem ( QtGui.QWidget ) :
     #char_expand    = 'V' # solid down-head triangle
     #char_shrink    = '>' # solid right-head triangle
 
-    def __init__ ( self, parent=None, str_run_num='0000', run_type='Type N/A', comment='', xtc_in_dir=True) :
+    def __init__(self, parent=None, str_run_num='0000', run_type='Type N/A', comment='', xtc_in_dir=True) :
 
         #self.t0_sec = time()
-
-        QtGui.QWidget.__init__(self, parent)
+        Frame.__init__(self, parent, mlw=1, style=QtGui.QFrame.HLine | QtGui.QFrame.Sunken)
+        #QtGui.QWidget.__init__(self, parent)
 
         self.parent = parent
 
@@ -69,7 +55,6 @@ class GUIDarkListItem ( QtGui.QWidget ) :
         self.setWindowTitle('GUI Dark List Item')
         #try : self.setWindowIcon(cp.icon_help)
         #except : pass
-        self.setFrame()
 
         self.list_of_runs    = None
 
@@ -117,15 +102,6 @@ class GUIDarkListItem ( QtGui.QWidget ) :
         self.but_expand_shrink.setToolTip('Expand/shrink additional information space for this run.')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
     def setFieldsEnabled(self, is_enabled=True):
         logger.debug('Set fields enabled: %s' %  is_enabled, __name__)
         #self.lab_rnum .setEnabled(is_enabled)
@@ -148,20 +124,20 @@ class GUIDarkListItem ( QtGui.QWidget ) :
         #self.edi_from .setAlignment (QtCore.Qt.AlignRight)
         #if self.edi_from.isReadOnly() : self.edi_from.setStyleSheet (cp.styleEditInfo)
 
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        self.setContentsMargins (QtCore.QMargins(-9,-9,-9, 0))
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
         #self.box_txt.setGeometry(self.contentsRect())
         #print 'GUIDarkListItem resizeEvent: %s' % str(self.size())
+        #pass
 
-        
-    def moveEvent(self, e):
+
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -218,7 +194,6 @@ class GUIDarkListItem ( QtGui.QWidget ) :
         #self.gui_run.setStyleSheet(cp.styleYellowish)
 
 
-
     def onClickShrink(self):
         logger.debug('onClickShrink', __name__)
 
@@ -254,18 +229,19 @@ class GUIDarkListItem ( QtGui.QWidget ) :
 
     def getStrRunNum(self) :
         return self.str_run_num
+
        
     def getRunNum(self) :
         return int(self.str_run_num)
        
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     w = GUIDarkListItem(parent=None, str_run_num='0016')
     w.setFieldsEnabled(True)
     w.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

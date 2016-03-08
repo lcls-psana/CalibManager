@@ -3,42 +3,28 @@
 #  $Id$
 #
 # Description:
-#  Module GUIStatus ...
-#
+#  GUIStatus ...
 #------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
 import GlobalUtils          as     gu
-#from GUIStatusTable         import *
 
 #---------------------
-#  Class definition --
-#---------------------
-class GUIStatus ( QtGui.QGroupBox ) :
-#class GUIStatus ( QtGui.QWidget ) :
+
+#class GUIStatus(QtGui.QWidget) :
+class GUIStatus(QtGui.QGroupBox) :
     """GUI State"""
 
-    def __init__ ( self, parent=None, msg='No message in GUIStatus...' ) :
+    def __init__(self, parent=None, msg='No message in GUIStatus...') :
 
         QtGui.QGroupBox.__init__(self, 'State', parent)
         #QtGui.QWidget.__init__(self, parent)
@@ -46,7 +32,6 @@ class GUIStatus ( QtGui.QGroupBox ) :
         self.setWindowTitle('GUI Status')
         #try : self.setWindowIcon(cp.icon_help)
         #except : pass
-        self.setFrame()
 
         #self.instr_dir      = cp.instr_dir
         self.instr_name     = cp.instr_name
@@ -74,22 +59,11 @@ class GUIStatus ( QtGui.QGroupBox ) :
 
         cp.guistatus = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         #self           .setToolTip('This GUI is intended for run control and monitoring.')
         #self.but_close .setToolTip('Close this window.')
         pass
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
 
     def setStyle(self):
@@ -100,7 +74,10 @@ class GUIStatus ( QtGui.QGroupBox ) :
         self.box_txt   .setReadOnly   (True)
         #self.box_txt   .setStyleSheet (cp.styleBkgd)
         self.box_txt   .setStyleSheet (cp.styleWhiteFixed)
-        self.setContentsMargins (QtCore.QMargins(10,20,10,10))
+        #self.setContentsMargins(QtCore.QMargins(10,20,10,10))
+        #self.setContentsMargins(-5,8,-5,-5)
+        self.setContentsMargins(0,8,0,0)
+        #self.setContentsMargins(-9,-9,-9,-9)
 
         #self.setMinimumHeight(60)
         self.setMinimumSize(300,60)
@@ -110,15 +87,14 @@ class GUIStatus ( QtGui.QGroupBox ) :
         self.parent = parent
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
-        self.box_txt.setGeometry(self.contentsRect())
+        #self.box_txt.setGeometry(self.contentsRect())
         
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -182,12 +158,10 @@ class GUIStatus ( QtGui.QGroupBox ) :
 
         self.setStatusMessage(msg)
 
-
-
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     w = GUIStatus()
     w.setStatusMessage('Test of GUIStatus...')
@@ -195,4 +169,4 @@ if __name__ == "__main__" :
     w.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

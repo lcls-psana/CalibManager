@@ -1,43 +1,28 @@
-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
-#  Module GUIMetrology...
-#
+#  GUIMetrology...
 #------------------------------------------------------------------------
 
-"""Renders the main GUI for the CalibManager.
+"""GUI for CalibManager.
 
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
-
-@see RelatedModule
 
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
@@ -54,15 +39,10 @@ from OpticAlignmentCspadV1    import OpticAlignmentCspadV1
 from OpticAlignmentCspadV2    import OpticAlignmentCspadV2
 from OpticAlignmentCspad2x2V1 import OpticAlignmentCspad2x2V1
 
-#---------------------
-#  Class definition --
-#---------------------
-#class GUIMetrology ( QtGui.QWidget ) :
-class GUIMetrology ( Frame ) :
-    """GUI for metrology processing.
+#------------------------------
 
-    @see BaseClass
-    @see OtherClass
+class GUIMetrology(Frame) :
+    """GUI for metrology processing.
     """
     def __init__ (self, parent=None, app=None) :
 
@@ -85,8 +65,6 @@ class GUIMetrology ( Frame ) :
         #self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
-
-        #self.setFrame()
 
         self.setParams()
   
@@ -166,10 +144,6 @@ class GUIMetrology ( Frame ) :
         
         #print 'End of init'
         
-    #-------------------
-    # Private methods --
-    #-------------------
-
 
     def showToolTips(self):
         #pass
@@ -188,14 +162,6 @@ class GUIMetrology ( Frame ) :
         self.butSrc       .setToolTip('Select name of the detector')
  
 
-#    def setFrame(self):
-#        self.frame = QtGui.QFrame(self)
-#        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-#        self.frame.setLineWidth(0)
-#        self.frame.setMidLineWidth(1)
-#        self.frame.setGeometry(self.rect())
-#        #self.frame.setVisible(False)
-
     def setParams(self) :
         #if self.path_fm_selected != '' :
         #    self.path_fm_selected = os.path.dirname(self.path_fm_selected)
@@ -207,7 +173,6 @@ class GUIMetrology ( Frame ) :
 
 
     def setStyle(self):
-
         self.setMinimumSize(725,200)
         self.setMaximumSize(800,200)
         
@@ -251,19 +216,18 @@ class GUIMetrology ( Frame ) :
         else                       : self.butScript.setStyleSheet(cp.styleButton)
 
   
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        #self.frame.setGeometry(self.rect())
         #print 'GUIMetrology.resizeEvent: %s' % str(self.size())
-        pass
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -361,7 +325,6 @@ class GUIMetrology ( Frame ) :
             cp.guifilebrowser = GUIFileBrowser(None, list_of_files, fnm.path_metrology_text())
             cp.guifilebrowser.move(self.pos().__add__(QtCore.QPoint(880,40))) # open window with offset w.r.t. parent
             cp.guifilebrowser.show()
-
 
 
     def checkTextFileName(self):
@@ -621,8 +584,6 @@ class GUIMetrology ( Frame ) :
             if cp.guistatus is not None : cp.guistatus.updateStatusInfo()
 
 
-
-
     def approveCommand(self, but, msg):
         resp = gu.confirm_or_cancel_dialog_box(parent=but, text=msg, title='Please confirm or cancel!')
         if resp : logger.info('Commands approved', __name__)
@@ -668,13 +629,13 @@ class GUIMetrology ( Frame ) :
 
         #os.system('chmod 670 %s' % path)
 
+#------------------------------
 
-#-----------------------------
-#  In case someone decides to run this module
-#
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIMetrology()
     ex.show()
     app.exec_()
-#-----------------------------
+
+#------------------------------

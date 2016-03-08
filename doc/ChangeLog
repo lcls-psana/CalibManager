@@ -11,6 +11,14 @@ Package author: Mikhail S. Dubrovin
 
 Please describe any modifications that you made to the package in the
 reverse time order.
+2016-03-07 Mikhail S. Dubrovin
+Tag: V00-02-00
+- Significant code refactoring for many files (PSAS-6) 
+  - use commands Detector.event_keys and det_ndarr_raw_proc in stead of psana modules with cfg. files
+  - get rid of configuration file generator
+  - significantly remove redundant graphics(frames etc.) non-used import etc.	
+  - replace experiment selection pop-up window for compact one.
+	
 2016-02-12 Mikhail S. Dubrovin
 Tag: V00-01-02
 - GlobalUtils.ready_to_start - add check for host and username validity.

@@ -1,11 +1,10 @@
-
+#!/usr/bin/env python
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
-#  Module GUIMain...
-#
+#  GUIMain...
 #------------------------------------------------------------------------
 
 """Renders the main GUI for the CalibManager.
@@ -13,52 +12,34 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
 import time   # for sleep(sec)
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
-
 from ConfigParametersForApp import cp
 from Logger                 import logger
-from GUIButtonBar           import *
 from GUILogger              import *
 from GUITabs                import *
 from GUIInsExpDirDet        import *
 from PackageVersions        import PackageVersions
 from NotificationDB         import *
-#from GUICalibDirTree        import *
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIMain ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIMain(QtGui.QWidget) :
     """Main GUI for calibration management project.
-
-    @see BaseClass
-    @see OtherClass
     """
-    def __init__ (self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIMain'
         self.myapp = app
@@ -83,9 +64,7 @@ class GUIMain ( QtGui.QWidget ) :
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
 
-        self.setFrame()
-
-        #self.guitree   = GUICalibDirTree()
+        #self.guitree  = GUICalibDirTree()
         self.guitabs   = GUITabs(self) # QtGui.QTextEdit()
         self.guilogger = GUILogger(show_buttons=False)
         self.guiinsexpdirdet = GUIInsExpDirDet(self)
@@ -115,9 +94,6 @@ class GUIMain ( QtGui.QWidget ) :
 
         #print 'End of init'
         
-    #-------------------
-    # Private methods --
-    #-------------------
 
     def printStyleInfo(self):
         qstyle     = self.style()
@@ -133,18 +109,9 @@ class GUIMain ( QtGui.QWidget ) :
         #self.butStop.setToolTip('Not implemented yet...')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
     def setStyle(self):
-        pass
         self.setMinimumSize(800,700)
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
         #self.vsplit.setMinimumHeight(700)
         
         #self.        setStyleSheet(cp.styleBkgd)
@@ -163,19 +130,19 @@ class GUIMain ( QtGui.QWidget ) :
         #self.vsplit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Ignored)
 
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
          #logger.debug('resizeEvent', self.name) 
          #print 'GUIMain resizeEvent: %s' % str(self.size())
-         pass
+         #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
         #print 'Move window to x,y: ', str(self.mapToGlobal(QtCore.QPoint(0,0)))
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -188,6 +155,12 @@ class GUIMain ( QtGui.QWidget ) :
         except : pass
         
         try    : cp.guilogger.close()
+        except : pass
+
+        try    : cp.plotimgspe.close()
+        except : pass
+
+        try    : cp.guifilebrowser.close()
         except : pass
 
         self.onSave()
@@ -218,12 +191,9 @@ class GUIMain ( QtGui.QWidget ) :
         if cp.save_log_at_exit.value() : logger.saveLogInFile(fnm.log_file())
         #logger.saveLogTotalInFile( fnm.log_file_total() )
 
+#------------------------------
+#------------------------------
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
     #def mousePressEvent(self, event):
     #    print 'event.x, event.y, event.button =', str(event.x()), str(event.y()), str(event.button())         
 
@@ -250,12 +220,13 @@ class GUIMain ( QtGui.QWidget ) :
             #print 'event.key() = Home'
             pass
 
-#-----------------------------
-#  In case someone decides to run this module
-#
+#------------------------------
+
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIMain()
     ex.show()
     app.exec_()
-#-----------------------------
+
+#------------------------------

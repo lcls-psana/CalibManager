@@ -3,52 +3,33 @@
 #  $Id$
 #
 # Description:
-#  Module GUIGeometry...
-#
+#  GUIGeometry...
 #------------------------------------------------------------------------
 
-"""GUI sets path to files"""
+"""GUI for geometry"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from GUIMetrology           import *
 from GUIAlignment           import *
 from Logger                 import logger
 
-#from BatchJobPedestals      import bjpeds
+#------------------------------
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIGeometry ( QtGui.QWidget ) :
+class GUIGeometry(QtGui.QWidget) :
     """GUI with tabs for calibration of geometry"""
 
-    #----------------
-    #  Constructor --
-    #----------------
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(1, 1, 600, 200)
         self.setWindowTitle('Geometry Calibration')
-        self.setFrame()
 
         self.lab_title  = QtGui.QLabel     ('Geometry Calibration')
         self.lab_status = QtGui.QLabel     ('Status: ')
@@ -80,40 +61,28 @@ class GUIGeometry ( QtGui.QWidget ) :
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
 
-        self.connect( self.but_close, QtCore.SIGNAL('clicked()'), self.onClose )
-        self.connect( self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave )
-        self.connect( self.but_show,  QtCore.SIGNAL('clicked()'), self.onShow )
+        self.connect(self.but_close, QtCore.SIGNAL('clicked()'), self.onClose)
+        self.connect(self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave)
+        self.connect(self.but_show,  QtCore.SIGNAL('clicked()'), self.onShow)
 
         self.showToolTips()
         self.setStyle()
 
         cp.guigeometry = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         #msg = 'Edit field'
-        self.but_close .setToolTip('Close this window.')
-        self.but_save  .setToolTip('Save all current configuration parameters.')
-        self.but_show  .setToolTip('Show ...')
-
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
+        self.but_close.setToolTip('Close this window.')
+        self.but_save .setToolTip('Save all current configuration parameters.')
+        self.but_show .setToolTip('Show ...')
 
 
     def setStyle(self):
-        self.          setStyleSheet (cp.styleBkgd)
-        self.but_close.setStyleSheet (cp.styleButton)
-        self.but_save .setStyleSheet (cp.styleButton)
-        self.but_show .setStyleSheet (cp.styleButton)
+        self.          setStyleSheet(cp.styleBkgd)
+        self.but_close.setStyleSheet(cp.styleButton)
+        self.but_save .setStyleSheet(cp.styleButton)
+        self.but_show .setStyleSheet(cp.styleButton)
 
         self.lab_title.setStyleSheet (cp.styleTitleBold)
         self.lab_title .setAlignment(QtCore.Qt.AlignCenter)
@@ -130,9 +99,9 @@ class GUIGeometry ( QtGui.QWidget ) :
         #self.setMinimumSize(750,760)
 
         #self.lab_status.setVisible(False)
-        self.but_close .setVisible(False)
-        self.but_save  .setVisible(False)
-        self.but_show  .setVisible(False)
+        self.but_close.setVisible(False)
+        self.but_save .setVisible(False)
+        self.but_show .setVisible(False)
 
 
     def makeTabBar(self,mode=None) :
@@ -140,8 +109,8 @@ class GUIGeometry ( QtGui.QWidget ) :
         self.tab_bar = QtGui.QTabBar()
 
         #Uses self.list_tab_titles
-        self.ind_tab_0 = self.tab_bar.addTab( self.list_tab_titles[0] )
-        self.ind_tab_1 = self.tab_bar.addTab( self.list_tab_titles[1] )
+        self.ind_tab_0 = self.tab_bar.addTab(self.list_tab_titles[0])
+        self.ind_tab_1 = self.tab_bar.addTab(self.list_tab_titles[1])
 
         self.tab_bar.setTabTextColor(self.ind_tab_0, QtGui.QColor('magenta'))
         self.tab_bar.setTabTextColor(self.ind_tab_1, QtGui.QColor('magenta'))
@@ -174,14 +143,14 @@ class GUIGeometry ( QtGui.QWidget ) :
 
         if cp.current_geometry_tab.value() == self.list_tab_titles[0] :
             self.gui_win = GUIMetrology(self)
-            self.setStatus(0, 'Status: work with %s' % self.list_tab_titles[0])
-            self.gui_win.setFixedHeight(200)
+            self.setStatus(0, 'Status: work on %s' % self.list_tab_titles[0])
+            #self.gui_win.setFixedHeight(200)
             
         if cp.current_geometry_tab.value() == self.list_tab_titles[1] :
             #self.gui_win = QtGui.QTextEdit('') # GUIConfigFile(self)
             self.gui_win = GUIAlignment(self)
-            self.setStatus(0, 'Status: work with %s' % self.list_tab_titles[1])
-            self.gui_win.setFixedHeight(300)
+            self.setStatus(0, 'Status: work on %s' % self.list_tab_titles[1])
+            #self.gui_win.setFixedHeight(270)
 
         #self.gui_win.setFixedHeight(180)
         #self.gui_win.setFixedHeight(600)
@@ -201,19 +170,19 @@ class GUIGeometry ( QtGui.QWidget ) :
         self.parent = parent
 
 
-    def resizeEvent(self, e):
-        logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+    #def resizeEvent(self, e):
+        #logger.debug('resizeEvent', __name__) 
         #print __name__ + ' config: self.size():', self.size()
         #self.setMinimumSize( self.size().width(), self.size().height()-40 )
+        #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent: new pos:' + str(self.position), __name__)
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -257,13 +226,12 @@ class GUIGeometry ( QtGui.QWidget ) :
         #self.lab_status.setText('Status: ' + list_of_states[status_index] + msg)
         self.lab_status.setText(msg)
 
-
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-    widget = GUIGeometry ()
+    widget = GUIGeometry()
     widget.show()
     app.exec_()
 

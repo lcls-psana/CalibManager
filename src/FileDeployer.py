@@ -3,34 +3,23 @@
 #  $Id$
 #
 # Description:
-#  Module FileDeployer ...
-#
+#   FileDeployer ...
 #------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
-
 #--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
+#import sys
 import os
 import stat
 import socket
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from   Logger               import logger
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
 
-#-----------------------------
+#------------------------------
 
 def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     """Get list of deploy commands for all detectors of the same type"""
@@ -90,7 +79,6 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
         if is_allowed_command(cmd, list_src_cbx) : fd.procDeployCommand(cmd, mode)
 
 
-
 def is_allowed_command(cmd, list_src_cbx):
     """Check the deployment command is for selected src"""
 
@@ -108,14 +96,12 @@ def is_allowed_command(cmd, list_src_cbx):
     return False
 
 
-
 def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, list_of_sources, base_path, calibtype='pedestals', str_run_range='0-end'):
     """Get list of deploy commands for lists of type and sources for calibtype"""
     
     list_of_files = gu.get_list_of_files_for_list_of_insets( base_path, list_of_sources )
 
     list_of_deploy_commands = []
-
 
     for file, ctype, type, source in zip(list_of_files, list_of_ctypes, list_of_types, list_of_sources) :
         # Ex.: ctype='Epix100a::CalibV1',  type='Epix::ElementV2',  source='NoDetector.0:Epix100a.0'
@@ -132,7 +118,6 @@ def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, lis
         list_of_deploy_commands.append(cmd)
 
     return list_of_deploy_commands
-   
 
 #-----------------------------
 
@@ -189,13 +174,11 @@ class FileDeployer :
         self.addHistoryRecord(cmd, comment)
 
 
-
     def changeFilePermissions(self, path, mode=660):
         cmd = 'chmod %d %s' % (mode,path)
         msg = 'Change permissions for file: %s' % cmd
         logger.info(msg, __name__)
         os.system(cmd)
-
 
 
     def addHistoryRecord(self, cmd, comment='dark'):
@@ -246,7 +229,6 @@ class FileDeployer :
         gu.save_textfile(rec, path_history, mode='a')
 
         #self.changeFilePermissions(path_history)
-
 
 
     def addHistoryRecordOnDelete(self, cmd, comment='file-manager'):

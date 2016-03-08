@@ -3,7 +3,7 @@
 #  $Id$
 #
 # Description:
-#  Module BatchJob...
+#   BatchJob...
 #
 #------------------------------------------------------------------------
 
@@ -17,15 +17,10 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
 import os
 
@@ -37,13 +32,13 @@ from PyQt4 import QtGui, QtCore # need it in order to use QtCore.QObject for con
 
 #-----------------------------
 
-class BatchJob (QtCore.QObject ) : # need in QtCore.QObject in order to connect to signals:
+class BatchJob(QtCore.QObject) : # need in QtCore.QObject in order to connect to signals:
     """Base class with common methods for batch jobs.
     """
     dict_status = {True  : 'available',
                    False : 'not available'}
 
-    def __init__ (self) :
+    def __init__(self) :
         """Constructor.
         @param fname the file name for ...
         """
@@ -156,7 +151,7 @@ class BatchJob (QtCore.QObject ) : # need in QtCore.QObject in order to connect 
     def check_files_for_list(self, list_of_files, comment='') :
         logger.info('Check files for list ' + comment, __name__)         
         for fname in list_of_files :
-            msg = '%s is %s' % ( fname.ljust(100), self.dict_status[os.path.lexists(fname)] )
+            msg = '%s is %s' % (fname.ljust(100), self.dict_status[os.path.lexists(fname)])
             logger.info(msg)         
 
 #-----------------------------
@@ -201,14 +196,14 @@ class BatchJob (QtCore.QObject ) : # need in QtCore.QObject in order to connect 
     def connectToThread1(self):
         if cp.commandlinecalib is not None : return
 
-        try : self.connect( cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus )
+        try : self.connect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
         except : logger.warning('connectToThread1 IS FAILED !!!', __name__)
 
 
     def disconnectFromThread1(self):
         if cp.commandlinecalib is not None : return
 
-        try : self.disconnect( cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus )
+        try : self.disconnect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
         except : logger.warning('disconnectFromThread1 IS FAILED !!!', __name__)
 
 
@@ -224,6 +219,7 @@ class BatchJob (QtCore.QObject ) : # need in QtCore.QObject in order to connect 
         else :
             self.connectToThread1()
             self.on_auto_processing_start()
+
 
     def stop_auto_processing(self, is_stop_on_button_click=True) :
         logger.info('Auto-processing for run %s IS STOPPED' % self.str_run_number, __name__)

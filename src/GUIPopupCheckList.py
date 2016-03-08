@@ -4,35 +4,23 @@
 #
 # Description:
 #  Module GUIPopupCheckList...
-#
 #------------------------------------------------------------------------
 
-"""Send message to ELog"""
+"""Popup GUI"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
 #import time   # for sleep(sec)
 
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 from Logger import logger
 from ConfigParametersForApp import cp
 
-#---------------------
-#  Class definition --
-#---------------------
+#------------------------------  
 
 class GUIPopupCheckList(QtGui.QDialog) :
     """Gets list of item for checkbox GUI in format [['name1',false], ['name2',true], ..., ['nameN',false]], 
@@ -43,7 +31,6 @@ class GUIPopupCheckList(QtGui.QDialog) :
         QtGui.QDialog.__init__(self,parent)
         #self.setGeometry(20, 40, 500, 200)
         self.setWindowTitle(win_title)
-        self.setFrame()
  
         #self.setModal(True)
         self.list_in_out = list_in_out
@@ -58,8 +45,8 @@ class GUIPopupCheckList(QtGui.QDialog) :
         self.but_cancel.setIcon(cp.icon_button_cancel)
         self.but_apply .setIcon(cp.icon_button_ok)
         
-        self.connect( self.but_cancel, QtCore.SIGNAL('clicked()'), self.onCancel )
-        self.connect( self.but_apply,  QtCore.SIGNAL('clicked()'), self.onApply )
+        self.connect(self.but_cancel, QtCore.SIGNAL('clicked()'), self.onCancel)
+        self.connect(self.but_apply,  QtCore.SIGNAL('clicked()'), self.onApply)
 
         self.hbox = QtGui.QHBoxLayout()
         self.hbox.addWidget(self.but_cancel)
@@ -93,13 +80,6 @@ class GUIPopupCheckList(QtGui.QDialog) :
         self.but_apply.setToolTip('Apply changes to the list')
         self.but_cancel.setToolTip('Use default list')
         
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
 
     def setStyle(self):
         #self.setFixedWidth(200)
@@ -107,13 +87,16 @@ class GUIPopupCheckList(QtGui.QDialog) :
         self.setStyleSheet(cp.styleBkgd)
         self.but_cancel.setStyleSheet(cp.styleButton)
         self.but_apply.setStyleSheet(cp.styleButton)
- 
-    def resizeEvent(self, e):
-        #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
 
-    def moveEvent(self, e):
-        pass
+ 
+    #def resizeEvent(self, e):
+        #logger.debug('resizeEvent', __name__) 
+        #pass
+
+
+    #def moveEvent(self, e):
+        #pass
+
 
     def closeEvent(self, event):
         logger.debug('closeEvent', __name__)
@@ -122,7 +105,7 @@ class GUIPopupCheckList(QtGui.QDialog) :
         #except : pass
 
     #def event(self, event):
-    #    print 'Event happens...:', event
+        #print 'Event happens...:', event
 
     
     def onCBox(self, tristate):
@@ -152,17 +135,14 @@ class GUIPopupCheckList(QtGui.QDialog) :
         for cbx,[k,name,state] in self.dict_of_items.iteritems() :
             self.list_in_out[k] = [name,state]
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-
     list_in = [['CSPAD1',True], ['CSPAD2x21', False], ['pNCCD1', True], ['Opal1', False], \
                ['CSPAD2',True], ['CSPAD2x22', False], ['pNCCD2', True], ['Opal2', False]]
-
     for name,state in list_in : print  '%s checkbox is in state %s' % (name.ljust(10), state) 
-    
     w = GUIPopupCheckList (None, list_in)
     #w.show()
     resp=w.exec_()
@@ -171,7 +151,6 @@ if __name__ == "__main__" :
     print 'QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted
 
     for name,state in list_in : print  '%s checkbox is in state %s' % (name.ljust(10), state) 
-
     #app.exec_()
 
-#-----------------------------
+#------------------------------

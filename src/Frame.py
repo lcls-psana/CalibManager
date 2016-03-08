@@ -1,11 +1,20 @@
+#--------------------------------------------------------------------------
+# File and Version Information:
+#  $Id$
+#
+# Description:
+#   Frame...
+#------------------------------------------------------------------------
 
-'''
+"""Frame derived from QFrame
 Created on Dec 3, 2014
 
 @author: Mikhail
-'''
+"""
+#--------------------------------
+__version__ = "$Revision$"
+#--------------------------------
 
-import sys
 #from PyQt4.Qt import QFrame
 from PyQt4 import QtGui, QtCore
 
@@ -26,7 +35,7 @@ class Frame(QtGui.QFrame):
         self.setMidLineWidth(mlw)
         self.setBoarderVisible(vis) 
         #self.setGeometry(self.parent.rect())
-
+        #self.setContentsMargins(QtCore.QMargins(-10,-10,-10,-10))
 
     def setBoarderVisible(self, vis=True) :
         if vis : self.setFrameShape(QtGui.QFrame.Box)
@@ -72,7 +81,9 @@ class GUIFrame(Frame):
         but.move(30,20)
 
 #-----------------------------
+
 if __name__ == "__main__" :
+    import sys
     
     app = QtGui.QApplication(sys.argv)
 
@@ -83,7 +94,6 @@ if __name__ == "__main__" :
     #w = GUIWidgetFrame()
     #w = GUIWidget()
     w = GUIFrame()
-
     w.setWindowTitle('GUIWidget')
     w.setGeometry(200, 500, 200, 100)
     w.show()

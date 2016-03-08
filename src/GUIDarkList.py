@@ -3,28 +3,14 @@
 #  $Id$
 #
 # Description:
-#  Module GUIDarkList ...
-#
+#   GUIDarkList ...
 #------------------------------------------------------------------------
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
@@ -36,14 +22,12 @@ from BatchLogScanParser     import blsp
 
 from time import time
 
-#---------------------
-#  Class definition --
-#---------------------
-#class GUIDarkList ( QtGui.QGroupBox ) :
-class GUIDarkList ( QtGui.QWidget ) :
+#------------------------------
+
+class GUIDarkList(QtGui.QWidget) :
     """GUI for the list of widgers"""
 
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
 
         self.parent = parent
         self.dark_list_run_min     = cp.dark_list_run_min 
@@ -74,7 +58,6 @@ class GUIDarkList ( QtGui.QWidget ) :
         #self.setTitle('My status')
         #try : self.setWindowIcon(cp.icon_help)
         #except : pass
-        self.setFrame()
 
         #self.list = QtGui.QListWidget(parent=self)
         # Use singleton object
@@ -101,17 +84,14 @@ class GUIDarkList ( QtGui.QWidget ) :
 
         cp.guidarklist = self
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def connectToThreadWorker(self):
-        try : self.connect   ( cp.thread_check_new_xtc_files, QtCore.SIGNAL('update(QString)'), self.signalReciever )
+        try : self.connect(cp.thread_check_new_xtc_files, QtCore.SIGNAL('update(QString)'), self.signalReciever)
         except : logger.warning('connectToThreadWorker is failed', __name__)
 
 
     def disconnectFromThreadWorker(self):
-        try : self.disconnect( cp.thread_check_new_xtc_files, QtCore.SIGNAL('update(QString)'), self.signalReciever )
+        try : self.disconnect(cp.thread_check_new_xtc_files, QtCore.SIGNAL('update(QString)'), self.signalReciever)
         except : pass
 
 
@@ -230,7 +210,6 @@ class GUIDarkList ( QtGui.QWidget ) :
             return item, widg
 
 
-
     def setItemsHidden(self) :        
         for run, (item, widg) in self.dict_guidarklistitem.iteritems() :
             self.list.setItemHidden (item, True)
@@ -272,7 +251,6 @@ class GUIDarkList ( QtGui.QWidget ) :
         return False
 
 
-
     def det_is_in_list_of_sources(self, det_name, list_of_srcs) :
 
         pattern = det_name.lower() + '.'
@@ -280,7 +258,6 @@ class GUIDarkList ( QtGui.QWidget ) :
             if src.lower().find(pattern) != -1 :
                 return True
         return False
-
 
 
     def hasSelectedDetectorsInRun(self, run_num) :
@@ -327,21 +304,12 @@ class GUIDarkList ( QtGui.QWidget ) :
         #self.but_close .setToolTip('Close this window.')
         pass
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(1)
-        self.frame.setMidLineWidth(0)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
-
 
     def setStyle(self):
         self.setMinimumSize(760,80)
         self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        self.setStyleSheet (cp.styleBkgd)
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
-
+        self.setStyleSheet(cp.styleBkgd)
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
         #self.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
         #self.list.adjustSize()
@@ -356,17 +324,17 @@ class GUIDarkList ( QtGui.QWidget ) :
         #self.lab_txt   .setStyleSheet (cp.styleBkgd)
         
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
         #self.lab_txt.setGeometry(self.contentsRect())
         #print 'self.rect():', str(self.rect())
+        #pass
 
         
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #cp.posGUIMain = (self.pos().x(),self.pos().y())
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -443,7 +411,7 @@ class GUIDarkList ( QtGui.QWidget ) :
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     w = GUIDarkList()
     #w.setStatusMessage('Test of GUIDarkList...')

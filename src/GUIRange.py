@@ -1,11 +1,9 @@
-
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
 #  Module GUIRange...
-#
 #------------------------------------------------------------------------
 
 """Range setting GUI
@@ -13,39 +11,26 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
-
 @version $Id$
 
 @author Mikhail S. Dubrovin
 """
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#--------------------------------
-#  Imports
-#--------------------------------
-import sys
 import os
 from PyQt4 import QtGui, QtCore
 
 from Logger import logger
 from ConfigParametersForApp import cp
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIRange ( QtGui.QWidget ) :
-    """Range setting GUI
-    @see BaseClass
-    @see OtherClass
-    """
+#------------------------------
 
-    def __init__ (self, parent=None, str_from=None, str_to=None, txt_from='valid from', txt_to='to') :
+class GUIRange(QtGui.QWidget) :
+    """Range setting GUI
+    """
+    def __init__(self, parent=None, str_from=None, str_to=None, txt_from='valid from', txt_to='to') :
 
         QtGui.QWidget.__init__(self, None)
         self.parent = parent
@@ -58,8 +43,6 @@ class GUIRange ( QtGui.QWidget ) :
             self.use_lab_from = True
 
         self.setWindowTitle('Range setting GUI')
-
-        self.setFrame()
 
         self.setParams(str_from, str_to)
 
@@ -95,10 +78,6 @@ class GUIRange ( QtGui.QWidget ) :
         # cp.guirange = self # DO NOT REGISTER THIS OBJECT! There may be many instances in the list of runs...
 
 
-    #-------------------
-    # Private methods --
-    #-------------------
-
     def setEdiValidators(self):
         self.edi_from.setValidator(QtGui.QIntValidator(0,9999,self))
         self.edi_to  .setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|end$"),self))
@@ -108,15 +87,6 @@ class GUIRange ( QtGui.QWidget ) :
     def showToolTips(self):
         self.edi_from  .setToolTip('Enter run number in range [0,9999]')
         self.edi_to    .setToolTip('Enter run number in range [1,9999] or "end"')
-
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
 
     def setStyle(self):
@@ -163,19 +133,17 @@ class GUIRange ( QtGui.QWidget ) :
             self.edi_to  .setStyleSheet(cp.styleEditBad)
 
 
-    def resizeEvent(self, e):
-        #logger.debug('resizeEvent', __name__) 
-        #self.frame.setGeometry(self.rect())
-        #print 'GUIRange resizeEvent: %s' % str(self.size())
-        pass
+    #def resizeEvent(self, e):
+         #logger.debug('resizeEvent', __name__) 
+         #pass
 
 
-    def moveEvent(self, e):
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+        #pass
 
 
     def closeEvent(self, event):
@@ -258,9 +226,10 @@ class GUIRange ( QtGui.QWidget ) :
 
         #return self.str_from + '-' + self.str_to
 
-#-----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
+    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIRange(None,'0','end','')
     #ex  = GUIRange(None,'0','end')
@@ -268,4 +237,4 @@ if __name__ == "__main__" :
     ex.show()
     app.exec_()
 
-#-----------------------------
+#------------------------------

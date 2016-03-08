@@ -3,52 +3,30 @@
 #  $Id$
 #
 # Description:
-#  Module GUIConfig...
-#
+#   GUIConfig...
 #------------------------------------------------------------------------
 
-"""GUI sets path to files"""
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
-
 #--------------------------------
-#  Imports of standard modules --
-#--------------------------------
-import sys
-import os
+#import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
 
 from ConfigParametersForApp import cp
 from GUIConfigPars          import *
 from GUIConfigFile          import *
 from Logger                 import logger
 
-#from BatchJobPedestals      import bjpeds
+#------------------------------
 
-#---------------------
-#  Class definition --
-#---------------------
-class GUIConfig ( QtGui.QWidget ) :
+class GUIConfig(QtGui.QWidget) :
     """GUI with tabs for configuration management"""
 
-    #----------------
-    #  Constructor --
-    #----------------
-    def __init__ ( self, parent=None ) :
+    def __init__(self, parent=None) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(1, 1, 600, 200)
         self.setWindowTitle('Files')
-        self.setFrame()
 
         self.lab_title  = QtGui.QLabel     ('Configuration settings')
         self.lab_status = QtGui.QLabel     ('Status: ')
@@ -87,9 +65,6 @@ class GUIConfig ( QtGui.QWidget ) :
         self.showToolTips()
         self.setStyle()
 
-    #-------------------
-    #  Public methods --
-    #-------------------
 
     def showToolTips(self):
         #msg = 'Edit field'
@@ -97,14 +72,6 @@ class GUIConfig ( QtGui.QWidget ) :
         self.but_save  .setToolTip('Save all current configuration parameters.')
         self.but_show  .setToolTip('Show ...')
 
-
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
     def setStyle(self):
         self.          setStyleSheet (cp.styleBkgd)
@@ -114,17 +81,7 @@ class GUIConfig ( QtGui.QWidget ) :
 
         self.lab_title.setStyleSheet (cp.styleTitleBold)
         self.lab_title .setAlignment(QtCore.Qt.AlignCenter)
-        #self.setMinimumWidth (600)
-        #self.setMaximumWidth (700)
-        #self.setMinimumHeight(300)
-        #self.setMaximumHeight(400)
-        #self.setFixedWidth (700)
-        #self.setFixedHeight(400)
-        #self.setFixedHeight(330)
-        #self.setFixedSize(550,350)
-        #self.setFixedSize(600,360)
         self.setMinimumSize(600,360)
-        #self.setMinimumSize(750,760)
 
         #self.lab_status.setVisible(False)
         self.but_close .setVisible(False)
@@ -192,21 +149,25 @@ class GUIConfig ( QtGui.QWidget ) :
         logger.info(' ---> selected tab: ' + str(tab_ind) + ' - open GUI to work with: ' + tab_name, __name__)
         self.guiSelector()
 
+
     def setParent(self,parent) :
         self.parent = parent
 
-    def resizeEvent(self, e):
-        logger.debug('resizeEvent', __name__) 
-        self.frame.setGeometry(self.rect())
+
+    #def resizeEvent(self, e):
+        #logger.debug('resizeEvent', __name__) 
         #print __name__ + ' config: self.size():', self.size()
         #self.setMinimumSize( self.size().width(), self.size().height()-40 )
+        #pass
 
-    def moveEvent(self, e):
+
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', __name__) 
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
         #logger.debug('moveEvent: new pos:' + str(self.position), __name__)
-        pass
+        #pass
+
 
     def closeEvent(self, event):
         logger.debug('closeEvent', __name__)
@@ -223,13 +184,16 @@ class GUIConfig ( QtGui.QWidget ) :
         try    : del cp.guifiles # GUIConfig
         except : pass # silently ignore
 
+
     def onClose(self):
         logger.debug('onClose', __name__)
         self.close()
 
+
     def onSave(self):
         logger.debug('onSave', __name__)
         cp.saveParametersInFile( cp.fname_cp.value() )
+
 
     def onShow(self):
         logger.debug('onShow - is not implemented yet...', __name__)
@@ -244,11 +208,10 @@ class GUIConfig ( QtGui.QWidget ) :
         #self.lab_status.setText('Status: ' + list_of_states[status_index] + msg)
         self.lab_status.setText(msg)
 
-
 #-----------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
     widget = GUIConfig ()
     widget.show()

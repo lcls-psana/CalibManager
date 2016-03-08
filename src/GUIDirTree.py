@@ -3,33 +3,25 @@
 #  $Id$
 #
 # Description:
-#  Module GUIDirTree...
-#
+#  GUIDirTree...
 #------------------------------------------------------------------------
 
-"""GUI works with dark run"""
+"""GUI for generic directory tree"""
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
+#--------------------------------
 __version__ = "$Revision$"
-# $Source$
+#--------------------------------
 
-#-------------------
-#  Import modules --
-#-------------------
-import sys
 import os
 
 from PyQt4 import QtGui, QtCore
-#import time   # for sleep(sec)
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
 
-#----------------------------
+#------------------------------
 
-class GUIDirTree (QtGui.QWidget):
+class GUIDirTree(QtGui.QWidget):
 
     def __init__(self, parent=None, dir_top='.') :
         #super(GUIQTreeView, self).__init__(parent)
@@ -40,14 +32,8 @@ class GUIDirTree (QtGui.QWidget):
         self.setGeometry(100, 100, 200, 300)
         self.setWindowTitle('Item selection tree')
 
-        self.setFrame()
-
         cp.setIcons()
  
-        #self.icon_folder_open   = QtGui.QIcon("icons/folder_open.gif")
-        #self.icon_folder_closed = QtGui.QIcon("icons/folder_closed.gif")
-        #self.icon_table         = QtGui.QIcon("icons/table.gif")
-
         #self.view = QtGui.QListView()
         #self.view = QtGui.QTableView()
         self.view = QtGui.QTreeView()
@@ -93,8 +79,6 @@ class GUIDirTree (QtGui.QWidget):
         #self.model.setVerticalHeaderLabels('abc')
 
 
-#----------------------------
-
     def update_dir_tree(self, dir_top=None) :
         if dir_top is not None :
             self.dir_top = dir_top
@@ -102,7 +86,6 @@ class GUIDirTree (QtGui.QWidget):
         self.fill_dir_tree(self.dir_top)
         self.view.expandAll()
 
-#----------------------------
 
     def fill_dir_tree(self, path, item=None, level=0) :
 
@@ -115,18 +98,12 @@ class GUIDirTree (QtGui.QWidget):
         item_parent.appendRow(item_add)
 
         if os.path.isfile(path) :
-            item_add.setIcon(cp.icon_table)
+            #item_add.setIcon(cp.icon_table)
             item_add.setCheckable(True) 
             return
 
         elif os.path.isdir(path) :
             item_add.setIcon(cp.icon_folder_open)
-            #    ind = self.model.indexFromItem(item_add)
-            #    self.view.setExpanded(ind,True)
-            #    self.view.expand(ind)
-            #else :
-            #    item_add.setIcon(cp.icon_folder_closed)
-                
             list_of_fnames = sorted(os.listdir(path))
             if list_of_fnames == [] :
                 return # 'Directory %s IS EMPTY!' %  path     
@@ -138,7 +115,6 @@ class GUIDirTree (QtGui.QWidget):
         else : # for links etc
             pass
 
-#----------------------------
 
     def get_list_of_checked_item_names(self) :
         basedir = os.path.dirname(self.dir_top)
@@ -151,7 +127,6 @@ class GUIDirTree (QtGui.QWidget):
                 list.append(fname)
         return list
 
-#----------------------------
 
     def getFullNameFromItem(self, item): 
         #item = self.model.itemFromIndex(ind)        
@@ -238,49 +213,34 @@ class GUIDirTree (QtGui.QWidget):
         pass
 
 
-
     def setStyle(self):
-        pass
-        #self.setMinimumSize(100,200)
-        #self.setMinimumSize(200,300)
-        #self.setFixedWidth(300)
         self.setMinimumWidth(200)
-        #self.setMinimumHeight(300)
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
-        
-        #self.view.setMinimumWidth(200)
+        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        self.frame.setVisible(False)
 
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #logger.debug('resizeEvent', self.name) 
-        self.frame.setGeometry(self.rect())
+    #    pass
 
-    def moveEvent(self, e):
+
+    #def moveEvent(self, e):
         #logger.debug('moveEvent', self.name) 
-        #self.position = self.mapToGlobal(self.pos())
-        #self.position = self.pos()
         #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
-        pass
+    #    pass
+
 
     def closeEvent(self, event):
         logger.debug('closeEvent', __name__)
         cp.guidirtree = None
  
-#----------------------------
+#------------------------------
 
 if __name__ == "__main__" :
-
+    import sys
     app = QtGui.QApplication(sys.argv)
-    widget = GUIDirTree (None, '/reg/d/psdm/SXR/sxrb5914/calib')
-    #widget = GUIDirTree (None, '.')
+    #widget = GUIDirTree (None, '/reg/d/psdm/SXR/sxrb5914/calib')
+    widget = GUIDirTree (None, '.')
     widget.show()
     app.exec_()
 
-#----------------------------
+#------------------------------

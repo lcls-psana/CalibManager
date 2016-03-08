@@ -12,54 +12,40 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
 @version $Id$ 
 @author Mikhail S. Dubrovin
 """
-
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
-__version__ = "$Revision$"
-# $Source$
-
 #--------------------------------
-#  Imports of standard modules --
+__version__ = "$Revision$"
 #--------------------------------
 import sys
 import os
 
 from PyQt4 import QtGui, QtCore
 
+from CalibManager.Frame     import Frame
 from Logger                 import logger
 from GUIHelp                import *
-#from GUIELogPostingDialog   import *
 import GlobalUtils          as     gu
-
 from GUIRangeIntensity      import *
-
 from FileNameManager        import fnm
 from ConfigParametersForApp import cp
-
 from CorAna.ArrFileExchange import *
 
 #---------------------
-#  Class definition --
-#---------------------
 
-#class PlotImgSpeButtons (QtGui.QMainWindow) :
-class PlotImgSpeButtons (QtGui.QWidget) :
+#class PlotImgSpeButtons(QtGui.QMainWindow) :
+#class PlotImgSpeButtons(QtGui.QWidget) :
+class PlotImgSpeButtons(Frame) :
     """Buttons for interactive plot of the image and spectrum for 2-d array."""
 
-    #----------------
-    #  Constructor --
-    #----------------
+    def __init__(self, parent=None, widgimage=None, ifname='', ofname='./fig.png',\
+                 help_msg=None, expand=False, fexmod=False, verb=False):
 
-    def __init__(self, parent=None, widgimage=None, ifname='', ofname='./fig.png', help_msg=None, expand=False, fexmod=False, verb=False):
-        QtGui.QWidget.__init__(self, parent)
+        Frame.__init__(self, parent, mlw=1)
+        #QtGui.QWidget.__init__(self, parent)
+
         self.setWindowTitle('GUI of buttons')
-
-        self.setFrame()
 
         self.parent      = parent
         self.ifname      = ifname
@@ -171,7 +157,6 @@ class PlotImgSpeButtons (QtGui.QWidget) :
         self.hbox.addWidget(self.but_quit)
         self.hbox.addWidget(self.but_more)
         self.setLayout(self.hbox)
-
         self.setPannel()
 
 
@@ -205,7 +190,7 @@ class PlotImgSpeButtons (QtGui.QWidget) :
         self.vbox.addStretch(1)
 
         self.setLayout(self.vbox)
-        self.setContentsMargins (QtCore.QMargins(0,-5,0,-5))
+        #self.setContentsMargins(QtCore.QMargins(0,-5,0,-5))
         self.setPannel()
 
 
@@ -225,7 +210,6 @@ class PlotImgSpeButtons (QtGui.QWidget) :
 
 
     def setPannel(self):
-
         self.but_quit.setVisible(False)
         self.but_elog.setVisible(False)
         #self.but_help.setVisible(False)
@@ -234,9 +218,9 @@ class PlotImgSpeButtons (QtGui.QWidget) :
         self.but_save.setVisible(self.is_expanded)
         self.guirange.setVisible(self.is_expanded)
         
-        height = 78 if self.is_expanded else 40
         #self.setMinimumHeight(height)
-        self.setFixedHeight(height)
+        #height = 78 if self.is_expanded else 40
+        #self.setFixedHeight(height)
 
 
     def setGridLayout(self):
@@ -271,18 +255,8 @@ class PlotImgSpeButtons (QtGui.QWidget) :
         self.edi_nbins.setToolTip('Edit the number of bins\nfor spectrum [1-1000]')
 
 
-    def setFrame(self):
-        self.frame = QtGui.QFrame(self)
-        self.frame.setFrameStyle( QtGui.QFrame.Box | QtGui.QFrame.Sunken ) #Box, Panel | Sunken, Raised 
-        self.frame.setLineWidth(0)
-        self.frame.setMidLineWidth(1)
-        self.frame.setGeometry(self.rect())
-        #self.frame.setVisible(False)
-
-
-    def resizeEvent(self, e):
+    #def resizeEvent(self, e):
         #print 'resizeEvent' 
-        self.frame.setGeometry(self.rect())
         #print 'PlotImgSpeButtons resizeEvent: %s' % str(self.size())
 
 
@@ -376,7 +350,6 @@ class PlotImgSpeButtons (QtGui.QWidget) :
                                            y_is_flip   = self.widgimage.y_is_flip)
 
 
-
     def on_but_diff(self):
         logger.info('on_but_diff', __name__ )
 
@@ -414,7 +387,6 @@ class PlotImgSpeButtons (QtGui.QWidget) :
             return
 
         self.widgimage.subtract_from_image_array(arr_sub)
-
 
 
     def on_but_save(self):
@@ -508,20 +480,11 @@ class PlotImgSpeButtons (QtGui.QWidget) :
         
 #-----------------------------
 
-def main():
-
+if __name__ == "__main__" :
     app = QtGui.QApplication(sys.argv)
-
-    w = PlotImgSpeButtons(None, is_expanded=True)
+    w = PlotImgSpeButtons(None, expand=True)
     w.move(QtCore.QPoint(50,50))
     w.show()
-
     app.exec_()
-        
-#-----------------------------
-#  In case someone decides to run this module
-#
-if __name__ == "__main__" :
-    main()
 
 #-----------------------------
