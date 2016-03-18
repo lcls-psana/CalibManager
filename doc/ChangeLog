@@ -11,6 +11,11 @@ Package author: Mikhail S. Dubrovin
 
 Please describe any modifications that you made to the package in the
 reverse time order.
+
+2016-03-17 Mikhail S. Dubrovin
+Tag: V00-02-01
+- FileNameManager - in path_hotpix_mask set name as peds-sta.txt
+
 2016-03-07 Mikhail S. Dubrovin
 Tag: V00-02-00
 - Significant code refactoring for many files (PSAS-6) 
