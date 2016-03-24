@@ -12,6 +12,10 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2016-03-24 Mikhail S. Dubrovin
+Tag: V00-02-02
+- NotificationDB - update server name to 'psdb-user' changed by Igor.
+
 2016-03-17 Mikhail S. Dubrovin
 Tag: V00-02-01
 - FileNameManager - in path_hotpix_mask set name as peds-sta.txt

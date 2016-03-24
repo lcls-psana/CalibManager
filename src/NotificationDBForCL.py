@@ -38,7 +38,6 @@ class NotificationDBForCL (NotificationDB):
     def __init__(self) :
         NotificationDB.__init__(self, table='calibrun')
 
-
 #------------------------------
 
 if __name__ == "__main__" :
@@ -47,6 +46,6 @@ if __name__ == "__main__" :
     main_test(ndb)
     ndb.close()
 
-    sys.exit ( 'End of test NotificationDBForCL' )
+    sys.exit('End of test NotificationDBForCL')
 
 #------------------------------

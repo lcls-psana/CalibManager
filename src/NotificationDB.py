@@ -39,7 +39,7 @@ class NotificationDB :
     """Is intended for submission of notification records in db
     """
 
-    def __init__(self, server='psdb', table='calibman') :
+    def __init__(self, server='psdb-user', table='calibman') :
         self.server = server
         self.table  = table
         self.db = _mysql.connect(self.server, cp.par02, cp.par01[7:3:-1].lower(), cp.par02)
@@ -167,7 +167,6 @@ class NotificationDB :
         print 'server = %s' % self.server
         print 'table  = %s' % self.table
 
-
 #------------------------------
 
 def test_notification_db(ndb, test_num):
@@ -239,6 +238,6 @@ if __name__ == "__main__" :
     main_test(ndb)
     ndb.close()
 
-    sys.exit ( 'End of test NotificationDB' )
+    sys.exit('End of test NotificationDB')
 
 #------------------------------
