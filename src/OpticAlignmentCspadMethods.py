@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines  as lines
 
 from optparse import OptionParser
+import GlobalUtils as gu
 
 #----------------------------------
 
@@ -531,7 +532,7 @@ class OpticAlignmentCspadMethods :
         txt = '# TITLE      Geometry parameters of %s' % self.det \
             + '\n# DATE_TIME  %s' % strftime('%Y-%m-%d %H:%M:%S %Z', localtime()) \
             + '\n# METROLOGY  %s' % self.fname \
-            + '\n# AUTHOR     %s' % os.environ['LOGNAME'] \
+            + '\n# AUTHOR     %s' % gu.get_login() \
             + '\n# EXPERIMENT %s' % self.exp \
             + '\n# DETECTOR   %s' % self.det \
             + '\n# CALIB_TYPE geometry' \
@@ -580,7 +581,6 @@ class OpticAlignmentCspadMethods :
             txt += '\n' 
         return txt
 
- 
 #----------------------------------
 def input_option_parser(dir_def, fname_def) :
 

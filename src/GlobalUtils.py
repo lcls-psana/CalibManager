@@ -25,6 +25,7 @@ __version__ = "$Revision$"
 import os
 import pwd
 import socket
+import getpass
 #import time
 from time import localtime, gmtime, strftime, clock, time, sleep
 #from datetime import datetime
@@ -598,12 +599,18 @@ def get_cwd() :
     return os.getcwd()
 
 def get_hostname() :
+    #return os.uname()[1]
     return socket.gethostname()
  
 def get_enviroment(env='USER') :
     """Returns the value of specified by string name environment variable
     """
     return os.environ[env]
+
+def get_login() :
+    """Returns login name
+    """
+    return getpass.getuser()
 
 #----------------------------------
 
@@ -1036,7 +1043,7 @@ def ready_to_start(check_bits=0777, fatal_bits=0777) :
             return False
 
     if check_bits & 16 : 
-        user = get_enviroment(env='USER')
+        user = get_login() # get_enviroment(env='USER')
         if user in ('amoopr', 'cxiopr', 'diaopr', 'mecopr', 'mfxopr', 'mobopr', 'monopr') :
             print 'WARNING:  Account "%s" may not have permission to write files in the calib directory.' % user
             print 'SOLUTION: Run this application under account of user - member of experimental group.'

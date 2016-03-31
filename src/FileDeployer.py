@@ -12,7 +12,7 @@ __version__ = "$Revision$"
 #import sys
 import os
 import stat
-import socket
+#import socket
 
 from ConfigParametersForApp import cp
 from   Logger               import logger
@@ -189,10 +189,9 @@ class FileDeployer :
         exp_name       = cp.exp_name.value()
         str_run_number = cp.str_run_number.value()
 
-        user   = gu.get_enviroment(env='USER')
-        login  = gu.get_enviroment(env='LOGNAME')
-        #host   = gu.get_enviroment(env='HOSTNAME')
-        host   = socket.gethostname()
+        user   = gu.get_login()
+        login  = gu.get_login()
+        host   = gu.get_hostname()
         tstamp = gu.get_current_local_time_stamp(fmt='%Y-%m-%dT%H:%M:%S  zone:%Z')
 
         cmd_cp, path_inp, path_out = cmd.split() 
@@ -238,9 +237,9 @@ class FileDeployer :
         fname_history  = cp.fname_history.value()
         if fname_history == '' : return
 
-        user   = gu.get_enviroment(env='USER')
-        login  = gu.get_enviroment(env='LOGNAME')
-        host   = socket.gethostname()
+        user   = gu.get_login()
+        login  = gu.get_login()
+        host   = gu.get_hostname()
         tstamp = gu.get_current_local_time_stamp(fmt='%Y-%m-%dT%H:%M:%S  zone:%Z')
 
         cmd_rm, path = cmd.split() 

@@ -137,8 +137,11 @@ class CommandLineCalib() :
         self.scan_events = cp.bat_dark_scan.value()  if self.opts['scan_events'] is None else self.opts['scan_events']
         self.skip_events = cp.bat_dark_start.value() if self.opts['skip_events'] is None else self.opts['skip_events']
         self.num_events  = cp.bat_dark_end.value() - cp.bat_dark_start.value() if self.opts['num_events'] is None else self.opts['num_events']
+        self.thr_int_min = cp.mask_min_thr.value() if self.opts['thr_int_min'] is None else self.opts['thr_int_min']
+        self.thr_int_max = cp.mask_max_thr.value() if self.opts['thr_int_max'] is None else self.opts['thr_int_max']
         self.thr_rms_min = cp.mask_rms_thr_min.value() if self.opts['thr_rms_min'] is None else self.opts['thr_rms_min']
         self.thr_rms     = cp.mask_rms_thr.value() if self.opts['thr_rms'] is None else self.opts['thr_rms']
+
         self.workdir     = cp.dir_work.value()  if self.opts['workdir'] is None else self.opts['workdir']
 	#self.queue       = cp.bat_queue.value() if self.opts['queue'] is None else self.opts['queue']
 	self.queue       = self.opts['queue']
@@ -168,6 +171,8 @@ class CommandLineCalib() :
         cp.bat_dark_scan   .setValue(self.scan_events)
         cp.bat_dark_start  .setValue(self.skip_events)
         cp.bat_dark_end    .setValue(self.num_events+self.skip_events)
+        cp.mask_min_thr    .setValue(self.thr_int_min)
+        cp.mask_max_thr    .setValue(self.thr_int_max)
         cp.mask_rms_thr_min.setValue(self.thr_rms_min)
         cp.mask_rms_thr    .setValue(self.thr_rms)
 	cp.det_name        .setValue(self.det_name)
@@ -195,6 +200,8 @@ class CommandLineCalib() :
         + '\n     skip_events   : %d' % self.skip_events\
         + '\n     scan_events   : %d' % self.scan_events\
         + '\n     timeout_sec   : %d' % self.timeout_sec\
+        + '\n     thr_int_min   : %f' % self.thr_int_min\
+        + '\n     thr_int_max   : %f' % self.thr_int_max\
         + '\n     thr_rms_min   : %f' % self.thr_rms_min\
         + '\n     thr_rms       : %f' % self.thr_rms\
         + '\n     process       : %s' % self.process\

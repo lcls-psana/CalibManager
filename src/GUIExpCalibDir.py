@@ -20,6 +20,7 @@ from ConfigParametersForApp import cp
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
 from Logger                 import logger
+from GUIPopupSelectExp      import select_experiment_v3
 
 #------------------------------
 
@@ -162,7 +163,8 @@ class GUIExpCalibDir(QtGui.QWidget) :
         #print 'dir =', dir
         #if self.list_of_exp is None : self.list_of_exp=sorted(os.listdir(dir))
         self.list_of_exp=sorted(os.listdir(dir))
-        item_selected = gu.selectFromListInPopupMenu(self.list_of_exp)
+        #item_selected = gu.selectFromListInPopupMenu(self.list_of_exp)
+        item_selected = select_experiment_v3(self.butExp, self.list_of_exp)
         if item_selected is None : return          # selection is cancelled
         #if item_selected == self.exp_name_src.value() : return # selected the same item 
 

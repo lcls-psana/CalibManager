@@ -74,7 +74,7 @@ class NotificationDB :
         info_dict['date'] = date
         info_dict['time'] = time
         info_dict['zone'] = zone
-        info_dict['user'] = gu.get_enviroment(env='LOGNAME')
+        info_dict['user'] = gu.get_login()
         info_dict['host'] = gu.get_hostname()
         info_dict['cwd']  = gu.get_cwd()
         info_dict['exp']  = cp.exp_name.value()
@@ -127,7 +127,7 @@ class NotificationDB :
 
 
     def is_permitted(self) :
-        return True if gu.get_enviroment(env='LOGNAME') == cp.par02 else False
+        return True if gu.get_login() == cp.par02 else False
 
 
     def msg_about_permission(self) :
