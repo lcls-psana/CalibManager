@@ -83,7 +83,7 @@ def proc_stat(weights, bins) :
     center = np.array([0.5*(bins[i] + bins[i+1]) for i,w in enumerate(weights)])
 
     sum_w  = weights.sum()
-    if sum_w == 0 : return  0, 0, 0, 0, 0, 0, 0, 0
+    if sum_w == 0 : return  0, 0, 0, 0, 0, 0, 0, 0, 0
     
     sum_w2 = (weights*weights).sum()
     neff   = sum_w*sum_w/sum_w2
