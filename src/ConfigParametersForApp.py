@@ -363,7 +363,7 @@ class ConfigParametersForApp(ConfigParameters) :
     
         self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', \
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000', \
-                               'OrcaFl40', 'Epix', 'Epix10k', 'Epix100a', 'Fccd960', 'Andor', 'DualAndor', 'Acqiris']
+                               'OrcaFl40', 'Epix100a', 'Fccd960', 'Andor', 'DualAndor', 'Acqiris']
 
         self.list_of_dets_lower = [det.lower() for det in self.list_of_dets]
 
@@ -377,8 +377,6 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::FrameV',
                                     'Camera::FrameV',
                                     'Camera::FrameV',
-                                    'Epix::ElementV',
-                                    'Epix::ElementV',
                                     'Epix::ElementV',
                                     'Camera::FrameV',
                                     'Andor::FrameV',
@@ -397,8 +395,6 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::CalibV1',
                                     'Camera::CalibV1',
                                     'Camera::CalibV1',
-                                    'Epix::CalibV1',
-                                    'Epix10k::CalibV1',
                                     'Epix100a::CalibV1',
                                     'Camera::CalibV1',
                                     'Andor::CalibV1',
@@ -410,8 +406,6 @@ class ConfigParametersForApp(ConfigParameters) :
 #------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
-                           (False, False ,'bool'), \
-                           (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -562,8 +556,6 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_camera
                                                                      ,self.const_types_camera
                                                                      ,self.const_types_orcafl40
-                                                                     ,self.const_types_epix
-                                                                     ,self.const_types_epix
                                                                      ,self.const_types_epix
                                                                      ,self.const_types_fccd960
                                                                      ,self.const_types_andor
@@ -757,8 +749,6 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_opal4000
                                                                  ,self.srcs_opal8000
                                                                  ,self.srcs_orcafl40
-                                                                 ,self.srcs_epix
-                                                                 ,self.srcs_epix10k
                                                                  ,self.srcs_epix100a
                                                                  ,self.srcs_fccd960
                                                                  ,self.srcs_andor
@@ -777,8 +767,6 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['OPAL4000V1']
                                                                        ,['OPAL8000V1']
                                                                        ,['ORCAFL40V1']
-                                                                       ,['EPIXV1']
-                                                                       ,['EPIX10KV1']
                                                                        ,['EPIX100AV1']
                                                                        ,['FCCD960V1']
                                                                        ,['ANDOR']

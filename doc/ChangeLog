@@ -12,6 +12,10 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2016-04-14 Mikhail S. Dubrovin
+Tag: V00-02-05
+- ConfigParametersForApp.py - Gabriella suggested to remove 'Epix' and 'Epix10k' from the list of detectors.
+
 2016-04-11 Mikhail S. Dubrovin
 Tag: V00-02-04
 - PlotImgSpeWidget.proc_stat - fix number of values in the returned tuple.
