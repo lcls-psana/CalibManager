@@ -12,6 +12,10 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2016-04-27 Mikhail S. Dubrovin
+Tag: V00-02-06
+- ConfigParametersForApp.py change mask_max_thr from 32000 to 16000
+
 2016-04-14 Mikhail S. Dubrovin
 Tag: V00-02-05
 - ConfigParametersForApp.py - Gabriella suggested to remove 'Epix' and 'Epix10k' from the list of detectors.
@@ -19,7 +23,7 @@ Tag: V00-02-05
 2016-04-11 Mikhail S. Dubrovin
 Tag: V00-02-04
 - PlotImgSpeWidget.proc_stat - fix number of values in the returned tuple.
-	
+
 2016-03-31 Mikhail S. Dubrovin
 Tag: V00-02-03
 - get rid of calls to get_enviroment(...)
@@ -46,7 +50,7 @@ Tag: V00-01-02
 - GlobalUtils.ready_to_start - add check for host and username validity.
 - ConfigFileGenerator.path_to_data_files - select event reader mode between :xtc and :smd
 - ConfigParametersForApp.py - add parameter smd_is_on
-	
+
 2016-02-11 Mikhail S. Dubrovin
 Tag: V00-01-01
 - ConfigFileGenerator.py - add self.add_cfg_module_peds_aver_andor3d
@@ -55,20 +59,20 @@ Tag: V00-01-01
 2015-10-06 Mikhail S. Dubrovin
 Tag: V00-01-00
 - ConfigParametersForApp.py - add MFX to the list of instruments.
-	
+
 2015-10-06 Christopher O'Grady
 Tag: V00-00-99
 - Remove restriction on using calibman for 'tut' expts (e.g. xpptut15)
-	
+
 2015-10-01 Mikhail S. Dubrovin
 Tag: V00-00-98
 - ConfigParametersForApp.py - add queues psnehhiprioq (default), psfehhiprioq (PSAS-6)
-	
+
 2015-08-07 Mikhail S. Dubrovin
 Tag: V00-00-97
 - ConfigParametersForApp.py - add type pixel_bkgd and pixel_mask in the list of types for all detectors (PSAS-6)
 - GUIFileManagerSingleControl.py - make persistent path to source file.
-	
+
 2015-07-02 Mikhail S. Dubrovin
 Tag: V00-00-96
 - Improve ROI Mask GUI performance (PSAS-6)
@@ -77,7 +81,7 @@ Tag: V00-00-96
     - use cp parameters for med
     - set tooltips for all fields
     - add gu.confirm_or_cancel_dialog_box befroe file selection dialog to reset file name to empty 
-      for np.once()   
+      for np.once()
   - ConfigParametersForApp - add 4 pars for for med - mask editor command line launched in GUIMaskEditor
   - GlobalUtils.load_textfile() - add loading text from *.npy file for GUIFileBrowser.py
 
@@ -92,19 +96,19 @@ Tag: V00-00-94
 2015-05-19 Mikhail S. Dubrovin
 Tag: V00-00-93
 - CommandLineCalib.py - fix bug timeout_sec -> self.timeout_sec (PSAS-6)
-	
+
 2015-05-18 Mikhail S. Dubrovin
 Tag: V00-00-92
-- add parameter cp.job_timeout_sec for calibrun and its configuration in GUIConfigPars (PSAS-6) 
-	
+- add parameter cp.job_timeout_sec for calibrun and its configuration in GUIConfigPars (PSAS-6)
+
 2015-05-13 Mikhail S. Dubrovin
 Tag: V00-00-91
 - PlotImgSpeWidget.py - add number of entries to histogram info.
-	
+
 2015-05-13 Mikhail S. Dubrovin
 Tag: V00-00-90
-- Save Princeton calib files WITH metadata, modified: ConfigFileGenerator.py and psana-module-peds-aver-princeton.cfg (PSAS-6) 
-	
+- Save Princeton calib files WITH metadata, modified: ConfigFileGenerator.py and psana-module-peds-aver-princeton.cfg (PSAS-6)
+
 2015-05-04 Mikhail S. Dubrovin
 Tag: V00-00-89
 - add parameter cp.mask_rms_thr_min and propagate it in calibman/calibrun code along with cp.mask_rms_thr (PSAS-6) 
@@ -145,7 +149,7 @@ Tag: V00-00-84
     - ConfigParametersForApp - add parameter bat_dark_sele
     - GUIConfigPars - add editable field for cp.bat_dark_sele
     - ConfigFileGenerator - add filling of the cfg file for module ImgAlgos.EventCodeFilter
-	
+
 2015-03-10 Mikhail S. Dubrovin
 Tag: V00-00-83
 - app/calibrun, CommandLineCalib - add optional parameter -m - number of events to scan data and search for selected detector(s) (PSAS-6)
@@ -155,27 +159,27 @@ Tag: V00-00-82
 - Add dark rate calibration support for Andor camera (PSAS-6, PSAS-121)
 	- modify ConfigParametersForApp, ConfigFileGenerator, RegDBUtils
 	- add data/scripts/psana-module-peds-aver-andor.cfg
-	
+
 2015-01-22 Mikhail S. Dubrovin
 Tag: V00-00-81
 - ConfigParametersForApp.py - get default example files from /reg/g/psdm/detector/alignment/cspad/... (PSAS-10)
-	
+
 2015-01-20 Mikhail S. Dubrovin
 Tag: V00-00-80
 - ConfigParametersForApp.py - change list of queues - set psnehprioq as default (PSAS-6)
-	
+
 2015-01-16 Mikhail S. Dubrovin
 Tag: V00-00-79
-- GUIMaskEditor - re-implement in GUI algorithm of the command-line (roicon) mask processing PSAS-6, PSAS-10, PSAS-11 
-	
+- GUIMaskEditor - re-implement in GUI algorithm of the command-line (roicon) mask processing PSAS-6, PSAS-10, PSAS-11
+
 2015-01-14 Mikhail S. Dubrovin
 Tag: V00-00-78
 - GUIDarkList - protection against creation of the list of dark files for tutorial directories like xpptut13 (PSAS-6).
 app/roicon - Use new algorithm to generate ndarray for mask: [mask_roi[r,c] for r,c in zip(iX, iY)] (PSAS-10)
-	
+
 2015-01-13 Mikhail S. Dubrovin
 Tag: V00-00-77
-- app/roicon - extend I/O to work with *.npy files (PSAS-10) 
+- app/roicon - extend I/O to work with *.npy files (PSAS-10)
 
 2015-01-06 Mikhail S. Dubrovin
 Tag: V00-00-76
@@ -184,7 +188,7 @@ Tag: V00-00-76
 2014-12-11 Mikhail S. Dubrovin
 Tag: V00-00-75
 - add Frame.py, re-factoring GUIHelp.py (PSAS-6)
-	
+
 2014-11-24 Mikhail S. Dubrovin
 Tag: V00-00-74
 - add app/roicon - polishing command line interface, add craetion of image from file with ndarray (PSAS-10)
@@ -200,11 +204,11 @@ Tag: V00-00-72
 2014-11-11 Mikhail S. Dubrovin
 Tag: V00-00-71
 - FileDeployer.py, ConfigFileGenerator.py, BatchLogScanParser.py - fix problem with generation of list of calib types (PSAS-6)
-	
+
 2014-11-10 Mikhail S. Dubrovin
 Tag: V00-00-70
 - data/scripts/psana-module-peds-aver-camera.cfg, ConfigFileGenerator.py - for Fccd960 use outtype='int' to account for gain bits (PSAS-44)
-	
+
 2014-10-05 Mikhail S. Dubrovin
 Tag: V00-00-69
 - ConfigParametersForApp - support for Epix100a: add 'geometry', update default list of sources (PSAS-7, PSAS-11)
@@ -213,7 +217,7 @@ Tag: V00-00-69
 2014-10-05 Mikhail S. Dubrovin
 Tag: V00-00-68
 - BatchLogScanParser, ConfigParametersForApp, FileDeployer.py - use calibtypes from config pars in stead of evaluation from source (PSAS-6)
-	
+
 2014-10-03 Mikhail S. Dubrovin
 Tag: V00-00-67
 - ConfigParametersForApp, ConfigFileGenerator add support for Epix100a (see PSAS-6, PSAS-7)
@@ -221,7 +225,7 @@ Tag: V00-00-67
 2014-10-24 Mikhail S. Dubrovin
 Tag: V00-00-66
 - ConfigParametersForApp.py, GUIDarkListItem.py - switch back to usage of unicode chars for shrinc/expand buttons
-	
+
 2014-10-16 Mikhail S. Dubrovin
 Tag: V00-00-65
 - PlotImgSpeWidget.py - print image intensity along with coursor coordinates in coursor motion
@@ -230,7 +234,7 @@ Tag: V00-00-65
 Tag: V00-00-64
 - OpticAlignmentCspad* - add in all output geometry files the line with detector position relative to IP
 - ConfigParametersForApp, ConfigFileGenerator add support for Fccd960
-	
+
 2014-10-03 Mikhail S. Dubrovin
 Tag: V00-00-63
 - in OpticAlignmentCspad*.py - add option parser for manual processing of metrology files

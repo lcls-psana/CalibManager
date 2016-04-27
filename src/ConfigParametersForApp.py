@@ -320,7 +320,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.mask_rms_thr_min  = self.declareParameter( name='MASK_HOT_PIX_MIN_THR_RMS',  val_def=    0,  type='float' )
         self.mask_rms_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_RMS',  val_def=    0,  type='float' )
         self.mask_min_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MIN',  val_def=    1,  type='float' )
-        self.mask_max_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MAX',  val_def=32000,  type='float' )
+        self.mask_max_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MAX',  val_def=16000,  type='float' )
         self.mask_hot_is_used  = self.declareParameter( name='MASK_HOT_PIX_IS_USED',      val_def= True,  type='bool'  )
 
         # For batch jobs
