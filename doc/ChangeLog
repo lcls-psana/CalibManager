@@ -12,6 +12,19 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the
 reverse time order.
 
+2016-05-17 Mikhail S. Dubrovin
+Tag: V00-02-07
+- Add support for common mode parameters. Currently implemented in Detector/app/det_ndarr_raw_proc for PNCCD only
+M       src/BatchJobPedestals.py
+M       src/CommandLineCalib.py
+M       src/ConfigParametersForApp.py
+M       src/FileDeployer.py
+M       src/FileNameManager.py
+M       src/GUIConfig.py
+M       src/GUIConfigPars.py
+M       src/GUIDarkMoreOpts.py
+M       src/GUIFileBrowser.py
+
 2016-04-27 Mikhail S. Dubrovin
 Tag: V00-02-06
 - ConfigParametersForApp.py change mask_max_thr from 32000 to 16000

@@ -248,7 +248,10 @@ class FileNameManager :
 
     def path_hotpix_mask(self) :
         return self.path_prefix_dark() + 'peds-sta.txt'
-        #return self.path_prefix_dark() + 'mask-hot-thr-%.2fADU.txt' % (cp.mask_rms_thr.value())
+
+
+    def path_peds_cmod(self) :
+        return self.path_prefix_dark() + 'peds-cmo.txt'
 
 
     def path_peds_ave_plot(self) :

@@ -39,7 +39,10 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_rms(), 'pixel_rms', str_run_range)
 
     if cp.dark_deploy_hotpix.value() :
-        list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_hotpix_mask(), 'pixel_status', str_run_range)
+      list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_hotpix_mask(), 'pixel_status', str_run_range)
+
+    if cp.dark_deploy_cmod.value() :
+      list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_cmod(), 'common_mode', str_run_range)
 
     return list_of_deploy_commands, list_of_sources
     
@@ -56,6 +59,7 @@ def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode=
 
 def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_confirm=True):
     """Deploys the calibration file(s)"""
+
     list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode)
     msg = 'Deploy calibration file(s):'
 

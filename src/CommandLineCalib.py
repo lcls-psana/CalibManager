@@ -347,7 +347,8 @@ class CommandLineCalib() :
         return fnm.get_list_of_files_peds() \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_of_srcs) \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_of_srcs) \
-             + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs)
+             + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs) \
+             + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(),   lst_of_srcs) 
 
 
     def print_list_of_types_and_sources_from_xtc(self) :

@@ -179,7 +179,7 @@ class GUIFileBrowser(QtGui.QWidget) :
 
             self.setListOfFiles(self.list_of_files[1:])
             self.box_file.setCurrentIndex( len(self.list_of_files)-1 )
-            self.setStatus(0, 'Status: enjoy browsing selected file...')
+            self.setStatus(0, 'Status: browsing selected file')
 
  
     def onBox(self):

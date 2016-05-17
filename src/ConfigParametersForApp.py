@@ -278,6 +278,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.dark_list_show_runs  = self.declareParameter( name='DARK_LIST_SHOW_RUNS', val_def=self.list_of_show_runs[0], type='str' )
         self.dark_list_show_dets  = self.declareParameter( name='DARK_LIST_SHOW_DETS', val_def=self.list_of_show_dets[0], type='str' )
         self.dark_deploy_hotpix   = self.declareParameter( name='DARK_DEPLOY_HOTPIX',  val_def=True,                      type='bool')
+        self.dark_deploy_cmod     = self.declareParameter( name='DARK_DEPLOY_CMODE',   val_def=True,                      type='bool')
         self.dark_list_run_min    = self.declareParameter( name='DARK_LIST_RUN_MIN',   val_def=1,      type='int' )
         self.dark_list_run_max    = self.declareParameter( name='DARK_LIST_RUN_MAX',   val_def=10,     type='int' )
 

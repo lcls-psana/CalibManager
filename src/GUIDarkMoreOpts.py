@@ -281,12 +281,13 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
         lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors()
         return gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_of_srcs) \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_of_srcs) \
-             + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs)
+             + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs) \
+             + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(),   lst_of_srcs)
 
 
     def get_list_of_files_peds_view(self) :
         return fnm.get_list_of_files_peds_view() \
-             + self.get_list_of_files_peds_for_plot()
+             + self.get_list_of_files_peds_for_plot() \
 
 
     def on_but_view(self):
@@ -326,6 +327,11 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
                 fname = gu.selectFromListInPopupMenu(list_of_fnames)
 
             if fname is None or fname == '' : return
+
+            if not os.path.exists(fname) :
+                msg = 'Selected file: %s does not exist - nothing to plot...' % fname
+                logger.info(msg, __name__)
+                return
 
             msg = 'Selected file to plot: %s' % fname
             logger.info(msg, __name__)

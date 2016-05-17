@@ -54,9 +54,9 @@ class GUIConfigPars(Frame) :
         self.lab_dark_end   = QtGui.QLabel('end:') 
         self.lab_dark_scan  = QtGui.QLabel('scan:') 
         self.lab_timeout    = QtGui.QLabel('t-out, sec:') 
-        self.lab_rms_thr_min= QtGui.QLabel('Threshold RMS MIN, ADU:') 
+        self.lab_rms_thr_min= QtGui.QLabel('Thr. RMS MIN, ADU') 
         self.lab_rms_thr    = QtGui.QLabel('MAX:') 
-        self.lab_min_thr    = QtGui.QLabel('Threshold MIN, ADU:') 
+        self.lab_min_thr    = QtGui.QLabel('Thr. MIN, ADU') 
         self.lab_max_thr    = QtGui.QLabel('MAX:') 
         self.lab_dark_sele  = QtGui.QLabel('Event code:') 
 
@@ -84,8 +84,11 @@ class GUIConfigPars(Frame) :
         self.edi_max_thr    .setValidator(QtGui.QDoubleValidator(0,65000,3,self))
         #self.edi_events.setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[0-9]\\d{0,3}|end$"),self))
 
-        self.cbx_deploy_hotpix = QtGui.QCheckBox('Deploy hotpix mask')
+        self.cbx_deploy_hotpix = QtGui.QCheckBox('Deploy pixel_status')
         self.cbx_deploy_hotpix.setChecked(cp.dark_deploy_hotpix.value())
+
+        self.cbx_deploy_cmod = QtGui.QCheckBox('Deploy common_mode')
+        self.cbx_deploy_cmod.setChecked(cp.dark_deploy_cmod.value())
 
         self.cbx_smd_or_xtc = QtGui.QCheckBox('smd is on')
         self.cbx_smd_or_xtc.setChecked(cp.smd_is_on.value())
@@ -115,15 +118,15 @@ class GUIConfigPars(Frame) :
         self.grid.addWidget(self.edi_rms_thr_min,   self.grid_row+6, 1, 1, 4)
         self.grid.addWidget(self.lab_rms_thr,       self.grid_row+6, 3)
         self.grid.addWidget(self.edi_rms_thr,       self.grid_row+6, 4, 1, 4)
-        self.grid.addWidget(self.cbx_deploy_hotpix, self.grid_row+6, 5, 1, 2)
-        self.grid.addWidget(self.cbx_smd_or_xtc,    self.grid_row+6, 7, 1, 2)
+        self.grid.addWidget(self.cbx_smd_or_xtc,    self.grid_row+6, 6, 1, 3)
         self.grid.addWidget(self.lab_min_thr,       self.grid_row+7, 0)
         self.grid.addWidget(self.edi_min_thr,       self.grid_row+7, 1, 1, 2)
         self.grid.addWidget(self.lab_max_thr,       self.grid_row+7, 3)
         self.grid.addWidget(self.edi_max_thr,       self.grid_row+7, 4, 1, 2)
-
         self.grid.addWidget(self.lab_dark_sele,     self.grid_row+7, 5)
         self.grid.addWidget(self.edi_dark_sele,     self.grid_row+7, 6)
+        self.grid.addWidget(self.cbx_deploy_hotpix, self.grid_row+8, 0, 1, 2)
+        self.grid.addWidget(self.cbx_deploy_cmod,   self.grid_row+8, 3, 1, 4)
 
         #self.setLayout(self.grid)
 
@@ -146,6 +149,7 @@ class GUIConfigPars(Frame) :
         self.connect(self.edi_min_thr,      QtCore.SIGNAL('editingFinished()'),  self.onEdiMinThr)
         self.connect(self.edi_max_thr,      QtCore.SIGNAL('editingFinished()'),  self.onEdiMaxThr)
         self.connect(self.cbx_deploy_hotpix,QtCore.SIGNAL('stateChanged(int)'),  self.on_cbx_deploy_hotpix) 
+        self.connect(self.cbx_deploy_cmod,  QtCore.SIGNAL('stateChanged(int)'),  self.on_cbx_deploy_cmod) 
         self.connect(self.cbx_smd_or_xtc,   QtCore.SIGNAL('stateChanged(int)'),  self.on_cbx_smd_or_xtc) 
         self.connect(self.but_show_vers,    QtCore.SIGNAL('clicked()'),          self.onButShowVers)
         self.connect(self.but_lsf_status,   QtCore.SIGNAL('clicked()'),          self.onButLsfStatus)
@@ -165,12 +169,13 @@ class GUIConfigPars(Frame) :
         self.edi_dark_sele    .setToolTip('Selector event code;\n0=off, +N=select, -N=discard')
         self.cbx_smd_or_xtc   .setToolTip('Switch between .smd and .xtc modes')
         self.cbx_deploy_hotpix.setToolTip('Deploy or not pixel_status constants')
+        self.cbx_deploy_cmod  .setToolTip('Deploy or not common_mode constants (for PNCCD only)')
 
 
     def setStyle(self):
         self.                 setStyleSheet (cp.styleBkgd)
-        self.setMinimumSize(500,240)
-        self.setMaximumSize(700,240)
+        self.setMinimumSize(500,300)
+        self.setMaximumSize(700,300)
 
         #self.tit_dir_work     .setStyleSheet(cp.styleTitle)
         self.edi_dir_work     .setStyleSheet(cp.styleEditInfo)       
@@ -190,6 +195,7 @@ class GUIConfigPars(Frame) :
         self.lab_min_thr      .setStyleSheet(cp.styleLabel)
         self.lab_max_thr      .setStyleSheet(cp.styleLabel)
         self.cbx_deploy_hotpix.setStyleSheet(cp.styleLabel)
+        self.cbx_deploy_cmod  .setStyleSheet(cp.styleLabel)
         self.cbx_smd_or_xtc   .setStyleSheet(cp.styleLabel)
         self.but_show_vers    .setStyleSheet(cp.styleButton) 
         self.but_lsf_status   .setStyleSheet(cp.styleButton) 
@@ -380,6 +386,10 @@ class GUIConfigPars(Frame) :
 
     def on_cbx_deploy_hotpix(self):
         self.on_cbx(cp.dark_deploy_hotpix, self.cbx_deploy_hotpix)
+
+
+    def on_cbx_deploy_cmod(self):
+        self.on_cbx(cp.dark_deploy_cmod, self.cbx_deploy_cmod)
 
 #-----------------------------
 

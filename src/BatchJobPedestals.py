@@ -402,10 +402,11 @@ class BatchJobPedestals(BatchJob) :
 
     def get_list_of_files_peds_aver(self) :
         self.exportLocalPars() # export run_number to cp.str_run_number        
-        lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors ()
+        lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors()
         list_of_fnames = fnm.get_list_of_files_peds_aver() \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(), lst_of_srcs) \
-             + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(), lst_of_srcs)
+             + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(), lst_of_srcs) 
+             #+ gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(), lst_of_srcs)
 
         return list_of_fnames
 
