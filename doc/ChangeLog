@@ -9,8 +9,14 @@
 
 Package author: Mikhail S. Dubrovin
 
-Please describe any modifications that you made to the package in the
-reverse time order.
+Please describe any modifications that you made to the package in the reverse time order.
+
+#-----------------------------
+
+2016-06-13 Mikhail S. Dubrovin
+Tag: V00-02-08
+- ConfigParametersForApp - fix psfehhiprioq name in the list
+- ConfigParameters - code style cosmetic improvements
 
 2016-05-17 Mikhail S. Dubrovin
 Tag: V00-02-07

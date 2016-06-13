@@ -11,7 +11,7 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@see RelatedModule
+@see :py:class:`CalibManager.ConfigParametersForApp`
 
 @version $Id$
 
@@ -22,7 +22,7 @@ __version__ = "$Revision$"
 #--------------------------------
 
 import os
-from Logger import logger
+from CalibManager.Logger import logger
 
 #------------------------------
 
@@ -144,7 +144,7 @@ class Parameter :
 
 
     def strParInfo(self) :
-        s = 'Par: %s %s %s %s' % ( self.name().ljust(32), str(self.value()).ljust(32), self.type().ljust(8), str(self.index()).ljust(8) )
+        s = 'Par: %s %s %s %s' % (self.name().ljust(32), str(self.value()).ljust(32), self.type().ljust(8), str(self.index()).ljust(8))
         return s
 
 
@@ -160,16 +160,15 @@ class ConfigParameters :
     """Is intended as a storage for configuration parameters.
     """
 
-    name = 'ConfigParameters'
-
     dict_pars  = {} # Dictionary for all configuration parameters, containing pairs {<parameter-name>:<parameter-object>, ... } 
     dict_lists = {} # Dictionary for declared lists of configuration parameters:    {<list-name>:<list-of-parameters>, ...}
 
     def __init__(self, fname=None) :
         """Constructor.
-        - fname  the file name with configuration parameters,
-        if not specified then it will be set to the default value at declaration.
+           - fname - the file name with configuration parameters,
+           if not specified then it will be set to the default value at declaration.
         """
+        self.name = self.__class__.__name__
         self.fname_cp = 'confpars.txt'
 
 
@@ -189,7 +188,7 @@ class ConfigParameters :
             name = list_name + ':' + str(index)
             val, val_def, type = rec
 
-            #par = self.declareParameter( name, val, val_def, type, index )
+            #par = self.declareParameter(name, val, val_def, type, index)
             par = Parameter(name, val, val_def, type, index)
             list_of_pars.append(par)
             self.dict_pars.update({name:par})
@@ -244,7 +243,7 @@ class ConfigParameters :
         for par in self.dict_pars.values() :
             v = par.value()
             s = '%s %s\n' % (par.name().ljust(32), str(v))
-            f.write( s )
+            f.write(s)
         f.close() 
 
 
@@ -276,7 +275,7 @@ class ConfigParameters :
         for line in f :
             if len(line) == 1 : continue # line is empty
             fields = line.rstrip('\n').split(' ',1)
-            self.setParameterValueByName ( name=fields[0], str_val=fields[1].strip(' ') )
+            self.setParameterValueByName(name=fields[0], str_val=fields[1].strip(' '))
         f.close() 
 
 #------------------------------
