@@ -3,7 +3,6 @@
 #  $Id$
 #
 # Description:
-#  GUIFileManager...
 #------------------------------------------------------------------------
 
 """GUI wrapper for Single and Group file managers"""
@@ -69,7 +68,7 @@ class GUIFileManager(QtGui.QWidget) :
     def setStyle(self):
         self.          setStyleSheet(cp.styleBkgd)
         self.lab_title.setStyleSheet(cp.styleTitleBold)
-        self.lab_title .setAlignment(QtCore.Qt.AlignCenter)
+        self.lab_title.setAlignment(QtCore.Qt.AlignCenter)
         self.setMinimumSize(600,200)
         #self.lab_status.setVisible(False)
         self.lab_title.setVisible(False)

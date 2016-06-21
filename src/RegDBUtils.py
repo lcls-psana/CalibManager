@@ -3,8 +3,6 @@
 #  $Id$
 #
 # Description:
-#  Module RegDBUtils.py...
-#
 #------------------------------------------------------------------------
 
 """RegDB Global methods
@@ -294,7 +292,7 @@ if __name__ == "__main__" :
     #det_name = 'epix'
     #det_name = 'epix100a'
     #det_name = 'andor'
-    det_name = 'dualandor'
+    #det_name = 'dualandor'
     #det_name = 'epix10k'
     #det_name = 'princeton'
     #det_name = 'pnccd'
@@ -306,8 +304,11 @@ if __name__ == "__main__" :
     #det_name = 'orcafl40'
     #det_name = 'fccd960'
     #det_name = 'Acqiris'
-    print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
-    print_list_of_sources_for_det (det_name)
-    sys.exit ( "End of test" )
+
+    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd') :
+      print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
+      print_list_of_sources_for_det(det_name)
+
+    sys.exit('End of test')
 
 #------------------------------

@@ -5,30 +5,33 @@
 # Description:
 #------------------------------------------------------------------------
 
+"""GUI for data processing/imaging"""
+
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
+
 #import os
 
 from PyQt4 import QtGui, QtCore
 
 from ConfigParametersForApp import cp
-from GUIConfigPars          import GUIConfigPars
-from GUIConfigFile          import GUIConfigFile
 from Logger                 import logger
+from GUIDataAverage         import GUIDataAverage
+from GUIDataImage           import GUIDataImage
 
 #------------------------------
 
-class GUIConfig(QtGui.QWidget) :
-    """GUI with tabs for configuration management"""
+class GUIData(QtGui.QWidget) :
+    """GUI with tabs for data processing/imaging"""
 
     def __init__(self, parent=None) :
         QtGui.QWidget.__init__(self, parent)
         self.setGeometry(1, 1, 600, 200)
-        self.setWindowTitle('Files')
+        self.setWindowTitle('Data processing/imaging')
 
-        self.lab_title  = QtGui.QLabel     ('Configuration settings')
-        self.lab_status = QtGui.QLabel     ('Status: ')
+        self.lab_title  = QtGui.QLabel('Data processing/imaging')
+        self.lab_status = QtGui.QLabel('Status: ')
         self.but_close  = QtGui.QPushButton('&Close') 
         self.but_save   = QtGui.QPushButton('&Save') 
         self.but_show   = QtGui.QPushButton('Show &Image') 
@@ -39,10 +42,10 @@ class GUIConfig(QtGui.QWidget) :
         self.hboxB.addStretch(1)     
         self.hboxB.addWidget(self.but_close)
         self.hboxB.addWidget(self.but_save)
-        self.hboxB.addWidget(self.but_show )
+        self.hboxB.addWidget(self.but_show)
 
-        self.list_file_types = [ 'Parameters'
-                                ,'Configuration File'
+        self.list_tab_titles = ['Average'
+                               ,'Image'
                                ]
         self.makeTabBar()
         self.guiSelector()
@@ -57,46 +60,53 @@ class GUIConfig(QtGui.QWidget) :
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
 
-        self.connect( self.but_close, QtCore.SIGNAL('clicked()'), self.onClose )
-        self.connect( self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave )
-        self.connect( self.but_show,  QtCore.SIGNAL('clicked()'), self.onShow )
+        self.connect(self.but_close, QtCore.SIGNAL('clicked()'), self.onClose)
+        self.connect(self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave)
+        self.connect(self.but_show,  QtCore.SIGNAL('clicked()'), self.onShow)
 
         self.showToolTips()
         self.setStyle()
 
+        cp.guidata = self
+
 
     def showToolTips(self):
         #msg = 'Edit field'
-        self.but_close .setToolTip('Close this window.')
-        self.but_save  .setToolTip('Save all current configuration parameters.')
-        self.but_show  .setToolTip('Show ...')
+        self.but_close.setToolTip('Close this window.')
+        self.but_save .setToolTip('Save all current configuration parameters.')
+        self.but_show .setToolTip('Show ...')
 
 
     def setStyle(self):
-        self.          setStyleSheet (cp.styleBkgd)
-        self.but_close.setStyleSheet (cp.styleButton)
-        self.but_save .setStyleSheet (cp.styleButton)
-        self.but_show .setStyleSheet (cp.styleButton)
+        self.          setStyleSheet(cp.styleBkgd)
+        self.but_close.setStyleSheet(cp.styleButton)
+        self.but_save .setStyleSheet(cp.styleButton)
+        self.but_show .setStyleSheet(cp.styleButton)
 
-        self.lab_title.setStyleSheet (cp.styleTitleBold)
+        self.lab_title.setStyleSheet(cp.styleTitleBold)
         self.lab_title.setAlignment(QtCore.Qt.AlignCenter)
-        self.lab_title.setVisible(False)
-
-        self.setMinimumSize(600,360)
+        #self.setMinimumWidth (600)
+        #self.setMaximumWidth (700)
+        #self.setMinimumHeight(300)
+        #self.setMaximumHeight(400)
+        #self.setFixedWidth (700)
+        #self.setFixedHeight(330)
+        #self.setFixedSize(550,350)
+        #self.setFixedSize(600,360)
+        self.setMinimumSize(600,700)
 
         #self.lab_status.setVisible(False)
-        self.but_close .setVisible(False)
-        self.but_save  .setVisible(False)
-        self.but_show  .setVisible(False)
+        self.but_close.setVisible(False)
+        self.but_save .setVisible(False)
+        self.but_show .setVisible(False)
 
 
     def makeTabBar(self,mode=None) :
         #if mode is not None : self.tab_bar.close()
         self.tab_bar = QtGui.QTabBar()
 
-        #Uses self.list_file_types
-        self.ind_tab_0 = self.tab_bar.addTab( self.list_file_types[0] )
-        self.ind_tab_1 = self.tab_bar.addTab( self.list_file_types[1] )
+        self.ind_tab_0 = self.tab_bar.addTab(self.list_tab_titles[0])
+        self.ind_tab_1 = self.tab_bar.addTab(self.list_tab_titles[1])
 
         self.tab_bar.setTabTextColor(self.ind_tab_0, QtGui.QColor('magenta'))
         self.tab_bar.setTabTextColor(self.ind_tab_1, QtGui.QColor('magenta'))
@@ -104,17 +114,15 @@ class GUIConfig(QtGui.QWidget) :
 
         #self.tab_bar.setTabEnabled(1, False)
         #self.tab_bar.setTabEnabled(2, False)
-        #self.tab_bar.setTabEnabled(3, False)
-        #self.tab_bar.setTabEnabled(4, False)
         
         try    :
-            tab_index = self.list_file_types.index(cp.current_config_tab.value())
+            tab_index = self.list_tab_titles.index(cp.current_guidata_tab.value())
         except :
-            tab_index = 3
-            cp.current_config_tab.setValue(self.list_file_types[tab_index])
+            tab_index = 1
+            cp.current_guidata_tab.setValue(self.list_tab_titles[tab_index])
         self.tab_bar.setCurrentIndex(tab_index)
 
-        logger.debug(' make_tab_bar - set mode: ' + cp.current_config_tab.value(), __name__)
+        logger.debug(' make_tab_bar - set mode: ' + cp.current_guidata_tab.value(), __name__)
 
         self.connect(self.tab_bar, QtCore.SIGNAL('currentChanged(int)'), self.onTabBar)
 
@@ -127,18 +135,18 @@ class GUIConfig(QtGui.QWidget) :
         try    : del self.gui_win
         except : pass
 
-        if cp.current_config_tab.value() == self.list_file_types[0] :
-            self.gui_win = GUIConfigPars(self)
-            self.setStatus(0, 'Status: setting of configuration parameters')
-            self.gui_win.setFixedHeight(350)
+        if cp.current_guidata_tab.value() == self.list_tab_titles[0] :
+            #self.gui_win = QtGui.QTextEdit('Template 0')
+            self.gui_win = GUIDataAverage(self)
+            self.setStatus(0, 'Status: work on %s' % self.list_tab_titles[0])
+            self.gui_win.setFixedHeight(300)
             
-        if cp.current_config_tab.value() == self.list_file_types[1] :
-            self.gui_win = GUIConfigFile(self)
-            self.setStatus(0, 'Status: operations with configuration file')
-            self.gui_win.setFixedHeight(170)
+        if cp.current_guidata_tab.value() == self.list_tab_titles[1] :
+            self.gui_win = QtGui.QTextEdit('Template 1')
+            self.gui_win = GUIDataImage(self)
+            #self.setStatus(0, 'Status: work on %s' % self.list_tab_titles[1])
+            self.gui_win.setFixedHeight(300)
 
-        #self.gui_win.setFixedHeight(180)
-        #self.gui_win.setFixedHeight(600)
         self.hboxW.addWidget(self.gui_win)
         self.gui_win.setVisible(True)
 
@@ -146,7 +154,7 @@ class GUIConfig(QtGui.QWidget) :
     def onTabBar(self):
         tab_ind  = self.tab_bar.currentIndex()
         tab_name = str(self.tab_bar.tabText(tab_ind))
-        cp.current_config_tab.setValue( tab_name )
+        cp.current_guidata_tab.setValue(tab_name)
         logger.info(' ---> selected tab: ' + str(tab_ind) + ' - open GUI to work with: ' + tab_name, __name__)
         self.guiSelector()
 
@@ -173,8 +181,8 @@ class GUIConfig(QtGui.QWidget) :
     def closeEvent(self, event):
         logger.debug('closeEvent', __name__)
 
-        try    : cp.guimain.butFiles.setStyleSheet(cp.styleButton)
-        except : pass
+        #try    : cp.guimain.butFiles.setStyleSheet(cp.styleButton)
+        #except : pass
 
         try    : self.gui_win.close()
         except : pass
@@ -182,8 +190,10 @@ class GUIConfig(QtGui.QWidget) :
         try    : self.tab_bar.close()
         except : pass
         
-        try    : del cp.guifiles # GUIConfig
-        except : pass # silently ignore
+        #try    : del cp.guifiles # GUIData
+        #except : pass # silently ignore
+
+        cp.guidata = None
 
 
     def onClose(self):
@@ -193,7 +203,7 @@ class GUIConfig(QtGui.QWidget) :
 
     def onSave(self):
         logger.debug('onSave', __name__)
-        cp.saveParametersInFile( cp.fname_cp.value() )
+        cp.saveParametersInFile(cp.fname_cp.value())
 
 
     def onShow(self):
@@ -214,7 +224,7 @@ class GUIConfig(QtGui.QWidget) :
 if __name__ == "__main__" :
     import sys
     app = QtGui.QApplication(sys.argv)
-    widget = GUIConfig ()
+    widget = GUIData()
     widget.show()
     app.exec_()
 

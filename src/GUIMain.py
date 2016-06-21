@@ -4,7 +4,6 @@
 #  $Id$
 #
 # Description:
-#  GUIMain...
 #------------------------------------------------------------------------
 
 """Renders the main GUI for the CalibManager.
@@ -28,8 +27,8 @@ import time   # for sleep(sec)
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
-from GUILogger              import *
-from GUITabs                import *
+from GUILogger              import GUILogger
+from GUIMainTabs            import GUIMainTabs
 from GUIInsExpDirDet        import *
 from PackageVersions        import PackageVersions
 from NotificationDB         import *
@@ -65,7 +64,7 @@ class GUIMain(QtGui.QWidget) :
         self.resetColorIsSet = False
 
         #self.guitree  = GUICalibDirTree()
-        self.guitabs   = GUITabs(self) # QtGui.QTextEdit()
+        self.guitabs   = GUIMainTabs(self) # QtGui.QTextEdit()
         self.guilogger = GUILogger(show_buttons=False)
         self.guiinsexpdirdet = GUIInsExpDirDet(self)
 

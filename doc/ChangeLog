@@ -13,6 +13,24 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-06-21 Mikhail S. Dubrovin
+Tag: V00-02-09
+- Add control on three additional parameters in Detector.app.det_ndarr_raw_proc (PSAS-6)
+- a bunch of minor cosmetic/style changes
+M       src/BatchJobPedestals.py
+M       src/ConfigParametersForApp.py
+M       src/GUIConfig.py
+M       src/GUIConfigPars.py
+M       src/GUIFileManager.py
+M       src/GUIGeometry.py
+M       src/GUIMain.py
+- move GUITabs to GUIMainTabs
+- RegDBUtils.py - in test print detectors for a list of sources
+- Begin to add staff for calibrated data averaging, event brawser
+A       src/GUIData.py
+A       src/GUIDataAverage.py
+A       src/GUIDataImage.py
+
 2016-06-13 Mikhail S. Dubrovin
 Tag: V00-02-08
 - ConfigParametersForApp - fix psfehhiprioq name in the list

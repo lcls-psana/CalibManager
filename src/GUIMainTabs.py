@@ -3,7 +3,6 @@
 #  $Id$
 #
 # Description:
-#  Module GUITabs...
 #------------------------------------------------------------------------
 
 """GUI for tabs.
@@ -29,14 +28,16 @@ from ConfigParametersForApp import cp
 #from GUILogger            import *
 #from FileNameManager      import fnm
 from Logger               import logger
-from GUIConfig            import * 
-from GUIDark              import * 
-from GUIROIMask           import * 
-from GUIFileManager       import * 
-from GUIGeometry          import * 
+from GUIConfig            import * # GUIConfig
+from GUIDark              import GUIDark
+from GUIData              import GUIData 
+from GUIROIMask           import GUIROIMask
+from GUIFileManager       import GUIFileManager
+from GUIGeometry          import GUIGeometry 
+import GlobalUtils        as     gu
 
 #---------------------
-class GUITabs(QtGui.QWidget) :
+class GUIMainTabs(QtGui.QWidget) :
     """GUI for tabs support in GUIMain.
     """
     list_of_tabs = [ 'Dark'
@@ -45,6 +46,7 @@ class GUITabs(QtGui.QWidget) :
                     ,'File Manager'
                     ,'Configuration'
                     ]
+                    #,'Data'
                     #,'Gain'
 
     orientation = 'H'
@@ -52,7 +54,7 @@ class GUITabs(QtGui.QWidget) :
 
     def __init__(self, parent=None, app=None) :
 
-        self.name = 'GUITabs'
+        self.name = 'GUIMainTabs'
         self.myapp = app
         QtGui.QWidget.__init__(self, parent)
 
@@ -108,7 +110,10 @@ class GUITabs(QtGui.QWidget) :
 
         #len(self.list_of_tabs)
         for tab_name in self.list_of_tabs :
-            tab_ind = self.tab_bar.addTab( tab_name )
+            #===============================
+            #if tab_name == 'Data' : continue # DO NOT ADD THIS TAB
+            #===============================
+            tab_ind = self.tab_bar.addTab(tab_name)
             self.tab_bar.setTabTextColor(tab_ind, QtGui.QColor('blue')) #gray, red, grayblue
 
         if self.orientation == 'H' :
@@ -153,15 +158,17 @@ class GUITabs(QtGui.QWidget) :
             self.gui_win = GUIGeometry(self)
 
         elif cp.current_tab.value() == self.list_of_tabs[3] :
-            #self.gui_win = QtGui.QTextEdit('File manager is not implemented.')
             self.gui_win = GUIFileManager(self)
 
         elif cp.current_tab.value() == self.list_of_tabs[4] :
             self.gui_win = GUIConfig(self)
+
+        elif cp.current_tab.value() == self.list_of_tabs[5] :
+            self.gui_win = GUIData(self)
             #self.setStatus(0, 'Status: processing for data')
 
-        #elif cp.current_tab.value() == self.list_of_tabs[5] :
-        #    self.gui_win = QtGui.QTextEdit('') # Gain is not implemented.'
+        #elif cp.current_tab.value() == self.list_of_tabs[6] :
+        #    self.gui_win = QtGui.QTextEdit('is not implemented yet...') # Gain is not implemented.'
 
         self.hboxW.addWidget(self.gui_win)
         self.gui_win.setVisible(True)
@@ -170,7 +177,7 @@ class GUITabs(QtGui.QWidget) :
     def onTabBar(self):
         tab_ind  = self.tab_bar.currentIndex()
         tab_name = str(self.tab_bar.tabText(tab_ind))
-        cp.current_tab.setValue( tab_name )
+        cp.current_tab.setValue(tab_name)
         msg = 'Selected tab: %i - %s' % (tab_ind, tab_name)
         logger.info(msg, __name__)
         self.guiSelector()
@@ -208,7 +215,7 @@ class GUITabs(QtGui.QWidget) :
 if __name__ == "__main__" :
     import sys
     app = QtGui.QApplication(sys.argv)
-    ex  = GUITabs()
+    ex  = GUIMainTabs()
     ex.move(QtCore.QPoint(50,50))
     ex.show()
     app.exec_()

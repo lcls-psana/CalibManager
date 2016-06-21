@@ -3,7 +3,6 @@
 #  $Id$
 #
 # Description:
-#   ConfigParametersForApp
 #------------------------------------------------------------------------
 
 """ConfigParametersForApp - class supporting configuration parameters for specific application.
@@ -78,6 +77,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.guilogger         = None
         self.guimain           = None
         self.guidark           = None
+        self.guidata           = None
         self.guidarklist       = None
         self.guitabs           = None
         self.guistatus         = None
@@ -239,7 +239,7 @@ class ConfigParametersForApp(ConfigParameters) :
         # FileDeployer.py
         self.fname_history      = self.declareParameter( name='HISTORY_FILE_NAME', val_def='HISTORY',      type='str' )
 
-        # GUITabs.py
+        # GUIMainTabs.py
         self.current_tab    = self.declareParameter( name='CURRENT_TAB'      , val_def='Status',        type='str' )
 
         # GUIConfig.py
@@ -268,6 +268,9 @@ class ConfigParametersForApp(ConfigParameters) :
 
         # GUIDark.py
         self.dark_more_opts    = self.declareParameter( name='DARK_MORE_OPTIONS',     val_def=True,          type='bool')
+
+        # GUIData.py
+        self.current_guidata_tab = self.declareParameter( name='CURRENT_GUIDATA_TAB',    val_def='Average',     type='str' )
 
         # GUIDarkRunGo.py
         self.str_run_number    = self.declareParameter( name='STRING_RUN_NUMBER',     val_def='None',         type='str' )
@@ -323,6 +326,9 @@ class ConfigParametersForApp(ConfigParameters) :
         self.mask_min_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MIN',  val_def=    1,  type='float' )
         self.mask_max_thr      = self.declareParameter( name='MASK_HOT_PIX_ADU_THR_MAX',  val_def=16000,  type='float' )
         self.mask_hot_is_used  = self.declareParameter( name='MASK_HOT_PIX_IS_USED',      val_def= True,  type='bool'  )
+        self.mask_rms_nsiglo   = self.declareParameter( name='MASK_HOT_PIX_NSIG_LO',  val_def=5,    type='float' )
+        self.mask_rms_nsighi   = self.declareParameter( name='MASK_HOT_PIX_NSIG_HI',  val_def=6,    type='float' )
+        self.mask_rms_flomin   = self.declareParameter( name='MASK_HOT_PIX_FLOMIN',   val_def=0.01, type='float' )
 
         # For batch jobs
         self.bat_queue               = self.declareParameter( name='BATCH_QUEUE',                val_def=self.list_of_queues[0], type='str' )
@@ -816,6 +822,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.styleDefault   = ""
         #self.styleTitle  = "color: rgb(150, 160, 100);"
         self.styleBlue   = "color: rgb(100, 0, 150);"
+        self.styleBlueM  = "color: rgb(200, 0, 150);"
         self.styleBuriy  = "color: rgb(150, 100, 50);"
         self.styleRed    = "color: rgb(255, 0, 0);"
         self.styleGreen  = "color: rgb(0, 150, 0);"
@@ -823,7 +830,7 @@ class ConfigParametersForApp(ConfigParameters) :
 
         #self.styleBkgd         = self.styleGreenMy # styleYellowish
         self.styleBkgd         = self.styleDefault
-        self.styleTitle        = self.styleBuriy
+        self.styleTitle        = self.styleBlueM
         self.styleLabel        = self.styleBlue
         self.styleEdit         = self.styleWhite
         self.styleEditInfo     = self.styleBkgd # self.styleGreenish

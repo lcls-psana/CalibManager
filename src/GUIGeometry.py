@@ -3,7 +3,6 @@
 #  $Id$
 #
 # Description:
-#  GUIGeometry...
 #------------------------------------------------------------------------
 
 """GUI for geometry"""
@@ -85,7 +84,8 @@ class GUIGeometry(QtGui.QWidget) :
         self.but_show .setStyleSheet(cp.styleButton)
 
         self.lab_title.setStyleSheet (cp.styleTitleBold)
-        self.lab_title .setAlignment(QtCore.Qt.AlignCenter)
+        self.lab_title.setAlignment(QtCore.Qt.AlignCenter)
+        self.lab_title.setVisible(False)
         #self.setMinimumWidth (600)
         #self.setMaximumWidth (700)
         #self.setMinimumHeight(300)
