@@ -38,7 +38,7 @@ from NotificationDB         import *
 class GUIMain(QtGui.QWidget) :
     """Main GUI for calibration management project.
     """
-    def __init__(self, parent=None, app=None) :
+    def __init__(self, parent=None, app=None, **dict_opts) :
 
         self.name = 'GUIMain'
         self.myapp = app
@@ -62,6 +62,8 @@ class GUIMain(QtGui.QWidget) :
         self.setWindowIcon(cp.icon_monitor)
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
+
+        self.setOptionalPars(dict_opts)
 
         #self.guitree  = GUICalibDirTree()
         self.guitabs   = GUIMainTabs(self) # QtGui.QTextEdit()
@@ -92,8 +94,56 @@ class GUIMain(QtGui.QWidget) :
         cp.guimain = self
 
         #print 'End of init'
-        
 
+
+    def setOptionalPars(self, opts):
+
+        is_default = True
+
+        if opts['runnum'] is not None :
+            rnum = opts['runnum']
+            str_run_number = '%04d' % rnum
+            cp.str_run_number.setValue(str_run_number)
+            cp.dark_list_run_min.setValue(rnum)
+            cp.dark_list_run_max.setValue(rnum+10)
+            is_default = False
+    
+        if opts['exp'] is not None :
+            cp.exp_name.setValue(opts['exp'])
+            instr_name  = opts['exp'][:3]
+            cp.instr_name.setValue(instr_name)
+            cp.calib_dir.setValue(fnm.path_to_calib_dir_default())
+            is_default = False
+    
+        if opts['detector'] is not None :
+            det_name = opts['detector'].replace(","," ")
+
+            list_of_dets_sel = det_name.split()
+            list_of_dets_sel_lower = [det.lower() for det in list_of_dets_sel]
+
+            #msg = self.sep + 'List of detectors:'
+            for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list) :
+                par.setValue(det in list_of_dets_sel_lower)
+                #msg += '\n%s %s' % (det.ljust(10), par.value())
+            #self.log(msg,1)
+            is_default = False
+
+        if opts['calibdir'] is not None :
+            cdir = opts['calibdir']
+            if os.path.exists(cdir) : cp.calib_dir.setValue(cdir)
+            is_default = False
+
+
+        if not is_default :
+   	    #print 'dict_opts', opts
+            print 'Optional parameters',\
+                  '\n  instr_name : %s' % cp.instr_name.value(),\
+                  '\n  exp_name   : %s' % cp.exp_name.value(),\
+                  '\n  calib_dir  : %s' % cp.calib_dir.value(),\
+                  '\n  run_number : %s' % cp.str_run_number.value(),\
+                  '\n  detectors  : %s' % opts['detector']
+
+ 
     def printStyleInfo(self):
         qstyle     = self.style()
         qpalette   = qstyle.standardPalette()

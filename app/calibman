@@ -35,7 +35,24 @@ from CalibManager.GUIMain import GUIMain
 from CalibManager.GlobalUtils import ready_to_start
 from CalibManager.ThreadWorker import ThreadWorker
 from CalibManager.ThreadCheckNewXtcFiles import ThreadCheckNewXtcFiles
-#---------------------------------
+
+from optparse import OptionParser
+
+#------------------------------
+
+def input_options_parser() :
+    com_ex = '\nExample: %prog -e xppi0613 -r 173 -d CSPAD,OPAL1000'
+    
+    parser = OptionParser(description='%prog - GUI for LCLS detector calibration', usage='  %prog [options]'+com_ex)
+    parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345')
+    parser.add_option('-r', '--run',         dest='runnum',       default=None,  action='store', type='int',    help='run number')
+    parser.add_option('-d', '--detector',    dest='detector',     default=None,  action='store', type='string', help='detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD')
+    parser.add_option('-c', '--calibdir',    dest='calibdir',     default=None,  action='store', type='string', help='non-standard path to calib directory, ex: ./calib')
+ 
+    opts, args = parser.parse_args()
+    return opts, args
+
+#------------------------------
 
 class StartCalibManager :
 
@@ -56,7 +73,16 @@ class StartCalibManager :
 	t1.start()
 	t2.start()
 
-        gui = GUIMain(None,app)
+        opts, args = input_options_parser()
+        dict_opts = vars(opts)
+
+	if len(args) > 0 : 
+            print 'Command line argumants are not accepted. Use optional parameters.'\
+                  '\nList optional parameters: calibman -h'\
+                  '\nExample: calibman -e xppi0613 -r 173 -d CSPAD,OPAL1000'
+            sys.exit()
+
+        gui = GUIMain(None, app, **dict_opts)
         gui.show()
         
         sys.exit(app.exec_())

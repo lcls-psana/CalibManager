@@ -13,6 +13,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-06-29 Mikhail S. Dubrovin
+Tag: V00-02-10
+- Add optional parameters -h/e/r/d/c to calibman at launch (PSAS-6)
+M       app/calibman
+M       doc/ChangeLog
+M       src/GUIMain.py
+
 2016-06-21 Mikhail S. Dubrovin
 Tag: V00-02-09
 - Add control on three additional parameters in Detector.app.det_ndarr_raw_proc (PSAS-6)
