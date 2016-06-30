@@ -305,7 +305,7 @@ if __name__ == "__main__" :
     #det_name = 'fccd960'
     #det_name = 'Acqiris'
 
-    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd') :
+    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix') :
       print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
       print_list_of_sources_for_det(det_name)
 

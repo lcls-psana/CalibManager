@@ -26,6 +26,8 @@ from ConfigParameters import *
 from PyQt4 import QtGui, QtCore
 import AppDataPath as apputils # for icons
 
+import PSCalib.GlobalUtils as gu
+
 #----------------------------
 
 class ConfigParametersForApp(ConfigParameters) :
@@ -51,6 +53,8 @@ class ConfigParametersForApp(ConfigParameters) :
     list_of_show_dets = ['any', 'selected any', 'selected all']
 
     list_geo_log_levels=['DEBUG', 'INFO', 'WARNING', 'CRITICAL', 'ERROR', 'NONE']
+
+    list_of_depl_cmod = [gu.PNCCD] # see also self.dark_deploy_cmod 
     
     par01 = 'MPA1SdCp7h18m'
     par02 = __author__.split()[2].lower()
@@ -163,44 +167,6 @@ class ConfigParametersForApp(ConfigParameters) :
         self.icon_table         = QtGui.QIcon(path_icon_table        )
         self.icon_folder_open   = QtGui.QIcon(path_icon_folder_open  )
         self.icon_folder_closed = QtGui.QIcon(path_icon_folder_closed)
-
-        #self.icon_contents      = QtGui.QIcon(path + 'contents.png'      )
-        #self.icon_mail_forward  = QtGui.QIcon(path + 'mail-forward.png'  )
-        #self.icon_button_ok     = QtGui.QIcon(path + 'button_ok.png'     )
-        #self.icon_button_cancel = QtGui.QIcon(path + 'button_cancel.png' )
-        #self.icon_exit          = QtGui.QIcon(path + 'exit.png'          )
-        #self.icon_home          = QtGui.QIcon(path + 'home.png'          )
-        #self.icon_redo          = QtGui.QIcon(path + 'redo.png'          )
-        #self.icon_undo          = QtGui.QIcon(path + 'undo.png'          )
-        #self.icon_reload        = QtGui.QIcon(path + 'reload.png'        )
-        #self.icon_save          = QtGui.QIcon(path + 'save.png'          )
-        #self.icon_save_cfg      = QtGui.QIcon(path + 'fileexport.png'    )
-        #self.icon_edit          = QtGui.QIcon(path + 'edit.png'          )
-        #self.icon_browser       = QtGui.QIcon(path + 'fileopen.png'      )
-        #self.icon_monitor       = QtGui.QIcon(path + 'icon-monitor.png'  )
-        #self.icon_unknown       = QtGui.QIcon(path + 'icon-unknown.png'  )
-        #self.icon_logviewer     = QtGui.QIcon(path + 'logviewer.png'     )
-        #self.icon_lock          = QtGui.QIcon(path + 'locked-icon.png'   )
-        #self.icon_unlock        = QtGui.QIcon(path + 'unlocked-icon.png' )
-
-        #base_dir = '/usr/share/icons/Bluecurve/24x24/'
-        #self.icon_contents      = QtGui.QIcon(base_dir + 'actions/contents.png')
-        #self.icon_mail_forward  = QtGui.QIcon(base_dir + '../../gnome/24x24/actions/mail-forward.png')
-        #self.icon_button_ok     = QtGui.QIcon(base_dir + 'actions/button_ok.png')
-        #self.icon_button_cancel = QtGui.QIcon(base_dir + 'actions/button_cancel.png')
-        #self.icon_exit          = QtGui.QIcon(base_dir + 'actions/exit.png')
-        #self.icon_home          = QtGui.QIcon(base_dir + 'actions/gohome.png')
-        #self.icon_redo          = QtGui.QIcon(base_dir + 'actions/redo.png')
-        #self.icon_undo          = QtGui.QIcon(base_dir + 'actions/undo.png')
-        #self.icon_reload        = QtGui.QIcon(base_dir + 'actions/reload.png')
-        #self.icon_stop          = QtGui.QIcon(base_dir + 'actions/stop.png')
-        #self.icon_save_cfg      = QtGui.QIcon(base_dir + 'actions/fileexport.png')
-        #self.icon_save          = QtGui.QIcon(base_dir + 'stock/stock-save.png')
-        #self.icon_edit          = QtGui.QIcon(base_dir + 'actions/edit.png')
-        #self.icon_browser       = QtGui.QIcon(base_dir + 'actions/fileopen.png')
-        #self.icon_monitor       = QtGui.QIcon(base_dir + 'apps/icon-monitor.png')
-        #self.icon_unknown       = QtGui.QIcon(base_dir + 'apps/icon-unknown.png')
-        #self.icon_logviewer     = QtGui.QIcon(base_dir + '../32x32/apps/logviewer.png')
 
         self.icon_logger        = self.icon_edit
         self.icon_help          = self.icon_unknown
@@ -367,10 +333,10 @@ class ConfigParametersForApp(ConfigParameters) :
         self.med_img_fname  = self.declareParameter( name='MED_IMAGE_FNAME',     val_def='./work/plot.png', type='str' )
 
 #------------------------------
-    
+
         self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', \
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000', \
-                               'OrcaFl40', 'Epix100a', 'Fccd960', 'Andor', 'DualAndor', 'Acqiris']
+                               'OrcaFl40', 'Epix100a', 'Fccd960', 'Rayonix', 'Andor', 'DualAndor', 'Acqiris']
 
         self.list_of_dets_lower = [det.lower() for det in self.list_of_dets]
 
@@ -385,6 +351,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::FrameV',
                                     'Camera::FrameV',
                                     'Epix::ElementV',
+                                    'Camera::FrameV',
                                     'Camera::FrameV',
                                     'Andor::FrameV',
                                     'Andor3d::FrameV',
@@ -404,6 +371,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::CalibV1',
                                     'Epix100a::CalibV1',
                                     'Camera::CalibV1',
+                                    'Camera::CalibV1',
                                     'Andor::CalibV1',
                                     'Andor3d::CalibV1',
                                     'Acqiris::CalibV1']
@@ -413,6 +381,7 @@ class ConfigParametersForApp(ConfigParameters) :
 #------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
+                           (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -476,6 +445,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'pixel_mask'
            ,'pixel_bkgd'
            ,'common_mode'
+           ,'geometry'
             ]
 
         self.const_types_pnccd = [
@@ -494,7 +464,10 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'pixel_status'
            ,'pixel_gain'
            ,'pixel_rms'
+           ,'pixel_mask'
+           ,'pixel_bkgd'
            ,'common_mode'
+           ,'geometry'
             ]
 
         self.const_types_orcafl40 = [
@@ -505,6 +478,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'pixel_mask'
            ,'pixel_bkgd'
            ,'common_mode'
+           ,'geometry'
             ]
 
         self.const_types_epix = [
@@ -526,6 +500,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'pixel_mask'
            ,'pixel_bkgd'
            ,'common_mode'
+           ,'geometry'
             ]
 
         self.const_types_andor = [
@@ -536,6 +511,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'pixel_mask'
            ,'pixel_bkgd'
            ,'common_mode'
+           ,'geometry'
             ]
 
         self.const_types_andor3d = [
@@ -565,6 +541,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_orcafl40
                                                                      ,self.const_types_epix
                                                                      ,self.const_types_fccd960
+                                                                     ,self.const_types_camera
                                                                      ,self.const_types_andor
                                                                      ,self.const_types_andor3d
                                                                      ,self.const_types_acqiris
@@ -706,12 +683,19 @@ class ConfigParametersForApp(ConfigParameters) :
 
         self.srcs_epix10k = [ 
             'NoDetector.0:Epix10k.0'
-           ]
+            ]
 
         self.srcs_epix100a = [ 
-            'NoDetector.0:Epix100a.0'
+            'MecTargetChamber.0:Epix100a.0'
+           ,'MfxEndstation.0:Epix100a.0'
+           ,'NoDetector.0:Epix100a.0'
+           ,'NoDetector.0:Epix100a.1'
            ,'XcsEndstation.0:Epix100a.0'
-           ]
+           ,'XcsEndstation.0:Epix100a.1'
+           ,'XcsEndstation.0:Epix100a.2'
+           ,'XcsEndstation.0:Epix100a.3'
+           ,'XcsEndstation.0:Epix100a.4'
+            ]
 
         self.srcs_fccd960 = [ 
             'XcsEndstation.0:Fccd960.0'
@@ -728,6 +712,13 @@ class ConfigParametersForApp(ConfigParameters) :
 
         self.srcs_andor3d = [ 
             'SxrEndstation.0:DualAndor.0'
+           ]
+
+        self.srcs_rayonix = [ 
+            'CxiEndstation.0:Rayonix.0'
+           ,'MfxEndstation.0:Rayonix.0'
+           ,'XppEndstation.0:Rayonix.0'
+           ,'XppSb1Pim.0:Rayonix.0'
            ]
 
         self.srcs_acqiris = [ 
@@ -758,6 +749,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_orcafl40
                                                                  ,self.srcs_epix100a
                                                                  ,self.srcs_fccd960
+                                                                 ,self.srcs_rayonix
                                                                  ,self.srcs_andor
                                                                  ,self.srcs_andor3d
                                                                  ,self.srcs_acqiris
@@ -776,6 +768,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['ORCAFL40V1']
                                                                        ,['EPIX100AV1']
                                                                        ,['FCCD960V1']
+                                                                       ,['RAYONIX']
                                                                        ,['ANDOR']
                                                                        ,['ANDOR3D']
                                                                        ,['ACQIRISV1']

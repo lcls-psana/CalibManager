@@ -47,6 +47,7 @@ import PyCSPadImage.CSPAD2x2ImageUtils as cspad2x2img
 import PyCSPadImage.CSPADImageUtils    as cspadimg
 
 from CalibFileFinder import *
+import PSCalib.GlobalUtils as cgu
 
 #-----------------------------
 

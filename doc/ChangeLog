@@ -13,6 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-06-30 Mikhail S. Dubrovin
+Tag: V00-02-11
+- add support for RAYONIX
+- do not print warning message if cmod file is not available for detectors other than PNCCD
+	
 2016-06-29 Mikhail S. Dubrovin
 Tag: V00-02-10
 - Add optional parameters -h/e/r/d/c to calibman at launch (PSAS-6)

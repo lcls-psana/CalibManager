@@ -114,6 +114,8 @@ def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, lis
         #pos2 = source.find('.',pos1)
         #typ  = source[pos1+1:pos2] + '::CalibV1' # Ex.: typ='Epix100a::CalibV1'
 
+        if calibtype == 'common_mode' and gu.cgu.det_type_from_source(source) not in cp.list_of_depl_cmod : continue
+
         fname = '%s.data' % str_run_range
         
         calib_path = os.path.join(cp.calib_dir.value(), ctype, source, calibtype, fname)
