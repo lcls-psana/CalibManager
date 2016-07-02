@@ -140,7 +140,7 @@ class CommandLineCalib() :
         self.thr_int_min = cp.mask_min_thr.value() if self.opts['thr_int_min'] is None else self.opts['thr_int_min']
         self.thr_int_max = cp.mask_max_thr.value() if self.opts['thr_int_max'] is None else self.opts['thr_int_max']
         self.thr_rms_min = cp.mask_rms_thr_min.value() if self.opts['thr_rms_min'] is None else self.opts['thr_rms_min']
-        self.thr_rms     = cp.mask_rms_thr.value() if self.opts['thr_rms'] is None else self.opts['thr_rms']
+        self.thr_rms_max = cp.mask_rms_thr_max.value() if self.opts['thr_rms_max'] is None else self.opts['thr_rms_max']
 
         self.workdir     = cp.dir_work.value()  if self.opts['workdir'] is None else self.opts['workdir']
 	#self.queue       = cp.bat_queue.value() if self.opts['queue'] is None else self.opts['queue']
@@ -174,7 +174,7 @@ class CommandLineCalib() :
         cp.mask_min_thr    .setValue(self.thr_int_min)
         cp.mask_max_thr    .setValue(self.thr_int_max)
         cp.mask_rms_thr_min.setValue(self.thr_rms_min)
-        cp.mask_rms_thr    .setValue(self.thr_rms)
+        cp.mask_rms_thr_max.setValue(self.thr_rms_max)
 	cp.det_name        .setValue(self.det_name)
 
         #cp.log_file      .setValue(self.logfile)          

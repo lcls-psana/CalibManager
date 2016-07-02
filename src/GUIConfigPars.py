@@ -54,14 +54,15 @@ class GUIConfigPars(Frame) :
         self.lab_dark_scan  = QtGui.QLabel('scan:') 
         self.lab_timeout    = QtGui.QLabel('t-out, sec:') 
         self.lab_pix_status = QtGui.QLabel('Pixel status parameters:') 
-        self.lab_rms_thr_min= QtGui.QLabel('RMS      MIN [ADU]:') 
-        self.lab_rms_thr    = QtGui.QLabel('MAX:') 
-        self.lab_min_thr    = QtGui.QLabel('Intensity MIN [ADU]:') 
+        self.lab_rms_thr_min= QtGui.QLabel('RMS MIN:') 
+        self.lab_rms_thr_max= QtGui.QLabel('MAX:') 
+        self.lab_min_thr    = QtGui.QLabel('Intensity MIN:') 
         self.lab_max_thr    = QtGui.QLabel('MAX:') 
         self.lab_dark_sele  = QtGui.QLabel('Event code:') 
-        self.lab_rms_nsiglo = QtGui.QLabel('Auto-RMS nsigma LOW:') 
-        self.lab_rms_nsighi = QtGui.QLabel('HIGH:') 
-        self.lab_rms_flomin = QtGui.QLabel('MIN/MEAN:') 
+        self.lab_rmsnlo     = QtGui.QLabel('nsigma LO:') 
+        self.lab_rmsnhi     = QtGui.QLabel('HI:') 
+        self.lab_intnlo     = QtGui.QLabel('nsigma LO:') 
+        self.lab_intnhi     = QtGui.QLabel('HI:') 
 
         self.but_show_vers  = QtGui.QPushButton('Soft Vers')
         self.but_lsf_status = QtGui.QPushButton('LSF status')
@@ -72,12 +73,13 @@ class GUIConfigPars(Frame) :
         self.edi_timeout    = QtGui.QLineEdit(str(cp.job_timeout_sec.value()))
         self.edi_dark_sele  = QtGui.QLineEdit(str(cp.bat_dark_sele.value()))
         self.edi_rms_thr_min= QtGui.QLineEdit(str(cp.mask_rms_thr_min.value()))
-        self.edi_rms_thr    = QtGui.QLineEdit(str(cp.mask_rms_thr.value()))
+        self.edi_rms_thr_max= QtGui.QLineEdit(str(cp.mask_rms_thr_max.value()))
         self.edi_min_thr    = QtGui.QLineEdit(str(cp.mask_min_thr.value()))
         self.edi_max_thr    = QtGui.QLineEdit(str(cp.mask_max_thr.value()))
-        self.edi_rms_nsiglo = QtGui.QLineEdit(str(cp.mask_rms_nsiglo.value()))
-        self.edi_rms_nsighi = QtGui.QLineEdit(str(cp.mask_rms_nsighi.value()))
-        self.edi_rms_flomin = QtGui.QLineEdit(str(cp.mask_rms_flomin.value()))
+        self.edi_rmsnlo = QtGui.QLineEdit(str(cp.mask_rmsnlo.value()))
+        self.edi_rmsnhi = QtGui.QLineEdit(str(cp.mask_rmsnhi.value()))
+        self.edi_intnlo = QtGui.QLineEdit(str(cp.mask_intnlo.value()))
+        self.edi_intnhi = QtGui.QLineEdit(str(cp.mask_intnhi.value()))
 
         self.edi_dark_start .setValidator(QtGui.QIntValidator(0,9999999,self))
         self.edi_dark_end   .setValidator(QtGui.QIntValidator(1,9999999,self))
@@ -85,12 +87,13 @@ class GUIConfigPars(Frame) :
         self.edi_timeout    .setValidator(QtGui.QIntValidator(1,9999999,self))
         self.edi_dark_sele  .setValidator(QtGui.QIntValidator(-256,256,self))
         self.edi_rms_thr_min.setValidator(QtGui.QDoubleValidator(0,65000,3,self))
-        self.edi_rms_thr    .setValidator(QtGui.QDoubleValidator(0,65000,3,self))
+        self.edi_rms_thr_max.setValidator(QtGui.QDoubleValidator(0,65000,3,self))
         self.edi_min_thr    .setValidator(QtGui.QDoubleValidator(0,65000,3,self))
         self.edi_max_thr    .setValidator(QtGui.QDoubleValidator(0,65000,3,self))
-        self.edi_rms_nsiglo .setValidator(QtGui.QDoubleValidator(0,1000000,3,self))
-        self.edi_rms_nsighi .setValidator(QtGui.QDoubleValidator(0,1000000,3,self))
-        self.edi_rms_flomin .setValidator(QtGui.QDoubleValidator(0,1,3,self))
+        self.edi_rmsnlo     .setValidator(QtGui.QDoubleValidator(0,1000000,3,self))
+        self.edi_rmsnhi     .setValidator(QtGui.QDoubleValidator(0,1000000,3,self))
+        self.edi_intnlo     .setValidator(QtGui.QDoubleValidator(0,1000000,3,self))
+        self.edi_intnhi     .setValidator(QtGui.QDoubleValidator(0,1000000,3,self))
 
         #self.edi_events.setValidator(QtGui.QRegExpValidator(QtCore.QRegExp("[0-9]\\d{0,3}|end$"),self))
 
@@ -131,24 +134,27 @@ class GUIConfigPars(Frame) :
         self.grid.addWidget(self.lab_dark_sele,     self.grid_row+6, 7)
         self.grid.addWidget(self.edi_dark_sele,     self.grid_row+6, 8)
 
-        self.grid.addWidget(self.lab_pix_status,    self.grid_row+7, 0, 1, 6)
+        #self.grid.addWidget(self.lab_pix_status,    self.grid_row+7, 0, 1, 6)
 
-        self.grid.addWidget(self.lab_min_thr,       self.grid_row+8, 1, 1, 3)
-        self.grid.addWidget(self.edi_min_thr,       self.grid_row+8, 4)
-        self.grid.addWidget(self.lab_max_thr,       self.grid_row+8, 5)
-        self.grid.addWidget(self.edi_max_thr,       self.grid_row+8, 6)
+        self.grid.addWidget(self.lab_min_thr,       self.grid_row+8, 0)
+        self.grid.addWidget(self.edi_min_thr,       self.grid_row+8, 1)
+        self.grid.addWidget(self.lab_max_thr,       self.grid_row+8, 2)
+        self.grid.addWidget(self.edi_max_thr,       self.grid_row+8, 3)
 
-        self.grid.addWidget(self.lab_rms_thr_min,   self.grid_row+9, 1, 1, 3)
-        self.grid.addWidget(self.edi_rms_thr_min,   self.grid_row+9, 4)
-        self.grid.addWidget(self.lab_rms_thr,       self.grid_row+9, 5)
-        self.grid.addWidget(self.edi_rms_thr,       self.grid_row+9, 6)
+        self.grid.addWidget(self.lab_intnlo,        self.grid_row+8, 4, 1, 2)
+        self.grid.addWidget(self.edi_intnlo,        self.grid_row+8, 6)
+        self.grid.addWidget(self.lab_intnhi,        self.grid_row+8, 7)
+        self.grid.addWidget(self.edi_intnhi,        self.grid_row+8, 8)
 
-        self.grid.addWidget(self.lab_rms_nsiglo,    self.grid_row+10, 1, 1, 3)
-        self.grid.addWidget(self.edi_rms_nsiglo,    self.grid_row+10, 4)
-        self.grid.addWidget(self.lab_rms_nsighi,    self.grid_row+10, 5)
-        self.grid.addWidget(self.edi_rms_nsighi,    self.grid_row+10, 6)
-        self.grid.addWidget(self.lab_rms_flomin,    self.grid_row+10, 7)
-        self.grid.addWidget(self.edi_rms_flomin,    self.grid_row+10, 8)
+        self.grid.addWidget(self.lab_rms_thr_min,   self.grid_row+9, 0)
+        self.grid.addWidget(self.edi_rms_thr_min,   self.grid_row+9, 1)
+        self.grid.addWidget(self.lab_rms_thr_max,   self.grid_row+9, 2)
+        self.grid.addWidget(self.edi_rms_thr_max,   self.grid_row+9, 3)
+
+        self.grid.addWidget(self.lab_rmsnlo,        self.grid_row+9, 4, 1, 2)
+        self.grid.addWidget(self.edi_rmsnlo,        self.grid_row+9, 6)
+        self.grid.addWidget(self.lab_rmsnhi,        self.grid_row+9, 7)
+        self.grid.addWidget(self.edi_rmsnhi,        self.grid_row+9, 8)
 
         #self.setLayout(self.grid)
 
@@ -167,12 +173,13 @@ class GUIConfigPars(Frame) :
         self.connect(self.edi_timeout,      QtCore.SIGNAL('editingFinished()'),  self.onEdiTimeOut)
         self.connect(self.edi_dark_sele,    QtCore.SIGNAL('editingFinished()'),  self.onEdiDarkSele)
         self.connect(self.edi_rms_thr_min,  QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsThrMin)
-        self.connect(self.edi_rms_thr,      QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsThr)
+        self.connect(self.edi_rms_thr_max,  QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsThr)
         self.connect(self.edi_min_thr,      QtCore.SIGNAL('editingFinished()'),  self.onEdiMinThr)
         self.connect(self.edi_max_thr,      QtCore.SIGNAL('editingFinished()'),  self.onEdiMaxThr)
-        self.connect(self.edi_rms_nsiglo,   QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsNsigLo)
-        self.connect(self.edi_rms_nsighi,   QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsNsigHi)
-        self.connect(self.edi_rms_flomin,   QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsFLoMin)
+        self.connect(self.edi_rmsnlo,       QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsNsigLo)
+        self.connect(self.edi_rmsnhi,       QtCore.SIGNAL('editingFinished()'),  self.onEdiRmsNsigHi)
+        self.connect(self.edi_intnlo,       QtCore.SIGNAL('editingFinished()'),  self.onEdiIntNsigLo)
+        self.connect(self.edi_intnhi,       QtCore.SIGNAL('editingFinished()'),  self.onEdiIntNsigHi)
         self.connect(self.cbx_deploy_hotpix,QtCore.SIGNAL('stateChanged(int)'),  self.on_cbx_deploy_hotpix) 
         self.connect(self.cbx_deploy_cmod,  QtCore.SIGNAL('stateChanged(int)'),  self.on_cbx_deploy_cmod) 
         self.connect(self.cbx_smd_or_xtc,   QtCore.SIGNAL('stateChanged(int)'),  self.on_cbx_smd_or_xtc) 
@@ -217,7 +224,7 @@ class GUIConfigPars(Frame) :
         self.lab_dark_sele    .setStyleSheet(cp.styleLabel)
         self.lab_pix_status   .setStyleSheet(cp.styleTitleBold)
         self.lab_rms_thr_min  .setStyleSheet(cp.styleLabel)
-        self.lab_rms_thr      .setStyleSheet(cp.styleLabel)
+        self.lab_rms_thr_max  .setStyleSheet(cp.styleLabel)
         self.lab_min_thr      .setStyleSheet(cp.styleLabel)
         self.lab_max_thr      .setStyleSheet(cp.styleLabel)
         self.cbx_deploy_hotpix.setStyleSheet(cp.styleLabel)
@@ -225,9 +232,10 @@ class GUIConfigPars(Frame) :
         self.cbx_smd_or_xtc   .setStyleSheet(cp.styleLabel)
         self.but_show_vers    .setStyleSheet(cp.styleButton) 
         self.but_lsf_status   .setStyleSheet(cp.styleButton) 
-        self.lab_rms_nsiglo   .setStyleSheet(cp.styleLabel)
-        self.lab_rms_nsighi   .setStyleSheet(cp.styleLabel)
-        self.lab_rms_flomin   .setStyleSheet(cp.styleLabel)
+        self.lab_rmsnlo       .setStyleSheet(cp.styleLabel)
+        self.lab_rmsnhi       .setStyleSheet(cp.styleLabel)
+        self.lab_intnlo       .setStyleSheet(cp.styleLabel)
+        self.lab_intnhi       .setStyleSheet(cp.styleLabel)
 
         #self.tit_dir_work    .setAlignment(QtCore.Qt.AlignLeft)
         self.edi_dir_work    .setAlignment(QtCore.Qt.AlignRight)
@@ -240,13 +248,14 @@ class GUIConfigPars(Frame) :
         self.lab_timeout     .setAlignment(QtCore.Qt.AlignRight)
         self.lab_dark_sele   .setAlignment(QtCore.Qt.AlignRight)
         self.lab_pix_status  .setAlignment(QtCore.Qt.AlignLeft)
-        self.lab_rms_thr_min .setAlignment(QtCore.Qt.AlignLeft)
-        self.lab_rms_thr     .setAlignment(QtCore.Qt.AlignRight)
-        self.lab_min_thr     .setAlignment(QtCore.Qt.AlignLeft)
+        self.lab_rms_thr_min .setAlignment(QtCore.Qt.AlignRight)
+        self.lab_rms_thr_max .setAlignment(QtCore.Qt.AlignRight)
+        self.lab_min_thr     .setAlignment(QtCore.Qt.AlignRight)
         self.lab_max_thr     .setAlignment(QtCore.Qt.AlignRight)
-        self.lab_rms_nsiglo  .setAlignment(QtCore.Qt.AlignLeft)
-        self.lab_rms_nsighi  .setAlignment(QtCore.Qt.AlignRight)
-        self.lab_rms_flomin  .setAlignment(QtCore.Qt.AlignRight)
+        self.lab_rmsnlo      .setAlignment(QtCore.Qt.AlignRight)
+        self.lab_rmsnhi      .setAlignment(QtCore.Qt.AlignRight)
+        self.lab_intnlo      .setAlignment(QtCore.Qt.AlignRight)
+        self.lab_intnhi      .setAlignment(QtCore.Qt.AlignRight)
 
         self.edi_dir_work    .setMinimumWidth(300)
         self.but_dir_work    .setFixedWidth(80)
@@ -259,14 +268,16 @@ class GUIConfigPars(Frame) :
         self.edi_timeout     .setFixedWidth(80)
         self.edi_dark_sele   .setFixedWidth(80)
         self.edi_rms_thr_min .setFixedWidth(80)
-        self.edi_rms_thr     .setFixedWidth(80)
+        self.edi_rms_thr_max .setFixedWidth(80)
         self.edi_min_thr     .setFixedWidth(80)
         self.edi_max_thr     .setFixedWidth(80)
         self.but_show_vers   .setFixedWidth(80)
         self.but_lsf_status  .setFixedWidth(80)
-        self.edi_rms_nsiglo  .setFixedWidth(80)
-        self.edi_rms_nsighi  .setFixedWidth(80)
-        self.edi_rms_flomin  .setFixedWidth(80)
+        self.edi_rmsnlo      .setFixedWidth(80)
+        self.edi_rmsnhi      .setFixedWidth(80)
+        self.edi_intnlo      .setFixedWidth(80)
+        self.edi_intnhi      .setFixedWidth(80)
+
 
     def setParent(self,parent) :
         self.parent = parent
@@ -391,8 +402,8 @@ class GUIConfigPars(Frame) :
 
 
     def onEdiRmsThr(self):
-        str_value = str(self.edi_rms_thr.displayText())
-        cp.mask_rms_thr.setValue(float(str_value))  
+        str_value = str(self.edi_rms_thr_max.displayText())
+        cp.mask_rms_thr_max.setValue(float(str_value))  
         logger.info('Set hot pixel RMS MAX threshold: %s' % str_value, __name__)
 
 
@@ -409,21 +420,31 @@ class GUIConfigPars(Frame) :
 
 
     def onEdiRmsNsigLo(self):
-        str_value = str(self.edi_rms_nsiglo.displayText())
-        cp.mask_rms_nsiglo.setValue(float(str_value))  
+        str_value = str(self.edi_rmsnlo.displayText())
+        cp.mask_rmsnlo.setValue(float(str_value))  
         logger.info('Set nsigma low limit of rms: %s' % str_value, __name__)
 
 
     def onEdiRmsNsigHi(self):
-        str_value = str(self.edi_rms_nsighi.displayText())
-        cp.mask_rms_nsighi.setValue(float(str_value))  
+        str_value = str(self.edi_rmsnhi.displayText())
+        cp.mask_rmsnhi.setValue(float(str_value))  
         logger.info('Set nsigma high limit of rms: %s' % str_value, __name__)
 
 
-    def onEdiRmsFLoMin(self):
-        str_value = str(self.edi_rms_flomin.displayText())
-        cp.mask_rms_flomin.setValue(float(str_value))  
-        logger.info('Set minimal value of rms as a fraction of min/mean: %s' % str_value, __name__)
+
+
+    def onEdiIntNsigLo(self):
+        str_value = str(self.edi_intnlo.displayText())
+        cp.mask_intnlo.setValue(float(str_value))  
+        logger.info('Set nsigma low limit of intensity: %s' % str_value, __name__)
+
+
+    def onEdiIntNsigHi(self):
+        str_value = str(self.edi_intnhi.displayText())
+        cp.mask_intnhi.setValue(float(str_value))  
+        logger.info('Set nsigma high limit of intensity: %s' % str_value, __name__)
+
+
 
 
     def on_cbx(self, par, cbx):

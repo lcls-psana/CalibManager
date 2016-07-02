@@ -13,6 +13,15 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-07-01 Mikhail S. Dubrovin
+Tag: V00-02-12
+- Add auto-evaluation of the intensity range for pixel_status (PSAS-6).
+M       src/BatchJobPedestals.py
+M       src/CommandLineCalib.py
+M       src/ConfigParametersForApp.py
+M       src/GUIConfig.py
+M       src/GUIConfigPars.py
+
 2016-06-30 Mikhail S. Dubrovin
 Tag: V00-02-11
 - add support for RAYONIX

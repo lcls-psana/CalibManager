@@ -186,10 +186,11 @@ class BatchJobPedestals(BatchJob) :
         int_lo = cp.mask_min_thr.value() 
         int_hi = cp.mask_max_thr.value() 
         rms_lo = cp.mask_rms_thr_min.value()
-        rms_hi = cp.mask_rms_thr.value()
-        nsiglo = cp.mask_rms_nsiglo.value()
-        nsighi = cp.mask_rms_nsighi.value()
-        flomin = cp.mask_rms_flomin.value()
+        rms_hi = cp.mask_rms_thr_max.value()
+        rmsnlo = cp.mask_rmsnlo.value()
+        rmsnhi = cp.mask_rmsnhi.value()
+        intnlo = cp.mask_intnlo.value()
+        intnhi = cp.mask_intnhi.value()
 
         command = 'det_ndarr_raw_proc'\
                 + ' -d %s'   % dsname\
@@ -197,17 +198,18 @@ class BatchJobPedestals(BatchJob) :
                 + ' -n %d'   % events\
                 + ' -m %d'   % evskip\
                 + ' -f %s'   % fntmpl\
-                + ' -b %d'   % int_lo\
-                + ' -t %d'   % int_hi\
+                + ' -b %.3f' % int_lo\
+                + ' -t %.3f' % int_hi\
                 + ' -B %.3f' % rms_lo\
                 + ' -T %.3f' % rms_hi\
                 + ' -F 0.1'\
                 + ' -p 0'\
                 + ' -S 0377'\
                 + ' -v 511'\
-                + ' -L %.3f' % nsiglo\
-                + ' -H %.3f' % nsighi\
-                + ' -M %.3f' % flomin
+                + ' -L %.3f' % rmsnlo\
+                + ' -H %.3f' % rmsnhi\
+                + ' -D %.3f' % intnlo\
+                + ' -U %.3f' % intnhi
 
 #  -d DSNAME, --dsname=DSNAME  dataset name, default = None
 #  -s SOURCE, --source=SOURCE  input ndarray file name, default = None
@@ -222,9 +224,10 @@ class BatchJobPedestals(BatchJob) :
 #  -p PLOTIM, --plotim=PLOTIM  control bit-word to plot images, default = 0
 #  -v VERBOS, --verbos=VERBOS  control bit-word for verbosity, default = 7
 #  -S SAVEBW, --savebw=SAVEBW  control bit-word to save arrays, default = 255
-#  -L NSIGLO, --nsiglo=NSIGLO  number of sigma from mean for low limit on rms, default = 5.0
-#  -H NSIGHI, --nsighi=NSIGHI  number of sigma from mean for high limit on rms, default = 6.0
-#  -M FLOMIN, --flomin=FLOMIN  minimal low limit on rms as a fraction of mean, default = 0.01
+#  -D INTNLO, --intnlo=INTNLO  number of sigma from mean for low  limit on INTENSITY, default = 6.0
+#  -U INTNHI, --intnhi=INTNHI  number of sigma from mean for high limit on INTENSITY, default = 6.0
+#  -L RMSNLO, --nsiglo=RMSNLO  number of sigma from mean for low limit on RMS, default = 6.0
+#  -H RMSNHI, --nsighi=RMSNHI  number of sigma from mean for high limit on RMS, default = 6.0
  
         msg = 'Avereging xtc file(s) using command:\n%s' % command \
             + '\nand save results in the log-file: %s' % logave

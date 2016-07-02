@@ -130,7 +130,7 @@ class GUIConfig(QtGui.QWidget) :
         if cp.current_config_tab.value() == self.list_file_types[0] :
             self.gui_win = GUIConfigPars(self)
             self.setStatus(0, 'Status: setting of configuration parameters')
-            self.gui_win.setFixedHeight(350)
+            self.gui_win.setFixedHeight(280)
             
         if cp.current_config_tab.value() == self.list_file_types[1] :
             self.gui_win = GUIConfigFile(self)
