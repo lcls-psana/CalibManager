@@ -141,6 +141,10 @@ class CommandLineCalib() :
         self.thr_int_max = cp.mask_max_thr.value() if self.opts['thr_int_max'] is None else self.opts['thr_int_max']
         self.thr_rms_min = cp.mask_rms_thr_min.value() if self.opts['thr_rms_min'] is None else self.opts['thr_rms_min']
         self.thr_rms_max = cp.mask_rms_thr_max.value() if self.opts['thr_rms_max'] is None else self.opts['thr_rms_max']
+        self.intnlo      = cp.mask_intnlo.value() if self.opts['intnlo'] is None else self.opts['intnlo']
+        self.intnhi      = cp.mask_intnhi.value() if self.opts['intnhi'] is None else self.opts['intnhi']
+        self.rmsnlo      = cp.mask_rmsnlo.value() if self.opts['rmsnlo'] is None else self.opts['rmsnlo']
+        self.rmsnhi      = cp.mask_rmsnhi.value() if self.opts['rmsnhi'] is None else self.opts['rmsnhi']
 
         self.workdir     = cp.dir_work.value()  if self.opts['workdir'] is None else self.opts['workdir']
 	#self.queue       = cp.bat_queue.value() if self.opts['queue'] is None else self.opts['queue']
@@ -176,6 +180,10 @@ class CommandLineCalib() :
         cp.mask_rms_thr_min.setValue(self.thr_rms_min)
         cp.mask_rms_thr_max.setValue(self.thr_rms_max)
 	cp.det_name        .setValue(self.det_name)
+        cp.mask_intnlo     .setValue(self.intnlo)
+        cp.mask_intnhi     .setValue(self.intnhi)
+        cp.mask_rmsnlo     .setValue(self.rmsnlo)
+        cp.mask_rmsnhi     .setValue(self.rmsnhi)
 
         #cp.log_file      .setValue(self.logfile)          
 
@@ -203,7 +211,11 @@ class CommandLineCalib() :
         + '\n     thr_int_min   : %f' % self.thr_int_min\
         + '\n     thr_int_max   : %f' % self.thr_int_max\
         + '\n     thr_rms_min   : %f' % self.thr_rms_min\
-        + '\n     thr_rms       : %f' % self.thr_rms\
+        + '\n     thr_rms_max   : %f' % self.thr_rms_max\
+        + '\n     intnlo        : %f' % self.intnlo\
+        + '\n     intnhi        : %f' % self.intnhi\
+        + '\n     rmsnlo        : %f' % self.rmsnlo\
+        + '\n     rmsnhi        : %f' % self.rmsnhi\
         + '\n     process       : %s' % self.process\
         + '\n     deploy        : %s' % self.deploy\
         + '\n     loadcfg       : %s' % self.loadcfg\

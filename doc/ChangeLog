@@ -13,6 +13,12 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-07-11 Mikhail S. Dubrovin
+Tag: V00-02-13
+- fix dictionary keyword thr_rms -> thr_rms_max, add options -U,u,Z,z (PSAS-6)
+M       app/calibrun
+M       src/CommandLineCalib.py
+
 2016-07-01 Mikhail S. Dubrovin
 Tag: V00-02-12
 - Add auto-evaluation of the intensity range for pixel_status (PSAS-6).
