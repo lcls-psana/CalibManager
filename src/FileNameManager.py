@@ -218,6 +218,14 @@ class FileNameManager :
         return cp.dir_work.value() + '/' + logger.getLogFileName()
 
 
+    def log_file_cpo(self) :
+        # Returns name like /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
+        fname = logger.getLogFileName()     # 2016-07-19-11:53:02-log.txt
+        year, month = fname.split('-')[:2]  # 2016, 07
+        name, ext = os.path.splitext(fname) # 2016-07-19-11:53:02-log, .txt   
+        return '%s/%s/%s/%s-%s-%s%s' % (cp.dir_log_cpo.value(), year, month, name, gu.get_login(), gu.get_pid(), ext)
+
+
     def path_peds_scan_psana_cfg(self) :
         return self.path_prefix_dark() + 'peds-scan.cfg'
 
@@ -312,6 +320,8 @@ fnm = FileNameManager ()
 
 if __name__ == "__main__" :
     import sys
+    ntest = 1
+    if len(sys.argv)>1 : ntest = sys.argv[1]
 
 #    print '\nfnm.get_list_of_files_cora_proc_check():' 
 #    list =   fnm.get_list_of_files_cora_proc_check()
@@ -319,6 +329,8 @@ if __name__ == "__main__" :
 
 #    print 'fnm.path_hotpix_mask() : ', fnm.path_hotpix_mask()
 #    print 'fnm.path_satpix_mask() : ', fnm.path_satpix_mask()
+
+    if ntest == 1 : print 'fnm.log_file_cpo() : ', fnm.log_file_cpo()
 
     sys.exit ( 'End of test for FileNameManager' )
 

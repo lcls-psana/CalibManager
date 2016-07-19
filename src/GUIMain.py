@@ -237,7 +237,15 @@ class GUIMain(QtGui.QWidget) :
         
         cp.close()
 
-        if cp.save_log_at_exit.value() : logger.saveLogInFile(fnm.log_file())
+        if cp.save_log_at_exit.value() :
+            logger.saveLogInFile(fnm.log_file())
+
+            path = fnm.log_file_cpo()
+            if gu.create_path(path) :
+                logger.saveLogInFile(path)
+                print 'Log file: %s' % path
+            else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
+            
         #logger.saveLogTotalInFile( fnm.log_file_total() )
 
 #------------------------------

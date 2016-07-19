@@ -81,7 +81,8 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
 
 #-----------------------------
 
-def create_directory(dir) : 
+def create_directory(dir) :
+    #print 'create_directory: %s' % dir
     if os.path.exists(dir) :
         logger.info('Directory exists: ' + dir, __name__) 
     else :
@@ -89,6 +90,20 @@ def create_directory(dir) :
         #os.fchmod(dir,770)
         logger.info('Directory created: ' + dir, __name__) 
 
+
+def create_path(path, depth=5) : 
+    # Creates missing path for /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
+    # if path to file exists return True, othervise False
+    subdirs = path.strip('/').split('/')
+    cpath = ''
+    for i,sd in enumerate(subdirs[:-1]) :
+        cpath += '/%s'% sd 
+        if i<depth : continue
+        create_directory(cpath)
+        #print 'create_path: %s' % cpath
+
+    return os.path.exists(cpath)
+    
 
 def get_list_of_files_in_dir(dirname) :
     return os.listdir(dirname)
@@ -612,6 +627,11 @@ def get_login() :
     """Returns login name
     """
     return getpass.getuser()
+
+def get_pid() :
+    """Returns pid - process id
+    """
+    return os.getpid()
 
 #----------------------------------
 
@@ -1242,6 +1262,9 @@ if __name__ == "__main__" :
     #print 'LSF status: \n%s \nqueue:%s, status:%s' % (output, queue, status)
 
     print 'CalibManager package revision: "%s"' % get_pkg_version()
+
+    #from FileNameManager import fnm
+    #create_path(fnm.log_file_cpo(), depth=5)
      
     sys.exit("End of test")
 

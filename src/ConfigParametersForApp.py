@@ -178,11 +178,11 @@ class ConfigParametersForApp(ConfigParameters) :
         # Possible typs for declaration : 'str', 'int', 'long', 'float', 'bool' 
 
         # GUILogger.py
-        self.log_level        = self.declareParameter( name='LOG_LEVEL_OF_MSGS',  val_def='info',         type='str' )
-        self.log_file         = self.declareParameter( name='LOG_FILE_FOR_LEVEL', val_def='./log_for_level.txt',       type='str' )
-        #self.log_file_total  = self.declareParameter( name='LOG_FILE_TOTAL',     val_def='./log_total.txt',           type='str' )
-        self.save_log_at_exit = self.declareParameter( name='SAVE_LOG_AT_EXIT',   val_def=True,           type='bool')
-
+        self.log_level        = self.declareParameter( name='LOG_LEVEL_OF_MSGS',    val_def='info',         type='str' )
+        self.log_file         = self.declareParameter( name='LOG_FILE_FOR_LEVEL',   val_def='./log_for_level.txt',       type='str' )
+        #self.log_file_total  = self.declareParameter( name='LOG_FILE_TOTAL',       val_def='./log_total.txt',           type='str' )
+        self.save_log_at_exit = self.declareParameter( name='SAVE_LOG_AT_EXIT',     val_def=True,           type='bool')
+        self.dir_log_cpo      = self.declareParameter( name='DIR_FOR_LOG_FILE_CPO', val_def='/reg/g/psdm/logs/calibman', type='str' )
 
         # GUIMain.py (10, 25, 800, 700)
         self.main_win_width  = self.declareParameter( name='MAIN_WIN_WIDTH',  val_def=800, type='int' )
