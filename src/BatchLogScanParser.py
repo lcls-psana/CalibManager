@@ -72,16 +72,17 @@ class BatchLogScanParser :
         if not self.make_set_of_lines_from_file_for_pattern(pattern) : return
         self.make_list_of_types_and_sources(pattern)
 
-        #print 'List of types and sources:'
+        #msg = 'List of found in data types and sources:'
         #for type, src in zip(self.list_of_types, self.list_of_sources) :
-        #    msg = '    %30s : %s' % (type, src)
+        #    msg += '\n    %30s : %s' % (type, src)
+        #    logger.info(msg, __name__)
         #    print msg
     
         #for det_name in self.list_of_dets_selected() :
-            #self.pattern = self.dict_of_det_data_types[det_name]
-            # print 'Parse file: %s for detector: %s and pattern: %s' % (self.path, det_name, self.pattern)
-            #cp.print_dict_of_det_data_types()
-            #self.parse_list_of_lines()
+        #    self.pattern = self.dict_of_det_data_types[det_name]
+        #    print 'Parse file: %s for detector: %s and pattern: %s' % (self.path, det_name, self.pattern)
+        #    cp.print_dict_of_det_data_types()
+        #    self.parse_list_of_lines()
 
 #-----------------------------
  
@@ -131,56 +132,24 @@ class BatchLogScanParser :
             #print 'type: ', type
             tparts = type.split('.')
             type_old = '%s::%s' % (tparts[0],tparts[1]) if len(tparts) == 2 else type # CsPad2x2.ElementV1 -> CsPad2x2::ElementV1
-            self.list_of_types.append(type_old)
 
             if len(fields)<2 : continue
             patt = 'src='
             pos1 = fields[1].find(patt) + len(patt)
             detinfo_src = fields[1][pos1:].strip('"\'') # DetInfo(CxiDg2.0:Cspad2x2.0)
             #print 'detinfo_src: ', detinfo_src
-            self.list_of_detinfo_sources.append(detinfo_src)
             
             pos1 = detinfo_src.find('(') + 1
             pos2 = detinfo_src.rfind(')')
             src  = detinfo_src[pos1:pos2] # if pos2 != -1 elsw detinfo_src[pos1:]  # CxiDg2.0:Cspad2x2.0
             #print 'type:%s  src:%s' % (type, src)
-            self.list_of_sources.append(src)
 
-            #if len(fields)<3 : continue
-            #patt = 'alias='
-            #pos1 = fields[2].find(patt) + len(patt)
-            #alias = fields[2][pos1:].strip('"\'') # Dg2CsPad2x2
-            #print 'alias: ', alias
-            #self.list_of_aliases.append(src)
-
-#-----------------------------
-
-    def make_list_of_types_and_sources_old(self) :
-
-        for line in self.list_of_found_lines : 
-
-            pos1 = line.find('type=Psana::') + 12
-            wid1 = line[pos1:].find(',')
-            pen1 = pos1+wid1
-            type = line[pos1:pen1]
-            if type.find('ConfigV') != -1 : continue # remove ConfigV from lists
-            self.list_of_types.append(type)
-            #print 'pos1, wid1, type:', pos1, wid1, type
-            
-            pos2 = line[pen1:].find('src=') + pen1 + 4
-            wid2 = line[pos2:].find(')')
-            pen2 = pos2+wid2+1
-            detinfo_src = line[pos2:pen2]
             self.list_of_detinfo_sources.append(detinfo_src)
-            #print 'pos2, wid2, detinfo_src:', pos2, wid2, detinfo_src
-
-            pos3 = line[pos2:].find('(') + pos2 + 1
-            wid3 = line[pos3:].find(')')
-            pen3 = pos3+wid3
-            src  = line[pos3:pen3]
+            self.list_of_types.append(type_old)
             self.list_of_sources.append(src)
-            #print 'pos3, wid3, pen3, src:', pos3, wid3, pen3, src
-            
+
+        #for src in self.list_of_sources : print 'YYY: %s' % src
+
 #-----------------------------
 
     def print_list_of_types_and_sources(self) :

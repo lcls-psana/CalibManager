@@ -81,17 +81,18 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
 
 #-----------------------------
 
-def create_directory(dir) :
+def create_directory(dir, mode=0775) :
     #print 'create_directory: %s' % dir
     if os.path.exists(dir) :
         logger.info('Directory exists: ' + dir, __name__) 
     else :
         os.makedirs(dir)
-        #os.fchmod(dir,770)
+        os.chmod(dir, mode)
+        #os.system(cmd)
         logger.info('Directory created: ' + dir, __name__) 
 
 
-def create_path(path, depth=5) : 
+def create_path(path, depth=5, mode=0775) : 
     # Creates missing path for /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
     # if path to file exists return True, othervise False
     subdirs = path.strip('/').split('/')
@@ -99,7 +100,7 @@ def create_path(path, depth=5) :
     for i,sd in enumerate(subdirs[:-1]) :
         cpath += '/%s'% sd 
         if i<depth : continue
-        create_directory(cpath)
+        create_directory(cpath, mode)
         #print 'create_path: %s' % cpath
 
     return os.path.exists(cpath)
@@ -1263,8 +1264,11 @@ if __name__ == "__main__" :
 
     print 'CalibManager package revision: "%s"' % get_pkg_version()
 
-    #from FileNameManager import fnm
-    #create_path(fnm.log_file_cpo(), depth=5)
+    from FileNameManager import fnm
+    #fname = fnm.log_file_cpo()
+    fname = '/reg/g/psdm/logs/calibman/2016/09/2016-00-00-00:00:00-log-dubrovin-12345.txt'
+    print 'create directry and save file %s' % fname
+    create_path(fname, depth=5)
      
     sys.exit("End of test")
 

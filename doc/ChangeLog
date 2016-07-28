@@ -13,6 +13,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-07-28 Mikhail S. Dubrovin
+Tag: V00-02-15
+- Fix problems raised in PSAS-255:
+  - BatchJobPedestals.py - add protection if the list of requested detectors is empty
+  - BatchLogScanParser.py - fix synchronization of type-source lists
+  - GlobalUtils.py - add mode parameter in create_path(..., mode=0775)
+
 2016-07-19 Mikhail S. Dubrovin
 Tag: V00-02-14
 - save log file under /reg/g/psdm/logs/calibman/YYYY/MM/ (PSAS-6)

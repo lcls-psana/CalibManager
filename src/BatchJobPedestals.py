@@ -192,6 +192,11 @@ class BatchJobPedestals(BatchJob) :
         intnlo = cp.mask_intnlo.value()
         intnhi = cp.mask_intnhi.value()
 
+        if srcs == '' :
+            str_sel_dets = ' '.join(cp.list_of_dets_selected())
+            logger.warning('Requested detector(s): "%s" is(are) are not found in data' % str_sel_dets , __name__)
+            return None
+
         command = 'det_ndarr_raw_proc'\
                 + ' -d %s'   % dsname\
                 + ' -s %s'   % srcs\
@@ -240,6 +245,8 @@ class BatchJobPedestals(BatchJob) :
     def command_for_peds_aver_v1(self) :
 
         command = self.str_command_for_peds_aver()
+        if command is None : return False
+
         logave  = fnm.path_peds_aver_batch_log() # log file name for averaging
 
         err = gu.subproc_in_log(command.split(), logave) # , shell=True)
@@ -320,6 +327,8 @@ class BatchJobPedestals(BatchJob) :
         #command = 'det_ndarr_raw_proc -d exp=mecj5515:run=102:stream=0-79:smd -s MecTargetChamber.0:Cspad.0\
         #                      -n 6 -m 0 -f ./work/clb-#exp-#run-peds-#type-#src.txt'
         command = self.str_command_for_peds_aver()
+        if command is None : return False
+
         queue        = self.queue.value()
         bat_log_file = fnm.path_peds_aver_batch_log()
 
