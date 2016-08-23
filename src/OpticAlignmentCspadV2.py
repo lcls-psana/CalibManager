@@ -158,7 +158,7 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
                 if self.print_bits & 256 : print 'Stuff for quad', self.quad  
                 continue
 
-            if list_of_fields[0] == 'Sensor' : # Treat the title lines
+            if list_of_fields[0] in ('Sensor', 'Point') : # Treat the title lines
                 if self.print_bits & 256 : print 'Comment line:', line  
                 continue
             

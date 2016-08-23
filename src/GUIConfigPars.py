@@ -362,19 +362,19 @@ class GUIConfigPars(Frame) :
     def onEditPrefix(self):
         logger.debug('onEditPrefix', __name__)
         cp.fname_prefix.setValue(str(self.edi_fname_prefix.displayText()))
-        logger.info('Set file name common prefix: ' + str( cp.fname_prefix.value()), __name__ )
+        logger.info('Set file name common prefix: ' + str( cp.fname_prefix.value()), __name__)
 
 
     def onEdiDarkStart(self):
         str_value = str(self.edi_dark_start.displayText())
         cp.bat_dark_start.setValue(int(str_value))      
-        logger.info('Set start event for dark run: %s' % str_value, __name__ )
+        logger.info('Set start event for dark run: %s' % str_value, __name__)
 
 
     def onEdiDarkEnd(self):
         str_value = str(self.edi_dark_end.displayText())
         cp.bat_dark_end.setValue(int(str_value))      
-        logger.info('Set last event for dark run: %s' % str_value, __name__ )
+        logger.info('Set last event for dark run: %s' % str_value, __name__)
 
 
     def onEdiDarkScan(self):
@@ -386,13 +386,13 @@ class GUIConfigPars(Frame) :
     def onEdiTimeOut(self):
         str_value = str(self.edi_timeout.displayText())
         cp.job_timeout_sec.setValue(int(str_value))      
-        logger.info('Job execution timout, sec : %s' % str_value, __name__ )
+        logger.info('Job execution timout, sec : %s' % str_value, __name__)
 
 
     def onEdiDarkSele(self):
         str_value = str(self.edi_dark_sele.displayText())
         cp.bat_dark_sele.setValue(int(str_value))      
-        logger.info('Set the event code for selector: %s' % str_value, __name_ )
+        logger.info('Set the event code for selector: %s' % str_value, __name__)
 
 
     def onEdiRmsThrMin(self):

@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-08-23 Mikhail S. Dubrovin
+Tag: V00-02-16
+- OpticAlignmentCspadV2.py - skip text line with keyword Point 
+	
 2016-07-28 Mikhail S. Dubrovin
 Tag: V00-02-15
 - Fix problems raised in PSAS-255:
