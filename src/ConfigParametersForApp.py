@@ -284,7 +284,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.bat_dark_start    = self.declareParameter( name='BATCH_DARK_START',      val_def=1,        type='int' )
         self.bat_dark_end      = self.declareParameter( name='BATCH_DARK_END',        val_def=1000,     type='int' )
         self.bat_dark_scan     = self.declareParameter( name='BATCH_DARK_SCAN',       val_def=10,       type='int' )
-        self.bat_dark_sele     = self.declareParameter( name='BATCH_DARK_SELECTOR',   val_def=0,        type='int' )
+        self.bat_dark_sele     = self.declareParameter( name='BATCH_DARK_EVCODES',    val_def=None,     type='str' )
         self.bat_det_info      = self.declareParameter( name='BATCH_DET_INFO',        val_def='DetInfo(:Princeton)',  type='str' )
         self.bat_img_rec_mod   = self.declareParameter( name='BATCH_IMG_REC_MODULE',  val_def='ImgAlgos.PrincetonImageProducer',  type='str' )
         self.mask_rms_thr_min  = self.declareParameter( name='MASK_PIX_MIN_THR_RMS',  val_def=  0.1,  type='float' )

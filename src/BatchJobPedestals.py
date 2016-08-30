@@ -191,6 +191,7 @@ class BatchJobPedestals(BatchJob) :
         rmsnhi = cp.mask_rmsnhi.value()
         intnlo = cp.mask_intnlo.value()
         intnhi = cp.mask_intnhi.value()
+        evcode = cp.bat_dark_sele.value()
 
         if srcs == '' :
             str_sel_dets = ' '.join(cp.list_of_dets_selected())
@@ -216,6 +217,8 @@ class BatchJobPedestals(BatchJob) :
                 + ' -D %.3f' % intnlo\
                 + ' -U %.3f' % intnhi
 
+        if evcode != 'None' : command += ' -c %s'   % evcode
+
 #  -d DSNAME, --dsname=DSNAME  dataset name, default = None
 #  -s SOURCE, --source=SOURCE  input ndarray file name, default = None
 #  -f OFNAME, --ofname=OFNAME  output file name template, default = nda-#exp-#run-#src-#evts-#type-#date-#time-#fid-#sec-#nsec.txt
@@ -233,7 +236,8 @@ class BatchJobPedestals(BatchJob) :
 #  -U INTNHI, --intnhi=INTNHI  number of sigma from mean for high limit on INTENSITY, default = 6.0
 #  -L RMSNLO, --nsiglo=RMSNLO  number of sigma from mean for low limit on RMS, default = 6.0
 #  -H RMSNHI, --nsighi=RMSNHI  number of sigma from mean for high limit on RMS, default = 6.0
- 
+#  -c EVCODE, --evcode=EVCODE  comma separated event codes for selection as OR ..., default = None
+
         msg = 'Avereging xtc file(s) using command:\n%s' % command \
             + '\nand save results in the log-file: %s' % logave
         logger.info(msg, __name__)

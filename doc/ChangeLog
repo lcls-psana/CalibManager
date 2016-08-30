@@ -13,7 +13,14 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
-2016-08-23 Mikhail S. Dubrovin
+2016-08-30 Mikhail S. Dubrovin
+Tag: V00-02-17
+- Restore event code selection for dark runs in python interface (PSAS-139)
+M       app/calibrun
+M       src/BatchJobPedestals.py
+M       src/ConfigParametersForApp.py
+M       src/GUIConfigPars.py
+
 Tag: V00-02-16
 - OpticAlignmentCspadV2.py - skip text line with keyword Point 
 	

@@ -36,17 +36,18 @@ from optparse import OptionParser
 #-----------------------------
 
 def input_options_parser() :
-    com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173'
+    com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'
     com_x  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc' 
     help_print_bits = '0-print nothing, +1-debug, +2-info, +4-warning, +8-error, +16-critical; default=036, minimal recommended=020'
-    
+    help_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all.'   
+
     parser = OptionParser(description='%prog - command line calibration utility', usage='  %prog [options] args'+com_ex )
     parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345')
     parser.add_option('-r', '--run',         dest='runnum',       default=None,  action='store', type='int',    help='run number')
     parser.add_option('-n', '--num_events',  dest='num_events',   default=None,  action='store', type='int',    help='number of events to process')
     parser.add_option('-s', '--skip_events', dest='skip_events',  default=None,  action='store', type='int',    help='number of events to skip before processing')
     parser.add_option('-m', '--scan_events', dest='scan_events',  default=None,  action='store', type='int',    help='number of events to scan data and search for selected detector(s)')
-    parser.add_option('-f', '--event_code',  dest='event_code',   default=None,  action='store', type='int',    help='event code for dark event selection')
+    parser.add_option('-f', '--event_code',  dest='event_code',   default=None,  action='store', type='string', help=help_event_code)
     parser.add_option('-B', '--thr_int_min', dest='thr_int_min',  default=None,  action='store', type='float',  help='minimal threshold on intensity for pixel_status (intens<thr - dead pixel)')
     parser.add_option('-T', '--thr_int_max', dest='thr_int_max',  default=None,  action='store', type='float',  help='maximal threshold on intensity for pixel_status (intens>thr - satturated pixel)')
     parser.add_option('-b', '--thr_rms_min', dest='thr_rms_min',  default=None,  action='store', type='float',  help='minimal threshold on rms for pixel_status (rms<thr - cold pixel)')

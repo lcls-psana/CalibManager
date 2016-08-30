@@ -85,7 +85,7 @@ class GUIConfigPars(Frame) :
         self.edi_dark_end   .setValidator(QtGui.QIntValidator(1,9999999,self))
         self.edi_dark_scan  .setValidator(QtGui.QIntValidator(1,9999999,self))
         self.edi_timeout    .setValidator(QtGui.QIntValidator(1,9999999,self))
-        self.edi_dark_sele  .setValidator(QtGui.QIntValidator(-256,256,self))
+        #self.edi_dark_sele  .setValidator(QtGui.QIntValidator(-256,256,self)) # str like '1,2,3'
         self.edi_rms_thr_min.setValidator(QtGui.QDoubleValidator(0,65000,3,self))
         self.edi_rms_thr_max.setValidator(QtGui.QDoubleValidator(0,65000,3,self))
         self.edi_min_thr    .setValidator(QtGui.QDoubleValidator(0,65000,3,self))
@@ -198,7 +198,7 @@ class GUIConfigPars(Frame) :
         self.edi_fname_prefix .setToolTip('Edit the common file prefix in this field')
         self.but_show_vers    .setToolTip('Show current package tags')
         self.but_lsf_status   .setToolTip('Show LSF status')
-        self.edi_dark_sele    .setToolTip('Selector event code;\n0=off, +N=select, -N=discard')
+        self.edi_dark_sele    .setToolTip('Comma separated event codes;\nNone=off, +N=select, -N=discard.\nEx.: 43,45')
         self.cbx_smd_or_xtc   .setToolTip('Switch between .smd and .xtc modes')
         self.cbx_deploy_hotpix.setToolTip('Deploy or not pixel_status constants')
         self.cbx_deploy_cmod  .setToolTip('Deploy or not common_mode constants (for PNCCD only)')
@@ -391,7 +391,8 @@ class GUIConfigPars(Frame) :
 
     def onEdiDarkSele(self):
         str_value = str(self.edi_dark_sele.displayText())
-        cp.bat_dark_sele.setValue(int(str_value))      
+        if str_value == '' : str_value = 'None'
+        cp.bat_dark_sele.setValue(str_value)      
         logger.info('Set the event code for selector: %s' % str_value, __name__)
 
 
