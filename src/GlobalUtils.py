@@ -39,7 +39,7 @@ import subprocess # for subprocess.Popen
 
 from Logger import logger
 from PyQt4 import QtGui, QtCore
-from LogBook import message_poster
+#from LogBook import message_poster
 from GUIPopupCheckList import *
 from GUIPopupRadioList import *
 
@@ -198,69 +198,68 @@ def subproc(command_seq, env=None, shell=False) : # for example, command_seq=['b
 
 #----------------------------------
 
-def send_msg_with_att_to_elog(inst='AMO', expt='amodaq09', run='825', tag='TAG1',
-                              msg='EMPTY MESSAGE', fname_text=None, fname_att=None, resp=None) :
-
-    poster = message_poster.message_poster_self ( inst, experiment=expt )
-
-    if resp == 'None' : msg_id = poster.post ( msg, attachments=[fname_att], run_num=run, tags=tag )
-    else              : msg_id = poster.post ( msg, attachments=[fname_att], parent_message_id = int(resp) )    
-
-    msg_in_log = 'Message with id: %d is submitted to ELog' % (msg_id)
-
-    logger.info(msg_in_log, __name__)
-    return msg_id
+#def send_msg_with_att_to_elog(inst='AMO', expt='amodaq09', run='825', tag='TAG1',
+#                              msg='EMPTY MESSAGE', fname_text=None, fname_att=None, resp=None) :
+#
+#    poster = message_poster.message_poster_self ( inst, experiment=expt )
+#
+#    if resp == 'None' : msg_id = poster.post ( msg, attachments=[fname_att], run_num=run, tags=tag )
+#    else              : msg_id = poster.post ( msg, attachments=[fname_att], parent_message_id = int(resp) )    
+#
+#    msg_in_log = 'Message with id: %d is submitted to ELog' % (msg_id)
+#
+#    logger.info(msg_in_log, __name__)
+#    return msg_id
 
 #----------------------------------
 
-def send_msg_with_att_to_elog_v0(inst='AMO', expt='amodaq09', run='825', tag='TAG1',
-                              msg='EMPTY MESSAGE', fname_text=None, fname_att=None, resp=None) :
-    #pypath = os.getenv('PYTHONPATH')
-    my_env = os.environ
-    pypath = my_env.get('PYTHONPATH', '')
-    my_env['PYTHONPATH'] = pypath + \
-                  ':/reg/g/pcds/pds/grabber/lib/python2.7/site-packages/' 
-    command_seq = ['/reg/g/pcds/pds/grabber/bin/LogBookPost_self.py',
-                   '-i', inst,
-                   '-e', expt,
-                   '-r', run,
-                   '-t', tag
-                   ]
-
-    if msg is not None and msg != 'None' :
-        command_seq.append('-m')
-        command_seq.append(msg)
-
-    if fname_text is not None and fname_text != 'None' :
-        command_seq.append('-f')
-        command_seq.append(fname_text)
-
-    if fname_att is not None and fname_att != 'None' :
-        command_seq.append('-a')
-        command_seq.append(fname_att)
-
-    if resp is not None and resp != 'None' :
-        command_seq.append('-???')
-        command_seq.append(resp)
-
-
-    #print 'my_env for PYTHONPATH: ', my_env['PYTHONPATH']
-    #print 'command_seq: ', command_seq
-
-    str_command_seq = ''
-    for v in command_seq : str_command_seq += v + ' '
-
-    logger.info('command_seq: ' + str_command_seq, __name__) 
-
-    #==================
-    #out, err = 'submission procedure must be uncommented...', 'Responce should be ok, but...'
-    out, err = subproc(command_seq, env=my_env)
-    #==================
-
-    #print 'out:\n', out
-    #print 'err:\n', err
-    if err != '' : return err + '\n' + out
-    else         : return out
+#def send_msg_with_att_to_elog_v0(inst='AMO', expt='amodaq09', run='825', tag='TAG1',
+#                              msg='EMPTY MESSAGE', fname_text=None, fname_att=None, resp=None) :
+#    #pypath = os.getenv('PYTHONPATH')
+#    my_env = os.environ
+#    pypath = my_env.get('PYTHONPATH', '')
+#    my_env['PYTHONPATH'] = pypath + \
+#                  ':/reg/g/pcds/pds/grabber/lib/python2.7/site-packages/' 
+#    command_seq = ['/reg/g/pcds/pds/grabber/bin/LogBookPost_self.py',
+#                   '-i', inst,
+#                   '-e', expt,
+#                   '-r', run,
+#                   '-t', tag
+#                   ]
+#
+#    if msg is not None and msg != 'None' :
+#        command_seq.append('-m')
+#        command_seq.append(msg)
+#
+#    if fname_text is not None and fname_text != 'None' :
+#        command_seq.append('-f')
+#        command_seq.append(fname_text)
+#
+#    if fname_att is not None and fname_att != 'None' :
+#        command_seq.append('-a')
+#        command_seq.append(fname_att)
+#
+#    if resp is not None and resp != 'None' :
+#        command_seq.append('-???')
+#        command_seq.append(resp)
+#
+#    #print 'my_env for PYTHONPATH: ', my_env['PYTHONPATH']
+#    #print 'command_seq: ', command_seq
+#
+#    str_command_seq = ''
+#    for v in command_seq : str_command_seq += v + ' '
+#
+#    logger.info('command_seq: ' + str_command_seq, __name__) 
+#
+#    #==================
+#    #out, err = 'submission procedure must be uncommented...', 'Responce should be ok, but...'
+#    out, err = subproc(command_seq, env=my_env)
+#    #==================
+#
+#    #print 'out:\n', out
+#    #print 'err:\n', err
+#    if err != '' : return err + '\n' + out
+#    else         : return out
 
 #----------------------------------
 

@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-08-31 Mikhail S. Dubrovin
+Tag: V00-02-18
+- GlobalUtils - remove dependence on LogBook
+
 2016-08-30 Mikhail S. Dubrovin
 Tag: V00-02-17
 - Restore event code selection for dark runs in python interface (PSAS-139)
@@ -22,8 +26,8 @@ M       src/ConfigParametersForApp.py
 M       src/GUIConfigPars.py
 
 Tag: V00-02-16
-- OpticAlignmentCspadV2.py - skip text line with keyword Point 
-	
+- OpticAlignmentCspadV2.py - skip text line with keyword Point
+
 2016-07-28 Mikhail S. Dubrovin
 Tag: V00-02-15
 - Fix problems raised in PSAS-255:
