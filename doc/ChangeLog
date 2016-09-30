@@ -13,6 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-09-30 Mikhail S. Dubrovin
+Tag: V00-02-19
+- GlobalUtils - create directories and file with default mode 777.
+- Logger - save log file with default mode 666.
+
 2016-08-31 Mikhail S. Dubrovin
 Tag: V00-02-18
 - GlobalUtils - remove dependence on LogBook

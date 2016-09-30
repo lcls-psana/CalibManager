@@ -81,7 +81,7 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
 
 #-----------------------------
 
-def create_directory(dir, mode=0775) :
+def create_directory(dir, mode=0777) :
     #print 'create_directory: %s' % dir
     if os.path.exists(dir) :
         logger.info('Directory exists: ' + dir, __name__) 
@@ -92,7 +92,7 @@ def create_directory(dir, mode=0775) :
         logger.info('Directory created: ' + dir, __name__) 
 
 
-def create_path(path, depth=5, mode=0775) : 
+def create_path(path, depth=5, mode=0777) : 
     # Creates missing path for /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
     # if path to file exists return True, othervise False
     subdirs = path.strip('/').split('/')

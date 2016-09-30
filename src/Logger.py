@@ -54,6 +54,7 @@ __version__ = "$Revision$"
 #  Import of modules --
 #----------------------
 
+import os
 from time import localtime, strftime
 
 #-----------------------------
@@ -206,25 +207,26 @@ class Logger :
         return log_txt
 
 
-    def saveLogInFile(self, fname=None):
+    def saveLogInFile(self, fname=None, mode=0666):
         """Save content of the selected log records in the text file"""
         if fname is None : fname_log = self.fname
         else             : fname_log = fname
-        self._saveTextInFile(self.getLogContent(), fname_log)
+        self._saveTextInFile(self.getLogContent(), fname_log, mode)
 
 
-    def saveLogTotalInFile(self, fname=None):
+    def saveLogTotalInFile(self, fname=None, mode=0666):
         """Save content of all log records in the text file"""
         if fname is None : fname_log = self.fname_total
         else             : fname_log = fname
-        self._saveTextInFile(self.getLogContentTotal(), fname_log)
+        self._saveTextInFile(self.getLogContentTotal(), fname_log, mode)
 
 
-    def _saveTextInFile(self, text, fname='log.txt'):
+    def _saveTextInFile(self, text, fname='log.txt', mode=0666):
         self.debug('saveTextInFile: ' + fname, self.name)
         f=open(fname,'w')
         f.write(text)
-        f.close() 
+        f.close()
+        os.chmod(fname, mode)
 
 #-----------------------------
 
