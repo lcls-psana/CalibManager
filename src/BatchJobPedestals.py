@@ -110,7 +110,7 @@ class BatchJobPedestals(BatchJob) :
 #-----------------------------
 
     def command_for_peds_scan(self) :
-        self.command_for_peds_scan_v1()
+        return self.command_for_peds_scan_v1()
         #self.command_for_peds_scan_old()
 
 #-----------------------------
@@ -122,11 +122,17 @@ class BatchJobPedestals(BatchJob) :
         
         err = gu.subproc_in_log(command.split(), logscan) # , shell=True)
         if err != '' :
-            logger.error('\nerr: %s' % (err), __name__)
-            self.stop_auto_processing(is_stop_on_button_click=False)
-            logger.warning('Autoprocessing for run %s is stopped due to error at execution of the scan command' % self.str_run_number, __name__)
-        else :
-            logger.info('Scan for run %s is completed' % self.str_run_number, __name__)
+            if 'ERR' in err :
+                logger.error('\nERROR message from scan:\n%s' % (err), __name__)
+                self.stop_auto_processing(is_stop_on_button_click=False)
+                logger.warning('Autoprocessing for run %s is stopped due to error at execution of the scan command'\
+                               % self.str_run_number, __name__)
+                return False
+            else :
+                logger.warning('\nMessage from scan:\n%s' % (err), __name__)
+
+        logger.info('Scan for run %s is completed' % self.str_run_number, __name__)
+        return True
 
 #-----------------------------
 
@@ -321,7 +327,9 @@ class BatchJobPedestals(BatchJob) :
         if not self.job_can_be_submitted(self.job_id_peds_str, self.time_peds_job_submitted, 'peds') : return        
         self.time_peds_job_submitted = gu.get_time_sec()
 
-        self.command_for_peds_scan()
+        status = self.command_for_peds_scan()
+        if not status :
+            return False
 
         if not self.is_good_lsf() :
             self.stop_auto_processing(is_stop_on_button_click=False)

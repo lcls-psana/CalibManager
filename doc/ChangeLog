@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-10-13 Mikhail S. Dubrovin
+Tag: V00-02-20 
+- BatchJobPedestals - do not stop processing in case of warning messages from scan (PSAS-139).
+
 2016-09-30 Mikhail S. Dubrovin
 Tag: V00-02-19
 - GlobalUtils - create directories and file with default mode 777.
