@@ -46,11 +46,38 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
 
     return list_of_deploy_commands, list_of_sources
     
+#------------------------------
+
+def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode='dark'):
+    """Get list of deploy commands for all detectors of the same type"""
+
+    cp.str_run_number.setValue(str_run_number)
+    #cp.blsp.print_list_of_types_and_sources()
+    list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
+
+    list_of_deploy_commands  = get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_ave(), 'pedestals', str_run_range, mode)
+    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_rms(), 'pixel_rms', str_run_range, mode)
+
+    if cp.dark_deploy_hotpix.value() :
+      list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_hotpix_mask(), 'pixel_status', str_run_range, mode)
+
+    if cp.dark_deploy_cmod.value() :
+      list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_cmod(), 'common_mode', str_run_range, mode)
+
+    return list_of_deploy_commands, list_of_sources
+    
 #-----------------------------
 
 def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode='dark'):
     if mode=='calibman-dark' or \
        mode=='calibrun-dark' : return get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range)
+    else                     : return [], []
+
+#-----------------------------
+
+def get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode='dark'):
+    if mode=='calibman-dark' or \
+       mode=='calibrun-dark' : return get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode)
     else                     : return [], []
 
 #-----------------------------
@@ -82,6 +109,68 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
         #print 'cmd: ', cmd
         if is_allowed_command(cmd, list_src_cbx) : fd.procDeployCommand(cmd, mode)
 
+    #---->>> DCS hdf5 file deployment
+    deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx)
+
+#-----------------------------
+
+def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
+    """Deploys the calibration file(s) in the Detector Calibration Store
+       e.g.: dcs add -e mfxn8316 -r 11 -d Epix100a -t pixel_status -v 4 -f my-nda.txt -m "my comment" -c ./calib
+    """
+    
+    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode)
+
+    if list_of_deploy_commands == [] :
+        msg += 'List of DCS deploy commands IS EMPTY !!!'  
+        logger.info(msg, __name__)
+        return
+    
+    msg =  '\nTentative DCS deployment commands:\n' + '\n'.join(list_of_deploy_commands)
+    logger.info(msg, __name__)
+
+    #list_src_cbx = [[src,True] for src in list_of_sources]
+    #if ask_confirm :
+    #    resp = gu.changeCheckBoxListInPopupMenu(list_src_cbx, win_title='Confirm depl. for:')
+    #    if resp != 1 :
+    #        logger.info('Deployment is cancelled!', __name__)
+    #        return
+
+    for cmd in list_of_deploy_commands :
+        #print 'cmd: ', cmd
+        if is_allowed_command_dcs(cmd, list_src_cbx) : procDeployCommandDCS(cmd, mode)
+
+#-----------------------------
+
+def procDeployCommandDCS(cmd, mode) :
+    #os.system(cmd_cat)
+    stream = os.popen(cmd)
+    resp = stream.read()
+    msg = '%s\n%s' % (cmd, resp) if resp else cmd
+    logger.info(msg, 'procDeployCommandDCS')
+
+#-----------------------------
+
+def is_allowed_command_dcs(cmd, list_src_cbx):
+    """Check the deployment command is for selected src"""
+
+    fields  = cmd.split()
+    infname = fields[11] # for example:  ./work/clb-cxib2313-r0010-mask-hot-thr-0.00ADU-CxiDs1.0:Cspad.0.txt 
+    if not os.path.exists(infname) :
+        msg = '\nWARNING: INPUT FILE %s DOES NOT EXIST... Is not deployed.\n' % infname
+        logger.warning(msg, __name__)
+        return False
+
+    for src,cbx in list_src_cbx :
+        if cbx : return True
+        #if src in destination : return True
+
+    return False
+
+#-----------------------------
+#-----------------------------
+#-----------------------------
+#-----------------------------
 
 def is_allowed_command(cmd, list_src_cbx):
     """Check the deployment command is for selected src"""
@@ -103,7 +192,7 @@ def is_allowed_command(cmd, list_src_cbx):
 def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, list_of_sources, base_path, calibtype='pedestals', str_run_range='0-end'):
     """Get list of deploy commands for lists of type and sources for calibtype"""
     
-    list_of_files = gu.get_list_of_files_for_list_of_insets( base_path, list_of_sources )
+    list_of_files = gu.get_list_of_files_for_list_of_insets(base_path, list_of_sources)
 
     list_of_deploy_commands = []
 
@@ -120,6 +209,40 @@ def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, lis
         
         calib_path = os.path.join(cp.calib_dir.value(), ctype, source, calibtype, fname)
         cmd = 'cp %s %s' % (file, calib_path)
+
+        list_of_deploy_commands.append(cmd)
+
+    return list_of_deploy_commands
+
+#-----------------------------
+#-----------------------------
+#-----------------------------
+#-----------------------------
+
+def get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, base_path, calibtype='pedestals', str_run_range='0-end', mode='dark'):
+    """Get list of deploy commands for lists of type and sources for calibtype"""
+    
+    list_of_files = gu.get_list_of_files_for_list_of_insets(base_path, list_of_sources)
+
+    list_of_deploy_commands = []
+
+    for file, source in zip(list_of_files, list_of_sources) :
+        # Ex. source: 'NoDetector.0:Epix100a.0'
+        # Ex. file  : './work/clb-mfxn8316-r0014-peds-sta-MfxEndstation.0:Epix100a.0.txt'
+        if calibtype == 'common_mode' and gu.cgu.det_type_from_source(source) not in cp.list_of_depl_cmod : continue
+
+        #fname = '%s.data' % str_run_range        
+        #calib_path = os.path.join(cp.calib_dir.value(), ctype, source, calibtype, fname)
+
+        # ex.: dcs add -e mfxn8316 -r 11 -d Epix100a -t pixel_status -v 4 -f my-nda.txt -m "my comment" -c ./calib
+        cmd = 'dcs add -e %s' % cp.exp_name.value()\
+            +  ' -r %s' % cp.str_run_number.value().lstrip('0')\
+            +  ' -d %s' % source\
+            +  ' -t %s' % calibtype\
+            +  ' -f %s' % file\
+            +  ' -m %s' % mode\
+            +  ' -c %s' % cp.calib_dir.value()\
+            +  ' -i'
 
         list_of_deploy_commands.append(cmd)
 

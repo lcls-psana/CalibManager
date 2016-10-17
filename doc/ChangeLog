@@ -13,6 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-10-17 Mikhail S. Dubrovin
+Tag: V00-02-20
+- FileDeployer - add *dcs methods to deploy files in DCS through CLI.
+- GUIDarkMoreOpts - on View button throw modal GUI to pick up necessary file.
+
 2016-10-13 Mikhail S. Dubrovin
 Tag: V00-02-19
 - BatchJobPedestals - do not stop processing in case of warning messages from scan (PSAS-139).

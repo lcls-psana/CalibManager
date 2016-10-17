@@ -299,8 +299,12 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
             #self.but_view.setStyleSheet(cp.styleButtonBad)
         except :
             #self.but_view.setStyleSheet(cp.styleButtonGood)
-            
-            cp.guifilebrowser = GUIFileBrowser(None, self.get_list_of_files_peds_view(), fnm.path_peds_scan_batch_log())
+
+            list_of_fnames = self.get_list_of_files_peds_view()
+            fname = gu.selectFromListInPopupMenu(list_of_fnames)
+            cp.guifilebrowser = GUIFileBrowser(None, list_of_fnames, fname)
+
+            #cp.guifilebrowser = GUIFileBrowser(None, self.get_list_of_files_peds_view(), fnm.path_peds_scan_batch_log())
             cp.guifilebrowser.move(self.pos().__add__(QtCore.QPoint(880,40))) # open window with offset w.r.t. parent
             cp.guifilebrowser.show()
 
