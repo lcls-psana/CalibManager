@@ -103,8 +103,9 @@ class GUIDarkListItemRun(QtGui.QWidget) :
 
     def showToolTips(self):
         self.lab_rnum.setToolTip('Data run for calibration.')
-        self.lab_type.setToolTip('Type of file (data, dark, etc)')
+        self.lab_type.setToolTip('Type of file (data, dark, etc).')
         self.but_go  .setToolTip('Begin data processing for calibration.')
+        self.but_depl.setToolTip('Deploy file with constants\nin the calib directory.')
 
 
     def setFieldsEnabled(self, is_enabled=True):
@@ -133,7 +134,7 @@ class GUIDarkListItemRun(QtGui.QWidget) :
         #self.lab_rnum .setFixedWidth(60)        
         self.lab_type.setMinimumWidth(250)
         self.but_go  .setFixedWidth(60)        
-        self.but_depl.setFixedWidth(60)
+        self.but_depl.setFixedWidth(80)
 
         #self.but_go.setEnabled(self.str_run_number != 'None' and self.lab_rnum.isEnabled())
 
@@ -236,8 +237,21 @@ class GUIDarkListItemRun(QtGui.QWidget) :
 
     def onButDeploy(self):
         logger.debug('onButDeploy', __name__)
+        but = self.but_depl
+        but.setText('Busy...')
+        but.setStyleSheet(cp.styleDefault)
+        but.setEnabled(False)
+        status = fdmets.deploy_calib_files(self.str_run_number, self.strRunRange(), mode='calibman-dark', ask_confirm=True)
 
-        fdmets.deploy_calib_files(self.str_run_number, self.strRunRange(), mode='calibman-dark', ask_confirm=True)
+        if status :
+            but.setText('Deploy')
+            but.setStyleSheet(cp.styleButtonWarning)
+            #logger.warning('Deployment command terminated.', __name__)
+        else :
+            but.setText('Deployed')
+            logger.info('Deployment command completed.', __name__)
+
+        but.setEnabled(True)
 
         if cp.guistatus is not None : cp.guistatus.updateStatusInfo()
 

@@ -13,6 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-10-18 Mikhail S. Dubrovin
+Tag: V00-02-22
+- FileDeployer.deploy_calib_files - return status
+- GUIDarkListItemRun - onButDeploy - change "Deploy" button status depending on procedure status (PSAS-6).
+	
 2016-10-17 Mikhail S. Dubrovin
 Tag: V00-02-20
 - FileDeployer - add *dcs methods to deploy files in DCS through CLI.

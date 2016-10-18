@@ -93,7 +93,7 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
     if list_of_deploy_commands == [] :
         msg += 'List of commands IS EMPTY !!!'  
         logger.info(msg, __name__)
-        return
+        return 1
     
     msg =  '\nTentative deployment commands:\n' + '\n'.join(list_of_deploy_commands)
     logger.info(msg, __name__)
@@ -103,14 +103,14 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
         resp = gu.changeCheckBoxListInPopupMenu(list_src_cbx, win_title='Confirm depl. for:')
         if resp != 1 :
             logger.info('Deployment is cancelled!', __name__)
-            return
+            return 2
 
     for cmd in list_of_deploy_commands :
         #print 'cmd: ', cmd
         if is_allowed_command(cmd, list_src_cbx) : fd.procDeployCommand(cmd, mode)
 
     #---->>> DCS hdf5 file deployment
-    deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx)
+    return deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx)
 
 #-----------------------------
 
@@ -124,7 +124,7 @@ def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
     if list_of_deploy_commands == [] :
         msg += 'List of DCS deploy commands IS EMPTY !!!'  
         logger.info(msg, __name__)
-        return
+        return 3
     
     msg =  '\nTentative DCS deployment commands:\n' + '\n'.join(list_of_deploy_commands)
     logger.info(msg, __name__)
@@ -139,6 +139,8 @@ def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
     for cmd in list_of_deploy_commands :
         #print 'cmd: ', cmd
         if is_allowed_command_dcs(cmd, list_src_cbx) : procDeployCommandDCS(cmd, mode)
+
+    return 0
 
 #-----------------------------
 

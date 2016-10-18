@@ -304,7 +304,6 @@ class CommandLineCalib() :
         #if self.bjpeds.autoRunStage :            
         #self.bjpeds.stop_auto_processing()
 
-
 #------------------------------
 
     def deploy_calib_files(self) :
@@ -314,8 +313,11 @@ class CommandLineCalib() :
 
         if self.deploy :
             self.log(self.sep + 'Begin deployment of calibration files',1) 
-            fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False)
-            self.log('\nDeployment of calibration files is completed',1)
+            s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False)
+            if s : 
+                self.log('\nProblem with deployment of calibration files...',2)
+            else :
+                self.log('\nDeployment of calibration files is completed',1)
         else :
             self.log(self.sep + '\nWARNING: FILE DEPLOYMENT OPTION IS TURNED OFF...'\
                      +'\nAdd "-D" option in the command line to deploy files\n',4)
