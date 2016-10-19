@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-10-19 Mikhail S. Dubrovin
+Tag: V00-02-22
+- GUIPopupSelectExp.py - ignore selection of the year in stead of experiment name.
+	
 2016-10-18 Mikhail S. Dubrovin
 Tag: V00-02-21
 - FileDeployer.deploy_calib_files - return status

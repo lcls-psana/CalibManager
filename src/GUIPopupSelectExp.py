@@ -84,10 +84,12 @@ class GUIPopupList(QtGui.QDialog) :
 
 
     def fill_list(self, lst_exp) :
-        for year in sorted(years(lst_exp)) :
+        self.years = sorted(years(lst_exp))
+        for year in self.years :
             item = QtGui.QListWidgetItem(year, self.list)
             item.setFont(QtGui.QFont('Courier', 14, QtGui.QFont.Bold))
             item.setFlags(QtCore.Qt.NoItemFlags)
+            #item.setFlags(QtCore.Qt.NoItemFlags ^ QtCore.Qt.ItemIsEnabled ^ QtCore.Qt.ItemIsSelectable)
             for exp in sorted(lst_exp_for_year(lst_exp, year)) :
                 item = QtGui.QListWidgetItem(exp, self.list)
                 item.setFont(QtGui.QFont('Monospace', 11, QtGui.QFont.Normal)) # Bold))
@@ -124,6 +126,7 @@ class GUIPopupList(QtGui.QDialog) :
         #widg = self.list.itemWidget(item)
         #item.checkState()
         self.name_sel = item.text()
+        if self.name_sel in self.years : return # ignore selection of year
         #print self.name_sel
         logger.debug('Selected experiment %s' % self.name_sel, __name__)  
         self.accept()
