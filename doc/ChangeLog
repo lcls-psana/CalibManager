@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-11-26 Mikhail S. Dubrovin
+Tag: V00-02-23
+- In GUIMain and CommandLineCalib - remove add_record_in_db - hangs on _mysql.query due to locked table
+	
 2016-10-19 Mikhail S. Dubrovin
 Tag: V00-02-22
 - GUIPopupSelectExp.py - ignore selection of the year in stead of experiment name.

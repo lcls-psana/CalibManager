@@ -31,7 +31,6 @@ from GUILogger              import GUILogger
 from GUIMainTabs            import GUIMainTabs
 from GUIInsExpDirDet        import *
 from PackageVersions        import PackageVersions
-from NotificationDB         import *
 
 #------------------------------
 
@@ -229,12 +228,8 @@ class GUIMain(QtGui.QWidget) :
         self.main_win_width .setValue(w)
         self.main_win_height.setValue(h)
 
-        try :
-            ndb = NotificationDB()
-            ndb.add_record()
-        except :
-            pass
-        
+        #self.add_record_in_db()
+
         cp.close()
 
         if cp.save_log_at_exit.value() :
@@ -247,6 +242,15 @@ class GUIMain(QtGui.QWidget) :
             else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
             
         #logger.saveLogTotalInFile( fnm.log_file_total() )
+
+
+    def add_record_in_db(self):
+        from NotificationDB import *
+        try :
+            ndb = NotificationDB()
+            ndb.add_record()
+        except :
+            pass
 
 #------------------------------
 #------------------------------

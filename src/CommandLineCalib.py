@@ -34,7 +34,6 @@ from BatchJobPedestals        import *
 from BatchLogScanParser       import blsp # Just in order to instatiate it
 
 import FileDeployer           as     fdmets
-from NotificationDBForCL      import *
 
 #------------------------------
 class CommandLineCalib() :
@@ -79,7 +78,7 @@ class CommandLineCalib() :
         self.deploy_calib_files()
         
         self.save_log_file()
-        self.add_record_in_db()
+        #self.add_record_in_db()
 
 #------------------------------
 
@@ -333,6 +332,7 @@ class CommandLineCalib() :
 
 
     def add_record_in_db(self) :
+        from NotificationDBForCL import *
         try :
             ndb = NotificationDBForCL()
             ndb.insert_record(mode='enabled')
