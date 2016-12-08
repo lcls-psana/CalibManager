@@ -13,6 +13,14 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-12-07 Mikhail S. Dubrovin
+Tag: V00-02-25
+- save ChangeLog file, forgotten in previous revision
+	
+2016-12-07 Mikhail S. Dubrovin
+Tag: V00-02-24
+- GUIPopup* - get rid of dependency on Logger, ConfigParametersForApp for re-usable modules.
+
 2016-11-26 Mikhail S. Dubrovin
 Tag: V00-02-23
 - In GUIMain and CommandLineCalib - remove add_record_in_db - hangs on _mysql.query due to locked table
