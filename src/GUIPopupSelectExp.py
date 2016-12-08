@@ -15,9 +15,8 @@ __version__ = "$Revision$"
 import os
 
 from PyQt4 import QtGui, QtCore
-from Logger import logger
-from ConfigParametersForApp import cp
-from GlobalUtils import selectFromListInPopupMenu
+#from CalibManager.Logger import logger
+#from CalibManager.ConfigParametersForApp import cp
 
 #------------------------------
 
@@ -107,9 +106,9 @@ class GUIPopupList(QtGui.QDialog) :
         self.setFixedWidth(120)
         self.setMinimumHeight(600)
         #self.setMaximumWidth(600)
-        self.setStyleSheet(cp.styleBkgd)
+        #self.setStyleSheet(cp.styleBkgd)
         self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
-        self.setStyleSheet(cp.styleBkgd)
+        #self.setStyleSheet(cp.styleBkgd)
         #self.but_cancel.setStyleSheet(cp.styleButton)
         #self.but_apply.setStyleSheet(cp.styleButton)
         self.move(QtGui.QCursor.pos().__add__(QtCore.QPoint(-110,-50)))
@@ -128,12 +127,12 @@ class GUIPopupList(QtGui.QDialog) :
         self.name_sel = item.text()
         if self.name_sel in self.years : return # ignore selection of year
         #print self.name_sel
-        logger.debug('Selected experiment %s' % self.name_sel, __name__)  
+        #logger.debug('Selected experiment %s' % self.name_sel, __name__)  
         self.accept()
 
 
     def closeEvent(self, event):
-        logger.info('closeEvent', __name__)
+        #logger.info('closeEvent', __name__)
         self.reject()
 
 
@@ -142,12 +141,12 @@ class GUIPopupList(QtGui.QDialog) :
 
  
     def onCancel(self):
-        logger.debug('onCancel', __name__)
+        #logger.debug('onCancel', __name__)
         self.reject()
 
 
     def onApply(self):
-        logger.debug('onApply', __name__)  
+        #logger.debug('onApply', __name__)  
         self.accept()
 
 #------------------------------  
@@ -184,7 +183,7 @@ class GUIPopupSelectExp(QtGui.QDialog) :
         self.setStyle()
         #gu.printStyleInfo(self)
 
-        cp.guitabs = self
+        #cp.guitabs = self
         #self.move(10,25)
 
         #self.onTabBar()
@@ -194,7 +193,7 @@ class GUIPopupSelectExp(QtGui.QDialog) :
     def makeTabBar(self) :
 
         self.tab_bar = QtGui.QTabBar()
-        tab_names = years(lst_exp)
+        tab_names = years(self.lst_exp)
 
         for tab_name in tab_names :
             tab_ind = self.tab_bar.addTab(tab_name)
@@ -224,6 +223,8 @@ class GUIPopupSelectExp(QtGui.QDialog) :
 
 
     def onTabBar(self):
+        from CalibManager.GlobalUtils import selectFromListInPopupMenu
+
         tab_ind = self.tab_bar.currentIndex()
         tab_name = str(self.tab_bar.tabText(tab_ind))
         print 'Tab index: %d, name: %s' % (tab_ind, tab_name)
@@ -246,7 +247,7 @@ class GUIPopupSelectExp(QtGui.QDialog) :
         #self.setFixedWidth(200)
         self.setMinimumWidth(200)
         self.setMaximumWidth(500)
-        self.setStyleSheet(cp.styleBkgd)
+        #self.setStyleSheet(cp.styleBkgd)
         self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
         self.move(QtGui.QCursor.pos())
 
@@ -263,7 +264,8 @@ class GUIPopupSelectExp(QtGui.QDialog) :
 
 
     def closeEvent(self, event):
-        logger.debug('closeEvent', __name__)
+        pass
+        #logger.debug('closeEvent', __name__)
         #print 'closeEvent'
         #try    : self.widg_pars.close()
         #except : pass
@@ -278,18 +280,14 @@ class GUIPopupSelectExp(QtGui.QDialog) :
 
 
     def onCancel(self):
-        logger.debug('onCancel', __name__)
+        #logger.debug('onCancel', __name__)
         self.reject()
 
 
     def onApply(self):
-        logger.debug('onApply', __name__)  
+        #logger.debug('onApply', __name__)  
         self.accept()
 
-#------------------------------
-#------------------------------
-#----------- TESTS ------------
-#------------------------------
 #------------------------------
 
 def select_experiment_v1(lst_exp) :
@@ -301,6 +299,8 @@ def select_experiment_v1(lst_exp) :
 #------------------------------
 
 def select_experiment_v2(lst_exp) :
+    from CalibManager.GlobalUtils import selectFromListInPopupMenu
+
     lst_years = years(lst_exp)
     year = selectFromListInPopupMenu(lst_years)
     if year is None : return None
@@ -319,19 +319,12 @@ def select_experiment_v3(parent, lst_exp) :
     else : return None
 
 #------------------------------
-
-def test(lst_exp) :
-    #exp_name = select_experiment_v1(lst_exp)
-    #exp_name = select_experiment_v2(lst_exp)
-    exp_name = select_experiment_v3(None, lst_exp)
-    print 'exp_name = %s' % exp_name 
-
 #------------------------------
-
-if __name__ == "__main__" :
-
-    import sys
-
+#----------- TESTS ------------
+#------------------------------
+#------------------------------
+ 
+def test_all(tname) :
     lst_exp = sorted(os.listdir('/reg/d/psdm/CXI/'))
     #print 'lst_exps:', lst_exp    
     print 'years form the list of experiments', years(lst_exp)
@@ -339,6 +332,20 @@ if __name__ == "__main__" :
 
     app = QtGui.QApplication(sys.argv)
 
-    test(lst_exp)
+    exp_name = 'N/A'
+    if tname == '1': exp_name = select_experiment_v1(lst_exp)
+    if tname == '2': exp_name = select_experiment_v2(lst_exp)
+    if tname == '3': exp_name = select_experiment_v3(None, lst_exp)
+
+    print 'exp_name = %s' % exp_name 
+
+#------------------------------
+
+if __name__ == "__main__" :
+    import sys; global sys
+    tname = sys.argv[1] if len(sys.argv) > 1 else '3'
+    print 50*'_', '\nTest %s' % tname
+    test_all(tname)
+    sys.exit('End of Test %s' % tname)
 
 #------------------------------

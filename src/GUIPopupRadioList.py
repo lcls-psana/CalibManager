@@ -16,8 +16,9 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from Logger import logger
-from ConfigParametersForApp import cp
+#from Logger import logger
+#from ConfigParametersForApp import cp
+import CalibManager.AppDataPath as apputils # for icons
 
 #------------------------------  
 
@@ -41,10 +42,7 @@ class GUIPopupRadioList(QtGui.QDialog) :
 
         self.but_cancel = QtGui.QPushButton('&Cancel') 
         self.but_apply  = QtGui.QPushButton('&Apply') 
-        cp.setIcons()
-        self.but_cancel.setIcon(cp.icon_button_cancel)
-        self.but_apply .setIcon(cp.icon_button_ok)
-        
+
         self.connect( self.but_cancel, QtCore.SIGNAL('clicked()'), self.onCancel )
         self.connect( self.but_apply,  QtCore.SIGNAL('clicked()'), self.onApply )
 
@@ -59,6 +57,7 @@ class GUIPopupRadioList(QtGui.QDialog) :
         self.but_cancel.setFocusPolicy(QtCore.Qt.NoFocus)
 
         self.setStyle()
+        self.setIcons()
         self.showToolTips()
 
 
@@ -84,11 +83,24 @@ class GUIPopupRadioList(QtGui.QDialog) :
     def setStyle(self):
         #self.setFixedWidth(200)
         self.setMinimumWidth(200)
-        self.setStyleSheet(cp.styleBkgd)
-        self.but_cancel.setStyleSheet(cp.styleButton)
-        self.but_apply.setStyleSheet(cp.styleButton)
+
+        styleGray = "background-color: rgb(230, 240, 230); color: rgb(0, 0, 0);" # Gray
+        styleDefault = ""
+        self.setStyleSheet(styleDefault)
+        self.but_cancel.setStyleSheet(styleGray)
+        self.but_apply.setStyleSheet(styleGray)
+
         self.but_cancel.setVisible(self.do_confirm) 
         self.but_apply .setVisible(self.do_confirm) 
+
+
+    def setIcons(self):
+        path_icon_button_ok     = apputils.AppDataPath('CalibManager/icons/button_ok.png').path()
+        path_icon_button_cancel = apputils.AppDataPath('CalibManager/icons/button_cancel.png').path()
+        self.icon_button_ok     = QtGui.QIcon(path_icon_button_ok)
+        self.icon_button_cancel = QtGui.QIcon(path_icon_button_cancel)
+        self.but_cancel.setIcon(self.icon_button_cancel)
+        self.but_apply .setIcon(self.icon_button_ok)
         
  
     #def resizeEvent(self, e):
@@ -99,11 +111,12 @@ class GUIPopupRadioList(QtGui.QDialog) :
          #pass
 
 
-    def closeEvent(self, event):
-        logger.debug('closeEvent', __name__)
+    #def closeEvent(self, event):
+        #logger.debug('closeEvent', __name__)
         #print 'closeEvent'
         #try    : self.widg_pars.close()
         #except : pass
+
 
     #def event(self, event):
     #    print 'Event happens...:', event
@@ -126,18 +139,18 @@ class GUIPopupRadioList(QtGui.QDialog) :
             if rad.isChecked() :
                 name = str(rad.text()) 
                 self.dict_of_pars['checked'] = name
-                logger.info('Selected button: %s' % name, __name__)
+                #logger.info('Selected button: %s' % name, __name__)
                 self.accept()
                 break;
 
 
     def onCancel(self):
-        logger.debug('onCancel', __name__)
+        #logger.debug('onCancel', __name__)
         self.reject()
 
 
     def onApply(self):
-        logger.debug('onApply', __name__)  
+        #logger.debug('onApply', __name__)  
         self.applySelection()
 
 #------------------------------
