@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2016-12-08 Mikhail S. Dubrovin
+Tag: V00-02-26
+- GUIPopupSelectExp.py - make frameless pop-up window
+	
 2016-12-07 Mikhail S. Dubrovin
 Tag: V00-02-25
 - save ChangeLog file, forgotten in previous revision

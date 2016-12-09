@@ -107,6 +107,7 @@ class GUIPopupList(QtGui.QDialog) :
         self.setMinimumHeight(600)
         #self.setMaximumWidth(600)
         #self.setStyleSheet(cp.styleBkgd)
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
         self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
         #self.setStyleSheet(cp.styleBkgd)
         #self.but_cancel.setStyleSheet(cp.styleButton)
@@ -130,6 +131,14 @@ class GUIPopupList(QtGui.QDialog) :
         #logger.debug('Selected experiment %s' % self.name_sel, __name__)  
         self.accept()
 
+
+    def event(self, e):
+        """Intercepts mouse clicks outside popup window"""
+        #print 'event.type', e.type()
+        if e.type() == QtCore.QEvent.WindowDeactivate :
+            self.reject()
+        return QtGui.QDialog.event(self, e)
+    
 
     def closeEvent(self, event):
         #logger.info('closeEvent', __name__)
