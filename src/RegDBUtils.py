@@ -303,9 +303,10 @@ if __name__ == "__main__" :
     #det_name = 'opal8000'
     #det_name = 'orcafl40'
     #det_name = 'fccd960'
+    #det_name = 'jungfrau'
     #det_name = 'Acqiris'
 
-    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix') :
+    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix', 'jungfrau') :
       print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
       print_list_of_sources_for_det(det_name)
 

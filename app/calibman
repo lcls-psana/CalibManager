@@ -84,8 +84,13 @@ class StartCalibManager :
 
         gui = GUIMain(None, app, **dict_opts)
         gui.show()
-        
-        sys.exit(app.exec_())
+
+	stat = app.exec_()
+
+        statt1 = t1.quit()
+        statt2 = t2.quit()
+
+        sys.exit(stat)
 
 #---------------------------------
 
