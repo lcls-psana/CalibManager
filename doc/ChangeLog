@@ -13,7 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
-2017-01-04 Mikhail S. Dubrovin
+2017-01-20 Mikhail S. Dubrovin
+Tag: V00-02-28
+- PlotImgSpeWidget.proc_stat - add protection
+
 Tag: V00-02-27
 - ConfigParametersForApp - add support for Jungfrau
 - calibman - close threads at exit
@@ -21,11 +24,11 @@ Tag: V00-02-27
 2016-12-08 Mikhail S. Dubrovin
 Tag: V00-02-26
 - GUIPopupSelectExp.py - make frameless pop-up window
-	
+
 2016-12-07 Mikhail S. Dubrovin
 Tag: V00-02-25
 - save ChangeLog file, forgotten in previous revision
-	
+
 2016-12-07 Mikhail S. Dubrovin
 Tag: V00-02-24
 - GUIPopup* - get rid of dependency on Logger, ConfigParametersForApp for re-usable modules.
@@ -33,16 +36,16 @@ Tag: V00-02-24
 2016-11-26 Mikhail S. Dubrovin
 Tag: V00-02-23
 - In GUIMain and CommandLineCalib - remove add_record_in_db - hangs on _mysql.query due to locked table
-	
+
 2016-10-19 Mikhail S. Dubrovin
 Tag: V00-02-22
 - GUIPopupSelectExp.py - ignore selection of the year in stead of experiment name.
-	
+
 2016-10-18 Mikhail S. Dubrovin
 Tag: V00-02-21
 - FileDeployer.deploy_calib_files - return status
 - GUIDarkListItemRun - onButDeploy - change "Deploy" button status depending on procedure status (PSAS-6).
-	
+
 2016-10-17 Mikhail S. Dubrovin
 Tag: V00-02-20
 - FileDeployer - add *dcs methods to deploy files in DCS through CLI.
