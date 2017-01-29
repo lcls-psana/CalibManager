@@ -12,6 +12,9 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+2017-01-29 Mikhail S. Dubrovin
+Tag: V00-02-29
+- Add modules for H5* GUI project, NotificationLog, QIcons, Styles, update icons
 
 2017-01-20 Mikhail S. Dubrovin
 Tag: V00-02-28

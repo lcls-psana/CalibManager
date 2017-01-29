@@ -83,7 +83,7 @@ class Logger :
 
     def setLevel(self, level):
         """Sets the threshold level of messages for record selection algorithm"""
-        self.level_thr     = level
+        self.level_thr_str = level
         self.level_thr_ind = self.levels.index(level)
 
 
@@ -98,7 +98,7 @@ class Logger :
 
 
     def getLevel(self):
-        return self.level_thr
+        return self.level_thr_str
 
 
     def getLogFileName(self):
@@ -113,15 +113,15 @@ class Logger :
         return self.str_start_time
 
 
-    def debug   (self, msg, name=None) : self._message(msg, 0, name)
+    def debug   (self, msg, name=None) : self._message(msg, 0, name=None)
 
-    def info    (self, msg, name=None) : self._message(msg, 1, name)
+    def info    (self, msg, name=None) : self._message(msg, 1, name=None)
 
-    def warning (self, msg, name=None) : self._message(msg, 2, name)
+    def warning (self, msg, name=None) : self._message(msg, 2, name=None)
 
-    def error   (self, msg, name=None) : self._message(msg, 3, name)
+    def error   (self, msg, name=None) : self._message(msg, 3, name=None)
 
-    def critical(self, msg, name=None) : self._message(msg, 4, name)
+    def critical(self, msg, name=None) : self._message(msg, 4, name=None)
 
     def _message(self, msg, index, name=None) :
         """Store input message the 2D tuple of records, send request to append GUI.
@@ -230,7 +230,7 @@ class Logger :
 
 #-----------------------------
 
-logger = Logger (fname=None)
+logger = Logger(fname=None)
 
 #-----------------------------
 
