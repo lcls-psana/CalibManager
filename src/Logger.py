@@ -36,6 +36,12 @@ Usage ::
 
     logger.setGUILogger(gui) # will callback guilogger.appendGUILog(msg)
 
+@see class :py:class:`CalibManager.Logger`
+
+@see project modules
+    * :py:class:`CalibManager.GUILogger.py`
+    * :py:class:`CalibManager.ConfigParameters`
+
 This software was developed for the SIT project.  
 If you use all or part of it, please give an appropriate acknowledgment.
 
@@ -45,19 +51,13 @@ If you use all or part of it, please give an appropriate acknowledgment.
 """
 
 #------------------------------
-#  Module's version from SVN --
-#------------------------------
 __version__ = "$Revision$"
-# $Source$
-
-#----------------------
-#  Import of modules --
-#----------------------
+#------------------------------
 
 import os
 from time import localtime, strftime
 
-#-----------------------------
+#------------------------------
 
 class Logger :
     """Logbook for messages.
@@ -113,15 +113,15 @@ class Logger :
         return self.str_start_time
 
 
-    def debug   (self, msg, name=None) : self._message(msg, 0, name=None)
+    def debug   (self, msg, name=None) : self._message(msg, 0, name)
 
-    def info    (self, msg, name=None) : self._message(msg, 1, name=None)
+    def info    (self, msg, name=None) : self._message(msg, 1, name)
 
-    def warning (self, msg, name=None) : self._message(msg, 2, name=None)
+    def warning (self, msg, name=None) : self._message(msg, 2, name)
 
-    def error   (self, msg, name=None) : self._message(msg, 3, name=None)
+    def error   (self, msg, name=None) : self._message(msg, 3, name)
 
-    def critical(self, msg, name=None) : self._message(msg, 4, name=None)
+    def critical(self, msg, name=None) : self._message(msg, 4, name)
 
     def _message(self, msg, index, name=None) :
         """Store input message the 2D tuple of records, send request to append GUI.
@@ -179,10 +179,10 @@ class Logger :
     def _startLog(self, fname=None) :
         """Logger initialization at start"""
         self.str_start_time = self.timeStamp( fmt='%Y-%m-%d-%H:%M:%S' )
-        if  fname is None :
+        if  (not fname) or (fname is None) :
             self.fname       = '%s-log.txt'       % self.str_start_time
             self.fname_total = '%s-log-total.txt' % self.str_start_time
-        else :        
+        else :
             self.fname       = fname
             self.fname_total = self.fname + '-total' 
 
@@ -258,6 +258,6 @@ def test_Logger() :
 if __name__ == "__main__" :
     import sys
     test_Logger()
-    sys.exit (0)
+    sys.exit('End of test')
 
 #-----------------------------
