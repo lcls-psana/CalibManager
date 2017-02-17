@@ -12,6 +12,11 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+2017-02-17 Mikhail S. Dubrovin
+Tag: V00-02-31
+- in ConfigParameters - sort the list of config parameters at output in file
+- in GUIPopupRadioList.py and GUIPopupCheckList.py - use icons from CalibManager.QIcons
+
 2017-02-05 Mikhail S. Dubrovin
 Tag: V00-02-30
 - Logger - fix passing the name of the module (not None) along with messages

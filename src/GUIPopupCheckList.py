@@ -19,7 +19,7 @@ from PyQt4 import QtGui, QtCore
 
 #from Logger import logger
 #from ConfigParametersForApp import cp
-import CalibManager.AppDataPath as apputils # for icons
+#import CalibManager.AppDataPath as apputils # for icons
 
 #------------------------------  
 
@@ -92,12 +92,10 @@ class GUIPopupCheckList(QtGui.QDialog) :
 
 
     def setIcons(self):
-        path_icon_button_ok     = apputils.AppDataPath('CalibManager/icons/button_ok.png').path()
-        path_icon_button_cancel = apputils.AppDataPath('CalibManager/icons/button_cancel.png').path()
-        self.icon_button_ok     = QtGui.QIcon(path_icon_button_ok)
-        self.icon_button_cancel = QtGui.QIcon(path_icon_button_cancel)
-        self.but_cancel.setIcon(self.icon_button_cancel)
-        self.but_apply .setIcon(self.icon_button_ok)
+        from CalibManager.QIcons import icon
+        icon.set_icons()
+        self.but_cancel.setIcon(icon.icon_button_cancel)
+        self.but_apply .setIcon(icon.icon_button_ok)
 
  
     #def resizeEvent(self, e):

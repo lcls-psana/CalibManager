@@ -153,6 +153,14 @@ class Parameter :
         logger.info(s)
         #print s
 
+
+    def __cmp__(self, other) :
+        """used in list.sort()"""
+        #print 'In __cmp__ comparing', self._name, other._name
+        if self._name  < other._name : return -1
+        if self._name  > other._name : return  1
+        if self._name == other._name : return  0
+
 #------------------------------
 #------------------------------
 
@@ -216,7 +224,9 @@ class ConfigParameters :
 
     def getTextParameters(self) :
         txt = 'printParameters - Number of declared parameters in the dict: %d\n' % len(self.dict_pars)
-        list_of_recs = [par.strParInfo() for par in self.dict_pars.values()]
+        lpars = list(self.dict_pars.values())
+        lpars.sort() # sort "in situ" - it does not return anything so can't use it any other way....
+        list_of_recs = [par.strParInfo() for par in lpars]
         return txt + '  ' + '\n  '.join(list_of_recs)
 
 
@@ -237,6 +247,20 @@ class ConfigParameters :
 
 
     def saveParametersInFile(self, fname=None) :
+        self.setParsFileName(fname)        
+        logger.info('Save configuration parameters in file: %s' % self.fname, self.name)
+        f=open(self.fname,'w')
+
+        lpars = list(self.dict_pars.values())
+        lpars.sort() # sort "in situ" - it does not return anything so can't use it any other way....
+        for par in lpars :
+            v = par.value()
+            s = '%s %s\n' % (par.name().ljust(32), str(v))
+            f.write(s)
+        f.close() 
+
+
+    def saveParametersInFileV0(self, fname=None) :
         self.setParsFileName(fname)        
         logger.info('Save configuration parameters in file: %s' % self.fname, self.name)
         f=open(self.fname,'w')
