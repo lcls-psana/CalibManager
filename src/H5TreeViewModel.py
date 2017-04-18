@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 # File and Version Information:
-#  $Id$
+#  $Id: H5TreeViewModel.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 #
 # Description:
 #  Module H5TreeViewModel...
@@ -77,8 +77,8 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
         self.parent_item.setAccessibleDescription(self.str_file)
         self.parent_item.setAccessibleText(g.name) # Root item does not show this text...
         #self.parent_item.setIcon(self.icon_folder_open) # Root item does not show icon...
-        
-        if isinstance(g,h5py.Dataset):
+
+        if isinstance(g, h5py.Dataset):
             #print offset, "(Dateset)   len =", g.shape #, subg.dtype
             item = QtGui.QStandardItem(QtCore.QString(g.key()))
             item.setAccessibleDescription(self.str_data)
@@ -86,6 +86,9 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
         else:
             self._add_group_to_tree(g,self.parent_item) # start recursions from here
 
+
+        #self._set_checkable_items_for_level(self.parent_item, level=3)
+ 
     #---------------------
 
     def _add_group_to_tree(self, g, parent_item):
@@ -111,17 +114,46 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
                 item.setAccessibleDescription(self.str_data)
                 item.setAccessibleText(str(key))
                 parent_item.appendRow(item)
+                #print 'item row, col:', parent_item.row(), parent_item.column()
+                
                 
             elif isinstance(subg, h5py.Group):
                 #print " (Group)   len =",len(subg) 
                 #offset_subg = offset + '    '
+                item.setCheckable(True)
                 item.setIcon(self.icon_folder_closed)
                 item.setAccessibleDescription(self.str_group)
                 item.setAccessibleText(str(key))
+                #item.setDragEnabled(True)
+                #item.setDropEnabled(True)
+                #item.setSelectable(False)
+
                 parent_item.appendRow(item)
 
                 self._add_group_to_tree(subg,item)
 
+    #---------------------
+
+    def _set_checkable_items_for_level(self, item, level=3):
+        """Recursive iteration over item children in the frame of the QtGui.QStandardItemModel"""
+
+        if self.distance_from_top(item) > level : item.setCheckable(True)
+
+        if item.hasChildren():
+            for row in range(item.rowCount()) :
+                item_child = item.child(row,0)
+                self._set_checkable_items_for_level(item_child, level)                
+
+    #---------------------
+
+    def distance_from_top(self, item, level=1):
+        parent_item = item.parent()
+        if parent_item is None : return level
+        level += 1
+        level = self.distance_from_top(parent_item, level)
+        return level
+
+    #---------------------
     #---------------------
     #---------------------
     #---------------------
@@ -177,6 +209,38 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
             for row in range(parent_item.rowCount()) :
                 item = parent_item.child(row,0)
                 self._iteration_over_items_and_set_icon(item)                
+
+    #---------------------
+    #---------------------
+    #---------------------
+
+    def check_parents(self, item):
+        check_state=item.checkState()
+        self._set_parents_check_state(item, check_state)
+
+    def _set_parents_check_state(self, item, check_state):
+        parent_item = item.parent()
+        if parent_item is None : return # for top-most parent
+        parent_item.setCheckState(check_state)
+        self._set_parents_check_state(parent_item, check_state)
+
+    #---------------------
+    #---------------------
+    #---------------------
+    #---------------------
+
+    def check_children(self, item) :
+
+        check_state=item.checkState()
+        self._set_children_check_state(item, check_state)
+
+    def _set_children_check_state(self, item, check_state) :
+        if item.hasChildren() :
+            #print 'item.row, col', item.row(), item.column()
+            for row in range(item.rowCount()) :
+                item_child = item.child(row,0)
+                item_child.setCheckState(check_state)
+                self._set_children_check_state(item_child, check_state)                
 
     #---------------------
     #---------------------
@@ -366,8 +430,8 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
 
 if __name__ == "__main__" :    
     import sys
-    app = QtGui.QApplication(sys.argv)
 
+    app = QtGui.QApplication(sys.argv)
     m = H5TreeViewModel(parent=None, fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5')
 
     #sys.exit('Module is not supposed to be run as main module')

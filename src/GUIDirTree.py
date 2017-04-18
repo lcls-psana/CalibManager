@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 # File and Version Information:
-#  $Id$
+#  $Id: GUIDirTree.py 11469 2016-03-08 01:29:03Z dubrovin@SLAC.STANFORD.EDU $
 #
 # Description:
 #  GUIDirTree...
@@ -9,7 +9,7 @@
 """GUI for generic directory tree"""
 
 #--------------------------------
-__version__ = "$Revision$"
+__version__ = "$Revision: 11469 $"
 #--------------------------------
 
 import os
@@ -28,9 +28,6 @@ class GUIDirTree(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
 
         self.dir_top = dir_top
-
-        self.setGeometry(100, 100, 200, 300)
-        self.setWindowTitle('Item selection tree')
 
         cp.setIcons()
  
@@ -51,10 +48,13 @@ class GUIDirTree(QtGui.QWidget):
         if parent is None :
             self.setLayout(vbox)
 
-        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), self.itemSelected)
+        self.connect_item_selected_to(self.itemSelected)
+
         #self.view.clicked.connect(self.someMethod1)       # This works
         #self.view.doubleClicked.connect(self.someMethod2) # This works
-        self.model.itemChanged.connect(self.itemChanged)
+
+        self.connect_item_changed_to(self.itemChanged)
+
         self.view.expanded.connect(self.itemExpanded)
         self.view.collapsed.connect(self.itemCollapsed)
         #self.view.expandToDepth(2)
@@ -64,6 +64,19 @@ class GUIDirTree(QtGui.QWidget):
         self.setStyle()
 
         cp.guidirtree = self
+
+
+    def connect_item_selected_to(self, recipient) :
+        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), recipient)
+
+    def disconnect_item_selected_from(self, recipient) :
+        self.disconnect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), recipient)
+
+    def connect_item_changed_to(self, recipient) :
+        self.model.itemChanged.connect(recipient)
+
+    def disconnect_item_changed_from(self, recipient) :
+        self.model.itemChanged.disconnect(recipient)
 
 
     def make_model(self) :
@@ -168,7 +181,7 @@ class GUIDirTree(QtGui.QWidget):
     def itemChanged(self, item):
         state = ['UNCHECKED', 'TRISTATE', 'CHECKED'][item.checkState()]
         msg = 'Item %s, is at state %s' % ( self.getFullNameFromItem(item),  state)
-        #print msg
+        print msg
         #logger.info(msg, __name__)       
         #print 'col:', self.model.columnCount(self.model.indexFromItem(item))
         #print 'row:', self.model.rowCount(self.model.indexFromItem(item))
@@ -191,6 +204,8 @@ class GUIDirTree(QtGui.QWidget):
 
 
     def itemSelected(self, selected, deselected):
+        print  'Item selected: %s' % self.getFullNameFromIndex(selected)
+
         pass
         #msg1 = 'Item selected: %s' % self.getFullNameFromIndex(selected)
         #logger.info(msg1, __name__)       
@@ -214,6 +229,8 @@ class GUIDirTree(QtGui.QWidget):
 
 
     def setStyle(self):
+        self.setWindowTitle('Item selection tree')
+        self.setGeometry(100, 100, 500, 700)
         self.setMinimumWidth(200)
         self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
@@ -238,8 +255,8 @@ class GUIDirTree(QtGui.QWidget):
 if __name__ == "__main__" :
     import sys
     app = QtGui.QApplication(sys.argv)
-    #widget = GUIDirTree (None, '/reg/d/psdm/SXR/sxrb5914/calib')
-    widget = GUIDirTree (None, '.')
+    fname = sys.argv[1] if len(sys.argv) > 1 else '/reg/d/psdm/detector/calib'
+    widget = GUIDirTree (None, fname)
     widget.show()
     app.exec_()
 

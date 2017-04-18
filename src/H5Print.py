@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 # File and Version Information:
-#  $Id$
+#  $Id: H5Print.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 #
 # Description:
 #  Module H5Print
@@ -11,7 +11,7 @@
 This software was developed for the SIT project.
 If you use all or part of it, please give an appropriate acknowledgment.
 
-@version $Id$
+@version $Id: H5Print.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 
 @author Mikhail S. Dubrovin
 """
@@ -36,24 +36,40 @@ def print_hdf5_file_structure(fname):
 
 def print_hdf5_item_structure(g, offset='    ') :
     """Prints the input file/group/dataset (g) name and begin iterations on its content"""
-    if   isinstance(g,h5py.File) :
-        log.info('%s (File) %s' % (g.file, g.name))
+    msg = str_hdf5_item_structure('', g, offset)
+    log.info(msg)
+    #print msg
 
-    elif isinstance(g,h5py.Dataset) :
-        print '(Dataset)', g.name, '    len =', g.shape #, g.dtype
+#------------------------------
 
-    elif isinstance(g,h5py.Group) :
-        print '(Group)', g.name
+def str_hdf5_item_structure(msg, g, offset='    ') :
+    """Prints the input file/group/dataset (g) name and begin iterations on its content"""
+    if   isinstance(g, h5py.File) :
+        msg += '(File) %s %s\n' % (g.file, g.name)
+        #print '%s (File) %s' % (g.file, g.name)
+        
+    elif isinstance(g, h5py.Dataset) :
+        msg += '(Dataset) %s    shape=%s\n' % (g.name, str(g.shape)) #, g.dtype
+        #print '(Dataset)', g.name, '    len =', g.shape #, g.dtype
+        
+    elif isinstance(g, h5py.Group) :
+        msg += '(Group) %s\n' % g.name
+        #print '(Group)', g.name
 
     else :
-        print 'WORNING: UNKNOWN ITEM IN HDF5 FILE', g.name
-        sys.exit ( "EXECUTION IS TERMINATED" )
+        #print 'WORNING: UNKNOWN ITEM IN HDF5 FILE', g.name
+        log.info(msg)
+        log.worning('WORNING: UNKNOWN ITEM IN HDF5 FILE %s\n' % g.name)
+        sys.exit('EXECUTION IS TERMINATED')
 
     if isinstance(g, h5py.File) or isinstance(g, h5py.Group) :
         for key,val in dict(g).iteritems() :
             subg = val
-            print offset, key, #,"   ", subg.name #, val, subg.len(), type(subg),
-            print_hdf5_item_structure(subg, offset + '    ')
+            #print offset, key, #,"   ", subg.name #, val, subg.len(), type(subg),
+            msg += '%s%s' % (offset, key) #,"   ", subg.name #, val, subg.len(), type(subg),
+            msg = str_hdf5_item_structure(msg, subg, offset + '    ')
+
+    return msg
 
 #------------------------------
 
@@ -130,47 +146,49 @@ def CSpadIsInTheName(dsname):
 
 #------------------------------
 
-def print_time(ds,ind):
-    """Prints formatted time if the dataset is 'time'"""
+def print_time(ds, ind):
+    """DATA HDF5 ONLY! Prints formatted time if the dataset is 'time'"""
     
     item_last_name = get_item_last_name(str(ds.name))
     if item_last_name == 'time' :
         tarr = ds[ind]
         tloc = time.localtime(tarr[0]) # converts sec to tuple struct_time in local
-       #tgmt = time.gmtime(tarr[0])    # converts sec to tuple struct_time in UTC
-        print 'Special stuff for "time" :',tarr[0],'sec,',  tarr[1],'nsec, ', #, time.ctime(int(tarr[0]))
-        print 'time local :', time.strftime('%Y-%m-%d %H:%M:%S',tloc)
-       #print 'time (GMT) :', time.strftime('%Y-%m-%d %H:%M:%S',tgmt)
+        msg = 'Special stuff for "time" : %d sec, %d nsec, time local : %s' %\
+              (tarr[0], tarr[1], time.strftime('%Y-%m-%d %H:%M:%S',tloc))
+        
+        log.info(msg)
+        #tgmt = time.gmtime(tarr[0])    # converts sec to tuple struct_time in UTC
+        #print 'time (GMT) :', time.strftime('%Y-%m-%d %H:%M:%S',tgmt)
     
 #------------------------------
 
 def is_dataset(ds):
     """Check if the input dataset is a h5py.Dataset (exists as expected in HDF5)"""
-    return isinstance(ds,h5py.Dataset)
+    return isinstance(ds, h5py.Dataset)
 
 #------------------------------
 
 def print_dataset_info(ds):
     """Prints attributes and all other available info for group or data"""
-    if isinstance(ds,h5py.Dataset):
-        print "Dataset:",
-        print "ds.name         = ", ds.name
-        print "ds.dtype        = ", ds.dtype
-        print "ds.shape        = ", ds.shape
-        print "len(ds.shape)   = ", len(ds.shape)
-        if len(ds.shape) != 0 :
-            print "ds.shape[0]     = ", ds.shape[0]
+    if isinstance(ds, h5py.Dataset):
+
+        msg = 'Dataset:  ds.name = %s  ds.dtype = %s  ds.shape = %s  ds.ndim  = %d' %\
+            (ds.name, str(ds.dtype), str(ds.shape), len(ds.shape))
+        log.info(msg)
+
+        if len(ds.shape) > 0 :
+            log.info('ds.shape[0] = %s' % str(ds.shape[0]))
 
         # Print data array
-        if   len(ds.shape)==1 and ds.shape[0] == 0 : #check if the ds.shape scalar and in not an array 
-            print get_item_last_name(ds.name) + ' - item has no associated data.'
+        if len(ds.shape)==1 and ds.shape[0] == 0 : #check if the ds.shape scalar and in not an array 
+            log.info('%s - item has no associated data.' % get_item_last_name(ds.name))
 
         elif len(ds.shape)==0 or ds.shape[0] == 0  or ds.shape[0] == 1 : #check if the ds.shape scalar or array with dimension 0 or 1
-            print "ds.value    = ", ds.value
+            log.info('ds.value = %s' % str(ds.value))
 
         else : # ds.shape[0] < cp.confpars.eventCurrent: #check if the ds.shape array size less than current event number
-            print " data for ds[0]:"
-            print ds[0]
+            msg = ' data for ds[0]: %s' % str(ds[0])
+            log.info(msg)            
             print_time(ds,0)
 
         #else :
@@ -180,20 +198,16 @@ def print_dataset_info(ds):
 
         print_data_structure(ds)   
 
-    if isinstance(ds,h5py.Group):
-        print "Group:",
-        print "ds.name = ", ds.name
+    if isinstance(ds, h5py.Group):
+        msg = 'Group:\nds.name = %s' % ds.name
+        log.info(msg)
         print_group_items(ds)
 
-    if isinstance(ds,h5py.File):
-        print "File:"
-        print "file.name        = ", file.name
-        print "Run number       = ", file.attrs['runNumber']
-
-    print "ds.id             = ", ds.id 
-    print "ds.ref            = ", ds.ref 
-    print "ds.parent         = ", ds.parent
-    print "ds.file           = ", ds.file
+    if isinstance(ds, h5py.File):
+        msg = 'File:\n  file.name = %s\n  Run number = %d' % (file.name, file.attrs['runNumber'])\
+            + '\nds.id     = %s\nds.ref    = %s\nds.parent = %s\nds.file   = %s'%\
+            (str(ds.id), str(ds.ref), str(ds.parent), str(ds.file))
+        log.info(msg)
 
     #print_attributes(ds)
 
@@ -201,64 +215,62 @@ def print_dataset_info(ds):
 
 def print_data_structure(ds):
     """Prints data structure of the dataset"""
-    print 50*'I'
-    print 'UNROLL AND PRINT DATASET SUBSTRUCTURE'
+    log.info(50*'-' + '\nUNROLL AND PRINT DATASET SUBSTRUCTURE')
     iterate_over_data_structure(ds)
-    print 50*'I'
+    log.info(50*'-')
 
 #------------------------------
 
-def iterate_over_data_structure(ds,offset0=''):
+def iterate_over_data_structure(ds, offset0=''):
     """Prints data structure of the dataset"""
 
     offset=offset0+'    '
 
-    print offset, 'ds.shape =', ds.shape, '  len(ds.shape) =', len(ds.shape), '  shape dimension(s) =',
+    msg = '%sds.shape = %s  len(ds.shape) = %d  shape dimension(s) =' % (offset, str(ds.shape), len(ds.shape)) 
     if len(ds.shape) == 0 :
-        print offset, 'ZERO-CONTENT DATA! : ds.dtype=',  ds.dtype
+        msg += '%sZERO-CONTENT DATA! : ds.dtype=%s' % (offset, str(ds.dtype))
+        log.info(msg)
         return
 
     for shapeDim in ds.shape:
-        print shapeDim,
-    print ' '
+        msg += '%s'%str(shapeDim)
+        log.info('%s  '%msg)
 
     if len(ds.shape) > 0 :
-        print offset,'Sample of data ds[0]=', ds[0]
+        log.info('%sSample of data ds[0]=%s' % (offset, str(ds[0])))
 
     if len(ds.dtype) == 0 or ds.dtype.names == None :
-        print offset, 'NO MORE DAUGHTERS AVAILABLE because',\
-              ' len(ds.dtype) =', len(ds.dtype),\
-              ' ds.dtype.names =', ds.dtype.names
+        msg = '%sNO MORE DAUGHTERS AVAILABLE because len(ds.dtype) = %d ds.dtype.names =%s'%\
+              (offset, len(ds.dtype), str(ds.dtype.names))
+        log.info(msg)
         return
 
-    #print offset, 'ds.dtype.fields =', ds.dtype.fields
-    print offset, 'ds.dtype        =', ds.dtype
-    print offset, 'ds.dtype.names  =', ds.dtype.names
+    msg = '%sds.dtype        =%s\n%sds.dtype.names  =%s' % (offset, str(ds.dtype), offset, str(ds.dtype.names))
+    log.info(msg)
 
     if ds.dtype.names==None :
-        print offset, 'ZERO-DTYPE.NAMES!'
+        log.info('%sZERO-DTYPE.NAMES!' % offset)
         return
 
     for indname in ds.dtype.names :
-        print offset,'Index Name =', indname         
-        iterate_over_data_structure(ds[indname],offset)
-
+        log.info('%sIndex Name =%s' % (offset, indname))      
+        iterate_over_data_structure(ds[indname], offset)
 
 #------------------------------
 
 def print_file_info(file):
     """Prints attributes and all other available info for group or data"""
+    msg =   "file.name           = %s" % file.name\
+        + "\nfile.attrs          = %s" % str(file.attrs)\
+        + "\nfile.attrs.keys()   = %s" % str(file.attrs.keys())\
+        + "\nfile.attrs.values() = %s" % str(file.attrs.values())\
+        + "\nfile.id             = %s" % str(file.id)\
+        + "\nfile.ref            = %s" % str(file.ref)\
+        + "\nfile.parent         = %s" % str(file.parent)\
+        + "\nfile.file           = %s" % str(file.file)
+    log.info(msg)
 
-    print "file.name           = ", file.name
-    print "file.attrs          = ", file.attrs 
-    print "file.attrs.keys()   = ", file.attrs.keys() 
-    print "file.attrs.values() = ", file.attrs.values() 
-    print "file.id             = ", file.id 
-    print "file.ref            = ", file.ref 
-    print "file.parent         = ", file.parent
-    print "file.file           = ", file.file
-
-    print "Run number          = ", file.attrs['runNumber']
+    #print "Run number          = ", file.attrs['runNumber']
     print_attributes(file)
 
 #------------------------------
@@ -268,11 +280,11 @@ def print_group_items(g):
 
     list_of_items = g.items()
     Nitems = len(list_of_items)
-    print "Number of items in the group = ", Nitems
+    log.info('Number of items in the group = %d' % Nitems)
     #print "g.items() = ", list_of_items
     if Nitems != 0 :
         for item in list_of_items :
-            print '     ', item 
+            log.info('     %s' % str(item)) 
                         
 #------------------------------
 
@@ -280,15 +292,13 @@ def print_attributes(ds):
     """Prints all attributes for data set or file"""
 
     Nattrs = len(ds.attrs)
-    print "Number of attrs.  = ", Nattrs
+    log.info('Number of attrs.  = %d' % Nattrs)
     if Nattrs != 0 :
-        print "ds.attrs          = ", ds.attrs 
-        print "ds.attrs.keys()   = ", ds.attrs.keys() 
-        print "ds.attrs.values() = ", ds.attrs.values() 
-        print 'Attributes :'
+        msg = '  ds.attrs          = %s\n  ds.attrs.keys()   = %s\n  ds.attrs.values() = %s\n  Attributes :' %\
+              (str(ds.attrs), str(ds.attrs.keys()), str(ds.attrs.values()))
+        log.info(msg)
         for key,val in dict(ds.attrs).iteritems() :
-            print '%24s : %s' % (key, val)
-
+            log.info('%24s : %s' % (key, val))
 
 #------------------------------
 
@@ -300,24 +310,23 @@ def print_dataset_metadata_from_file(fname, dsname):
     #    print 'This is CSpad data'
     #    return
 
-    if(dsname == '/Configure:0000/Run:0000/CalibCycle:0000/EvrData::DataV3/NoDetector.0:Evr.0'):
-        print 'TypeError: No NumPy equivalent for TypeVlenID exists...\n',70*'='
-        return
+    #if(dsname == '/Configure:0000/Run:0000/CalibCycle:0000/EvrData::DataV3/NoDetector.0:Evr.0'):
+    #    print 'TypeError: No NumPy equivalent for TypeVlenID exists...\n',70*'='
+    #    return
 
-    if(dsname == '/Configure:0000/Run:0000/CalibCycle:0000/EvrData::DataV3/NoDetector.0:Evr.0/evrData'):
-        print 'TypeError: No NumPy equivalent for TypeVlenID exists...\n',70*'='        
-        return
+    #if(dsname == '/Configure:0000/Run:0000/CalibCycle:0000/EvrData::DataV3/NoDetector.0:Evr.0/evrData'):
+    #    print 'TypeError: No NumPy equivalent for TypeVlenID exists...\n',70*'='        
+    #    return
 
     #fname = cp.confpars.dirName+'/'+cp.confpars.fileName
-    print 'Open file : %s' % (fname)
+    log.info('Open file : %s' % fname, 'print_dataset_metadata_from_file')
     f  = h5py.File(fname, 'r') # open read-only
     ds = f[dsname]
     print_dataset_info(ds)
     print_attributes(ds)
-    print 'Path: %s\nItem: %s' % (os.path.split(str(dsname)))
+    #log.info('Path: %s' % str(dsname))
     f.close()
-    print 70*'='
-
+    log.info(70*'_')
 
 #------------------------------
 
@@ -396,10 +405,10 @@ def usage() :
 if __name__ == "__main__" :
 
     log.setPrintBits(0377)
-
     #fname = sys.argv[1] if len(sys.argv)==2 else '/reg/d/psdm/CXI/cxitut13/hdf5/cxitut13-r0135.h5'    
     fname = sys.argv[1] if len(sys.argv)==2 else '/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5'    
     print_hdf5_file_structure(fname)
+    #log.saveLogInFile('log-test.txt')
     usage()
     sys.exit ( "End of test" )
 

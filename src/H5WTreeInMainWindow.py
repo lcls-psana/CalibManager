@@ -1,7 +1,7 @@
 
 #--------------------------------------------------------------------------
 # File and Version Information:
-#  $Id$
+#  $Id: H5WTreeInMainWindow.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 #
 # Description:
 #  Module H5WTreeInMainWindow...
@@ -12,7 +12,7 @@
 This software was developed for the SIT project.
 If you use all or part of it, please give an appropriate acknowledgment.
 
-@version $Id$
+@version $Id: H5WTreeInMainWindow.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 
 @author Mikhail S. Dubrovin
 """
@@ -30,7 +30,6 @@ class H5WTreeInMainWindow(QtGui.QMainWindow) :
         QtGui.QMainWindow.__init__(self, parent)
 
         self.fname = fname
-
         self.list_of_checked_item_names = []
         self.tree_view_is_expanded = False
 
@@ -55,7 +54,7 @@ class H5WTreeInMainWindow(QtGui.QMainWindow) :
         self.actRetreve      = QtGui.QAction(self.icon_retreve,  'Retreve',        self)
         self.actExpand       = QtGui.QAction(self.icon_expand,   'Expand',         self)
         self.actCollapse     = QtGui.QAction(self.icon_collapse, 'Collapse',       self)
-        self.actExpColl = QtGui.QAction(self.icon_expcoll,  'Expand tree',    self)
+        self.actExpColl      = QtGui.QAction(self.icon_expcoll,  'Expand tree',    self)
         self.actExpCheck     = QtGui.QAction(self.icon_expcheck, 'Expand checked', self)
         self.actPrint        = QtGui.QAction(self.icon_print,    'Print tree',     self)
 
@@ -112,8 +111,16 @@ class H5WTreeInMainWindow(QtGui.QMainWindow) :
 #------------------
 
 if __name__ == "__main__" :
+    #l /reg/d/psdm/xpp/*/calib/epix100a/
+    #fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5'
+    fname='/reg/d/psdm/xpp/xppl7416/calib/epix100a/'\
+           'epix100a-3925999620-0996513537-2080374794-1794135040-0940361739-2398406657-0419430424.h5'\
+           if len(sys.argv) == 1 else sys.argv[1]
+
+    log.setPrintBits(0377)
+
     app = QtGui.QApplication(sys.argv)
-    ex  = H5WTreeInMainWindow(parent=None, fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5')
+    ex  = H5WTreeInMainWindow(None, fname)
     ex.show()
     app.exec_()
     sys.exit('End of test')

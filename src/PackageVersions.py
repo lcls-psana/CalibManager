@@ -79,10 +79,11 @@ class PackageVersions :
         t0_sec = time()
         self.list_of_pkgs = list_of_pkgs
         self.print_bits = print_bits
-        self.delete_old_tmp_files()
-        if self.print_bits & 1 : print 'PackageVersions: Old temporary files are deleted'
-        self.make_logfiles_in_background_mode()
-        if self.print_bits & 2 : print 'PackageVersions: make_logfiles_in_background_mode() is started'
+
+        #self.delete_old_tmp_files()
+        #if self.print_bits & 1 : print 'PackageVersions: Old temporary files are deleted'
+        #self.make_logfiles_in_background_mode()
+        #if self.print_bits & 2 : print 'PackageVersions: make_logfiles_in_background_mode() is started'
 
         #msg = 'Consumed time to launch subprocesses = %7.3f sec' % (time()-t0_sec)
         #print msg
@@ -124,8 +125,9 @@ class PackageVersions :
 
 
     def get_revision_str(self, props) :
-        spv = SvnPropsViewer(props)
-        return spv.get_pkg_revision()
+        return 'conda'
+        #spv = SvnPropsViewer(props)
+        #return spv.get_pkg_revision()
 
 
     def get_revision_msg(self, props) :

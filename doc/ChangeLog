@@ -13,6 +13,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 2017-02-17 Mikhail S. Dubrovin
+Tag: V01-00-01
+- switch to git
+- update H5WTree
+- fix float->int indexing in PlotImgSpeWidget.py 
+- fix PackageVersions.py crash for svn calls
+
+2017-02-17 Mikhail S. Dubrovin
 Tag: V00-02-31
 - in ConfigParameters - sort the list of config parameters at output in file
 - in GUIPopupRadioList.py and GUIPopupCheckList.py - use icons from CalibManager.QIcons

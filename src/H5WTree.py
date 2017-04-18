@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 # File and Version Information:
-#  $Id$
+#  $Id: H5WTree.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 #
 # Description:
 #  Module H5WTree...
@@ -11,7 +11,7 @@
 This software was developed for the SIT project.
 If you use all or part of it, please give an appropriate acknowledgment.
 
-@version $Id$
+@version $Id: H5WTree.py 13101 2017-01-29 21:22:43Z dubrovin@SLAC.STANFORD.EDU $
 
 @author Mikhail S. Dubrovin
 """
@@ -22,7 +22,7 @@ from PyQt4 import QtGui, QtCore
 import CalibManager.H5TreeViewModel as h5model
 from   CalibManager.QIcons import icon
 import CalibManager.H5Print as printh5
-from CalibManager.H5Logger import log
+from   CalibManager.H5Logger import log
 
 #------------------------------
 
@@ -65,10 +65,12 @@ class H5WTree(QtGui.QWidget) :
  
         self.setLayout(self.vbox)
 
-        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), self.cellSelected)
+        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), self.cellSelected)        
+
         #self.view.clicked.connect(self.someMethod1)       # This works
         #self.view.doubleClicked.connect(self.someMethod2) # This works
-        self.model.itemChanged.connect(self.itemChanged)
+        self.connect_item_changed()
+
         self.view.expanded.connect(self.itemExpanded)
         self.view.collapsed.connect(self.itemCollapsed)
 
@@ -82,9 +84,18 @@ class H5WTree(QtGui.QWidget) :
         self.set_style()
 
 
+    def connect_item_changed(self):
+        self.model.itemChanged.connect(self.itemChanged)
+
+
+    def disconnect_item_changed(self):
+        self.model.itemChanged.disconnect(self.itemChanged)
+    
+
     def set_style(self):
         self.setGeometry(10, 10, 350, 700)
         self.setWindowTitle('HDF5 tree, select items')
+        self.setContentsMargins(-9,-9,-9,-9)
 
 
     def closeEvent(self, event): # if the 'x' (in the top-right corner of the window) is clicked
@@ -197,12 +208,14 @@ class H5WTree(QtGui.QWidget) :
 
 
     def cellSelected(self, ind_sel, ind_desel):
+        dsfullname = str(self.model.get_full_name_from_index(ind_sel))
+        log.info('Selected item "%s"' % dsfullname)
+        printh5.print_dataset_metadata_from_file(self.fname, dsfullname)
+
         #print "ind   selected row, col = ", ind_sel.row(),  ind_sel.column()
         #print "ind deselected row, col = ", ind_desel.row(),ind_desel.column() 
         #item       = self.model.itemFromIndex(ind_sel)
         #dsfullname = str(self.model.get_full_name_from_item(item))
-        dsfullname = str(self.model.get_full_name_from_index(ind_sel))
-        log.info("Item with name '%s' is selected" % dsfullname)
         #print ' isEnabled=',item.isEnabled() 
         #print ' isCheckable=',item.isCheckable() 
         #print ' checkState=',item.checkState()
@@ -210,24 +223,33 @@ class H5WTree(QtGui.QWidget) :
         #print ' isTristate=',item.isTristate() 
         #print ' isEditable=',item.isEditable() 
         #print ' isExpanded=',self.view.isExpanded(ind_sel)
-        printh5.print_dataset_metadata_from_file(self.fname, dsfullname)
 
 
     def itemChanged(self, item):
         state = ['UNCHECKED', 'TRISTATE', 'CHECKED'][item.checkState()]
-        msg = "Item with full name %s, is at state %s\n" % (self.model.get_full_name_from_item(item), state)
+        msg = "Item with full name %s, is at state %s" % (self.model.get_full_name_from_item(item), state)
         log.info(msg)
 
+        #print 'level from top:', self.model.distance_from_top(item)
+
+        self.disconnect_item_changed()
+        ###self.model.check_parents(item)
+        self.model.check_children(item)
+        self.connect_item_changed()
+    
 #------------------
 #   -- test --
 #------------------
 
 if __name__ == "__main__" :
-
+    #l /reg/d/psdm/xpp/*/calib/epix100a/
+    #fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5'
+    fname='/reg/d/psdm/xpp/xppl7416/calib/epix100a/'\
+           'epix100a-3925999620-0996513537-2080374794-1794135040-0940361739-2398406657-0419430424.h5'
     log.setPrintBits(0377)
 
     app = QtGui.QApplication(sys.argv)
-    ex  = H5WTree(parent=None, fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5')
+    ex  = H5WTree(None, fname)
     ex.show()
     app.exec_()
     sys.exit('End of test')

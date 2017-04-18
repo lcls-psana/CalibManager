@@ -487,7 +487,7 @@ class PlotImgSpeWidget (QtGui.QWidget) :
         axes = event.inaxes
         #xmin, xmax = axes.get_xlim()
         #ymin, ymax = axes.get_ylim()
-        x, y = event.xdata, event.ydata
+        x, y = int(event.xdata), int(event.ydata)
         #print 'self.arr.shape', self.arr.shape
         v = self.arr[y,x]
         s = '%d, %d\nv=%d' % (x, y, v)

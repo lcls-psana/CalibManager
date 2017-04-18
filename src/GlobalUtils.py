@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 # File and Version Information:
-#  $Id$
+#  $Id: GlobalUtils.py 12682 2016-09-30 17:46:03Z dubrovin@SLAC.STANFORD.EDU $
 #
 # Description:
 #   GlobalUtils...
@@ -13,13 +13,13 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @see RelatedModule
 
-@version $Id$
+@version $Id: GlobalUtils.py 12682 2016-09-30 17:46:03Z dubrovin@SLAC.STANFORD.EDU $
 
 @author Mikhail S. Dubrovin
 """
 
 #--------------------------------
-__version__ = "$Revision$"
+__version__ = "$Revision: 12682 $"
 #--------------------------------
 
 import os
@@ -619,9 +619,9 @@ def get_hostname() :
     return socket.gethostname()
  
 def get_enviroment(env='USER') :
-    """Returns the value of specified by string name environment variable
+    """Returns the value of specified by string name environment variable or (str) 'None'
     """
-    return os.environ[env]
+    return str(os.environ.get(env))
 
 def get_login() :
     """Returns login name

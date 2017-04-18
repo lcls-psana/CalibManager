@@ -104,8 +104,9 @@ class NotificationLog :
         return strftime(fmt, localtime())
 
 
-    def get_enviroment(self, env='USER') :        
-        return os.environ[env] if env in os.environ.keys() else '%s-NONDEF-ENV' % env
+    def get_enviroment(self, env='USER') :
+        return str(os.environ.get(env))
+        #return os.environ[env] if env in os.environ.keys() else '%s-NONDEF-ENV' % env
 
 
     def version(self) :
