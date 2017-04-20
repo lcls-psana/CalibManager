@@ -12,11 +12,17 @@ Package author: Mikhail S. Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+
+2017-02-19 Mikhail S. Dubrovin
+Tag: V01-00-02
+- add app/optical_metrology_check
+- cosmetic update for OpticAlignmentCspad2x2V1.py
+
 2017-02-17 Mikhail S. Dubrovin
 Tag: V01-00-01
 - switch to git
 - update H5WTree
-- fix float->int indexing in PlotImgSpeWidget.py 
+- fix float->int indexing in PlotImgSpeWidget.py
 - fix PackageVersions.py crash for svn calls
 
 2017-02-17 Mikhail S. Dubrovin

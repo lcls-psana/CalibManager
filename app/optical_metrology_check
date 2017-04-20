@@ -1,0 +1,646 @@
+#!/usr/bin/env python
+
+#------------------------------
+# Description:
+#------------------------------
+""" Check optical measurements for 4-point/segment (e.g. cspad 2x1)
+
+@author Mikhail S. Dubrovin
+"""
+#------------------------------
+
+import os
+import sys
+from math import atan2, degrees, sqrt, fabs, pi
+import numpy as np
+#from CalibManager.OpticAlignmentCspadMethods import *
+
+#------------------------------
+
+INFO, WARNING, ERROR, CRITICAL, DEBUG = (1,2,4,8,16)
+
+#------------------------------
+
+class OpticalMetrologyCheck() :
+    """Check optical metrology measurements"""
+
+    def __init__(self) :
+
+        self._name = self.__class__.__name__
+        self.init_parameters()
+
+        self.read_optical_metrology_file()
+        self.make_table_of_segments()
+        self.print_quality_check_tables()
+        if self.plt : 
+            self.plot_metrology_data()
+
+            self.fill_histograms()
+            try: self.plot_histograms(self.ofpref, do_save=True, hwin_x0y0=(0,50))
+            except : 
+                print "Sorry, can't plot histograms w/o package pyimgalgos"
+
+#------------------------------
+
+    def init_parameters(self) :
+        self.parser = option_parser()
+        (popts, pargs) = self.parser.parse_args()
+        self.ifname = pargs[0] if len(pargs) else popts.ifn # popts['ifn']
+        self.ofpref = popts.ofp # popts['ofp']
+        self.ofname = '%s.txt' % self.ofpref
+        self.ofplot = '%s.png' % self.ofpref
+        self.pixsize = popts.psz
+        self.vrb = popts.vrb
+        self.plt = popts.plt
+        
+        if self.vrb & DEBUG: print 'In %s' % sys._getframe().f_code.co_name
+        if self.vrb & INFO : print_command_line()
+        if self.vrb & INFO : print_command_line_parameters(self.parser)
+
+#------------------------------
+
+    def read_optical_metrology_file(self) : 
+        """Reads the metrology.txt file with original optical measurements
+        """
+        if self.vrb & DEBUG : print '%s: %s' % (sys._getframe().f_code.co_name, self.ifname)
+
+                                 # quad 0:3
+                                   # point 1:32
+                                      # record: point, X, Y, Z 0:3
+        #self.arr_opt = np.zeros( (self.nquads,self.npoints+1,4), dtype=numpy.int32 )
+        #self.quad = 0
+
+        self.arr_opt = []
+
+        if not os.path.lexists(self.ifname) : 
+            raise IOError('File "%s" is not available' % self.ifname)
+
+        file = open(self.ifname, 'r')
+
+        for linef in file:
+
+            line = linef.strip('\n').strip()
+
+            if not line : 
+                if self.vrb & INFO : print 'EMPTY LINE IS IGNORED'  
+                continue   # discard empty strings
+
+            if line[0] == '#' : # comment
+                if self.vrb & INFO : print 'IS RECOGNIZED and ignored comment: "%s"' % line  
+                continue
+
+            list_of_fields = line.split()
+            field0 = list_of_fields[0]
+
+            if field0 == 'Quad' : # Treat quad header lines
+                self.quad = int(list_of_fields[1])
+                if self.vrb & INFO : print 'IS RECOGNIZED QUAD: %d' % self.quad  
+                continue
+
+            if field0 in ('Sensor', 'Point') : # Treat the title lines
+                if self.vrb & INFO : print 'TITLE LINE:     %s' % line  
+                continue
+
+            if not field0.lstrip("-+").isdigit() :  # is 1-st field digital?
+                if self.vrb & INFO : print 'RECORD IS IGNORED due to unexpected format of the line: %s' % line 
+                continue
+            
+            if len(list_of_fields) != 4 : # Ignore lines with non-expected number of fields
+                if self.vrb & INFO : print 'len(list_of_fields) =', len(list_of_fields),
+                if self.vrb & INFO : print 'RECORD IS IGNORED due to unexpected format of the line: %s' % line
+                continue              
+
+            n, x, y, z = [int(v) for v in list_of_fields]
+            
+            if self.vrb & INFO : print 'ACCEPT RECORD: %3d %7d %7d %7d ' % (n, x, y, z)
+
+            self.arr_opt.append((n, x, y, z))
+
+        file.close()
+
+        #if self.vrb & DEBUG : print '\nArray of alignment info:\n', self.arr_opt
+
+        self.arr = np.array(self.arr_opt, dtype= np.int32)
+        #print self.arr
+
+#------------------------------
+
+    def make_table_of_segments(self) :
+        """Reshape optical metrology table to arr_segs;
+           arr_segs.shape=(nsegs, 4(points-per-segment), 4(n, x, y, z))
+           NOTE: npoints may not nesserely be dividable by 4...
+
+           Input : self.arr
+           Output: self.arr_segs
+        """
+        if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+
+        npoints = self.arr.shape[0]
+        nsegs = int(npoints/4)
+        self.arr_segs = np.empty(shape=(nsegs, 4, 4), dtype=np.int64)
+
+        npts_x4 = nsegs*4
+        for i in range(npts_x4) :
+            nseg = i/4 # [0, npoints/4]
+            npoi = i%4 # [0,3]
+            #print 'XXX nseg: %d  npoi: %d' % (nseg, npoi)
+            self.arr_segs[nseg, npoi,:] = self.arr[i,:]
+
+        if self.vrb & DEBUG : print self.arr_segs
+
+#------------------------------
+
+    def print_quality_check_tables(self) :
+        if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+
+        txt = self.txt_qc_table_xy()
+        print 'X-Y quality check for optical metrology measurements \n%s' % txt
+
+        txt = self.txt_qc_table_z()
+        print  'Z quality check for optical metrology measurements \n%s' % txt
+
+#------------------------------
+
+    def test_loop_over_segments(self) :
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            arr1seg = self.arr_segs[nseg,:]
+            x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
+            #if self.vrb & 256 : print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
+
+            self.evaluate_length_width_angle(arr1seg)
+
+#------------------------------
+
+    def segment_center_coordinates(self, arr1seg) :
+        """Returns segment center coordinates x, y, z in micrometer
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: x_um, y_um, z_um - segment center coordinates
+        """
+        #n, x_um, y_um, z_um = 0.25 * arr1seg.sum(axis=0)
+        return 0.25 * arr1seg.sum(axis=0)[1:]
+
+#------------------------------
+
+    def get_segment_vectors(self, arr1seg, iorgn=0) :
+        """Returns segment vectors relative to its origin point (def iorgn=0).
+           In perfect world origin is a one of [0,3] corner nearest to pixel(0,0). 
+           However,
+           for quality check it is not necessary.
+
+           1) makes dictionary of 3 vectors from segment origin corner to 3 other corners,
+           2) orders dictionary by vector length and assign them to vS1, vL1, and vD1,
+           3) find complementary vectors vS2, vL2, vD2 and return results.
+
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: vS1, vS2, vL1, vL2, vD1, vD2
+        """
+        dic_v = {}
+        for i in range(4) :
+            if i == iorgn : continue
+            v = arr1seg[i,1:] - arr1seg[iorgn,1:]
+            vlen = sqrt(np.sum(np.square(v)))
+            #print 'v.shape: %s, v: %s, vlen:%f ' % (v.shape, v, vlen)            
+            dic_v[vlen] = v
+
+        list_v_keys = sorted(dic_v.keys())
+        #print '   sorted(list_v_keys) = ', list_v_keys
+        vS1, vL1, vD1 = [dic_v[k] for k in list_v_keys]
+        vS2 = vD1 - vL1 
+        vL2 = vD1 - vS1 
+        vD2 = vL1 - vS1 
+        #print 'XXX: vS1, vS2, vL1, vL2, vD1, vD2 = ', vS1, vS2, vL1, vL2, vD1, vD2
+
+        return vS1, vS2, vL1, vL2, vD1, vD2
+
+#------------------------------
+
+    def evaluate_short_long_average(self) :
+        self.dZSA = 0.5 * (self.dZS1 + self.dZS2)
+        self.dZLA = 0.5 * (self.dZL1 + self.dZL2)
+        self.SA   = 0.5 * (self.S1   + self.S2)
+        self.LA   = 0.5 * (self.L1   + self.L2)
+        self.dSA  = 0.5 * (self.dS1  + self.dS2)
+        self.dLA  = 0.5 * (self.dL1  + self.dL2)
+
+#------------------------------
+
+    def evaluate_length_width_angle(self, arr1seg) :
+        """
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: x_um, y_um, z_um - segment center coordinates
+        """
+        #if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+
+        ix, iy, iz = 0, 1, 2
+
+        vS1, vS2, vL1, vL2, vD1, vD2 = self.get_segment_vectors(arr1seg, iorgn=0)
+
+        orient = degrees(atan2(vL1[iy], vL1[ix]))
+
+        gate_deg = 10
+        segm_n90 = 0 if fabs(orient)     < gate_deg else\
+                   1 if fabs(orient-90)  < gate_deg else\
+                   2 if fabs(orient-180) < gate_deg else\
+                   2 if fabs(orient+180) < gate_deg else\
+                   3
+        #print 'XXX segment orientation: %5.1f  n90:%d' % (orient, segm_n90)
+        #return
+
+        if segm_n90 in (0,2) :
+            # horizontal segment
+
+            self.S1   = vS1[iy]
+            self.S2   = vS2[iy]
+
+            self.dS1  = vL1[iy]
+            self.dS2  = vL2[iy]
+
+            self.L1   = vL1[ix]
+            self.L2   = vL2[ix]
+
+            self.dL1  = vS1[ix]
+            self.dL2  = vS2[ix]
+
+            self.dZS1 = vS1[iz]
+            self.dZS2 = vS2[iz]
+            self.dZL1 = vL1[iz]
+            self.dZL2 = vL2[iz]
+
+            self.evaluate_short_long_average()
+
+            self.XSize = fabs(self.LA)
+            self.YSize = fabs(self.SA)
+            self.dZX   = self.dZLA 
+            self.dZY   = self.dZSA  
+
+        if segm_n90 in (1,3) :
+            # vertical segment
+
+            self.S1   = vS1[ix]
+            self.S2   = vS2[ix]
+                              
+            self.dS1  = vL1[ix]
+            self.dS2  = vL2[ix]
+                              
+            self.L1   = vL1[iy]
+            self.L2   = vL2[iy]
+                              
+            self.dL1  = vS1[iy]
+            self.dL2  = vS2[iy]
+                                           
+            self.dZS1 = vS1[iz]
+            self.dZS2 = vS2[iz]
+            self.dZL1 = vL1[iz]
+            self.dZL2 = vL2[iz]
+
+            self.evaluate_short_long_average()
+
+            self.XSize = fabs(self.SA)
+            self.YSize = fabs(self.LA)
+            self.dZX   = self.dZSA 
+            self.dZY   = self.dZLA  
+
+
+        self.D1   = sqrt(np.sum(np.square(vD1)))
+        self.D2   = sqrt(np.sum(np.square(vD2)))
+        self.dD   = self.D1 - self.D2
+
+        self.ddS  = self.dS1 - self.dS2
+        self.ddL  = self.dL1 - self.dL2
+
+        self.ddZS = self.dZS1 - self.dZS2
+        self.ddZL = self.dZL1 - self.dZL2
+
+        self.rotXYDegree = segm_n90 * 90
+        self.rotXZDegree = 0
+        self.rotYZDegree = 0
+
+        vLA = 0.5*(vL1+vL2)
+        vSA = 0.5*(vS1+vS2)
+
+        tiltXY = atan2(vLA[iy], vLA[ix])
+        tiltXZ = atan2(self.dZX, self.XSize) 
+        tiltYZ = atan2(self.dZY, self.YSize) 
+
+        #vLlen = sqrt(np.sum(np.square(vLA)))
+        #vSlen = sqrt(np.sum(np.square(vSA)))
+        #tiltXZ = atan2(vLA[iz], vLlen) 
+        #tiltYZ = atan2(vSA[iz], vSlen)  
+
+        if abs(tiltXY)>0.1 and tiltXY<0 : tiltXY += 2*pi # move angle in range [0,2pi]
+
+        self.tiltXYDegree = degrees(tiltXY) - self.rotXYDegree
+        self.tiltXZDegree = degrees(tiltXZ) - self.rotXZDegree
+        self.tiltYZDegree = degrees(tiltYZ) - self.rotYZDegree
+
+        #print 'rotXY : %f' % self.rotXYDegree
+        #print 'tiltXY: %f' % self.tiltXYDegree
+
+#------------------------------
+
+    def txt_qc_table_xy(self) :
+        """Returns (str)  text of the quality check table
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: text of the quality check table
+        """
+        if self.vrb & DEBUG : print '%s' % (sys._getframe().f_code.co_name)
+
+        sepline = '%s\n' % (124*'-') 
+        txt = sepline
+        txt += 'segm:        S1      S2     dS1     dS2        L1      L2     dL1     dL2    angle(deg)   D1      D2      dD   d(dS)   d(dL)\n'
+        txt += sepline
+
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            arr1seg = self.arr_segs[nseg,:]
+            self.evaluate_length_width_angle(arr1seg)
+
+            txt += 'segm:%2d  %6d  %6d  %6d  %6d    %6d  %6d  %6d  %6d   %8.5f  %6d  %6d  %6d  %6d  %6d\n' % \
+                (nseg, self.S1, self.S2, self.dS1, self.dS2, \
+                       self.L1, self.L2, self.dL1, self.dL2, \
+                       self.tiltXYDegree, \
+                       self.D1, self.D2, self.dD, self.ddS, self.ddL)
+        txt += sepline
+        return txt
+
+#------------------------------
+
+    def txt_qc_table_z(self) :
+        """Returns (str) text of the quality check table
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: text of the quality check table
+        """
+        if self.vrb & DEBUG : print '%s' % (sys._getframe().f_code.co_name)
+
+        sepline = '%s\n' % (137*'-') 
+        txt = sepline
+        txt += 'segm:        SA      LA   XSize   YSize    dZS1  dZS2  dZL1  dZL2    dZSA  dZLA  ddZS  ddZL     dZX   dZY   angXZ(deg) angYZ(deg) dz3(um)\n'
+        txt += sepline
+
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            arr1seg = self.arr_segs[nseg,:]
+            self.evaluate_length_width_angle(arr1seg)
+            self.evaluate_deviation_from_flatness(arr1seg)
+
+            txt += 'segm:%2d  %6d  %6d  %6d  %6d   %5d %5d %5d %5d   %5d %5d %5d %5d   %5d %5d  %8.5f   %8.5f   %8.3f\n' % \
+                (nseg, self.SA,   self.LA,   self.XSize, self.YSize, \
+                       self.dZS1, self.dZS2, self.dZL1,  self.dZL2, \
+                       self.dZSA, self.dZLA, self.ddZS,  self.ddZL, \
+                       self.dZX,  self.dZY,  self.tiltXZDegree, self.tiltYZDegree, \
+                       self.arr_dev_um)
+        txt += sepline
+        return txt #+'\n' 
+
+#------------------------------
+
+    def evaluate_deviation_from_flatness(self, arr1seg) :
+        """Evaluates deviation from segment flatness in micron self.arr_dev_um.
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: self.arr_dev_um - segment corner 3 deviation from flatness
+        """
+        #if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+
+        ix, iy, iz = 0, 1, 2
+
+        vS1, vS2, vL1, vL2, vD1, vD2 = self.get_segment_vectors(arr1seg, iorgn=0)
+
+        v21, v31, v41 = vL1, vD1, vS1
+        #print v21, v31, v41, 
+
+        vort = np.array(np.cross(v21, v41), dtype=np.double) # vort = [v21 x v41]        - vector product
+        norm = sqrt(np.sum(vort*vort))                       # norm = |vort|             - length of the vector vort
+        vort_norm = vort / norm                              # vort_norm = vort / |vort| - normalized vector orthogonal to the plane
+        dev = np.sum(v31*vort_norm)                          # dev = (v31 * vort_norm)   - scalar product
+
+        self.arr_dev_um = dev
+
+        #print '  vort_norm=', vort_norm, '  norm =', norm, '  dev =', dev
+        #print '  vort_norm=', vort_norm, '  norm =', norm, '  dev =', dev
+        #if self.vrb & DEBUG : print 'quad:%1d, segm:%2d,  dz3[um]: %8.3f' % (quad, segm, self.arr_dev_um[quad,segm])
+
+#------------------------------
+#------------------------------
+#--------- GRAPHICS -----------
+#------------------------------
+#------------------------------
+
+    def plot_metrology_data(self, offset=2000) :
+        import matplotlib.pyplot as plt;   global plt
+        import matplotlib.lines  as lines; global lines
+
+        if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+
+        cmin, cmax = self.arr[:,1].min(), self.arr[:,1].max()
+        rmin, rmax = self.arr[:,2].min(), self.arr[:,2].max()
+
+        if self.vrb & DEBUG : print 'rmin, rmax =', rmin, rmax
+        if self.vrb & DEBUG : print 'cmin, cmax =', cmin, cmax
+
+        fig = plt.figure(figsize=(8,8), dpi=100, facecolor='w',edgecolor='w',frameon=True)
+        axes = fig.add_axes((0.12, 0.08, 0.85, 0.88))        
+        #axes  = fig.add_subplot(111)        
+
+        axes.set_xlim((cmin-offset, cmax+offset))
+        axes.set_ylim((rmin-offset, rmax+offset))
+        axes.set_xlabel(u'x, \u00B5m', fontsize=14)
+        axes.set_ylabel(u'y, \u00B5m', fontsize=14)
+        axes.set_title('Check %s' % self.ifname, color='k', fontsize=14)
+
+        self.plot_points(axes)
+        self.plot_centers(axes)
+
+        plt.show()
+
+        fig.savefig(self.ofplot)
+        print 'Image saved in file: %s' % self.ofplot
+
+#------------------------------
+
+    def plot_points(self, axes) :
+        arr_segs = self.arr_segs
+        nsegs = arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            xlp = arr_segs[nseg, :, 1]; xp = xlp.tolist(); xp.append(xlp[0])
+            ylp = arr_segs[nseg, :, 2]; yp = ylp.tolist(); yp.append(ylp[0])
+            line = lines.Line2D(xp, yp, linewidth=1, color='r')        
+            axes.add_artist(line)
+
+            for point in range(4) :
+                n, x, y, z = arr_segs[nseg, point, :]
+                plt.text(x, y, str(n), fontsize=8, color='k', ha='left', rotation=45)
+
+#------------------------------
+
+    def plot_centers(self, axes) :
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            arr1seg = self.arr_segs[nseg, :]
+            x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
+            #if self.vrb & 256 : print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
+            plt.text(x_um, y_um, str(nseg), fontsize=8, color='k', ha='left', rotation=0)
+
+#------------------------------
+#------------------------------
+#-------- HISTOGRAMS ----------
+#------------------------------
+#------------------------------
+
+    def fill_histograms(self) :
+        """
+           Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
+           Output: text of the quality check table
+        """
+        if self.vrb & DEBUG : print '%s' % (sys._getframe().f_code.co_name)
+
+        self.lst_ds_um = []
+        self.lst_dl_um = []
+        self.lst_dd_um = []
+        self.lst_dz_um = []
+        self.lst_tilt_z = []
+        self.lst_tilt_y = []
+        self.lst_tilt_x = []
+
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            arr1seg = self.arr_segs[nseg,:]
+            self.evaluate_length_width_angle(arr1seg)
+            self.evaluate_deviation_from_flatness(arr1seg)
+
+            self.lst_ds_um.append(self.ddS)
+            self.lst_dl_um.append(self.ddL)
+            self.lst_dd_um.append(self.dD)
+            self.lst_dz_um.append(self.arr_dev_um)
+            self.lst_tilt_z.append(self.tiltXYDegree)
+            self.lst_tilt_y.append(self.tiltXZDegree)
+            self.lst_tilt_x.append(self.tiltYZDegree)
+
+#------------------------------
+
+    def h1d(sp, hlst, bins=None, amp_range=None, weights=None, color='magenta', show_stat=True, log=False,\
+        figsize=(6,5), axwin=(0.15, 0.12, 0.78, 0.80), title='Title', xlabel='x', ylabel='y', titwin=None, fnm='fnm.png') :
+        """Wrapper for hist1d, move, and save methods, using common store parameters
+        """
+        fig, axhi, hi = hist1d(np.array(hlst), bins, amp_range, weights, color, show_stat,\
+                           log, figsize, axwin, title, xlabel, ylabel, titwin)
+
+        move(sp.hwin_x0y0[0], sp.hwin_x0y0[1])
+        save('%s-%s' % (sp.prefix, fnm), sp.do_save)
+        return fig, axhi, hi
+
+#------------------------------
+
+    def plot_histograms(sp, prefix='plot', do_save=True, hwin_x0y0 = (0,0)) :
+        """Plots/saves histograms for intensiry of all and selected peaks in ARC and EQU regions
+        """
+        from pyimgalgos.GlobalGraphics import hist1d, show, move, save
+        global hist1d, show, move, save
+
+        sp.prefix    = prefix
+        sp.do_save   = do_save
+        sp.hwin_x0y0 = hwin_x0y0
+        #---------
+        sp.h1d(np.array(sp.lst_ds_um), bins=100, amp_range=(-100,100), \
+           title ='Short sides difference', xlabel='dS[um]', ylabel='Segments',\
+           fnm='his-ds-um.png')
+        #---------
+        sp.h1d(np.array(sp.lst_dl_um), bins=100, amp_range=(-100,100), \
+           title ='Long sides difference', xlabel='dL[um]', ylabel='Segments',\
+           fnm='his-dl-um.png')
+        #---------
+        sp.h1d(np.array(sp.lst_dd_um), bins=100, amp_range=(-100,100), \
+           title ='Segment diagonals difference', xlabel='dD[um]', ylabel='Segments',\
+           fnm='his-dd-um.png')
+        #---------
+        sp.h1d(np.array(sp.lst_dz_um), bins=100, amp_range=(-100,100), \
+           title ='Segment non-flatness dz', xlabel='dZ[um]', ylabel='Segments',\
+           fnm='his-dz-um.png')
+        #---------
+        sp.h1d(np.array(sp.lst_tilt_z), bins=100, amp_range=(-2,2), \
+            title ='Segment tilt around z', xlabel='tilt z [deg]', ylabel='Segments',\
+           fnm='his-tilt-z.png')
+        #---------
+        sp.h1d(np.array(sp.lst_tilt_y), bins=100, amp_range=(-2,2), \
+            title ='Segment tilt around y', xlabel='tilt y [deg]', ylabel='Segments',\
+           fnm='his-tilt-y.png')
+        #---------
+        sp.h1d(np.array(sp.lst_tilt_x), bins=100, amp_range=(-2,2), \
+            title ='Segment tilt around x', xlabel='tilt x [deg]', ylabel='Segments',\
+           fnm='his-tilt-x.png')
+        #---------
+
+        show()
+
+#------------------------------
+#------------------------------
+#--------- CL PARSER ----------
+#------------------------------
+#------------------------------
+
+def print_command_line(cmt='Command:\n') :
+    """Prints command line"""
+    print cmt, ' '.join(sys.argv)
+
+#------------------------------
+
+def print_command_line_parameters(parser) :
+    """Prints input arguments and optional parameters"""
+    (popts, pargs) = parser.parse_args()
+    args = pargs                             # list of positional arguments
+    opts = vars(popts)                       # dict of options
+    defs = vars(parser.get_default_values()) # dict of default options
+    print 'Command:\n ', ' '.join(sys.argv)+\
+          '\nArgument list: %s\nOptional parameters:\n' % str(args)+\
+          '  <key>      <value>              <default>'
+    for k,v in opts.items() :
+        print '  %s %s %s' % (k.ljust(10), str(v).ljust(20), str(defs[k]).ljust(20))
+
+#------------------------------
+
+def usage() :
+    return '\nCommand to run:'+\
+           '\n  %prog'+\
+           ' -i <input-file-name> -o <output-file-name> -p -v 0177'+\
+           '\n\n  Example:'+\
+           '\n  %prog -i optical_metrology.txt -o results/opmet-2017-04-18 -p'
+
+#------------------------------
+
+def option_parser() :
+
+    from optparse import OptionParser
+
+    def_ifn = './optical_metrology.txt'
+    def_ofp = './om' 
+    def_psz = 109.92
+    def_plt = True
+    def_vrb = 15
+ 
+    h_ifn   = 'input file name, default = %s' % def_ifn
+    h_ofp   = 'output file(s) prefix, default = %s' % def_ofp 
+    h_psz   = 'pixel size (um)-micrometer, default = %s' % def_psz 
+    h_plt   = 'plot image, default = %s' % str(def_plt)
+    h_vrb   = 'verbosity, default = %s' % str(def_vrb)
+ 
+    parser = OptionParser(description='Check optical metrology measurements', usage=usage())
+    parser.add_option('-i', '--ifn', default=def_ifn, action='store', type='string', help=h_ifn)
+    parser.add_option('-o', '--ofp', default=def_ofp, action='store', type='string', help=h_ofp)
+    parser.add_option('-s', '--psz', default=def_psz, action='store', type='string', help=h_psz)
+    parser.add_option('-p', '--plt', default=def_plt, action='store_false',          help=h_plt)
+    parser.add_option('-v', '--vrb', default=def_vrb, action='store', type='int',    help=h_vrb)
+  
+    return parser
+ 
+#------------------------------
+
+def do_work() :
+    omc = OpticalMetrologyCheck()
+
+#------------------------------
+
+if __name__ == '__main__' :
+    do_work()
+    sys.exit()
+
+#------------------------------

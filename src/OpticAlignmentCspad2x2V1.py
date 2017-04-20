@@ -1,38 +1,17 @@
 #!/usr/bin/env python
 
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
+#------------------------------
 # Description:
-#------------------------------------------------------------------------
-""" Processing of optical measurements for XPP-CSPAD (fixed geometry)
+#------------------------------
+""" Processing of optical measurements for CSPAD2x2
 
 @see OpticAlignmentCspadMethods.py
 
-@version $Id$
-
 @author Mikhail S. Dubrovin
 """
-
 #------------------------------
-__version__ = "$Revision$"
-# $Source$
-#----------------------------------
-#import os
-#import sys
-#import numpy
-#import numpy as np
-#import math
-#from time import localtime, gmtime, strftime, clock, time, sleep
-
-#import matplotlib.pyplot as plt
-#import matplotlib.lines  as lines
-
 from CalibManager.OpticAlignmentCspadMethods import *
-#from OpticAlignmentCspadMethods import *
-
-#----------------------------------
+#------------------------------
 
 class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
     """OpticAlignmentCspad2x2V1"""
@@ -83,8 +62,7 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
 
         self.present_results()
 
-
-#----------------------------------
+#------------------------------
 
     def present_results(self): 
 
@@ -103,7 +81,7 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
             print 'Draw array from metrology file'
             self.drawOpticalAlignmentFile()
 
-#----------------------------------
+#------------------------------
 
     def readOpticalAlignmentFile(self): 
         """Reads the metrology.txt file with original optical measurements for a single CSPAD2x2
@@ -158,7 +136,7 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
         self.arr = self.arr_opt
 
 
-#----------------------------------
+#------------------------------
 
 #    def txt_geometry_segments(self) :
 #        txt = ''        
@@ -184,8 +162,7 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
 #            txt += '\n' 
 #        return txt
 
-#----------------------------------
-#----------------------------------
+#------------------------------
  
     def txt_geometry_det_ip(self) :
         txt = ''
@@ -198,17 +175,14 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
 
         return txt + '\n' 
 
-#----------------------------------
+#------------------------------
  
     def txt_geometry(self) :
         return self.txt_geometry_header() + \
                self.txt_geometry_segments(name_segm='SENS2X1:V1', name_parent='CSPAD2X2:V1') + \
                self.txt_geometry_det_ip()
 
-#----------------------------------
-#----------------------------------
-#----------------------------------
-#----------------------------------
+#------------------------------
 
 def main():
 
@@ -231,4 +205,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-#----------------------------------
+#------------------------------
