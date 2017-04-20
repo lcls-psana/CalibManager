@@ -13,7 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
-2017-02-19 Mikhail S. Dubrovin
+2017-02-20 Mikhail S. Dubrovin
+Tag: V01-00-03
+- app/optical_metrology_check - ready to go - get rid of dependencies of other psana modules
+
 Tag: V01-00-02
 - add app/optical_metrology_check
 - cosmetic update for OpticAlignmentCspad2x2V1.py

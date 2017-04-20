@@ -11,6 +11,7 @@
 
 import os
 import sys
+import math
 from math import atan2, degrees, sqrt, fabs, pi
 import numpy as np
 #from CalibManager.OpticAlignmentCspadMethods import *
@@ -31,14 +32,13 @@ class OpticalMetrologyCheck() :
 
         self.read_optical_metrology_file()
         self.make_table_of_segments()
+        self.check_points_numeration()
         self.print_quality_check_tables()
         if self.plt : 
             self.plot_metrology_data()
 
             self.fill_histograms()
-            try: self.plot_histograms(self.ofpref, do_save=True, hwin_x0y0=(0,50))
-            except : 
-                print "Sorry, can't plot histograms w/o package pyimgalgos"
+            self.plot_histograms(self.ofpref, do_save=True, hwin_x0y0=(0,50))
 
 #------------------------------
 
@@ -62,7 +62,7 @@ class OpticalMetrologyCheck() :
     def read_optical_metrology_file(self) : 
         """Reads the metrology.txt file with original optical measurements
         """
-        if self.vrb & DEBUG : print '%s: %s' % (sys._getframe().f_code.co_name, self.ifname)
+        if self.vrb & INFO : print '%s\nIn %s: %s' % (60*'-', sys._getframe().f_code.co_name, self.ifname)
 
                                  # quad 0:3
                                    # point 1:32
@@ -86,7 +86,7 @@ class OpticalMetrologyCheck() :
                 continue   # discard empty strings
 
             if line[0] == '#' : # comment
-                if self.vrb & INFO : print 'IS RECOGNIZED and ignored comment: "%s"' % line  
+                if self.vrb & INFO : print 'COMMENT IS IGNORED : "%s"' % line  
                 continue
 
             list_of_fields = line.split()
@@ -148,6 +148,35 @@ class OpticalMetrologyCheck() :
 
         if self.vrb & DEBUG : print self.arr_segs
 
+
+#------------------------------
+
+    def check_points_numeration(self) :
+        if self.vrb & INFO : print '%s\n%s' % (60*'-', sys._getframe().f_code.co_name)
+
+        if is_correct_numeration(self.arr_segs[:,:,0].flatten()) : print 'OK - points in table are sequential' 
+        else : print 'WARNING - numeration of points in table is NOT sequential or started from non-x4 number'
+        
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            pnums = self.arr_segs[nseg,:,0]
+            print 'Measured segment %2d  point numbers: (%3d %3d %3d %3d)'%\
+                   (nseg, pnums[0], pnums[1], pnums[2], pnums[3]), 
+            if is_correct_numeration(pnums) : print 'OK - points in segment are sequential' 
+            else : print 'WARNING - numeration of points in segment is NOT sequential or started from non-x4 number'
+
+#------------------------------
+
+    def test_loop_over_segments(self) :
+        nsegs = self.arr_segs.shape[0]
+        for nseg in range(nsegs) :
+            arr1seg = self.arr_segs[nseg,:]
+            x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
+            self.evaluate_length_width_angle(arr1seg)
+            self.evaluate_deviation_from_flatness(arr1seg)
+            if self.vrb & DEBUG : 
+                print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
+
 #------------------------------
 
     def print_quality_check_tables(self) :
@@ -159,16 +188,6 @@ class OpticalMetrologyCheck() :
         txt = self.txt_qc_table_z()
         print  'Z quality check for optical metrology measurements \n%s' % txt
 
-#------------------------------
-
-    def test_loop_over_segments(self) :
-        nsegs = self.arr_segs.shape[0]
-        for nseg in range(nsegs) :
-            arr1seg = self.arr_segs[nseg,:]
-            x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
-            #if self.vrb & 256 : print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
-
-            self.evaluate_length_width_angle(arr1seg)
 
 #------------------------------
 
@@ -534,9 +553,6 @@ class OpticalMetrologyCheck() :
     def plot_histograms(sp, prefix='plot', do_save=True, hwin_x0y0 = (0,0)) :
         """Plots/saves histograms for intensiry of all and selected peaks in ARC and EQU regions
         """
-        from pyimgalgos.GlobalGraphics import hist1d, show, move, save
-        global hist1d, show, move, save
-
         sp.prefix    = prefix
         sp.do_save   = do_save
         sp.hwin_x0y0 = hwin_x0y0
@@ -570,7 +586,137 @@ class OpticalMetrologyCheck() :
            fnm='his-tilt-x.png')
         #---------
 
-        show()
+        plt.show()
+
+#------------------------------
+#------------------------------
+#------- METHODS FROM ---------
+#from pyimgalgos.GlobalGraphics import hist1d, move, save #, show
+#------------------------------
+
+def add_stat_text(axhi, weights, bins) :
+    #mean, rms, err_mean, err_rms, neff = proc_stat(weights,bins)
+    mean, rms, err_mean, err_rms, neff, skew, kurt, err_err, sum_w = proc_stat(weights,bins)
+    pm = r'$\pm$' 
+    txt  = 'Entries=%d\nMean=%.2f%s%.2f\nRMS=%.2f%s%.2f\n' % (sum_w, mean, pm, err_mean, rms, pm, err_rms)
+    txt += r'$\gamma1$=%.3f  $\gamma2$=%.3f' % (skew, kurt)
+    #txt += '\nErr of err=%8.2f' % (err_err)
+    xb,xe = axhi.get_xlim()     
+    yb,ye = axhi.get_ylim()     
+    #x = xb + (xe-xb)*0.84
+    #y = yb + (ye-yb)*0.66
+    #axhi.text(x, y, txt, fontsize=10, color='k', ha='center', rotation=0)
+    x = xb + (xe-xb)*0.98
+    y = yb + (ye-yb)*0.95
+
+    if axhi.get_yscale() is 'log' :
+        #print 'axhi.get_yscale():', axhi.get_yscale()
+        log_yb, log_ye = log10(yb), log10(ye)
+        log_y = log_yb + (log_ye-log_yb)*0.95
+        y = 10**log_y
+
+    axhi.text(x, y, txt, fontsize=10, color='k',
+              horizontalalignment='right',
+              verticalalignment='top',
+              rotation=0)
+
+#------------------------------
+
+def proc_stat(weights, bins) :
+    center = np.array([0.5*(bins[i] + bins[i+1]) for i,w in enumerate(weights)])
+
+    sum_w  = weights.sum()
+    if sum_w <= 0 : return  0, 0, 0, 0, 0, 0, 0, 0, 0
+    
+    sum_w2 = (weights*weights).sum()
+    neff   = sum_w*sum_w/sum_w2 if sum_w2>0 else 0
+    sum_1  = (weights*center).sum()
+    mean = sum_1/sum_w
+    d      = center - mean
+    d2     = d * d
+    wd2    = weights*d2
+    m2     = (wd2)   .sum() / sum_w
+    m3     = (wd2*d) .sum() / sum_w
+    m4     = (wd2*d2).sum() / sum_w
+
+    #sum_2  = (weights*center*center).sum()
+    #err2 = sum_2/sum_w - mean*mean
+    #err  = math.sqrt(err2)
+
+    rms  = math.sqrt(m2) if m2>0 else 0
+    rms2 = m2
+    
+    err_mean = rms/math.sqrt(neff)
+    err_rms  = err_mean/math.sqrt(2)    
+
+    skew, kurt, var_4 = 0, 0, 0
+
+    if rms>0 and rms2>0 :
+        skew  = m3/(rms2 * rms) 
+        kurt  = m4/(rms2 * rms2) - 3
+        var_4 = (m4 - rms2*rms2*(neff-3)/(neff-1))/neff if neff>1 else 0
+    err_err = math.sqrt(math.sqrt(var_4)) if var_4>0 else 0 
+    #print  'mean:%f, rms:%f, err_mean:%f, err_rms:%f, neff:%f' % (mean, rms, err_mean, err_rms, neff)
+    #print  'skew:%f, kurt:%f, err_err:%f' % (skew, kurt, err_err)
+    return mean, rms, err_mean, err_rms, neff, skew, kurt, err_err, sum_w
+
+#------------------------------
+
+def hist1d(arr, bins=None, amp_range=None, weights=None, color=None, show_stat=True, log=False, \
+           figsize=(6,5), axwin=(0.15, 0.12, 0.78, 0.80), \
+           title=None, xlabel=None, ylabel=None, titwin=None) :
+    """Makes historgam from input array of values (arr), which are sorted in number of bins (bins) in the range (amp_range=(amin,amax))
+    """
+    #print 'hist1d: title=%s, size=%d' % (title, arr.size)
+    if arr.size==0 : return None, None, None
+    fig = plt.figure(figsize=figsize, dpi=80, facecolor='w', edgecolor='w', frameon=True)
+    if   titwin is not None : fig.canvas.set_window_title(titwin)
+    elif title  is not None : fig.canvas.set_window_title(title)
+    axhi = fig.add_axes(axwin)
+    hbins = bins if bins is not None else 100
+    hi = axhi.hist(arr.flatten(), bins=hbins, range=amp_range, weights=weights, color=color, log=log) #, log=logYIsOn)
+    if amp_range is not None : axhi.set_xlim(amp_range) # axhi.set_autoscale_on(False) # suppress autoscailing
+    if title  is not None : axhi.set_title(title, color='k', fontsize=20)
+    if xlabel is not None : axhi.set_xlabel(xlabel, fontsize=14)
+    if ylabel is not None : axhi.set_ylabel(ylabel, fontsize=14)
+    if show_stat :
+        weights, bins, patches = hi
+        add_stat_text(axhi, weights, bins)
+    return fig, axhi, hi
+
+#------------------------------
+
+def save(fname='img.png', do_save=True, pbits=0377) :
+    if not do_save : return
+    if pbits & 1 : print 'Save plot in file: %s' % fname 
+    plt.savefig(fname)
+
+#------------------------------
+
+#def save_fig(fig, fname='img.png', do_save=True, pbits=0377) :
+#    if not do_save : return
+#    if pbits & 1 : print 'Save plot in file: %s' % fname 
+#    fig.savefig(fname)
+
+#------------------------------
+
+def move(x0=200,y0=100) :
+    plt.get_current_fig_manager().window.move(x0, y0)
+
+#------------------------------
+
+#def move_fig(fig, x0=200, y0=100) :
+#    fig.canvas.manager.window.move(x0, y0)
+
+#------------------------------
+
+def is_correct_numeration(mylst) :
+    for i, v in enumerate(mylst) :
+        if i==0 : 
+            if (v-1)%4 != 0 : return False
+            continue
+        if v != (mylst[i-1]+1) : return False
+    return True
 
 #------------------------------
 #------------------------------
@@ -601,9 +747,11 @@ def print_command_line_parameters(parser) :
 def usage() :
     return '\nCommand to run:'+\
            '\n  %prog'+\
-           ' -i <input-file-name> -o <output-file-name> -p -v 0177'+\
+           ' -i <input-file-name> -o <output-file-name> -p -s <pixel-seze-um> -v <verbosity-bitword>'+\
            '\n\n  Example:'+\
-           '\n  %prog -i optical_metrology.txt -o results/opmet-2017-04-18 -p'
+           '\n  %prog -i optical-metrology.txt -o results/opmet-2017-04-18 -p'+\
+           '\n  alternative:'+\
+           '\n  %prog optical-metrology.txt'
 
 #------------------------------
 
@@ -626,7 +774,7 @@ def option_parser() :
     parser = OptionParser(description='Check optical metrology measurements', usage=usage())
     parser.add_option('-i', '--ifn', default=def_ifn, action='store', type='string', help=h_ifn)
     parser.add_option('-o', '--ofp', default=def_ofp, action='store', type='string', help=h_ofp)
-    parser.add_option('-s', '--psz', default=def_psz, action='store', type='string', help=h_psz)
+    parser.add_option('-s', '--psz', default=def_psz, action='store', type='float',  help=h_psz)
     parser.add_option('-p', '--plt', default=def_plt, action='store_false',          help=h_plt)
     parser.add_option('-v', '--vrb', default=def_vrb, action='store', type='int',    help=h_vrb)
   
