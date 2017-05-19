@@ -93,7 +93,7 @@ class Parameter :
         if str_val.lower() == 'none' :
             self._value = self._value_def
 
-        if self._type == 'str' :
+        elif self._type == 'str' :
             self._value = str(str_val)
 
         elif self._type == 'int' :
