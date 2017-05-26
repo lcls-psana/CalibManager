@@ -13,6 +13,14 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-05-25 Mikhail S. Dubrovin
+Tag: V01-00-05
+- ConfigParameters add method is_default
+
+2017-05-18 Mikhail S. Dubrovin
+Tag: V01-00-04
+- ConfigParameters.py - fix parameter setting for None
+
 2017-02-20 Mikhail S. Dubrovin
 Tag: V01-00-03
 - app/optical_metrology_check - ready to go - get rid of dependencies of other psana modules

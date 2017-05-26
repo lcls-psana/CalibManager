@@ -1,24 +1,9 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#  Module ConfigParameters
-#------------------------------------------------------------------------
 
-"""ConfigParameters - class supporting generic configuration parameters
-
-This software was developed for the SIT project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
-
-@see :py:class:`CalibManager.ConfigParametersForApp`
-
-@version $Id$
-
-@author Mikhail S. Dubrovin
-"""
 #--------------------------------
-__version__ = "$Revision$"
+"""ConfigParameters
+   Created: 2017-02-18
+   Author : Mikhail Dubrovin
+"""
 #--------------------------------
 
 import os
@@ -129,6 +114,10 @@ class Parameter :
 
     def value_def(self) :
         return self._value_def
+
+
+    def is_default(self) :
+        return self._value == self._value_def
 
 
     def name(self) :
