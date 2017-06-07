@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-06-07 Mikhail S. Dubrovin
+Tag: V01-00-06
+- GUIPopupSelectExp - add support for 9-chars experiment names
+
 2017-05-25 Mikhail S. Dubrovin
 Tag: V01-00-05
 - ConfigParameters add method is_default

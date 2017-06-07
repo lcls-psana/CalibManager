@@ -110,7 +110,7 @@ class GUIInsExpDirDet(QtGui.QWidget) :
 
         self.        setFixedHeight(40)
         self.butIns .setFixedWidth(60)
-        self.butExp .setFixedWidth(90)
+        self.butExp .setFixedWidth(100)
         self.butBro .setFixedWidth(90)
         self.butDet .setFixedWidth(90)
         self.ediDir .setMinimumWidth(310)
