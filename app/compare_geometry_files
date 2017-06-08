@@ -1,0 +1,178 @@
+#!/usr/bin/env python
+
+#------------------------------
+"""Visual comparison of two geometry files.
+   Created: 2017-06-08
+   Autho r: Mikhail Dubrovin
+"""
+#------------------------------
+
+import sys
+import numpy as np
+
+#------------------------------
+
+from pyimgalgos.GlobalUtils import print_command_line_parameters, print_ndarr, reshape_to_3d
+from PSCalib.GeometryAccess import GeometryAccess
+
+#------------------------------
+
+class CompareGeometryFiles() :
+    """Check optical metrology measurements"""
+
+    def __init__(self) :
+        self._name = self.__class__.__name__
+
+        print_command_line()
+        self.init_parameters()
+	print_command_line_parameters(self.parser)
+
+        self.geo1 = GeometryAccess(self.gf1, 0) #0377)
+        self.geo2 = GeometryAccess(self.gf2, 0) #0377)
+
+	self.plot_segment_points()
+
+#------------------------------
+
+    def init_parameters(self) :
+
+        self.parser = option_parser()
+        (popts, pargs) = self.parser.parse_args()
+
+        self.gf1 = popts.gf1
+        self.gf2 = popts.gf2
+        self.ofn = popts.ofn
+
+        #self.ifname = pargs[0] if len(pargs) else popts.ifn # popts['ifn']
+        #self.ofpref = popts.ofp # popts['ofp']
+
+#------------------------------
+
+    def plot_segment_points(self, marg=5000) :
+        import matplotlib.pyplot as plt;   global plt
+        import matplotlib.lines  as lines; global lines
+
+	arr = array_of_segment_corner_points(self.geo1)
+
+        cmin, cmax = arr[:,0].min(), arr[:,0].max()
+        rmin, rmax = arr[:,1].min(), arr[:,1].max()
+
+        fig = plt.figure(figsize=(10,10), dpi=100, facecolor='w',edgecolor='w',frameon=True)
+        axes = fig.add_axes((0.12, 0.08, 0.85, 0.88))        
+        #axes  = fig.add_subplot(111)        
+
+        axes.set_xlim((cmin-marg, cmax+marg))
+        axes.set_ylim((rmin-marg, rmax+marg))
+        axes.set_xlabel(u'x, \u00B5m', fontsize=14)
+        axes.set_ylabel(u'y, \u00B5m', fontsize=14)
+        title = 'Comparison of two geometry files' #%s' % self.gf1, color='k', fontsize=14)
+        axes.set_title(title, color='k', fontsize=14)
+
+        plot_points(axes, arr, color='k')
+
+	arr2 = array_of_segment_corner_points(self.geo2)
+        plot_points(axes, arr2, color='r')
+
+        plt.show()
+
+        fig.savefig(self.ofn)
+        print 'Image saved in file: %s' % self.ofn
+
+#------------------------------
+
+def plot_points(axes, arr, color='r') :
+    nsegs = arr.shape[0]
+
+    for s in range(nsegs) :
+        xlp = arr[s, :, 0]; xp = xlp.tolist(); xp.append(xlp[0])
+        ylp = arr[s, :, 1]; yp = ylp.tolist(); yp.append(ylp[0])
+        line = lines.Line2D(xp, yp, linewidth=1, color=color)        
+        axes.add_artist(line)
+
+        #for p in range(4) :
+        #    n, x, y, z = arr[s, p, :]
+        #    plt.text(x, y, str(n), fontsize=8, color='k', ha='left', rotation=45)
+
+#------------------------------
+
+def array_of_segment_corner_points(geo) :
+    """From geo object returns np.arr of (x,y) points for all segment corners 
+       arr.shape=(nsegs,4,2) # (nsegs, ncorners, (x,y))
+    """
+
+    X, Y, Z = geo.get_pixel_coords() # oname=None, oindex=0, do_tilt=True)
+    # reshape_to_3d converts e.g. (1, 4, 8, 185, 388) -> (32, 185, 388)
+    arrx = reshape_to_3d(X)
+    arry = reshape_to_3d(Y)
+    arrz = reshape_to_3d(Z)
+
+    print_ndarr(arrx, 'X', first=0, last=4)
+    print_ndarr(arry, 'Y', first=0, last=4)
+    print_ndarr(arrz, 'Z', first=0, last=4)
+
+    lst_seg_points = []
+
+    nsegs = arrx.shape[0]
+    for s in range(nsegs) :
+        inds0 = (s,  0,  0)
+        inds1 = (s, -1,  0)
+        inds2 = (s, -1, -1)
+        inds3 = (s,  0, -1)
+
+        #print s, ' x0=', arrx[inds0]
+
+        lst_seg_points.append((arrx[inds0], arry[inds0]))	    
+        lst_seg_points.append((arrx[inds1], arry[inds1]))	    
+        lst_seg_points.append((arrx[inds2], arry[inds2]))	    
+        lst_seg_points.append((arrx[inds3], arry[inds3]))
+
+    arr = np.array(lst_seg_points) # has a shape = (nsegs * 4corners, (x,y))
+    arr.shape = (nsegs, 4, 2)      # reshape to    (nsegs,  4corners, (x,y))
+    return arr
+
+#------------------------------
+#------------------------------
+#------------------------------
+
+def print_command_line(cmt='Command:\n') :
+    """Prints command line"""
+    print cmt, ' '.join(sys.argv)
+
+#------------------------------
+
+def usage() :
+    return '\nCommand to run:'+\
+           '\n  %prog -1 <geo1-file-name> -2 <geo2-file-name> -o <output-plot-file-name>'+\
+           '\n  or:'+\
+           '\n  %prog --gf1 <geo1-file-name> --gf2 <geo2-file-name> --ofn <output-plot-file-name>'
+           #'\n\n  Example:'+\
+           #'\n  %prog -i optical-metrology.txt -o results/opmet-2017-04-18 -p'+\
+
+#------------------------------
+
+def option_parser() :
+
+    from optparse import OptionParser
+
+    def_gf1 = 'geometry-cxi04216-53-end.data'
+    def_gf2 = 'geometry-camera1-in-ds1-cxi10416-r0028.data' 
+    def_ofn = 'fig-geo-diff.png' 
+ 
+    h_gf1   = 'geometry file 1, default = %s' % def_gf1
+    h_gf2   = 'geometry file 2, default = %s' % def_gf2
+    h_ofn   = 'output plot file name, default = %s'  % def_ofn
+ 
+    parser = OptionParser(description='Comparison of two geometry files', usage=usage())
+    parser.add_option('-1', '--gf1', default=def_gf1, action='store', type='string', help=h_gf1)
+    parser.add_option('-2', '--gf2', default=def_gf2, action='store', type='string', help=h_gf2)
+    parser.add_option('-o', '--ofn', default=def_ofn, action='store', type='string', help=h_ofn)
+  
+    return parser
+ 
+#------------------------------
+
+if __name__ == '__main__' :
+    o = CompareGeometryFiles()
+    sys.exit()
+
+#------------------------------
