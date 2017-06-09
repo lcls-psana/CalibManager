@@ -3,7 +3,7 @@
 #------------------------------
 """Visual comparison of two geometry files.
    Created: 2017-06-08
-   Autho r: Mikhail Dubrovin
+   Author:  Mikhail Dubrovin
 """
 #------------------------------
 
@@ -14,7 +14,8 @@ import numpy as np
 
 from pyimgalgos.GlobalUtils import print_command_line_parameters, print_ndarr, reshape_to_3d
 from PSCalib.GeometryAccess import GeometryAccess
-
+from pyimgalgos.GlobalGraphics import hist1d, move, save #, show
+from PSCalib.GeometryObject import rotation
 #------------------------------
 
 class CompareGeometryFiles() :
@@ -27,10 +28,27 @@ class CompareGeometryFiles() :
         self.init_parameters()
 	print_command_line_parameters(self.parser)
 
-        self.geo1 = GeometryAccess(self.gf1, 0) #0377)
-        self.geo2 = GeometryAccess(self.gf2, 0) #0377)
+	self.retrieve_geometry_data()
 
 	self.plot_segment_points()
+	self.fill_and_plot_histograms()
+
+#------------------------------
+
+    def retrieve_geometry_data(self) :
+
+        pbits = 0377 if self.vrb else 0
+
+        self.geo1 = GeometryAccess(self.gf1, pbits)
+        self.geo2 = GeometryAccess(self.gf2, pbits)
+
+	self.arr1 = array_of_segment_corner_points(self.geo1)
+	self.arr2 = array_of_segment_corner_points(self.geo2)
+
+        self.arr_centers1 = segment_center_coordinates(self.arr1)
+        self.arr_centers2 = segment_center_coordinates(self.arr2)
+
+        if self.vrb : print 'arr_centers\n', self.arr_centers1
 
 #------------------------------
 
@@ -42,9 +60,97 @@ class CompareGeometryFiles() :
         self.gf1 = popts.gf1
         self.gf2 = popts.gf2
         self.ofn = popts.ofn
+        self.vrb = popts.vrb
 
         #self.ifname = pargs[0] if len(pargs) else popts.ifn # popts['ifn']
         #self.ofpref = popts.ofp # popts['ofp']
+
+#------------------------------
+
+    def fill_and_plot_histograms(self) :
+        arr_c1 = self.arr_centers1 # shape = (nseg, 3(x,y,z))
+        arr_c2 = self.arr_centers2
+        self.diff_c = arr_c2 - arr_c1
+        if self.vrb : print 'center coordinate difference\n', self.diff_c
+
+        mdx, mdy, mdz = self.diff_c.mean(0)
+        print 'Mean (over segments) center coordinate offsets (um) dx=%.2f  dy=%.2f  dz=%.2f' % (mdx, mdy, mdz)
+
+        xc1 = arr_c1[:,0]
+        yc1 = arr_c1[:,1]
+
+        # transform arr2 coordinates:
+        xc2 = arr_c2[:,0] - mdx
+        yc2 = arr_c2[:,1] - mdy
+
+        phic1 = phi_degrees(xc1, yc1)
+        phic2 = phi_degrees(xc2, yc2)
+        rc1   = radius(xc1, yc1)
+        dphic = phic2-phic1
+
+        if self.vrb : 
+            print 'phic1 (deg):\n', phic1
+            print 'dphic (deg):\n', dphic
+
+        # radius-weighted mean value of the angle difference
+        dphi_mean = -np.dot(rc1, dphic, out=None).sum() / rc1.sum()
+
+        print 'Radial-weighted mean of segment dphi (deg): %.3f' % dphi_mean
+
+        xc2rot, yc2rot = rotation(xc2, yc2, dphi_mean)
+
+        #dx = self.diff_x.mean()
+        #dy = self.diff_y.mean()
+        #dz = self.diff_z.mean()
+
+        self.diff_x = xc2rot - xc1
+        self.diff_y = yc2rot - yc1
+        self.diff_z = self.diff_c[:,2]
+
+        self.plot_histograms(prefix='plot', do_save=True, hwin_x0y0 = (0,0))
+
+#------------------------------
+#------------------------------
+#-------- HISTOGRAMS ----------
+#------------------------------
+#------------------------------
+
+    def h1d(sp, hlst, bins=None, amp_range=None, weights=None, color='magenta', show_stat=True, log=False,\
+        figsize=(6,5), axwin=(0.15, 0.12, 0.78, 0.80), title='Title', xlabel='x', ylabel='y', titwin=None, fnm='fnm.png') :
+        """Wrapper for hist1d, move, and save methods, using common store parameters
+        """
+        fig, axhi, hi = hist1d(np.array(hlst), bins, amp_range, weights, color, show_stat,\
+                           log, figsize, axwin, title, xlabel, ylabel, titwin)
+
+        move(sp.hwin_x0y0[0], sp.hwin_x0y0[1])
+        save('%s-%s' % (sp.prefix, fnm), sp.do_save)
+        return fig, axhi, hi
+
+#------------------------------
+
+    def plot_histograms(sp, prefix='plot', do_save=True, hwin_x0y0 = (0,0)) :
+        """Plots/saves histograms for intensiry of all and selected peaks in ARC and EQU regions
+        """
+        sp.prefix    = prefix
+        sp.do_save   = do_save
+        sp.hwin_x0y0 = hwin_x0y0
+        #---------
+
+        #---------
+        sp.h1d(sp.diff_x, bins=50, amp_range=None, \
+           title ='Segment center X difference', xlabel='dx[um]', ylabel='Segments',\
+           fnm='his-dx-um.png')
+        #---------
+        sp.h1d(sp.diff_y, bins=50, amp_range=None, \
+           title ='Segment center Y difference', xlabel='dy[um]', ylabel='Segments',\
+           fnm='his-dy-um.png')
+        #---------
+        sp.h1d(sp.diff_z*0.001, bins=50, amp_range=None, \
+           title ='Segment center Z difference', xlabel='dz[mm]', ylabel='Segments',\
+           fnm='his-dz-mm.png')
+        #---------
+   
+        plt.show()
 
 #------------------------------
 
@@ -52,12 +158,15 @@ class CompareGeometryFiles() :
         import matplotlib.pyplot as plt;   global plt
         import matplotlib.lines  as lines; global lines
 
-	arr = array_of_segment_corner_points(self.geo1)
+	arr1 = self.arr1
+	arr2 = self.arr2
+        arr_centers1 = self.arr_centers1
+        arr_centers2 = self.arr_centers2
 
-        cmin, cmax = arr[:,0].min(), arr[:,0].max()
-        rmin, rmax = arr[:,1].min(), arr[:,1].max()
+        cmin, cmax = arr1[:,:,0].min(), arr1[:,:,0].max()
+        rmin, rmax = arr1[:,:,1].min(), arr1[:,:,1].max()
 
-        fig = plt.figure(figsize=(10,10), dpi=100, facecolor='w',edgecolor='w',frameon=True)
+        fig = plt.figure(figsize=(9.5,9.5), dpi=100, facecolor='w',edgecolor='w',frameon=True)
         axes = fig.add_axes((0.12, 0.08, 0.85, 0.88))        
         #axes  = fig.add_subplot(111)        
 
@@ -68,24 +177,37 @@ class CompareGeometryFiles() :
         title = 'Comparison of two geometry files' #%s' % self.gf1, color='k', fontsize=14)
         axes.set_title(title, color='k', fontsize=14)
 
-        plot_points(axes, arr, color='k')
+        plot_corner_points(axes, arr1, color='k')
+        plot_corner_points(axes, arr2, color='r')
 
-	arr2 = array_of_segment_corner_points(self.geo2)
-        plot_points(axes, arr2, color='r')
+        plot_center_points(axes, arr_centers1, color='k')
+        plot_center_points(axes, arr_centers2, color='r')
 
         plt.show()
 
         fig.savefig(self.ofn)
+
         print 'Image saved in file: %s' % self.ofn
 
 #------------------------------
 
-def plot_points(axes, arr, color='r') :
+def phi_degrees(x,y) :
+    return np.degrees(np.arctan2(y,x))
+
+#------------------------------
+
+def radius(x,y) :
+    return np.sqrt(x*x + y*y)
+
+#------------------------------
+
+def plot_corner_points(axes, arr, color='r') :
     nsegs = arr.shape[0]
 
     for s in range(nsegs) :
         xlp = arr[s, :, 0]; xp = xlp.tolist(); xp.append(xlp[0])
         ylp = arr[s, :, 1]; yp = ylp.tolist(); yp.append(ylp[0])
+        #zlp = arr[s, :, 2]; zp = zlp.tolist(); yp.append(zlp[0])
         line = lines.Line2D(xp, yp, linewidth=1, color=color)        
         axes.add_artist(line)
 
@@ -95,9 +217,26 @@ def plot_points(axes, arr, color='r') :
 
 #------------------------------
 
+def plot_center_points(axes, arr_centers, color='r') :
+
+    for nseg, (x_um, y_um, z_um) in enumerate(arr_centers) :
+        plt.text(x_um, y_um, str(nseg), fontsize=8, color=color, ha='left', rotation=0)
+
+#------------------------------
+
+def plot_center_points_v1(axes, arr, color='r') :
+    nsegs = arr.shape[0]
+    for nseg in range(nsegs) :
+        arr1seg = arr[nseg, :]
+        x_um, y_um, z_um = segment_center_coordinates(arr1seg)
+        #if self.vrb & 256 : print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
+        plt.text(x_um, y_um, str(nseg), fontsize=8, color=color, ha='left', rotation=0)
+
+#------------------------------
+
 def array_of_segment_corner_points(geo) :
-    """From geo object returns np.arr of (x,y) points for all segment corners 
-       arr.shape=(nsegs,4,2) # (nsegs, ncorners, (x,y))
+    """From geo object returns np.arr of (x,y,z) points for all segment corners 
+       arr.shape=(nsegs,4,3) # (nsegs, ncorners, (x,y,z))
     """
 
     X, Y, Z = geo.get_pixel_coords() # oname=None, oindex=0, do_tilt=True)
@@ -121,15 +260,37 @@ def array_of_segment_corner_points(geo) :
 
         #print s, ' x0=', arrx[inds0]
 
-        lst_seg_points.append((arrx[inds0], arry[inds0]))	    
-        lst_seg_points.append((arrx[inds1], arry[inds1]))	    
-        lst_seg_points.append((arrx[inds2], arry[inds2]))	    
-        lst_seg_points.append((arrx[inds3], arry[inds3]))
+        lst_seg_points.append((arrx[inds0], arry[inds0], arrz[inds0]))	    
+        lst_seg_points.append((arrx[inds1], arry[inds1], arrz[inds1]))	    
+        lst_seg_points.append((arrx[inds2], arry[inds2], arrz[inds2]))	    
+        lst_seg_points.append((arrx[inds3], arry[inds3], arrz[inds3]))
 
-    arr = np.array(lst_seg_points) # has a shape = (nsegs * 4corners, (x,y))
-    arr.shape = (nsegs, 4, 2)      # reshape to    (nsegs,  4corners, (x,y))
+    arr = np.array(lst_seg_points) # has a shape = (nsegs * 4corners, (x,y,z))
+    arr.shape = (nsegs, 4, 3)      # reshape to    (nsegs,  4corners, (x,y,z))
     return arr
 
+#------------------------------
+
+def segment_center_coordinates(arr) :
+    """Returns segment center coordinates x, y, z in micrometer for all segments
+       Input : arr - array of segment data arr.shape=(nseg, 4points, 3(x, y, z))
+       Output: arr_out.shape=(nseg, 3(x, y, z)) - array of segment center coordinates
+    """
+    return 0.25 * arr.sum(axis=1)
+
+#------------------------------
+
+def segment_center_coordinates_v1(arr1seg) :
+    """Returns segment center coordinates x, y, z in micrometer
+       Input : arr1seg - array of segment data arr1seg.shape=(4points, 3(x, y, z))
+       Output: x_um, y_um, z_um - segment center coordinates
+    """
+    #n, x_um, y_um, z_um = 0.25 * arr1seg.sum(axis=0)
+    return 0.25 * arr1seg.sum(axis=0) #[1:]
+
+
+
+#------------------------------
 #------------------------------
 #------------------------------
 #------------------------------
@@ -142,9 +303,9 @@ def print_command_line(cmt='Command:\n') :
 
 def usage() :
     return '\nCommand to run:'+\
-           '\n  %prog -1 <geo1-file-name> -2 <geo2-file-name> -o <output-plot-file-name>'+\
+           '\n  %prog -1 <geo1-file-name> -2 <geo2-file-name> -o <output-plot-file-name> -v 0177777'+\
            '\n  or:'+\
-           '\n  %prog --gf1 <geo1-file-name> --gf2 <geo2-file-name> --ofn <output-plot-file-name>'
+           '\n  %prog --gf1 <geo1-file-name> --gf2 <geo2-file-name> --ofn <output-plot-file-name>  --vrb 0177777'
            #'\n\n  Example:'+\
            #'\n  %prog -i optical-metrology.txt -o results/opmet-2017-04-18 -p'+\
 
@@ -157,16 +318,20 @@ def option_parser() :
     def_gf1 = 'geometry-cxi04216-53-end.data'
     def_gf2 = 'geometry-camera1-in-ds1-cxi10416-r0028.data' 
     def_ofn = 'fig-geo-diff.png' 
+    def_vrb = False
  
     h_gf1   = 'geometry file 1, default = %s' % def_gf1
     h_gf2   = 'geometry file 2, default = %s' % def_gf2
     h_ofn   = 'output plot file name, default = %s'  % def_ofn
+    h_vrb   = 'verbosity, default = %s' % str(def_vrb)
  
     parser = OptionParser(description='Comparison of two geometry files', usage=usage())
     parser.add_option('-1', '--gf1', default=def_gf1, action='store', type='string', help=h_gf1)
     parser.add_option('-2', '--gf2', default=def_gf2, action='store', type='string', help=h_gf2)
     parser.add_option('-o', '--ofn', default=def_ofn, action='store', type='string', help=h_ofn)
-  
+    parser.add_option('-v', '--vrb', default=def_vrb, action='store_true',           help=h_vrb)
+    #parser.add_option('-v', '--vrb', default=def_vrb, action='store', type='int',    help=h_vrb)
+   
     return parser
  
 #------------------------------

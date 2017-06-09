@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-06-09 Mikhail S. Dubrovin
+Tag: V01-00-08
+- compare_geometry_files - add coordinate difference histograms
+
 2017-06-08 Mikhail S. Dubrovin
 Tag: V01-00-07
 - add app/compare_geometry_files
