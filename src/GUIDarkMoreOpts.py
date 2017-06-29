@@ -12,7 +12,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from   ConfigParametersForApp import cp
 from   Logger                 import logger
@@ -25,7 +25,7 @@ import FileDeployer           as     fdmets
 #------------------------------
 
 #class GUIDarkMoreOpts(QtGui.QGroupBox) :
-class GUIDarkMoreOpts(QtGui.QWidget) :
+class GUIDarkMoreOpts(QtWidgets.QWidget) :
     """GUI with extended options for GUIDark"""
 
     char_expand    = cp.char_expand
@@ -36,7 +36,7 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
                
     def __init__(self, parent=None, run_number='0000') :
 
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         #QtGui.QGroupBox.__init__(self, 'More', parent)
 
         self.parent     = parent
@@ -53,19 +53,19 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
 
         #self.lab_run  = QtGui.QLabel('Dark run')
 
-        self.cbx_dark_more = QtGui.QCheckBox('More options')
+        self.cbx_dark_more = QtWidgets.QCheckBox('More options')
         self.cbx_dark_more.setChecked(cp.dark_more_opts.value())
  
-        self.lab_show = QtGui.QLabel('Show:')
-        self.but_srcs = QtGui.QPushButton('Sources DB')
-        self.but_sxtc = QtGui.QPushButton('Sources XTC')
-        self.but_flst = QtGui.QPushButton('O/Files')
-        self.but_fxtc = QtGui.QPushButton('xtc Files')
-        self.but_view = QtGui.QPushButton('View')
-        self.but_plot = QtGui.QPushButton('Plot')
-        self.but_show = QtGui.QPushButton('Show cmd')
+        self.lab_show = QtWidgets.QLabel('Show:')
+        self.but_srcs = QtWidgets.QPushButton('Sources DB')
+        self.but_sxtc = QtWidgets.QPushButton('Sources XTC')
+        self.but_flst = QtWidgets.QPushButton('O/Files')
+        self.but_fxtc = QtWidgets.QPushButton('xtc Files')
+        self.but_view = QtWidgets.QPushButton('View')
+        self.but_plot = QtWidgets.QPushButton('Plot')
+        self.but_show = QtWidgets.QPushButton('Show cmd')
 
-        self.hbox = QtGui.QHBoxLayout()
+        self.hbox = QtWidgets.QHBoxLayout()
         self.hbox.addWidget(self.lab_show)
         self.hbox.addWidget(self.but_fxtc)
         self.hbox.addWidget(self.but_srcs)
@@ -90,20 +90,20 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
         #self.cbx_dark_more.move(50,0)
         #self.hbox.move(50,30)
 
-        self.vbox = QtGui.QVBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
         #self.vbox.addWidget(self.wbox)
         self.vbox.addLayout(self.hbox)
         self.vbox.addStretch(1)     
         self.setLayout(self.vbox)
 
-        self.connect(self.cbx_dark_more  , QtCore.SIGNAL('stateChanged(int)'), self.on_cbx) 
-        self.connect(self.but_srcs, QtCore.SIGNAL('clicked()'), self.on_but_srcs)
-        self.connect(self.but_sxtc, QtCore.SIGNAL('clicked()'), self.on_but_sxtc)
-        self.connect(self.but_flst, QtCore.SIGNAL('clicked()'), self.on_but_flst)
-        self.connect(self.but_fxtc, QtCore.SIGNAL('clicked()'), self.on_but_fxtc)
-        self.connect(self.but_view, QtCore.SIGNAL('clicked()'), self.on_but_view)
-        self.connect(self.but_plot, QtCore.SIGNAL('clicked()'), self.on_but_plot)
-        self.connect(self.but_show, QtCore.SIGNAL('clicked()'), self.on_but_show)
+        self.cbx_dark_more.stateChanged[int].connect(self.on_cbx)
+        self.but_srcs.clicked.connect(self.on_but_srcs)
+        self.but_sxtc.clicked.connect(self.on_but_sxtc)
+        self.but_flst.clicked.connect(self.on_but_flst)
+        self.but_fxtc.clicked.connect(self.on_but_fxtc)
+        self.but_view.clicked.connect(self.on_but_view)
+        self.but_plot.clicked.connect(self.on_but_plot)
+        self.but_show.clicked.connect(self.on_but_show)
    
         self.showToolTips()
 
@@ -396,7 +396,7 @@ class GUIDarkMoreOpts(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIDarkMoreOpts()
     w.setFieldsEnabled(True)
     w.show()

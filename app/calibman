@@ -16,7 +16,7 @@ part of it, please give an appropriate acknowledgement.
 #------------------------------
 #  Module's version from SVN --
 #------------------------------
-__version__ = "$Revision$"
+#__version__ = "$Revision$"
 # $Source$
 
 #-------------------
@@ -30,7 +30,7 @@ if __name__ == "__main__" :
     import matplotlib
     matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtCore, QtWidgets
 from CalibManager.GUIMain import GUIMain
 from CalibManager.GlobalUtils import ready_to_start
 from CalibManager.ThreadWorker import ThreadWorker

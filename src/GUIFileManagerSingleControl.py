@@ -22,7 +22,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from ConfigParametersForApp import cp
 
@@ -40,7 +40,7 @@ from GUIRange               import *
 #------------------------------
 
 #class GUIFileManagerSingleControl(Frame) :
-class GUIFileManagerSingleControl(QtGui.QWidget) :
+class GUIFileManagerSingleControl(QtWidgets.QWidget) :
     """Main GUI for main button bar.
     """
     char_expand = cp.char_expand
@@ -50,7 +50,7 @@ class GUIFileManagerSingleControl(QtGui.QWidget) :
 
         self.name = 'GUIFileManagerSingleControl'
         self.myapp = app
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         #Frame.__init__(self, parent, mlw=1)
 
         self.setGeometry(10, 25, 630, 120)
@@ -66,39 +66,39 @@ class GUIFileManagerSingleControl(QtGui.QWidget) :
 
         self.guirange  = GUIRange(None, self.str_run_from, self.str_run_to)
  
-        self.lab_src        = QtGui.QLabel('for detector')
-        self.lab_type       = QtGui.QLabel('calib type')
-        self.but_src        = QtGui.QPushButton(self.source_name + self.char_expand)
-        self.but_type       = QtGui.QPushButton(self.calib_type + self.char_expand)
+        self.lab_src        = QtWidgets.QLabel('for detector')
+        self.lab_type       = QtWidgets.QLabel('calib type')
+        self.but_src        = QtWidgets.QPushButton(self.source_name + self.char_expand)
+        self.but_type       = QtWidgets.QPushButton(self.calib_type + self.char_expand)
 
-        self.lab_file = QtGui.QLabel('File:')
-        self.edi_file = QtGui.QLineEdit ( self.path_fm_selected.value() ) # fnm.path_to_calib_dir() )
+        self.lab_file = QtWidgets.QLabel('File:')
+        self.edi_file = QtWidgets.QLineEdit ( self.path_fm_selected.value() ) # fnm.path_to_calib_dir() )
         self.edi_file.setReadOnly(True)
  
-        self.but_move   = QtGui.QPushButton('Move')
-        self.but_copy   = QtGui.QPushButton('Copy')
-        self.but_delete = QtGui.QPushButton('Delete')
-        self.but_view   = QtGui.QPushButton('View')
-        self.but_plot   = QtGui.QPushButton('Plot')
+        self.but_move   = QtWidgets.QPushButton('Move')
+        self.but_copy   = QtWidgets.QPushButton('Copy')
+        self.but_delete = QtWidgets.QPushButton('Delete')
+        self.but_view   = QtWidgets.QPushButton('View')
+        self.but_plot   = QtWidgets.QPushButton('Plot')
         #self.but_copy  .setIcon(cp.icon_monitor)
 
-        self.but_browse = QtGui.QPushButton('Browse')
+        self.but_browse = QtWidgets.QPushButton('Browse')
 
-        self.hboxB = QtGui.QHBoxLayout() 
+        self.hboxB = QtWidgets.QHBoxLayout() 
         #self.hboxB.addStretch(1)     
         self.hboxB.addWidget(self.lab_file)
         self.hboxB.addWidget(self.edi_file)
         self.hboxB.addWidget(self.but_browse)
         self.hboxB.addStretch(1)     
 
-        self.hboxD = QtGui.QHBoxLayout() 
+        self.hboxD = QtWidgets.QHBoxLayout() 
         #self.hboxD.addSpacing(50)
         self.hboxD.addWidget(self.but_view)
         self.hboxD.addWidget(self.but_plot)
         self.hboxD.addWidget(self.but_delete)
         self.hboxD.addStretch(1)     
 
-        self.hboxC = QtGui.QHBoxLayout() 
+        self.hboxC = QtWidgets.QHBoxLayout() 
         #self.hboxC.addStretch(1)     
         self.hboxC.addWidget(self.but_move)
         self.hboxC.addWidget(self.but_copy)
@@ -110,7 +110,7 @@ class GUIFileManagerSingleControl(QtGui.QWidget) :
         self.hboxC.addStretch(1)     
 
 
-        self.vboxW = QtGui.QVBoxLayout() 
+        self.vboxW = QtWidgets.QVBoxLayout() 
         self.vboxW.addStretch(1)
         self.vboxW.addLayout(self.hboxB) 
         self.vboxW.addLayout(self.hboxD) 
@@ -119,14 +119,14 @@ class GUIFileManagerSingleControl(QtGui.QWidget) :
         
         self.setLayout(self.vboxW)
 
-        self.connect(self.but_browse, QtCore.SIGNAL('clicked()'), self.onButBrowse) 
-        self.connect(self.but_move,   QtCore.SIGNAL('clicked()'), self.onButMove  ) 
-        self.connect(self.but_copy,   QtCore.SIGNAL('clicked()'), self.onButCopy  ) 
-        self.connect(self.but_view,   QtCore.SIGNAL('clicked()'), self.onButView  ) 
-        self.connect(self.but_plot,   QtCore.SIGNAL('clicked()'), self.onButPlot  ) 
-        self.connect(self.but_delete, QtCore.SIGNAL('clicked()'), self.onButDelete) 
-        self.connect(self.but_src,    QtCore.SIGNAL('clicked()'), self.onButSrc   ) 
-        self.connect(self.but_type,   QtCore.SIGNAL('clicked()'), self.onButType  ) 
+        self.but_browse.clicked.connect(self.onButBrowse)
+        self.but_move.clicked.connect(self.onButMove)
+        self.but_copy.clicked.connect(self.onButCopy)
+        self.but_view.clicked.connect(self.onButView)
+        self.but_plot.clicked.connect(self.onButPlot)
+        self.but_delete.clicked.connect(self.onButDelete)
+        self.but_src.clicked.connect(self.onButSrc)
+        self.but_type.clicked.connect(self.onButType)
   
         self.showToolTips()
         self.setStyle()
@@ -475,7 +475,7 @@ class GUIFileManagerSingleControl(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIFileManagerSingleControl()
     ex.show()
     app.exec_()

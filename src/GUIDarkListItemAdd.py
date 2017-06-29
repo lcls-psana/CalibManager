@@ -12,7 +12,7 @@ __version__ = "$Revision$"
 
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
@@ -21,12 +21,12 @@ from GUIDarkMoreOpts        import *
 
 #------------------------------
 
-class GUIDarkListItemAdd(QtGui.QWidget) :
+class GUIDarkListItemAdd(QtWidgets.QWidget) :
     """GUI extension of the Dark List Item"""
 
     def __init__(self, parent=None, run_number='0000') :
 
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.parent     = parent
         self.run_number = run_number
@@ -36,7 +36,7 @@ class GUIDarkListItemAdd(QtGui.QWidget) :
 
         self.gui_more = GUIDarkMoreOpts(self, self.run_number)
         
-        self.vbox = QtGui.QVBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
         self.vbox.addWidget(self.gui_more)
         self.vbox.addStretch(1)     
 
@@ -100,7 +100,7 @@ class GUIDarkListItemAdd(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIDarkListItemAdd(parent=None, run_number='0005')
     w.show()
     app.exec_()

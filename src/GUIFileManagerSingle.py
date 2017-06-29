@@ -12,7 +12,7 @@ __version__ = "$Revision$"
 
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 #from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
@@ -24,11 +24,11 @@ from GUIFileManagerSingleControl import *
 #------------------------------
 
 #class GUIFileManagerSingle(Frame) :
-class GUIFileManagerSingle(QtGui.QWidget) :
+class GUIFileManagerSingle(QtWidgets.QWidget) :
     """GUI for Single File Manager"""
 
     def __init__(self, parent=None) :
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         #Frame.__init__(self, parent, mlw=1)
 
         self.setGeometry(200, 400, 800, 300)
@@ -38,7 +38,7 @@ class GUIFileManagerSingle(QtGui.QWidget) :
         self.guifilemanagersinglecontrol  = GUIFileManagerSingleControl(self)
         #self.guifilemanagersinglecontrol  = QtGui.QTextEdit('Source file GUI is not implemented.') # GUIDark(self)
 
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addWidget(self.guistatus)
         self.vbox.addWidget(self.guifilemanagersinglecontrol)
         #self.vwidg = QtGui.QWidget(self)
@@ -48,7 +48,7 @@ class GUIFileManagerSingle(QtGui.QWidget) :
         #self.vsplit.addWidget(self.guistatus)
         #self.vsplit.addWidget(self.guifilemanagersinglecontrol)
 
-        self.hbox = QtGui.QHBoxLayout(self) 
+        self.hbox = QtWidgets.QHBoxLayout(self) 
         #self.hbox.addWidget(self.vsplit)
         self.hbox.addLayout(self.vbox)
         #self.hbox.addStretch(1)
@@ -69,7 +69,7 @@ class GUIFileManagerSingle(QtGui.QWidget) :
 
     def setStyle(self):
         self.setContentsMargins (QtCore.QMargins(-5,-5,-5,2))
-        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         #self.vsplit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Ignored)
         #self.setMinimumSize(790,210)
         #self.setMinimumHeight(320)
@@ -110,7 +110,7 @@ class GUIFileManagerSingle(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUIFileManagerSingle ()
     widget.show()
     app.exec_()

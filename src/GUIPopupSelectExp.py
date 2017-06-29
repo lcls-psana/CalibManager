@@ -13,8 +13,9 @@ __version__ = "$Revision$"
 #--------------------------------
 
 import os
+from PyQt5.QtWidgets import *
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 #from CalibManager.Logger import logger
 #from CalibManager.ConfigParametersForApp import cp
 
@@ -59,15 +60,15 @@ def lst_exp_for_year(lst_exp, year) :
 
 #------------------------------  
 
-class GUIPopupList(QtGui.QDialog) :
+class GUIPopupList(QtWidgets.QDialog) :
     """
     """
     def __init__(self, parent=None, lst_exp=[]):
 
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
 
         self.name_sel = None
-        self.list = QtGui.QListWidget(parent)
+        self.list = QtWidgets.QListWidget(parent)
 
         self.fill_list(lst_exp)
 
@@ -85,7 +86,7 @@ class GUIPopupList(QtGui.QDialog) :
         #self.hbox.addWidget(self.but_apply)
         ##self.hbox.addStretch(1)
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.list)
         #vbox.addLayout(self.hbox)
         self.setLayout(vbox)
@@ -98,42 +99,42 @@ class GUIPopupList(QtGui.QDialog) :
 
     def fill_list_v0(self, lst_exp) :
         for exp in sorted(lst_exp) :
-            item = QtGui.QListWidgetItem(exp, self.list)
+            item = QtWidgets.QListWidgetItem(exp, self.list)
         self.list.sortItems(QtCore.Qt.AscendingOrder)
 
 
     def fill_list_v1(self, lst_exp) :
         self.years = sorted(years(lst_exp))
         for year in self.years :
-            item = QtGui.QListWidgetItem(year, self.list)
+            item = QtWidgets.QListWidgetItem(year, self.list)
             item.setFont(QtGui.QFont('Courier', 14, QtGui.QFont.Bold))
             item.setFlags(QtCore.Qt.NoItemFlags)
             #item.setFlags(QtCore.Qt.NoItemFlags ^ QtCore.Qt.ItemIsEnabled ^ QtCore.Qt.ItemIsSelectable)
             for exp in sorted(lst_exp_for_year(lst_exp, year)) :
-                item = QtGui.QListWidgetItem(exp, self.list)
+                item = QtWidgets.QListWidgetItem(exp, self.list)
                 item.setFont(QtGui.QFont('Monospace', 11, QtGui.QFont.Normal)) # Bold))
 
     def fill_list(self, lst_exp) :
         self.years, self.runs = years_and_runs(lst_exp)
 
         for year in self.years :
-            item = QtGui.QListWidgetItem(year, self.list)
+            item = QtWidgets.QListWidgetItem(year, self.list)
             item.setFont(QtGui.QFont('Courier', 14, QtGui.QFont.Bold))
             item.setFlags(QtCore.Qt.NoItemFlags)
             #item.setFlags(QtCore.Qt.NoItemFlags ^ QtCore.Qt.ItemIsEnabled ^ QtCore.Qt.ItemIsSelectable)
             for exp in sorted(lst_exp_for_year(lst_exp, year)) :
                 if len(exp) != 8 : continue
-                item = QtGui.QListWidgetItem(exp, self.list)
+                item = QtWidgets.QListWidgetItem(exp, self.list)
                 item.setFont(QtGui.QFont('Monospace', 11, QtGui.QFont.Normal)) # Bold))
 
         for run in self.runs :
-            item = QtGui.QListWidgetItem(run, self.list)
+            item = QtWidgets.QListWidgetItem(run, self.list)
             item.setFont(QtGui.QFont('Courier', 14, QtGui.QFont.Bold))
             item.setFlags(QtCore.Qt.NoItemFlags)
             #item.setFlags(QtCore.Qt.NoItemFlags ^ QtCore.Qt.ItemIsEnabled ^ QtCore.Qt.ItemIsSelectable)
             for exp in sorted(lst_exp_for_year(lst_exp, run)) :
                 if len(exp) != 9 : continue
-                item = QtGui.QListWidgetItem(exp, self.list)
+                item = QtWidgets.QListWidgetItem(exp, self.list)
                 item.setFont(QtGui.QFont('Monospace', 11, QtGui.QFont.Normal)) # Bold))
 
 
@@ -186,7 +187,7 @@ class GUIPopupList(QtGui.QDialog) :
         #print 'event.type', e.type()
         if e.type() == QtCore.QEvent.WindowDeactivate :
             self.reject()
-        return QtGui.QDialog.event(self, e)
+        return QtWidgets.QDialog.event(self, e)
     
 
     def closeEvent(self, event):
@@ -209,12 +210,12 @@ class GUIPopupList(QtGui.QDialog) :
 
 #------------------------------  
 
-class GUIPopupSelectExp(QtGui.QDialog) :
+class GUIPopupSelectExp(QtWidgets.QDialog) :
     """
     """
 
     def __init__(self, parent=None, lst_exp=[], orient='H'):
-        QtGui.QDialog.__init__(self,parent)
+        QtWidgets.QDialog.__init__(self,parent)
         self.orient = orient
         self.lst_exp = lst_exp
         self.exp_name = None
@@ -229,7 +230,7 @@ class GUIPopupSelectExp(QtGui.QDialog) :
         self.showToolTips()
 
         #self.hboxW = QtGui.QHBoxLayout()
-        self.box = QtGui.QVBoxLayout(self) if self.orient=='H' else QtGui.QHBoxLayout(self) 
+        self.box = QtWidgets.QVBoxLayout(self) if self.orient=='H' else QtWidgets.QHBoxLayout(self) 
 
         self.box.addWidget(self.tab_bar)
         #self.box.addLayout(self.hboxW)
@@ -250,20 +251,20 @@ class GUIPopupSelectExp(QtGui.QDialog) :
 
     def makeTabBar(self) :
 
-        self.tab_bar = QtGui.QTabBar()
+        self.tab_bar = QtWidgets.QTabBar()
         tab_names = years(self.lst_exp)
 
         for tab_name in tab_names :
             tab_ind = self.tab_bar.addTab(tab_name)
             self.tab_bar.setTabTextColor(tab_ind, QtGui.QColor('blue')) #gray, red, grayblue
 
-        self.tab_bar.setShape(QtGui.QTabBar.RoundedNorth if self.orient=='H' else QtGui.QTabBar.RoundedWest)
+        self.tab_bar.setShape(QtWidgets.QTabBar.RoundedNorth if self.orient=='H' else QtWidgets.QTabBar.RoundedWest)
 
         tab_name = tab_names[-1]
         tab_index = tab_names.index(tab_name)
         self.tab_bar.setCurrentIndex(tab_index)
 
-        self.connect(self.tab_bar, QtCore.SIGNAL('currentChanged(int)'), self.onTabBar)
+        self.tab_bar.currentChanged[int].connect(self.onTabBar)
 
 
     def guiSelector(self):
@@ -372,8 +373,8 @@ def select_experiment_v3(parent, lst_exp) :
     w = GUIPopupList(parent, lst_exp)
     ##w.show()
     resp=w.exec_()
-    if   resp == QtGui.QDialog.Accepted : return w.selectedName()
-    elif resp == QtGui.QDialog.Rejected : return None
+    if   resp == QtWidgets.QDialog.Accepted : return w.selectedName()
+    elif resp == QtWidgets.QDialog.Rejected : return None
     else : return None
 
 #------------------------------
@@ -390,7 +391,7 @@ def test_all(tname) :
     print 'years and runs form the list of experiments', str(years_and_runs(lst_exp))
     print 'experiments for 2016:', lst_exp_for_year(lst_exp, '2016')
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     exp_name = 'N/A'
     if tname == '1': exp_name = select_experiment_v1(lst_exp)

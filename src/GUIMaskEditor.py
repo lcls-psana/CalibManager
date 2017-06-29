@@ -28,7 +28,7 @@ if __name__ == "__main__" :
     import matplotlib
     matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from CalibManager.Frame                  import Frame
 from CalibManager.ConfigParametersForApp import cp
@@ -77,30 +77,30 @@ class GUIMaskEditor(Frame) :
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
 
-        self.lab_status = QtGui.QLabel('Status: ')
-        self.lab_mask_cbits = QtGui.QLabel('Mask control bits:')
+        self.lab_status = QtWidgets.QLabel('Status: ')
+        self.lab_mask_cbits = QtWidgets.QLabel('Mask control bits:')
 
-        self.but_geometry     = QtGui.QPushButton(' 1. Select geometry file')
-        self.but_roi_img_nda  = QtGui.QPushButton(' 2. Select file with N-d array for image')
-        self.but_roi_img      = QtGui.QPushButton('Image')
-        self.but_reco_image   = QtGui.QPushButton(' 3. Reconstruct image from N-d array')
-        self.but_roi_mask_img = QtGui.QPushButton('Mask image')
-        self.but_mask_editor  = QtGui.QPushButton(' 4. Open Mask Editor')
-        self.but_roi_mask_nda = QtGui.QPushButton('Mask N-d array')
-        self.but_roi_convert  = QtGui.QPushButton(' 5. Convert mask image to N-d array')
+        self.but_geometry     = QtWidgets.QPushButton(' 1. Select geometry file')
+        self.but_roi_img_nda  = QtWidgets.QPushButton(' 2. Select file with N-d array for image')
+        self.but_roi_img      = QtWidgets.QPushButton('Image')
+        self.but_reco_image   = QtWidgets.QPushButton(' 3. Reconstruct image from N-d array')
+        self.but_roi_mask_img = QtWidgets.QPushButton('Mask image')
+        self.but_mask_editor  = QtWidgets.QPushButton(' 4. Open Mask Editor')
+        self.but_roi_mask_nda = QtWidgets.QPushButton('Mask N-d array')
+        self.but_roi_convert  = QtWidgets.QPushButton(' 5. Convert mask image to N-d array')
 
-        self.but_plot         = QtGui.QPushButton('Plot')
-        self.but_view         = QtGui.QPushButton('View')
+        self.but_plot         = QtWidgets.QPushButton('Plot')
+        self.but_view         = QtWidgets.QPushButton('View')
 
-        self.edi_geometry     = QtGui.QLineEdit(self.fname_geometry.value())
-        self.edi_roi_img_nda  = QtGui.QLineEdit(self.fname_roi_img_nda.value())
-        self.edi_roi_img      = QtGui.QLineEdit(self.fname_roi_img.value())
-        self.edi_roi_mask_img = QtGui.QLineEdit(self.fname_roi_mask_img.value())
-        self.edi_roi_mask_nda = QtGui.QLineEdit(self.fname_roi_mask_nda.value())
-        self.edi_mask_cbits   = QtGui.QLineEdit(str(self.sensor_mask_cbits.value()))
+        self.edi_geometry     = QtWidgets.QLineEdit(self.fname_geometry.value())
+        self.edi_roi_img_nda  = QtWidgets.QLineEdit(self.fname_roi_img_nda.value())
+        self.edi_roi_img      = QtWidgets.QLineEdit(self.fname_roi_img.value())
+        self.edi_roi_mask_img = QtWidgets.QLineEdit(self.fname_roi_mask_img.value())
+        self.edi_roi_mask_nda = QtWidgets.QLineEdit(self.fname_roi_mask_nda.value())
+        self.edi_mask_cbits   = QtWidgets.QLineEdit(str(self.sensor_mask_cbits.value()))
         self.edi_mask_cbits.setValidator(QtGui.QDoubleValidator(0,0177777,3,self))
 
-        self.grid = QtGui.QGridLayout()
+        self.grid = QtWidgets.QGridLayout()
         self.grid_row = 0
         self.grid.addWidget(self.but_geometry,      self.grid_row,     0, 1, 4)
         self.grid.addWidget(self.edi_geometry,      self.grid_row,     4, 1, 6)
@@ -125,27 +125,27 @@ class GUIMaskEditor(Frame) :
         self.grid.addWidget(self.but_plot,          self.grid_row+8,   8)
         self.grid.addWidget(self.but_view,          self.grid_row+8,   9)
 
-        self.hboxS = QtGui.QHBoxLayout()
+        self.hboxS = QtWidgets.QHBoxLayout()
         self.hboxS.addWidget(self.lab_status)
         self.hboxS.addStretch(1)     
 
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addLayout(self.grid)
         self.vbox.addStretch(1)
         self.vbox.addLayout(self.hboxS) 
         self.setLayout(self.vbox)
 
-        self.connect(self.edi_mask_cbits, QtCore.SIGNAL('editingFinished()'), self.on_edi_mask_cbits)
-        self.connect(self.but_geometry    ,     QtCore.SIGNAL('clicked()'), self.on_but_geometry    ) 
-        self.connect(self.but_roi_img_nda ,     QtCore.SIGNAL('clicked()'), self.on_but_roi_img_nda ) 
-        self.connect(self.but_roi_img     ,     QtCore.SIGNAL('clicked()'), self.on_but_roi_img     ) 
-        self.connect(self.but_roi_mask_img,     QtCore.SIGNAL('clicked()'), self.on_but_roi_mask_img) 
-        self.connect(self.but_roi_mask_nda,     QtCore.SIGNAL('clicked()'), self.on_but_roi_mask_nda) 
-        self.connect(self.but_reco_image  ,     QtCore.SIGNAL('clicked()'), self.on_but_reco_image  ) 
-        self.connect(self.but_mask_editor ,     QtCore.SIGNAL('clicked()'), self.on_but_mask_editor ) 
-        self.connect(self.but_roi_convert ,     QtCore.SIGNAL('clicked()'), self.on_but_roi_convert ) 
-        self.connect(self.but_plot        ,     QtCore.SIGNAL('clicked()'), self.on_but_plot        ) 
-        self.connect(self.but_view        ,     QtCore.SIGNAL('clicked()'), self.on_but_view        ) 
+        self.edi_mask_cbits.editingFinished.connect(self.on_edi_mask_cbits)
+        self.but_geometry.clicked.connect(self.on_but_geometry)
+        self.but_roi_img_nda.clicked.connect(self.on_but_roi_img_nda)
+        self.but_roi_img.clicked.connect(self.on_but_roi_img)
+        self.but_roi_mask_img.clicked.connect(self.on_but_roi_mask_img)
+        self.but_roi_mask_nda.clicked.connect(self.on_but_roi_mask_nda)
+        self.but_reco_image.clicked.connect(self.on_but_reco_image)
+        self.but_mask_editor.clicked.connect(self.on_but_mask_editor)
+        self.but_roi_convert.clicked.connect(self.on_but_roi_convert)
+        self.but_plot.clicked.connect(self.on_but_plot)
+        self.but_view.clicked.connect(self.on_but_view)
  
         self.showToolTips()
         self.setStyle()
@@ -306,9 +306,9 @@ class GUIMaskEditor(Frame) :
         msg = 'Current dir: %s   file: %s' % (dname, fname)
         logger.info(msg, __name__)
         
-        path = str( QtGui.QFileDialog.getSaveFileName(self, 'Save file', path, filter=filter) ) \
+        path = str( QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', path, filter=filter) ) \
                if mode == 'save' else \
-               str( QtGui.QFileDialog.getOpenFileName(self, 'Open file', path, filter=filter) )
+               str( QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', path, filter=filter) )[0]
 
         dname, fname = os.path.split(path)
 
@@ -354,7 +354,7 @@ class GUIMaskEditor(Frame) :
 
     def on_mask_editor_window_is_closed(self):
         #print 'mask_editor_window_is_closed' 
-        self.disconnect(cp.maskeditor, QtCore.SIGNAL('MaskEditorWindowIsClosed()'), self.on_mask_editor_window_is_closed) 
+        cp.maskeditor.MaskEditorWindowIsClosed.disconnect(self.on_mask_editor_window_is_closed)
         self.but_mask_editor.setStyleSheet(cp.styleButtonLeft)
         self.but_mask_editor.setText(' 4. Open Mask Editor')
         #self.on_but_mask_editor()
@@ -374,7 +374,7 @@ class GUIMaskEditor(Frame) :
                 logger.warning(msg, __name__)
                 status = gu.confirm_or_cancel_dialog_box(parent=self, text=msg, title='Confirm or cancel')
                 if not status : return
-                self.disconnect(cp.maskeditor, QtCore.SIGNAL('MaskEditorWindowIsClosed()'), self.on_mask_editor_window_is_closed) 
+                cp.maskeditor.MaskEditorWindowIsClosed.disconnect(self.on_mask_editor_window_is_closed)
 
             cp.maskeditor.close()
             del cp.maskeditor
@@ -393,7 +393,7 @@ class GUIMaskEditor(Frame) :
             cp.maskeditor.move(self.pos().__add__(QtCore.QPoint(820,-7))) # open window with offset w.r.t. parent
             cp.maskeditor.show()
 
-            self.connect(cp.maskeditor, QtCore.SIGNAL('MaskEditorWindowIsClosed()'), self.on_mask_editor_window_is_closed) 
+            cp.maskeditor.MaskEditorWindowIsClosed.connect(self.on_mask_editor_window_is_closed)
 
         self.setStatus(0)
 
@@ -576,7 +576,7 @@ class GUIMaskEditor(Frame) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIMaskEditor()
     ex.show()
     app.exec_()

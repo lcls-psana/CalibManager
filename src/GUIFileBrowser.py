@@ -14,7 +14,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
@@ -23,56 +23,56 @@ import GlobalUtils          as     gu
 
 #------------------------------
 
-class GUIFileBrowser(QtGui.QWidget) :
+class GUIFileBrowser(QtWidgets.QWidget) :
     """GUI for File Browser"""
 
     def __init__(self, parent=None, list_of_files=['Empty list'], selected_file=None, is_editable=True) :
 
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.setGeometry(200, 400, 900, 500)
         self.setWindowTitle('GUI File Browser')
         try : self.setWindowIcon(cp.icon_browser)
         except : pass
 
-        self.box_txt    = QtGui.QTextEdit()
+        self.box_txt    = QtWidgets.QTextEdit()
  
-        self.tit_status = QtGui.QLabel('Status:')
-        self.tit_file   = QtGui.QLabel('File:')
-        self.but_brow   = QtGui.QPushButton('Browse') 
-        self.but_close  = QtGui.QPushButton('Close') 
-        self.but_save   = QtGui.QPushButton('Save As') 
+        self.tit_status = QtWidgets.QLabel('Status:')
+        self.tit_file   = QtWidgets.QLabel('File:')
+        self.but_brow   = QtWidgets.QPushButton('Browse') 
+        self.but_close  = QtWidgets.QPushButton('Close') 
+        self.but_save   = QtWidgets.QPushButton('Save As') 
 
         self.is_editable = is_editable
 
-        self.box_file      = QtGui.QComboBox(self) 
+        self.box_file      = QtWidgets.QComboBox(self) 
         self.setListOfFiles(list_of_files)
 
-        self.hboxM = QtGui.QHBoxLayout()
+        self.hboxM = QtWidgets.QHBoxLayout()
         self.hboxM.addWidget(self.box_txt)
 
-        self.hboxF = QtGui.QHBoxLayout()
+        self.hboxF = QtWidgets.QHBoxLayout()
         self.hboxF.addWidget(self.tit_file)
         self.hboxF.addWidget(self.box_file)
         self.hboxF.addWidget(self.but_brow)
 
-        self.hboxB = QtGui.QHBoxLayout()
+        self.hboxB = QtWidgets.QHBoxLayout()
         self.hboxB.addWidget(self.tit_status)
         self.hboxB.addStretch(4)     
         self.hboxB.addWidget(self.but_save)
         self.hboxB.addWidget(self.but_close)
 
-        self.vbox  = QtGui.QVBoxLayout()
+        self.vbox  = QtWidgets.QVBoxLayout()
         #self.vbox.addWidget(self.tit_title)
         self.vbox.addLayout(self.hboxF)
         self.vbox.addLayout(self.hboxM)
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
         
-        self.connect(self.but_brow,  QtCore.SIGNAL('clicked()'), self.onBrow)
-        self.connect(self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave)
-        self.connect(self.but_close, QtCore.SIGNAL('clicked()'), self.onClose)
-        self.connect(self.box_file, QtCore.SIGNAL('currentIndexChanged(int)'), self.onBox)
+        self.but_brow.clicked.connect(self.onBrow)
+        self.but_save.clicked.connect(self.onSave)
+        self.but_close.clicked.connect(self.onClose)
+        self.box_file.currentIndexChanged[int].connect(self.onBox)
  
         self.startFileBrowser(selected_file)
 
@@ -252,7 +252,7 @@ class GUIFileBrowser(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUIFileBrowser ()
     widget.show()
     app.exec_()

@@ -14,7 +14,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 #import time   # for sleep(sec)
 
 #from Logger import logger
@@ -23,30 +23,30 @@ from PyQt4 import QtGui, QtCore
 
 #------------------------------  
 
-class GUIPopupCheckList(QtGui.QDialog) :
+class GUIPopupCheckList(QtWidgets.QDialog) :
     """Gets list of item for checkbox GUI in format [['name1',false], ['name2',true], ..., ['nameN',false]], 
     and modify this list in popup dialog gui.
     """
 
     def __init__(self, parent=None, list_in_out=[], win_title='Set check boxes'):
-        QtGui.QDialog.__init__(self,parent)
+        QtWidgets.QDialog.__init__(self,parent)
         #self.setGeometry(20, 40, 500, 200)
         self.setWindowTitle(win_title)
  
         #self.setModal(True)
         self.list_in_out = list_in_out
 
-        self.vbox = QtGui.QVBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
 
         self.make_gui_checkbox()
 
-        self.but_cancel = QtGui.QPushButton('&Cancel') 
-        self.but_apply  = QtGui.QPushButton('&Apply') 
+        self.but_cancel = QtWidgets.QPushButton('&Cancel') 
+        self.but_apply  = QtWidgets.QPushButton('&Apply') 
         
-        self.connect(self.but_cancel, QtCore.SIGNAL('clicked()'), self.onCancel)
-        self.connect(self.but_apply,  QtCore.SIGNAL('clicked()'), self.onApply)
+        self.but_cancel.clicked.connect(self.onCancel)
+        self.but_apply.clicked.connect(self.onApply)
 
-        self.hbox = QtGui.QHBoxLayout()
+        self.hbox = QtWidgets.QHBoxLayout()
         self.hbox.addWidget(self.but_cancel)
         self.hbox.addWidget(self.but_apply)
         self.hbox.addStretch(1)
@@ -65,10 +65,10 @@ class GUIPopupCheckList(QtGui.QDialog) :
     def make_gui_checkbox(self) :
         self.dict_of_items = {}
         for k,[name,state] in enumerate(self.list_in_out) :        
-            cbx = QtGui.QCheckBox(name) 
+            cbx = QtWidgets.QCheckBox(name) 
             if state : cbx.setCheckState(QtCore.Qt.Checked)
             else     : cbx.setCheckState(QtCore.Qt.Unchecked)
-            self.connect(cbx, QtCore.SIGNAL('stateChanged(int)'), self.onCBox)
+            cbx.stateChanged[int].connect(self.onCBox)
             self.vbox.addWidget(cbx)
 
             self.dict_of_items[cbx] = [k,name,state] 
@@ -149,7 +149,7 @@ class GUIPopupCheckList(QtGui.QDialog) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     list_in = [['CSPAD1',True], ['CSPAD2x21', False], ['pNCCD1', True], ['Opal1', False], \
                ['CSPAD2',True], ['CSPAD2x22', False], ['pNCCD2', True], ['Opal2', False]]
     for name,state in list_in : print  '%s checkbox is in state %s' % (name.ljust(10), state) 
@@ -157,8 +157,8 @@ if __name__ == "__main__" :
     #w.show()
     resp=w.exec_()
     print 'resp=',resp
-    print 'QtGui.QDialog.Rejected: ', QtGui.QDialog.Rejected
-    print 'QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted
+    print 'QtWidgets.QDialog.Rejected: ', QtWidgets.QDialog.Rejected
+    print 'QtWidgets.QDialog.Accepted: ', QtWidgets.QDialog.Accepted
 
     for name,state in list_in : print  '%s checkbox is in state %s' % (name.ljust(10), state) 
     #app.exec_()

@@ -10,9 +10,9 @@
 __version__ = "$Revision$"
 #--------------------------------
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 import time   # for sleep(sec)
-from time import time 
+from time import time
 
 from ConfigParametersForApp import cp
 from Logger                 import logger
@@ -25,14 +25,14 @@ from GUIRange               import *
 
 #------------------------------
 
-class GUIDarkListItemRun(QtGui.QWidget) :
+class GUIDarkListItemRun(QtWidgets.QWidget) :
     """GUI sets the source dark run number, validity range, and starts calibration of pedestals"""
 
     def __init__(self, parent=None, str_run_number='0000', str_run_type='Type N/A', comment='', xtc_in_dir=True) :
 
         self.t0_sec = time()
 
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.setGeometry(100, 100, 600, 35)
         self.setWindowTitle('GUI Dark Run Item')
@@ -53,16 +53,16 @@ class GUIDarkListItemRun(QtGui.QWidget) :
 
         self.create_or_use_butch_object()
 
-        self.lab_run = QtGui.QLabel('Run')
+        self.lab_run = QtWidgets.QLabel('Run')
 
         self.guirange = GUIRange(None, str_run_number, 'end')
 
-        self.lab_rnum = QtGui.QLabel(self.str_run_number)
-        self.lab_type = QtGui.QLabel(self.str_run_type + '  ' + comment)
-        self.but_go   = QtGui.QPushButton('Go')
-        self.but_depl = QtGui.QPushButton('Deploy')
+        self.lab_rnum = QtWidgets.QLabel(self.str_run_number)
+        self.lab_type = QtWidgets.QLabel(self.str_run_type + '  ' + comment)
+        self.but_go   = QtWidgets.QPushButton('Go')
+        self.but_depl = QtWidgets.QPushButton('Deploy')
 
-        self.hbox = QtGui.QHBoxLayout()
+        self.hbox = QtWidgets.QHBoxLayout()
         self.hbox.addWidget(self.lab_run)
         self.hbox.addWidget(self.lab_rnum)
         #self.hbox.addStretch(1)     
@@ -76,8 +76,8 @@ class GUIDarkListItemRun(QtGui.QWidget) :
 
         self.setLayout(self.hbox)
 
-        self.connect(self.but_go,   QtCore.SIGNAL('clicked()'), self.onButGo)
-        self.connect(self.but_depl, QtCore.SIGNAL('clicked()'), self.onButDeploy)
+        self.but_go.clicked.connect(self.onButGo)
+        self.but_depl.clicked.connect(self.onButDeploy)
    
         self.showToolTips()
 
@@ -277,7 +277,7 @@ class GUIDarkListItemRun(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIDarkListItemRun(parent=None, str_run_number='0016')
     w.setFieldsEnabled(True)
     w.show()

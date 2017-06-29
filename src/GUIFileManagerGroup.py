@@ -15,7 +15,7 @@ __version__ = "$Revision$"
 
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 #from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
@@ -29,11 +29,11 @@ from GUIExpCalibDir             import *
 #------------------------------
 
 #class GUIFileManagerGroup(Frame) :
-class GUIFileManagerGroup(QtGui.QWidget) :
+class GUIFileManagerGroup(QtWidgets.QWidget) :
     """GUI for Group File Manager"""
 
     def __init__(self, parent=None) :
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         #Frame.__init__(self, parent, mlw=1)
 
         self.setGeometry(200, 400, 800, 300)
@@ -49,12 +49,12 @@ class GUIFileManagerGroup(QtGui.QWidget) :
         #self.hbox.addWidget(self.guifilemanagergroupcontrol)
         #self.hbox.addWidget(self.guistatus)
 
-        self.hsplitter = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.hsplitter = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
         self.hsplitter.addWidget(self.guidirtree)
         self.hsplitter.addWidget(self.guifilemanagergroupcontrol)
         self.hsplitter.addWidget(self.guistatus)
         
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addWidget(self.guiexpcalibdir)
         self.vbox.addWidget(self.hsplitter)
         #self.vbox.addLayout(self.hbox)
@@ -85,7 +85,7 @@ class GUIFileManagerGroup(QtGui.QWidget) :
     def setStyle(self):
 
         self.setContentsMargins (QtCore.QMargins(-5,-5,-5,2))
-        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         #self.hbox.moveSplitter(250, self.hbox.indexOf(self.guifilemanagergroupcontrol))
         self.hsplitter.setSizes([200,100,600])
@@ -142,7 +142,7 @@ class GUIFileManagerGroup(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUIFileManagerGroup ()
     widget.show()
     app.exec_()

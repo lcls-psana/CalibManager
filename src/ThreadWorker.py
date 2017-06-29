@@ -23,7 +23,7 @@ import sys
 import os
 import random
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore
 from ConfigParametersForApp import confpars as cp
 
 #---------------------
@@ -31,6 +31,7 @@ from ConfigParametersForApp import confpars as cp
 #---------------------
 
 class ThreadWorker (QtCore.QThread) :
+    update = QtCore.pyqtSignal('QString')
 
     def __init__ ( self, parent=None, dt_sec=5, print_bits=0 ) :
         QtCore.QThread.__init__(self, parent)        
@@ -60,7 +61,7 @@ class ThreadWorker (QtCore.QThread) :
 
     def emitCheckStatusSignal( self ) :
         msg = 'from work thread ' + str(self.thread_id) + '  check counter: ' + str(self.counter)
-        self.emit( QtCore.SIGNAL('update(QString)'), msg)
+        self.update.emit(msg)
 
         if self.print_bits & 1 : print msg
 

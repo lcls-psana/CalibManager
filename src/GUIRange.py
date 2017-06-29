@@ -20,19 +20,21 @@ __version__ = "$Revision$"
 #--------------------------------
 
 import os
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from Logger import logger
 from ConfigParametersForApp import cp
 
 #------------------------------
 
-class GUIRange(QtGui.QWidget) :
+class GUIRange(QtWidgets.QWidget) :
     """Range setting GUI
     """
+    update = QtCore.pyqtSignal('QString')
+
     def __init__(self, parent=None, str_from=None, str_to=None, txt_from='valid from', txt_to='to') :
 
-        QtGui.QWidget.__init__(self, None)
+        QtWidgets.QWidget.__init__(self, None)
         self.parent = parent
 
         if txt_from == '' :
@@ -47,14 +49,14 @@ class GUIRange(QtGui.QWidget) :
         self.setParams(str_from, str_to)
 
         self.txt_from = txt_from
-        if self.use_lab_from : self.lab_from = QtGui.QLabel(txt_from)
-        self.lab_to         = QtGui.QLabel(txt_to)
-        self.edi_from       = QtGui.QLineEdit  ( self.str_from )
-        self.edi_to         = QtGui.QLineEdit  ( self.str_to )
+        if self.use_lab_from : self.lab_from = QtWidgets.QLabel(txt_from)
+        self.lab_to         = QtWidgets.QLabel(txt_to)
+        self.edi_from       = QtWidgets.QLineEdit  ( self.str_from )
+        self.edi_to         = QtWidgets.QLineEdit  ( self.str_to )
 
         self.setEdiValidators()
 
-        self.hboxC = QtGui.QHBoxLayout()
+        self.hboxC = QtWidgets.QHBoxLayout()
         self.hboxC.addStretch(1)     
         if self.use_lab_from : self.hboxC.addWidget( self.lab_from )
         self.hboxC.addWidget( self.edi_from )
@@ -62,15 +64,15 @@ class GUIRange(QtGui.QWidget) :
         self.hboxC.addWidget( self.edi_to )
         self.hboxC.addStretch(1)     
 
-        self.vboxW = QtGui.QVBoxLayout() 
+        self.vboxW = QtWidgets.QVBoxLayout() 
         self.vboxW.addStretch(1)
         self.vboxW.addLayout( self.hboxC ) 
         self.vboxW.addStretch(1)
         
         self.setLayout(self.vboxW)
 
-        self.connect( self.edi_from,   QtCore.SIGNAL('editingFinished()'), self.onEdiFrom )
-        self.connect( self.edi_to,     QtCore.SIGNAL('editingFinished()'), self.onEdiTo )
+        self.edi_from.editingFinished.connect(self.onEdiFrom)
+        self.edi_to.editingFinished.connect(self.onEdiTo)
   
         self.showToolTips()
         self.setStyle()
@@ -156,7 +158,7 @@ class GUIRange(QtGui.QWidget) :
 
 
     def emitFieldIsChangedSignal(self,msg) :
-        self.emit(QtCore.SIGNAL('update(QString)'), msg)
+        self.update.emit(msg)
         #print msg
 
   
@@ -230,7 +232,7 @@ class GUIRange(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIRange(None,'0','end','')
     #ex  = GUIRange(None,'0','end')
     ex.move(10,25)

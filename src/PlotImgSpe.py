@@ -33,7 +33,7 @@ if __name__ == "__main__" :
 #if matplotlib.get_backend() != 'Qt4Agg' : matplotlib.use('Qt4Agg')
 #import matplotlib.pyplot as plt
 #from matplotlib.figure import Figure
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 #from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 
 #-----------------------------
@@ -48,12 +48,12 @@ import GlobalUtils          as     gu
 #---------------------
 
 #class PlotImgSpe(QtGui.QMainWindow) :
-class PlotImgSpe(QtGui.QWidget) :
+class PlotImgSpe(QtWidgets.QWidget) :
     """Plots image and spectrum for 2d array"""
 
     def __init__(self, parent=None, arr=None, ifname='', ofname='./fig.png', title='Plot 2d array', orient=0, y_is_flip=False, is_expanded=False, verb=False, fexmod=False ):
         #QtGui.QMainWindow.__init__(self, parent)
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setGeometry(20, 40, 700, 800)
         self.setWindowTitle(title)
 
@@ -72,7 +72,7 @@ class PlotImgSpe(QtGui.QWidget) :
  
         #---------------------
 
-        vbox = QtGui.QVBoxLayout()                      # <=== Begin to combine layout 
+        vbox = QtWidgets.QVBoxLayout()                      # <=== Begin to combine layout 
         #vbox.addWidget(self.widgimage)                 # <=== Add figure as QWidget
         vbox.addWidget(self.widgimage.getCanvas())      # <=== Add figure as FigureCanvas 
         #vbox.addWidget(self.mpl_toolbar)                # <=== Add toolbar
@@ -129,7 +129,7 @@ def get_array2d_for_test() :
 #-----------------------------
 
 if __name__ == "__main__" :
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     #w = PlotImgSpe(None, get_array2d_for_test())
     w = PlotImgSpe(None, is_expanded=False)
     w.set_image_array(get_array2d_for_test())

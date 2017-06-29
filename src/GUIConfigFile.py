@@ -14,7 +14,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
@@ -36,18 +36,18 @@ class GUIConfigFile(Frame) :
         self.setGeometry(370, 350, 500,150)
         self.setWindowTitle('Configuration File')
         
-        self.titFile     = QtGui.QLabel('File with configuration parameters:')
-        self.titPars     = QtGui.QLabel('Operations on file:')
-        self.butFile     = QtGui.QPushButton('File:')
-        self.butRead     = QtGui.QPushButton('Read')
-        self.butWrite    = QtGui.QPushButton('Save')
-        self.butDefault  = QtGui.QPushButton('Reset default')
-        self.butPrint    = QtGui.QPushButton('Print current')
-        self.ediFile     = QtGui.QLineEdit( cp.fname_cp )        
-        self.cbxSave     = QtGui.QCheckBox('&Save at exit')
+        self.titFile     = QtWidgets.QLabel('File with configuration parameters:')
+        self.titPars     = QtWidgets.QLabel('Operations on file:')
+        self.butFile     = QtWidgets.QPushButton('File:')
+        self.butRead     = QtWidgets.QPushButton('Read')
+        self.butWrite    = QtWidgets.QPushButton('Save')
+        self.butDefault  = QtWidgets.QPushButton('Reset default')
+        self.butPrint    = QtWidgets.QPushButton('Print current')
+        self.ediFile     = QtWidgets.QLineEdit( cp.fname_cp )        
+        self.cbxSave     = QtWidgets.QCheckBox('&Save at exit')
         self.cbxSave.setChecked( cp.save_cp_at_exit.value() )
  
-        grid = QtGui.QGridLayout()
+        grid = QtWidgets.QGridLayout()
         grid.addWidget(self.titFile,       0, 0, 1, 5)
         grid.addWidget(self.butFile,       1, 0)
         grid.addWidget(self.ediFile,       1, 1, 1, 4)
@@ -59,18 +59,18 @@ class GUIConfigFile(Frame) :
         grid.addWidget(self.butPrint,      3, 4)
         #self.setLayout(grid)
 
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addLayout(grid)
         self.vbox.addStretch(1)
         self.setLayout(self.vbox)
 
-        self.connect(self.ediFile,   QtCore.SIGNAL('editingFinished ()'), self.onEditFile)
-        self.connect(self.butRead,   QtCore.SIGNAL('clicked()'),          self.onRead    )
-        self.connect(self.butWrite,  QtCore.SIGNAL('clicked()'),          self.onSave    )
-        self.connect(self.butPrint,  QtCore.SIGNAL('clicked()'),          self.onPrint   )
-        self.connect(self.butDefault,QtCore.SIGNAL('clicked()'),          self.onDefault )
-        self.connect(self.butFile,   QtCore.SIGNAL('clicked()'),          self.onFile    ) 
-        self.connect(self.cbxSave,   QtCore.SIGNAL('stateChanged(int)'),  self.onCbxSave ) 
+        self.ediFile.editingFinished .connect(self.onEditFile)
+        self.butRead.clicked.connect(self.onRead)
+        self.butWrite.clicked.connect(self.onSave)
+        self.butPrint.clicked.connect(self.onPrint)
+        self.butDefault.clicked.connect(self.onDefault)
+        self.butFile.clicked.connect(self.onFile)
+        self.cbxSave.stateChanged[int].connect(self.onCbxSave)
  
         self.showToolTips()
         self.setStyle()
@@ -174,7 +174,7 @@ class GUIConfigFile(Frame) :
         self.dname,self.fname = os.path.split(self.path)
         logger.info('dname : %s' % (self.dname), __name__)
         logger.info('fname : %s' % (self.fname), __name__)
-        self.path = str( QtGui.QFileDialog.getOpenFileName(self,'Open file',self.dname) )
+        self.path = str( QtWidgets.QFileDialog.getOpenFileName(self,'Open file',self.dname) )[0]
         self.dname,self.fname = os.path.split(self.path)
 
         if self.dname == '' or self.fname == '' :
@@ -213,7 +213,7 @@ class GUIConfigFile(Frame) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUIConfigFile()
     widget.show()
     app.exec_()

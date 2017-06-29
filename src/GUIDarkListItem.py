@@ -13,7 +13,7 @@ __version__ = "$Revision$"
 #import os
 import unicodedata
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
@@ -45,7 +45,7 @@ class GUIDarkListItem(Frame) :
     def __init__(self, parent=None, str_run_num='0000', run_type='Type N/A', comment='', xtc_in_dir=True) :
 
         #self.t0_sec = time()
-        Frame.__init__(self, parent, mlw=1, style=QtGui.QFrame.HLine | QtGui.QFrame.Sunken)
+        Frame.__init__(self, parent, mlw=1, style=QtWidgets.QFrame.HLine | QtWidgets.QFrame.Sunken)
         #QtGui.QWidget.__init__(self, parent)
 
         self.parent = parent
@@ -64,24 +64,24 @@ class GUIDarkListItem(Frame) :
         #self.calib_dir      = cp.calib_dir
         #self.det_name       = cp.det_name
         
-        self.but_expand_shrink = QtGui.QPushButton(self.char_expand)
+        self.but_expand_shrink = QtWidgets.QPushButton(self.char_expand)
 
         self.gui_add = None
         self.gui_run = GUIDarkListItemRun(self, str_run_num, run_type, comment, xtc_in_dir)
-        self.hboxTT = QtGui.QHBoxLayout()
+        self.hboxTT = QtWidgets.QHBoxLayout()
         self.hboxTT.addSpacing(5)     
         self.hboxTT.addWidget(self.but_expand_shrink)
         self.hboxTT.addWidget(self.gui_run)
         self.hboxTT.addStretch(1)     
 
-        self.hboxW = QtGui.QHBoxLayout()
+        self.hboxW = QtWidgets.QHBoxLayout()
         #self.hboxWW = QtGui.QHBoxLayout()
         ##self.hboxWW.addStretch(1)     
         #self.hboxWW.addSpacing(5)     
         #self.hboxWW.addLayout(self.hboxW)
         #self.hboxWW.addStretch(1)     
 
-        self.vbox = QtGui.QVBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
         #self.vbox.addWidget(self.gui_run)
         self.vbox.addLayout(self.hboxTT)
         self.vbox.addLayout(self.hboxW)
@@ -89,7 +89,7 @@ class GUIDarkListItem(Frame) :
 
         self.setLayout(self.vbox)
 
-        self.connect( self.but_expand_shrink, QtCore.SIGNAL('clicked()'), self.onButExpandShrink  )
+        self.but_expand_shrink.clicked.connect(self.onButExpandShrink)
  
         self.showToolTips()
 
@@ -238,7 +238,7 @@ class GUIDarkListItem(Frame) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIDarkListItem(parent=None, str_run_num='0016')
     w.setFieldsEnabled(True)
     w.show()
