@@ -50,6 +50,8 @@ class OpticalMetrologyCheck() :
         self.ofname = '%s.txt' % self.ofpref
         self.ofplot = '%s.png' % self.ofpref
         self.pixsize = popts.psz
+        self.txy = popts.txy
+        self.toz = popts.toz
         self.vrb = popts.vrb
         self.plt = popts.plt
         
@@ -369,6 +371,7 @@ class OpticalMetrologyCheck() :
         txt = sepline
         txt += 'segm:        S1      S2     dS1     dS2        L1      L2     dL1     dL2    angle(deg)   D1      D2      dD   d(dS)   d(dL)\n'
         txt += sepline
+        wrg = '\n'
 
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
@@ -380,7 +383,10 @@ class OpticalMetrologyCheck() :
                        self.L1, self.L2, self.dL1, self.dL2, \
                        self.tiltXYDegree, \
                        self.D1, self.D2, self.dD, self.ddS, self.ddL)
-        txt += sepline
+            if fabs(self.dD)  > self.txy : wrg += '  WARNING segm %2d:  |%d| > %.1f\n' % (nseg, self.dD,  self.txy)
+            if fabs(self.ddS) > self.txy : wrg += '  WARNING segm %2d:  |%d| > %.1f\n' % (nseg, self.ddS, self.txy)
+            if fabs(self.ddL) > self.txy : wrg += '  WARNING segm %2d:  |%d| > %.1f\n' % (nseg, self.ddL, self.txy)
+        txt += sepline + wrg
         return txt
 
 #------------------------------
@@ -396,6 +402,7 @@ class OpticalMetrologyCheck() :
         txt = sepline
         txt += 'segm:        SA      LA   XSize   YSize    dZS1  dZS2  dZL1  dZL2    dZSA  dZLA  ddZS  ddZL     dZX   dZY   angXZ(deg) angYZ(deg) dz3(um)\n'
         txt += sepline
+        wrg = '\n'
 
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
@@ -409,7 +416,8 @@ class OpticalMetrologyCheck() :
                        self.dZSA, self.dZLA, self.ddZS,  self.ddZL, \
                        self.dZX,  self.dZY,  self.tiltXZDegree, self.tiltYZDegree, \
                        self.arr_dev_um)
-        txt += sepline
+            if fabs(self.arr_dev_um) > self.toz : wrg += '  WARNING segm %2d:  |%.1f| > %.1f\n' % (nseg, self.arr_dev_um, self.toz)
+        txt += sepline + wrg
         return txt #+'\n' 
 
 #------------------------------
@@ -763,18 +771,24 @@ def option_parser() :
     def_ofp = './om' 
     def_psz = 109.92
     def_plt = True
+    def_txy = 60
+    def_toz = 100
     def_vrb = 15
  
     h_ifn   = 'input file name, default = %s' % def_ifn
     h_ofp   = 'output file(s) prefix, default = %s' % def_ofp 
     h_psz   = 'pixel size (um)-micrometer, default = %s' % def_psz 
     h_plt   = 'plot image, default = %s' % str(def_plt)
+    h_txy   = 'tolerance to deviatyion in x-y plane [um], default = %.2f' % def_txy
+    h_toz   = 'tolerance to deviatyion in z [um], default = %.2f' % def_toz
     h_vrb   = 'verbosity, default = %s' % str(def_vrb)
  
     parser = OptionParser(description='Check optical metrology measurements', usage=usage())
     parser.add_option('-i', '--ifn', default=def_ifn, action='store', type='string', help=h_ifn)
     parser.add_option('-o', '--ofp', default=def_ofp, action='store', type='string', help=h_ofp)
     parser.add_option('-s', '--psz', default=def_psz, action='store', type='float',  help=h_psz)
+    parser.add_option('-x', '--txy', default=def_txy, action='store', type='float',  help=h_txy)
+    parser.add_option('-z', '--toz', default=def_toz, action='store', type='float',  help=h_toz)
     parser.add_option('-p', '--plt', default=def_plt, action='store_false',          help=h_plt)
     parser.add_option('-v', '--vrb', default=def_vrb, action='store', type='int',    help=h_vrb)
   

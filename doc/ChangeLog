@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-07-05 Mikhail S. Dubrovin
+Tag: V01-00-10
+- app/optical_metrology_check - add x-y and z tolerance and warnings when tolerance is exceeded
+
 2017-06-13 Mikhail S. Dubrovin
 Tag: V01-00-09
 - ConfigParametersForApp - add support for Zyla
