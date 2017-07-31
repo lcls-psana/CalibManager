@@ -182,7 +182,8 @@ class ConfigParameters :
         if list_val_def_type is None : return None
 
         for index,rec in enumerate(list_val_def_type) :
-            name = list_name + ':' + str(index)
+            #name = list_name + ':' + str(index)
+            name = '%s:%03d'%(list_name, index)
             val, val_def, type = rec
 
             #par = self.declareParameter(name, val, val_def, type, index)
