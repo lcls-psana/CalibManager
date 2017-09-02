@@ -1,25 +1,12 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#------------------------------------------------------------------------
+#----------------------------
+""":py:class:`ConfigParametersForApp` - class supporting configuration parameters for specific application.
 
-"""ConfigParametersForApp - class supporting configuration parameters for specific application.
+This software was developed for the SIT project.  
+If you use all or part of it, please give an appropriate acknowledgment.
 
-This software was developed for the SIT project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
-
-@see RelatedModule
- 
-@version $Id$
-
-@author Mikhail S. Dubrovin
+Author: Mikhail Dubrovin
 """
-#---------------------------------
-__version__ = "$Revision$"
-__author__ = "Mikhail S. Dubrovin"
-#---------------------------------
+#----------------------------
 
 from Logger import logger
 from ConfigParameters import *

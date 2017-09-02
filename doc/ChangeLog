@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-09-01 Mikhail S. Dubrovin
+Tag: V01-00-12
+- GUIMain - save log on start with initial job info.
+
 2017-07-31 Mikhail S. Dubrovin
 Tag: V01-00-11
 - ConfigParameters.declareListOfPars - use format '%s:%03d' for parameters in the list.

@@ -1,36 +1,27 @@
 #!/usr/bin/env python
 #--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#------------------------------------------------------------------------
+"""Renders the main GUI for the :py:class:`CalibManager`
 
-"""Renders the main GUI for the CalibManager.
+This software was developed for the SIT project.  
+If you use all or part of it, please give an appropriate acknowledgment.
 
-This software was developed for the SIT project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
-
-@version $Id$
-
-@author Mikhail S. Dubrovin
+Author Mikhail Dubrovin
 """
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
+#------------------------------
 
 import os
+import sys
 
 from PyQt4 import QtGui, QtCore
 import time   # for sleep(sec)
 
-from ConfigParametersForApp import cp
-from Logger                 import logger
-from GUILogger              import GUILogger
-from GUIMainTabs            import GUIMainTabs
-from GUIInsExpDirDet        import *
-from PackageVersions        import PackageVersions
+from CalibManager.ConfigParametersForApp import cp
+from CalibManager.Logger                 import logger
+from CalibManager.GUILogger              import GUILogger
+from CalibManager.GUIMainTabs            import GUIMainTabs
+from CalibManager.GUIInsExpDirDet        import *
+from CalibManager.PackageVersions        import PackageVersions
 
 #------------------------------
 
@@ -42,6 +33,8 @@ class GUIMain(QtGui.QWidget) :
         self.name = 'GUIMain'
         self.myapp = app
         QtGui.QWidget.__init__(self, parent)
+
+        self.log_rec_on_start()
 
         cp.setIcons()
 
@@ -91,6 +84,10 @@ class GUIMain(QtGui.QWidget) :
         #self.move(10,25)
         self.move(self.main_win_pos_x.value(), self.main_win_pos_y.value())
         cp.guimain = self
+
+        # Saves the 1st version of the log file right on start
+        # in order to track down what is going on with open app.
+        self.save_log_file(verb=False)
 
         #print 'End of init'
 
@@ -235,13 +232,24 @@ class GUIMain(QtGui.QWidget) :
         if cp.save_log_at_exit.value() :
             logger.saveLogInFile(fnm.log_file())
 
-            path = fnm.log_file_cpo()
-            if gu.create_path(path) :
-                logger.saveLogInFile(path)
-                print 'Log file: %s' % path
-            else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
-            
-        #logger.saveLogTotalInFile( fnm.log_file_total() )
+            self.save_log_file(verb=True)
+
+            #logger.saveLogTotalInFile( fnm.log_file_total() )
+
+
+    def save_log_file(self, verb=True):
+        path = fnm.log_file_cpo()
+        if gu.create_path(path) :
+            logger.saveLogInFile(path)
+            if verb : print 'Log file: %s' % path
+        else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
+
+
+    def log_rec_on_start(self) :
+        import CalibManager.GlobalUtils as gu
+        msg = 'user: %s@%s  cwd: %s\n    command: %s'%\
+              (gu.get_login(), gu.get_hostname(), gu.get_cwd(), ' '.join(sys.argv))
+        logger.info(msg, self.name)
 
 
     def add_record_in_db(self):
@@ -284,7 +292,6 @@ class GUIMain(QtGui.QWidget) :
 #------------------------------
 
 if __name__ == "__main__" :
-    import sys
     app = QtGui.QApplication(sys.argv)
     ex  = GUIMain()
     ex.show()
