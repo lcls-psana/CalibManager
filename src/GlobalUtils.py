@@ -84,12 +84,12 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
 def create_directory(dir, mode=0777) :
     #print 'create_directory: %s' % dir
     if os.path.exists(dir) :
-        logger.info('Directory exists: ' + dir, __name__) 
+        logger.debug('Directory exists: ' + dir, __name__) 
     else :
         os.makedirs(dir)
         os.chmod(dir, mode)
         #os.system(cmd)
-        logger.info('Directory created: ' + dir, __name__) 
+        logger.debug('Directory created: ' + dir, __name__) 
 
 
 def create_path(path, depth=5, mode=0777) : 

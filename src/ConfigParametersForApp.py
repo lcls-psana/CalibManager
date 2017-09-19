@@ -7,6 +7,8 @@ If you use all or part of it, please give an appropriate acknowledgment.
 Author: Mikhail Dubrovin
 """
 #----------------------------
+__author__ = "Mikhail S. Dubrovin"
+#----------------------------
 
 from Logger import logger
 from ConfigParameters import *
@@ -35,7 +37,7 @@ class ConfigParametersForApp(ConfigParameters) :
     list_of_farms  = ['psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
     dict_of_queue_farm = dict(zip(list_of_queues, list_of_farms))
 
-    list_of_instr     = ['AMO', 'SXR', 'XPP', 'XCS', 'CXI', 'MEC', 'MFX']
+    list_of_instr     = ['AMO', 'SXR', 'XPP', 'XCS', 'CXI', 'MEC', 'MFX', 'DET']
     list_of_show_runs = ['in range', 'dark', 'all']
     list_of_show_dets = ['any', 'selected any', 'selected all']
 

@@ -41,10 +41,11 @@ class CommandLineCalib() :
 
     @see FileNameManager, ConfigFileGenerator, ConfigParametersForApp, BatchJobPedestals, BatchLogScanParser, FileDeployer, Logger
     """
-
     sep = '\n' + 60*'-' + '\n'
 
     def __init__(self, args, opts) :
+
+        self.name = 'CommandLineCalib'
 
         #print '__name__', __name__ # CalibManager.CommandLineCalib
         cp.commandlinecalib = self 
@@ -56,6 +57,7 @@ class CommandLineCalib() :
         if not self.set_pars() : return
 
         self.print_command_line()
+        self.log_rec_on_start()
         self.print_local_pars()
         self.print_list_of_detectors()
         self.print_list_of_xtc_files()
@@ -323,23 +325,38 @@ class CommandLineCalib() :
 
 #------------------------------
 
-    def save_log_file(self) :
+    def save_log_file(self, verb=True) :
+        # save log in local file
         logfname = fnm.log_file()
         msg = 'See details in log-file: %s' % logfname
         #self.log(msg,4) # set it 4-critical - always print
         logger.critical(msg) # critical - always print
         logger.saveLogInFile(logfname)
 
+        # save log in /reg/g/psdm/logs/calibman/<year>/<month>/<log-file-name>.txt
+        path = fnm.log_file_cpo()
+        if gu.create_path(path) :
+            logger.saveLogInFile(path)
+            if verb : print 'Log file: %s' % path
+        else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
 
-    def add_record_in_db(self) :
-        from NotificationDBForCL import *
-        try :
-            ndb = NotificationDBForCL()
-            ndb.insert_record(mode='enabled')
-            ndb.close()
-            #ndb.add_record()
-        except :
-            pass
+
+    def log_rec_on_start(self) :
+        #import CalibManager.GlobalUtils as gu
+        msg = 'user: %s@%s  cwd: %s\n    command: %s'%\
+              (gu.get_login(), gu.get_hostname(), gu.get_cwd(), ' '.join(sys.argv))
+        logger.info(msg, self.name)
+
+
+#    def add_record_in_db(self) :
+#        from NotificationDBForCL import *
+#        try :
+#            ndb = NotificationDBForCL()
+#            ndb.insert_record(mode='enabled')
+#            ndb.close()
+#            #ndb.add_record()
+#        except :
+#            pass
 
  
     def print_list_of_files_dark_in_work_dir(self) :

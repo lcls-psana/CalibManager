@@ -13,6 +13,12 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-09-19 Mikhail S. Dubrovin
+Tag: V01-00-13
+- ConfigParametersForApp add 'DET' to the list_of_instr
+- CommandLineCalib add saving log in /reg/g/psdm/logs/calibman/<year>/<month>/<log-file-name>.txt
+- GlobalUtils.create_directory() logger.info -> logger.debug
+
 2017-09-01 Mikhail S. Dubrovin
 Tag: V01-00-12
 - GUIMain - save log on start with initial job info.
