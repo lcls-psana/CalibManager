@@ -1,0 +1,144 @@
+#!@PYTHON@
+#####!/usr/bin/env python
+#------------------------------
+
+import os
+import sys
+import PSCalib.GlobalUtils as gu
+
+#------------------------------
+
+LOG_FILE = '/reg/g/psdm/logs/calibman/#YYYY-MM/calibfile.txt'
+
+#------------------------------
+
+def print_pars(args, opts, defs) :
+    """Prints command and input parameters"""
+    print 'Command:', ' '.join(sys.argv)+\
+          '\nlaunches %s' % sys.argv[0].split('/')[-1] +\
+          '\nwith argument %s and optional parameters:\n' % str(args)+\
+          '<key>      <value>          <default>'
+    for k,v in opts.items() :
+        print '%s %s %s' % (k.ljust(10), str(v).ljust(16), str(defs[k]).ljust(16))
+
+#------------------------------
+
+def calibfile() :
+    """CLI to deploy, access, remove files from calib directory
+    """
+    parser = input_option_parser()
+
+    (popts, pargs) = parser.parse_args()
+
+    fname   = popts.fname   # 'myfname.txt'
+    source   = popts.source # 'CxiDs2.0:Cspad.0'
+    exp      = popts.exp    # 'cxif5315'
+    runrng   = popts.runrng # '0-end'
+    ctype    = popts.ctype  # 'pedestals'
+    clbdir   = popts.clbdir # './calib' # None
+    lfname   = popts.lfname # LOG_FILE # None
+    verbos   = popts.verbos # True
+
+    if verbos :
+        args = pargs
+        opts = vars(popts)
+        defs = vars(parser.get_default_values())
+        print_pars(args, opts, defs)
+
+    if len(pargs) != 1 : 
+        parser.print_help()
+        sys.exit('WARNING: command argument is missing. Check input parameters')
+
+
+    dettype  = gu.det_type_from_source(source) # enumerated detector's type, e.g. ':Cspad.'
+    calibgrp = gu.dic_det_type_to_calib_group[dettype] # 'Camera::CalibV1'
+    clbdir   = clbdir if clbdir is not None else '/reg/d/psdm/%s/%s/calib' % (exp[:3], exp)
+    ctypedir = '%s/%s/%s' % (clbdir, calibgrp, source)
+    cfname   = '%s.data' % (runrng)
+    path     = '%s/%s/%s' % (ctypedir, ctype, cfname)
+
+    if verbos :
+        print 'dettype  =  %s' % dettype
+        print 'calibgrp =  %s' % calibgrp
+        print 'clbdir   =  %s' % clbdir
+        print 'ctypedir =  %s' % ctypedir
+        print 'cfname   =  %s' % cfname
+        print 'path     =  %s' % path
+
+    mode = pargs[0]
+
+    if mode == 'deploy' :
+        gu.deploy_file(fname, ctypedir, ctype, cfname, lfname, verbos)
+
+    elif mode == 'path' :
+        print 'Path: %s' % path
+
+    elif mode == 'get' :
+        print 'Mode "%s"' % mode
+	if os.path.exists(path) :
+	    cmd = 'cp %s %s' % (path, fname)
+            if verbos : print 'cmd: %s' % cmd
+	    os.system(cmd)
+	    print 'Saved file %s' % fname
+        else :
+            print 'Path "%s" DOES NOT EXIST' % path
+
+    else :
+        print 'Mode "%s" is UNKNOWN' % mode
+ 
+    #tstamp = gu.str_tstamp('%Y-%m-%dT%H:%M:%S', time())
+    #logpref = rpu.log_batch_prefix(exp, run, procname)
+    #logfname = '%s-%s.txt' % (logpref, tstamp)
+
+#------------------------------
+
+def usage() : 
+    return "\n%prog <mode> -f <fname> -e <experiment> -r <run-number> -s <full-source> -B <run-number-begin> ]"\
+           "\n    where <mode> stands for deploy/path/get"\
+           "\n  Ex.: %prog path   -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
+           "\n       %prog get    -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
+           "\n       %prog deploy -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"
+ 
+#------------------------------
+
+def input_option_parser() :
+
+    from optparse import OptionParser
+
+    d_fname  = 'fname.txt'
+    d_source = 'XppGon.0:Cspad.0'
+    d_exp    = 'xpptut15'
+    d_runrng = '0-end'
+    d_ctype  = 'pedestals'
+    d_clbdir = None # './calib' # None
+    d_lfname = LOG_FILE # None
+    d_verbos = False
+
+    h_fname  = 'input file name, default = %s' % d_fname
+    h_source = ', default = %s' % d_source
+    h_exp    = 'experiment name, default = %s' % d_exp
+    h_runrng = 'run range, default = %s' % d_runrng
+    h_ctype  = 'calibration constants type, default = %s' % d_ctype 
+    h_clbdir = 'non-default (local) calibration directory, default = %s' % d_clbdir
+    h_lfname = 'log file name, default = %s' % d_lfname
+    h_verbos = 'verbosity , default = %s' % d_verbos
+
+    parser = OptionParser(description='CLI to deploy, access, remove files from calib directory', usage=usage())
+    parser.add_option('-f', '--fname',  default=d_fname,  action='store', type='string', help=h_fname)
+    parser.add_option('-s', '--source', default=d_source, action='store', type='string', help=h_source)
+    parser.add_option('-e', '--exp',    default=d_exp   , action='store', type='string', help=h_exp   )
+    parser.add_option('-r', '--runrng', default=d_runrng, action='store', type='string', help=h_runrng)
+    parser.add_option('-t', '--ctype',  default=d_ctype , action='store', type='string', help=h_ctype )
+    parser.add_option('-c', '--clbdir', default=d_clbdir, action='store', type='string', help=h_clbdir)
+    parser.add_option('-l', '--lfname', default=d_lfname, action='store', type='string', help=h_lfname)
+    parser.add_option('-v', '--verbos', default=d_verbos, action='store_true',           help=h_verbos)
+
+    return parser
+  
+#------------------------------
+
+if __name__ == "__main__" :
+    calibfile()
+    sys.exit(0)
+
+#------------------------------

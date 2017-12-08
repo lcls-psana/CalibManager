@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2017-12-07 Mikhail S. Dubrovin
+Tag: V01-00-14
+- add app/calibfile and support for Epix10ka in ConfigParametersForApp.py
+
 2017-09-19 Mikhail S. Dubrovin
 Tag: V01-00-13
 - ConfigParametersForApp add 'DET' to the list_of_instr
