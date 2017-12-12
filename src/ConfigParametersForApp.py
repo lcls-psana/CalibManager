@@ -37,7 +37,7 @@ class ConfigParametersForApp(ConfigParameters) :
     list_of_farms  = ['psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
     dict_of_queue_farm = dict(zip(list_of_queues, list_of_farms))
 
-    list_of_instr     = ['AMO', 'SXR', 'XPP', 'XCS', 'CXI', 'MEC', 'MFX', 'DET']
+    list_of_instr     = ['AMO', 'SXR', 'XPP', 'XCS', 'CXI', 'MEC', 'MFX', 'DET', 'DIA', 'USR', 'MOB']
     list_of_show_runs = ['in range', 'dark', 'all']
     list_of_show_dets = ['any', 'selected any', 'selected all']
 
@@ -324,9 +324,10 @@ class ConfigParametersForApp(ConfigParameters) :
 
 #------------------------------
 
-        self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', \
-                               'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000', \
-                               'OrcaFl40', 'Epix100a', 'Fccd960', 'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla', 'Acqiris']
+        self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740',\
+                               'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000',\
+                               'OrcaFl40', 'Epix100a', 'Epix10ka', 'Fccd960',\
+                               'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla', 'Acqiris']
 
         self.list_of_dets_lower = [det.lower() for det in self.list_of_dets]
 
@@ -340,6 +341,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::FrameV',
                                     'Camera::FrameV',
                                     'Camera::FrameV',
+                                    'Epix::ElementV',
                                     'Epix::ElementV',
                                     'Camera::FrameV',
                                     'Camera::FrameV',
@@ -362,6 +364,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::CalibV1',
                                     'Camera::CalibV1',
                                     'Epix100a::CalibV1',
+                                    'Epix10ka::CalibV1',
                                     'Camera::CalibV1',
                                     'Camera::CalibV1',
                                     'Andor::CalibV1',
@@ -375,6 +378,7 @@ class ConfigParametersForApp(ConfigParameters) :
 #------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
+                           (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -560,6 +564,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_camera
                                                                      ,self.const_types_orcafl40
                                                                      ,self.const_types_epix
+                                                                     ,self.const_types_epix
                                                                      ,self.const_types_fccd960
                                                                      ,self.const_types_camera
                                                                      ,self.const_types_andor
@@ -707,6 +712,10 @@ class ConfigParametersForApp(ConfigParameters) :
             'NoDetector.0:Epix10k.0'
             ]
 
+        self.srcs_epix10ka = [ 
+            'MfxEndstation.0:Epix10ka.0'
+            ]
+
         self.srcs_epix100a = [ 
             'MecTargetChamber.0:Epix100a.0'
            ,'MfxEndstation.0:Epix100a.0'
@@ -778,6 +787,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_opal8000
                                                                  ,self.srcs_orcafl40
                                                                  ,self.srcs_epix100a
+                                                                 ,self.srcs_epix10ka
                                                                  ,self.srcs_fccd960
                                                                  ,self.srcs_rayonix
                                                                  ,self.srcs_andor
@@ -799,6 +809,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['OPAL8000V1']
                                                                        ,['ORCAFL40V1']
                                                                        ,['EPIX100AV1']
+                                                                       ,['EPIX10KAV1']
                                                                        ,['FCCD960V1']
                                                                        ,['RAYONIX']
                                                                        ,['ANDOR']
