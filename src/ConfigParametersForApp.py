@@ -545,6 +545,8 @@ class ConfigParametersForApp(ConfigParameters) :
 
         self.const_types_acqiris = [
             'pedestals'
+           ,'hex_config'
+           ,'hex_table'
             ]
 
         self.dict_of_det_const_types = dict( zip(self.list_of_dets, [ self.const_types_cspad 
