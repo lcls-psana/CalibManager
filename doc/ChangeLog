@@ -13,6 +13,12 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2018-01-30 Mikhail S. Dubrovin
+Tag: V01-00-16
+- GUIMaskEditor - fix dtype issue for new version of numpy
+
+Tag: V01-00-15 ???
+
 2017-12-07 Mikhail S. Dubrovin
 Tag: V01-00-14
 - add app/calibfile and support for Epix10ka in ConfigParametersForApp.py

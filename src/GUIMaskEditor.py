@@ -470,8 +470,13 @@ class GUIMaskEditor(Frame) :
 
         mask_roi = np.load(ifname) if ifext == '.npy' else np.loadtxt(ifname, dtype=np.uint16)
 
-        mask_nda = np.array( [mask_roi[r,c] for r,c in zip(iX, iY)] ) # 155 msec
-        if mcbits : mask_nda *= geometry.get_pixel_mask(mbits=mcbits)
+        mask_nda = np.array([mask_roi[r,c] for r,c in zip(iX, iY)], dtype=np.uint8) # 155 msec
+        geo_pixel_mask = geometry.get_pixel_mask(mbits=mcbits)
+
+        #print 'mask_nda       dtype, shape:', mask_nda.dtype, mask_nda.shape
+        #print 'geo_pixel_mask dtype, shape:', geo_pixel_mask.dtype, geo_pixel_mask.shape
+
+        if mcbits : mask_nda *= geo_pixel_mask
 
         img_mask_test = img_from_pixel_arrays(iX, iY, W=mask_nda) 
 
