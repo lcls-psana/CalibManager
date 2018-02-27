@@ -87,11 +87,6 @@ def list_of_sources_for_det (det_name='CSPAD') :
     return lst
 
 #------------------------------
-
-
-
-
-
 #------------------------------
 
 def experiment_runs (ins, exp) :
@@ -119,11 +114,16 @@ def dict_run_type (ins, exp) :
 def list_of_runnums (ins, exp) :
     """Returns the list of run numbers for specified experiment.
     """
-    runs = experiment_info.experiment_runs(ins, exp)
-    lst = []
-    for rec in runs :
-        lst.append( int(rec['num']) )
-    return lst
+    try : expruns = experiment_info.experiment_runs(ins, exp)
+    #if exp == 'xcs83814' : return []
+    except : return []
+
+    return [int(rec['num']) for rec in expruns]
+    #runs = experiment_info.experiment_runs(ins, exp)
+    #lst = []
+    #for rec in runs :
+    #    lst.append( int(rec['num']) )
+    #return lst
 
 #------------------------------
 
@@ -234,13 +234,49 @@ def print_unique_detector_names () :
 def print_list_of_sources_for_det (det_name='CSPAD') :
     for i, detname in enumerate( list_of_sources_for_det (det_name)) :
         print '%4d : %s' %(i, detname)
- 
+
+#------------------------------
+
+def active_experiment (ins, station=0) :
+    return experiment_info.active_experiment(ins, station)
+
 #------------------------------
 #------------------------------
 #------------------------------
 #------------------------------
 
-if __name__ == "__main__" :
+def experiments(ins) :
+    import expmon.EMUtils as emu
+    return emu.list_of_experiments(direxp='/reg/d/psdm/%s' % ins)
+
+
+def test_find_detector_runs_for_instrument(ins, dtype) :
+    print '\nTest find detector runs containing "%s" in all experiments of %s' % (dtype, ins)
+    print 'experiments of "%s":' % ins
+    patern = dtype.lower()
+    for exp in experiments(ins) :
+        runs = list_of_runnums (ins, exp)
+        print '  %s: nruns %4d' % (exp.ljust(9), len(runs))
+        for run in runs :
+            dets = list_of_sources_in_run (ins, exp, run)
+            for det in dets :
+                if patern in det.lower() :
+                    print '      run %4d: %s' % (run, det)
+
+def test_find_detector_runs(dtype) :
+    print '\n\nTest find detector runs containing "%s" in all experiments' % dtype
+    #for ins in ('AMO','SXR','XPP','XCS','CXI','MEC','MFX','DIA','DET','MOB') :
+    for ins in ('MFX','DIA') :
+        print '%s\n%s:' % (80*'_', ins)
+        test_find_detector_runs_for_instrument(ins, dtype)
+
+#------------------------------
+#------------------------------
+#------------------------------
+#------------------------------
+#------------------------------
+
+def test_all()  :
 
     print "\n\nTest detectors('XPP', 'xppa4513', 1):" 
     print detectors('XPP', 'xppa4513', 1)
@@ -306,9 +342,25 @@ if __name__ == "__main__" :
     #det_name = 'jungfrau'
     #det_name = 'Acqiris'
 
-    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix', 'jungfrau') :
+    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix', 'jungfrau', 'epix10k') :
       print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
       print_list_of_sources_for_det(det_name)
+
+    exp = active_experiment ('XCS', station=0)
+    print '\n\nTest active_experiment ("XCS", station=0)', exp
+
+#------------------------------
+
+if __name__ == "__main__" :
+
+    test_all()
+
+    test_find_detector_runs_for_instrument('MFX', 'epix10k')
+
+    # xcsi0115: runs 81-132 XcsEndstation.0:Epix10k.0
+    # mfxx32516: runs 3-377, MfxEndstation.0:Epix10ka.0, 1, and 2 
+    # xppi0614:runs 1-72, xppi0414:1-121: NoDetector.0:Epix10k.0
+    test_find_detector_runs('epix10k') 
 
     sys.exit('End of test')
 

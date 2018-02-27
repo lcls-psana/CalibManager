@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2018-02-27 Mikhail S. Dubrovin
+Tag: V01-00-17
+- src/RegDBUtils.py - add methods to find detector type in experiment(s)
+
 2018-01-30 Mikhail S. Dubrovin
 Tag: V01-00-16
 - GUIMaskEditor - fix dtype issue for new version of numpy
