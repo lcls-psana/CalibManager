@@ -529,6 +529,7 @@ class ConfigParametersForApp(ConfigParameters) :
             'pedestals'
            ,'pixel_status'
            ,'pixel_gain'
+           ,'pixel_offset'
            ,'pixel_rms'
            ,'pixel_mask'
            ,'pixel_bkgd'

@@ -13,8 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
-2018-02-27 Mikhail S. Dubrovin
+2018-02-28 Mikhail S. Dubrovin
 Tag: V01-00-17
+- ConfigParametersForApp - add pixel_offset to the list of known calib types
+
+2018-02-27 Mikhail S. Dubrovin
 - src/RegDBUtils.py - add methods to find detector type in experiment(s)
 
 2018-01-30 Mikhail S. Dubrovin
