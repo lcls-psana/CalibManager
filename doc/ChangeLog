@@ -13,9 +13,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2018-07-05 Mikhail S. Dubrovin
+Tag: V01-00-18
+- ConfigParametersForApp - add pixel_offset to the list of known calib types for epix10ka
+
 2018-02-28 Mikhail S. Dubrovin
 Tag: V01-00-17
-- ConfigParametersForApp - add pixel_offset to the list of known calib types
+- ConfigParametersForApp - add pixel_offset to the list of known calib types for jungfrau
 
 2018-02-27 Mikhail S. Dubrovin
 - src/RegDBUtils.py - add methods to find detector type in experiment(s)

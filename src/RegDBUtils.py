@@ -329,7 +329,7 @@ def test_all()  :
     #det_name = 'epix100a'
     #det_name = 'andor'
     #det_name = 'dualandor'
-    #det_name = 'epix10k'
+    #det_name = 'epix10ka'
     #det_name = 'princeton'
     #det_name = 'pnccd'
     #det_name = 'tm6740'
@@ -342,7 +342,7 @@ def test_all()  :
     #det_name = 'jungfrau'
     #det_name = 'Acqiris'
 
-    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix', 'jungfrau', 'epix10k') :
+    for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix', 'jungfrau', 'epix10k', 'epix10ka') :
       print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
       print_list_of_sources_for_det(det_name)
 
@@ -355,12 +355,16 @@ if __name__ == "__main__" :
 
     test_all()
 
-    test_find_detector_runs_for_instrument('MFX', 'epix10k')
+    #test_find_detector_runs_for_instrument('MFX', 'epix10ka')
 
     # xcsi0115: runs 81-132 XcsEndstation.0:Epix10k.0
     # mfxx32516: runs 3-377, MfxEndstation.0:Epix10ka.0, 1, and 2 
     # xppi0614:runs 1-72, xppi0414:1-121: NoDetector.0:Epix10k.0
-    test_find_detector_runs('epix10k') 
+
+    # on 2018-07-05 epix10ka
+    # mfxx32516: nruns 3-377, MfxEndstation.0:Epix10ka.0, MfxEndstation.0:Epix10ka.1
+    # mfxx36916: runs 1-84,  MfxEndstation.0:Epix10ka.1
+    test_find_detector_runs('epix10ka') 
 
     sys.exit('End of test')
 
