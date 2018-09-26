@@ -138,8 +138,14 @@ class ConfigFileGenerator :
 
                 #print self.ind, self.source, self.fname_ave, self.fname_rms
 
-                #list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740', 'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000', \
-                #                  'OrcaFl40', 'Epix', 'Epix10k', 'Epix100a', 'Fccd960', 'Andor', 'Andor3d', 'Acqiris']
+                ###list_of_dets   = [0'CSPAD', 1'CSPAD2x2', 2'Princeton', 3'pnCCD', 4'Tm6740', 5'Opal1000', 6'Opal2000', 7'Opal4000', 8'Opal8000', \
+                ###                  9'OrcaFl40', 10'Epix', 11'Epix10k', 12'Epix100a', 13'Fccd960', 14'Andor', 15'Andor3d', 16'Acqiris']
+
+                #self.list_of_dets   = [0'CSPAD', 1'CSPAD2x2', 2'Princeton', 3'pnCCD', 4'Tm6740',\
+                #                       5'Opal1000', 6'Opal2000', 7'Opal4000', 8'Opal8000',\
+                #                       9'OrcaFl40', 10'Epix100a', 11'Epix10ka', 12'Fccd960',\
+                #                       13'Rayonix', 14'Andor', 15'DualAndor', 16'Jungfrau', 17'Zyla', 18'Uxi', 19'Pixis', 20'Acqiris']
+
                 #if   det_name == cp.list_of_dets[0] : self.add_cfg_module_peds_aver_cspad('cspad_mod.CsPadPedestals')
                 #elif det_name == cp.list_of_dets[1] : self.add_cfg_module_peds_aver_cspad('cspad_mod.CsPad2x2Pedestals')
                 if   det_name == cp.list_of_dets[0] : self.add_cfg_module_peds_aver_cspad_with_mask('CSPadPixCoords.CSPadNDArrProducer')
@@ -155,12 +161,18 @@ class ConfigFileGenerator :
                 elif det_name == cp.list_of_dets[9] : self.add_cfg_module_peds_aver_camera()
                 elif det_name == cp.list_of_dets[10]: self.add_cfg_module_peds_aver_epix()
                 elif det_name == cp.list_of_dets[11]: self.add_cfg_module_peds_aver_epix()
-                elif det_name == cp.list_of_dets[12]: self.add_cfg_module_peds_aver_epix()
+
+                elif det_name == cp.list_of_dets[12]: self.add_cfg_module_peds_aver_camera(out_dtype='int')
                 elif det_name == cp.list_of_dets[13]: self.add_cfg_module_peds_aver_camera(out_dtype='int')
                 elif det_name == cp.list_of_dets[14]: self.add_cfg_module_peds_aver_andor()
                 elif det_name == cp.list_of_dets[15]: self.add_cfg_module_peds_aver_andor3d()
-                elif det_name == cp.list_of_dets[16]: self.add_cfg_module_peds_aver_acqiris()
-                elif det_name == cp.list_of_dets[17]: self.print_warning()
+
+                #This all is DEPRICATED STUFF
+                #elif det_name == cp.list_of_dets[17]: self.add_cfg_module_peds_aver_camera() # Zyla
+                #elif det_name == cp.list_of_dets[18]: self.add_cfg_module_peds_aver_camera() # Uxi
+                #elif det_name == cp.list_of_dets[19]: self.add_cfg_module_peds_aver_camera() # Pixis
+                elif det_name == cp.list_of_dets[20]: self.add_cfg_module_peds_aver_acqiris()
+                elif det_name == cp.list_of_dets[21]: self.print_warning()
                 else : logger.warning('UNKNOWN DETECTOR: %s' % det_name, __name__)
 
         if self.ind > 0 : return True

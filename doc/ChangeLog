@@ -13,6 +13,12 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2018-09-25 Mikhail S. Dubrovin
+Tag: V01-00-19
+- add uxi and pixis
+	modified:   src/ConfigFileGenerator.py
+	modified:   src/ConfigParametersForApp.py
+
 2018-07-05 Mikhail S. Dubrovin
 Tag: V01-00-18
 - ConfigParametersForApp - add pixel_offset to the list of known calib types for epix10ka

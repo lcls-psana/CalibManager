@@ -327,7 +327,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740',\
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000',\
                                'OrcaFl40', 'Epix100a', 'Epix10ka', 'Fccd960',\
-                               'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla', 'Acqiris']
+                               'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla', 'Uxi', 'Pixis', 'Acqiris']
 
         self.list_of_dets_lower = [det.lower() for det in self.list_of_dets]
 
@@ -349,6 +349,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Andor3d::FrameV',
                                     'Jungfrau::ElementV1',
                                     'Zyla::FrameV',
+                                    'Uxi::FrameV',
+                                    'Pixis::FrameV',
                                     'Acqiris::DataDesc']
         self.dict_of_det_data_types = dict( zip(self.list_of_dets, self.list_of_data_types) )
         #self.print_dict_of_det_data_types()
@@ -371,6 +373,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Andor3d::CalibV1',
                                     'Jungfrau::CalibV1',
                                     'Camera::CalibV1',
+                                    'Uxi::CalibV1',
+                                    'Pixis::CalibV1',
                                     'Acqiris::CalibV1']
         self.dict_of_det_calib_types = dict( zip(self.list_of_dets, self.list_of_calib_types) )
         #self.print_dict_of_det_calib_types()
@@ -378,6 +382,8 @@ class ConfigParametersForApp(ConfigParameters) :
 #------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
+                           (False, False ,'bool'), \
+                           (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -549,6 +555,28 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'geometry'
             ]
 
+        self.const_types_uxi = [
+            'pedestals'
+           ,'pixel_status'
+           ,'pixel_gain'
+           ,'pixel_rms'
+           ,'pixel_mask'
+           ,'pixel_bkgd'
+           ,'common_mode'
+           ,'geometry'
+            ]
+
+        self.const_types_pixis = [
+            'pedestals'
+           ,'pixel_status'
+           ,'pixel_gain'
+           ,'pixel_rms'
+           ,'pixel_mask'
+           ,'pixel_bkgd'
+           ,'common_mode'
+           ,'geometry'
+            ]
+
         self.const_types_acqiris = [
             'pedestals'
            ,'hex_config'
@@ -573,6 +601,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_andor3d
                                                                      ,self.const_types_jungfrau
                                                                      ,self.const_types_zyla
+                                                                     ,self.const_types_uxi
+                                                                     ,self.const_types_pixis
                                                                      ,self.const_types_acqiris
                                                                       ]) )
      
@@ -762,6 +792,14 @@ class ConfigParametersForApp(ConfigParameters) :
             'XppEndstation.0:Zyla.0'
            ]
 
+        self.srcs_uxi = [ 
+            'DetLab.0:Uxi.0'
+           ]
+
+        self.srcs_pixis = [ 
+            'MecTargetChamber.0:Pixis.1'
+           ]
+
         self.srcs_acqiris = [ 
             'AmoETOF.0:Acqiris.0'
            ,'AmoITOF.0:Acqiris.0'
@@ -796,6 +834,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_andor3d
                                                                  ,self.srcs_jungfrau
                                                                  ,self.srcs_zyla
+                                                                 ,self.srcs_uxi
+                                                                 ,self.srcs_pixis
                                                                  ,self.srcs_acqiris
                                                                   ]) )
 
@@ -818,6 +858,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['ANDOR3D']
                                                                        ,['JUNGFRAU']
                                                                        ,['ZYLA']
+                                                                       ,['UXI']
+                                                                       ,['PIXIS']
                                                                        ,['ACQIRISV1']
                                                                         ]) )
 
