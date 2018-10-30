@@ -13,6 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2018-10-30 Mikhail S. Dubrovin
+Tag: V01-00-20
+- add Streak, Archon, and Epix10ka2M (for file managment)
+	modified:   src/ConfigParametersForApp.py
+
 2018-09-25 Mikhail S. Dubrovin
 Tag: V01-00-19
 - add uxi and pixis

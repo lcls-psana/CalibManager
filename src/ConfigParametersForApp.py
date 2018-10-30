@@ -326,8 +326,9 @@ class ConfigParametersForApp(ConfigParameters) :
 
         self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740',\
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000',\
-                               'OrcaFl40', 'Epix100a', 'Epix10ka', 'Fccd960',\
-                               'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla', 'Uxi', 'Pixis', 'Acqiris']
+                               'OrcaFl40', 'Epix100a', 'Epix10ka', 'Epix10ka2M', 'Fccd960',\
+                               'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla',\
+                               'Uxi', 'Pixis', 'StreakC7700', 'Archon', 'Acqiris']
 
         self.list_of_dets_lower = [det.lower() for det in self.list_of_dets]
 
@@ -343,6 +344,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::FrameV',
                                     'Epix::ElementV',
                                     'Epix::ElementV',
+                                    'Epix::ArrayV',
                                     'Camera::FrameV',
                                     'Camera::FrameV',
                                     'Andor::FrameV',
@@ -351,6 +353,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Zyla::FrameV',
                                     'Uxi::FrameV',
                                     'Pixis::FrameV',
+                                    'Camera::FrameV',
+                                    'Camera::FrameV',
                                     'Acqiris::DataDesc']
         self.dict_of_det_data_types = dict( zip(self.list_of_dets, self.list_of_data_types) )
         #self.print_dict_of_det_data_types()
@@ -367,6 +371,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::CalibV1',
                                     'Epix100a::CalibV1',
                                     'Epix10ka::CalibV1',
+                                    'Epix10ka2M::CalibV1',
                                     'Camera::CalibV1',
                                     'Camera::CalibV1',
                                     'Andor::CalibV1',
@@ -375,6 +380,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Camera::CalibV1',
                                     'Uxi::CalibV1',
                                     'Pixis::CalibV1',
+                                    'Camera::CalibV1',
+                                    'Camera::CalibV1',
                                     'Acqiris::CalibV1']
         self.dict_of_det_calib_types = dict( zip(self.list_of_dets, self.list_of_calib_types) )
         #self.print_dict_of_det_calib_types()
@@ -382,6 +389,9 @@ class ConfigParametersForApp(ConfigParameters) :
 #------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
+                           (False, False ,'bool'), \
+                           (False, False ,'bool'), \
+                           (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -577,6 +587,28 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'geometry'
             ]
 
+        self.const_types_streak = [
+            'pedestals'
+           ,'pixel_status'
+           ,'pixel_gain'
+           ,'pixel_rms'
+           ,'pixel_mask'
+           ,'pixel_bkgd'
+           ,'common_mode'
+           ,'geometry'
+            ]
+
+        self.const_types_archon = [
+            'pedestals'
+           ,'pixel_status'
+           ,'pixel_gain'
+           ,'pixel_rms'
+           ,'pixel_mask'
+           ,'pixel_bkgd'
+           ,'common_mode'
+           ,'geometry'
+            ]
+
         self.const_types_acqiris = [
             'pedestals'
            ,'hex_config'
@@ -595,6 +627,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_orcafl40
                                                                      ,self.const_types_epix
                                                                      ,self.const_types_epix
+                                                                     ,self.const_types_epix
                                                                      ,self.const_types_fccd960
                                                                      ,self.const_types_camera
                                                                      ,self.const_types_andor
@@ -603,6 +636,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_zyla
                                                                      ,self.const_types_uxi
                                                                      ,self.const_types_pixis
+                                                                     ,self.const_types_streak
+                                                                     ,self.const_types_archon
                                                                      ,self.const_types_acqiris
                                                                       ]) )
      
@@ -748,6 +783,10 @@ class ConfigParametersForApp(ConfigParameters) :
             'MfxEndstation.0:Epix10ka.0'
             ]
 
+        self.srcs_epix10ka2m = [ 
+            'NoDetector.0:Epix10ka2M.0'
+            ]
+
         self.srcs_epix100a = [ 
             'MecTargetChamber.0:Epix100a.0'
            ,'MfxEndstation.0:Epix100a.0'
@@ -800,6 +839,14 @@ class ConfigParametersForApp(ConfigParameters) :
             'MecTargetChamber.0:Pixis.1'
            ]
 
+        self.srcs_streak = [ 
+            'DetLab.0:StreakC7700.0'
+           ]
+
+        self.srcs_archon = [ 
+            'SxrEndstation.0:Archon.0'
+           ]
+
         self.srcs_acqiris = [ 
             'AmoETOF.0:Acqiris.0'
            ,'AmoITOF.0:Acqiris.0'
@@ -828,6 +875,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_orcafl40
                                                                  ,self.srcs_epix100a
                                                                  ,self.srcs_epix10ka
+                                                                 ,self.srcs_epix10ka2m
                                                                  ,self.srcs_fccd960
                                                                  ,self.srcs_rayonix
                                                                  ,self.srcs_andor
@@ -836,6 +884,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_zyla
                                                                  ,self.srcs_uxi
                                                                  ,self.srcs_pixis
+                                                                 ,self.srcs_streak
+                                                                 ,self.srcs_archon
                                                                  ,self.srcs_acqiris
                                                                   ]) )
 
@@ -852,6 +902,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['ORCAFL40V1']
                                                                        ,['EPIX100AV1']
                                                                        ,['EPIX10KAV1']
+                                                                       ,['EPIX10KA2MV1']
                                                                        ,['FCCD960V1']
                                                                        ,['RAYONIX']
                                                                        ,['ANDOR']
@@ -860,6 +911,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['ZYLA']
                                                                        ,['UXI']
                                                                        ,['PIXIS']
+                                                                       ,['STREAK']
+                                                                       ,['ARCHON']
                                                                        ,['ACQIRISV1']
                                                                         ]) )
 
