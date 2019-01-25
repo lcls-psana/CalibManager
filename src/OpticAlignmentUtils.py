@@ -61,7 +61,7 @@ def create_directory(dir, mode=0777) : # 0o777
 
 #--------------------
 
-def save_textfile(text, path, accmode=0377) :
+def save_textfile(text, path, accmode=0777) :
     """Saves text in file specified by path. mode: 'w'-write, 'a'-append 
     """
     f=open(path,'w')
@@ -592,10 +592,10 @@ def geometry_constants(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_deg,
     #        print FMT % ((name_quad, q, name_seg, s) + tuple(arr_quads_daq[q,s,:]))
 
     camera_center = np.mean(arr_quad_center, axis=0)
-    logger.info('\nnumber of quads in metrology %d of total expected in camera %d' % (nquads, nquads_tot)+\
-                '\nquad centers from metrology:\n%s\n'  % str(arr_quad_center)+\
-                '\naveraged over quads center:\n%s'     % str(camera_center)+\
-                '\n\ncamera center from input pars:\n%s'% str(center_offset))
+    logger.info('\nnumber of quads in metrology %d of total expected in camera %d' % (nquads, nquads_tot))
+    logger.debug('\nquad centers from metrology:\n%s\n'  % str(arr_quad_center)+\
+                 '\naveraged over quads center:\n%s'     % str(camera_center)+\
+                 '\n\ncamera center from input pars:\n%s'% str(center_offset))
 
     #print 'camera_center evaluated as an averaged quad center:\n', camera_center
 
