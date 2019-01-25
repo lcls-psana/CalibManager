@@ -11,7 +11,6 @@
 
 import os
 import sys
-import math
 from math import atan2, degrees, sqrt, fabs, pi
 import numpy as np
 #from CalibManager.OpticAlignmentCspadMethods import *
@@ -70,12 +69,13 @@ class OpticalMetrologyCheck() :
                                    # point 1:32
                                       # record: point, X, Y, Z 0:3
         #self.arr_opt = np.zeros( (self.nquads,self.npoints+1,4), dtype=numpy.int32 )
-        #self.quad = 0
 
         self.arr_opt = []
 
         if not os.path.lexists(self.ifname) : 
             raise IOError('File "%s" is not available' % self.ifname)
+
+        quad = 0
 
         file = open(self.ifname, 'r')
 
@@ -94,12 +94,12 @@ class OpticalMetrologyCheck() :
             list_of_fields = line.split()
             field0 = list_of_fields[0]
 
-            if field0 == 'Quad' : # Treat quad header lines
-                self.quad = int(list_of_fields[1])
-                if self.vrb & INFO : print 'IS RECOGNIZED QUAD: %d' % self.quad  
+            if field0.lower() == 'quad' : # Treat quad header lines
+                quad = int(list_of_fields[1])
+                if self.vrb & INFO : print 'IS RECOGNIZED QUAD: %d' % quad  
                 continue
 
-            if field0 in ('Sensor', 'Point') : # Treat the title lines
+            if field0.lower() in ('point', 'sensor') : # Treat the title lines
                 if self.vrb & INFO : print 'TITLE LINE:     %s' % line  
                 continue
 
@@ -116,7 +116,7 @@ class OpticalMetrologyCheck() :
             
             if self.vrb & INFO : print 'ACCEPT RECORD: %3d %7d %7d %7d ' % (n, x, y, z)
 
-            self.arr_opt.append((n, x, y, z))
+            self.arr_opt.append((n, x, y, z, quad))
 
         file.close()
 
@@ -139,17 +139,16 @@ class OpticalMetrologyCheck() :
 
         npoints = self.arr.shape[0]
         nsegs = int(npoints/4)
-        self.arr_segs = np.empty(shape=(nsegs, 4, 4), dtype=np.int64)
+        self.arr_segs = np.empty(shape=(nsegs, 4, 5), dtype=np.int64)
 
-        npts_x4 = nsegs*4
-        for i in range(npts_x4) :
+        npoints = nsegs*4
+        for i in range(npoints) :
             nseg = i/4 # [0, npoints/4]
             npoi = i%4 # [0,3]
             #print 'XXX nseg: %d  npoi: %d' % (nseg, npoi)
             self.arr_segs[nseg, npoi,:] = self.arr[i,:]
 
         if self.vrb & DEBUG : print self.arr_segs
-
 
 #------------------------------
 
@@ -172,7 +171,7 @@ class OpticalMetrologyCheck() :
     def test_loop_over_segments(self) :
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
-            arr1seg = self.arr_segs[nseg,:]
+            arr1seg = self.arr_segs[nseg,:,:4]
             x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
             self.evaluate_length_width_angle(arr1seg)
             self.evaluate_deviation_from_flatness(arr1seg)
@@ -199,7 +198,7 @@ class OpticalMetrologyCheck() :
            Output: x_um, y_um, z_um - segment center coordinates
         """
         #n, x_um, y_um, z_um = 0.25 * arr1seg.sum(axis=0)
-        return 0.25 * arr1seg.sum(axis=0)[1:]
+        return 0.25 * arr1seg.sum(axis=0)[1:4]
 
 #------------------------------
 
@@ -322,7 +321,6 @@ class OpticalMetrologyCheck() :
             self.dZX   = self.dZSA 
             self.dZY   = self.dZLA  
 
-
         self.D1   = sqrt(np.sum(np.square(vD1)))
         self.D2   = sqrt(np.sum(np.square(vD2)))
         self.dD   = self.D1 - self.D2
@@ -375,7 +373,7 @@ class OpticalMetrologyCheck() :
 
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
-            arr1seg = self.arr_segs[nseg,:]
+            arr1seg = self.arr_segs[nseg,:,:4]
             self.evaluate_length_width_angle(arr1seg)
 
             txt += 'segm:%2d  %6d  %6d  %6d  %6d    %6d  %6d  %6d  %6d   %8.5f  %6d  %6d  %6d  %6d  %6d\n' % \
@@ -406,7 +404,7 @@ class OpticalMetrologyCheck() :
 
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
-            arr1seg = self.arr_segs[nseg,:]
+            arr1seg = self.arr_segs[nseg,:,:4]
             self.evaluate_length_width_angle(arr1seg)
             self.evaluate_deviation_from_flatness(arr1seg)
 
@@ -495,7 +493,7 @@ class OpticalMetrologyCheck() :
             axes.add_artist(line)
 
             for point in range(4) :
-                n, x, y, z = arr_segs[nseg, point, :]
+                n, x, y, z, q = arr_segs[nseg, point, :]
                 plt.text(x, y, str(n), fontsize=8, color='k', ha='left', rotation=45)
 
 #------------------------------
@@ -503,7 +501,7 @@ class OpticalMetrologyCheck() :
     def plot_centers(self, axes) :
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
-            arr1seg = self.arr_segs[nseg, :]
+            arr1seg = self.arr_segs[nseg,:,:4]
             x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
             #if self.vrb & 256 : print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
             plt.text(x_um, y_um, str(nseg), fontsize=8, color='k', ha='left', rotation=0)
@@ -531,7 +529,7 @@ class OpticalMetrologyCheck() :
 
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
-            arr1seg = self.arr_segs[nseg,:]
+            arr1seg = self.arr_segs[nseg,:,:4]
             self.evaluate_length_width_angle(arr1seg)
             self.evaluate_deviation_from_flatness(arr1seg)
 
@@ -649,13 +647,13 @@ def proc_stat(weights, bins) :
 
     #sum_2  = (weights*center*center).sum()
     #err2 = sum_2/sum_w - mean*mean
-    #err  = math.sqrt(err2)
+    #err  = sqrt(err2)
 
-    rms  = math.sqrt(m2) if m2>0 else 0
+    rms  = sqrt(m2) if m2>0 else 0
     rms2 = m2
     
-    err_mean = rms/math.sqrt(neff)
-    err_rms  = err_mean/math.sqrt(2)    
+    err_mean = rms/sqrt(neff)
+    err_rms  = err_mean/sqrt(2)    
 
     skew, kurt, var_4 = 0, 0, 0
 
@@ -663,7 +661,7 @@ def proc_stat(weights, bins) :
         skew  = m3/(rms2 * rms) 
         kurt  = m4/(rms2 * rms2) - 3
         var_4 = (m4 - rms2*rms2*(neff-3)/(neff-1))/neff if neff>1 else 0
-    err_err = math.sqrt(math.sqrt(var_4)) if var_4>0 else 0 
+    err_err = sqrt(sqrt(var_4)) if var_4>0 else 0 
     #print  'mean:%f, rms:%f, err_mean:%f, err_rms:%f, neff:%f' % (mean, rms, err_mean, err_rms, neff)
     #print  'skew:%f, kurt:%f, err_err:%f' % (skew, kurt, err_err)
     return mean, rms, err_mean, err_rms, neff, skew, kurt, err_err, sum_w
@@ -767,42 +765,37 @@ def option_parser() :
 
     from optparse import OptionParser
 
-    def_ifn = './optical_metrology.txt'
-    def_ofp = './om' 
-    def_psz = 109.92
-    def_plt = True
-    def_txy = 60
-    def_toz = 100
-    def_vrb = 15
+    d_ifn = './optical_metrology.txt'
+    d_ofp = './om' 
+    d_psz = 109.92
+    d_plt = True
+    d_txy = 60
+    d_toz = 100
+    d_vrb = 15
  
-    h_ifn   = 'input file name, default = %s' % def_ifn
-    h_ofp   = 'output file(s) prefix, default = %s' % def_ofp 
-    h_psz   = 'pixel size (um)-micrometer, default = %s' % def_psz 
-    h_plt   = 'plot image, default = %s' % str(def_plt)
-    h_txy   = 'tolerance to deviatyion in x-y plane [um], default = %.2f' % def_txy
-    h_toz   = 'tolerance to deviatyion in z [um], default = %.2f' % def_toz
-    h_vrb   = 'verbosity, default = %s' % str(def_vrb)
+    h_ifn   = 'input file name, default = %s' % d_ifn
+    h_ofp   = 'output file(s) prefix, default = %s' % d_ofp 
+    h_psz   = 'pixel size (um)-micrometer, default = %s' % d_psz 
+    h_plt   = 'plot image, default = %s' % str(d_plt)
+    h_txy   = 'tolerance to deviatyion in x-y plane [um], default = %.2f' % d_txy
+    h_toz   = 'tolerance to deviatyion in z [um], default = %.2f' % d_toz
+    h_vrb   = 'verbosity, default = %s' % str(d_vrb)
  
     parser = OptionParser(description='Check optical metrology measurements', usage=usage())
-    parser.add_option('-i', '--ifn', default=def_ifn, action='store', type='string', help=h_ifn)
-    parser.add_option('-o', '--ofp', default=def_ofp, action='store', type='string', help=h_ofp)
-    parser.add_option('-s', '--psz', default=def_psz, action='store', type='float',  help=h_psz)
-    parser.add_option('-x', '--txy', default=def_txy, action='store', type='float',  help=h_txy)
-    parser.add_option('-z', '--toz', default=def_toz, action='store', type='float',  help=h_toz)
-    parser.add_option('-p', '--plt', default=def_plt, action='store_false',          help=h_plt)
-    parser.add_option('-v', '--vrb', default=def_vrb, action='store', type='int',    help=h_vrb)
+    parser.add_option('-i', '--ifn', default=d_ifn, action='store', type='string', help=h_ifn)
+    parser.add_option('-o', '--ofp', default=d_ofp, action='store', type='string', help=h_ofp)
+    parser.add_option('-s', '--psz', default=d_psz, action='store', type='float',  help=h_psz)
+    parser.add_option('-x', '--txy', default=d_txy, action='store', type='float',  help=h_txy)
+    parser.add_option('-z', '--toz', default=d_toz, action='store', type='float',  help=h_toz)
+    parser.add_option('-p', '--plt', default=d_plt, action='store_false',          help=h_plt)
+    parser.add_option('-v', '--vrb', default=d_vrb, action='store', type='int',    help=h_vrb)
   
     return parser
  
 #------------------------------
 
-def do_work() :
-    omc = OpticalMetrologyCheck()
-
-#------------------------------
-
 if __name__ == '__main__' :
-    do_work()
+    omc = OpticalMetrologyCheck()
     sys.exit()
 
 #------------------------------
