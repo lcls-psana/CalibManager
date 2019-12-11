@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """GUIStatusTable GUI shows the status table for the list of files"""
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -246,7 +247,7 @@ if __name__ == "__main__" :
     import sys
     app = QtGui.QApplication(sys.argv)
     list_dir = sorted(os.listdir('./'))
-    print list_dir
+    print(list_dir)
     #widget = GUIStatusTable (parent=None, list_of_files=list_dir)
     widget = GUIStatusTable(parent=None)
     widget.makeTable(list_dir)

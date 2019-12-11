@@ -9,6 +9,7 @@
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 #------------------------------
 from CalibManager.OpticAlignmentCspadMethods import *
 #------------------------------
@@ -36,13 +37,13 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
     def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=07777, plot_bits=0377, exp='Any', det='CSPAD2X2', n90=0):
         """Constructor."""
 
-        if print_bits &  1 : print 'Start OpticAlignmentCspad2x2V1'
+        if print_bits &  1 : print('Start OpticAlignmentCspad2x2V1')
 
         if fname is not None : self.fname = fname
         else                 : self.fname = '/reg/neh/home1/dubrovin/LCLS/CSPadMetrologyProc/metrology_standard.txt'
 
         if not os.path.lexists(self.fname) : 
-            if print_bits &  1 : print 'Non-available input file: ' + self.fname
+            if print_bits &  1 : print('Non-available input file: ' + self.fname)
             return
 
         self.path             = path
@@ -66,19 +67,19 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
 
     def present_results(self): 
 
-        if self.print_bits & 2 : print '\n' + self.txt_deviation_from_flatness()
-        if self.print_bits & 4 : print '\nQuality check in XY plane:\n', self.txt_qc_table_xy() 
-        if self.print_bits & 8 : print '\nQuality check in Z:\n', self.txt_qc_table_z()
+        if self.print_bits & 2 : print('\n' + self.txt_deviation_from_flatness())
+        if self.print_bits & 4 : print('\nQuality check in XY plane:\n', self.txt_qc_table_xy()) 
+        if self.print_bits & 8 : print('\nQuality check in Z:\n', self.txt_qc_table_z())
 
         geometry_txt   = self.txt_geometry()
-        if self.print_bits & 128 : print '\nCalibration type "geometry"\n%s' % geometry_txt
+        if self.print_bits & 128 : print('\nCalibration type "geometry"\n%s' % geometry_txt)
 
         if self.save_calib_files :
             self.create_directory(self.path)
             self.save_text_file(self.fname_geometry, geometry_txt)
 
         if self.plot_bits & 1 :
-            print 'Draw array from metrology file'
+            print('Draw array from metrology file')
             self.drawOpticalAlignmentFile()
 
 #------------------------------
@@ -86,7 +87,7 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
     def readOpticalAlignmentFile(self): 
         """Reads the metrology.txt file with original optical measurements for a single CSPAD2x2
         """
-        if self.print_bits & 1 : print 'readOpticalAlignmentFile()'
+        if self.print_bits & 1 : print('readOpticalAlignmentFile()')
 
                                  # quad 0:3
                                    # point 1:32
@@ -109,29 +110,29 @@ class OpticAlignmentCspad2x2V1 (OpticAlignmentCspadMethods) :
 
             if list_of_fields[0] == 'Quad' : # Treat quad header lines
                 self.quad = int(list_of_fields[1])
-                if self.print_bits & 256 : print 'Stuff for quad', self.quad  
+                if self.print_bits & 256 : print('Stuff for quad', self.quad)  
                 continue
 
             if list_of_fields[0] == 'Sensor' \
             or list_of_fields[0] == 'Point' : # Treat the title lines
-                if self.print_bits & 256 : print 'Comment line:', line  
+                if self.print_bits & 256 : print('Comment line:', line)  
                 continue
             
             if len(list_of_fields) != 4 : # Ignore lines with non-expected number of fields
-                if self.print_bits & 256 : print 'len(list_of_fields) =', len(list_of_fields),
-                if self.print_bits & 256 : print 'RECORD IS IGNORED due to unexpected format of the line:',line
+                if self.print_bits & 256 : print('len(list_of_fields) =', len(list_of_fields), end=' ')
+                if self.print_bits & 256 : print('RECORD IS IGNORED due to unexpected format of the line:',line)
                 continue              
 
             point, X, Y, Z = [int(v) for v in list_of_fields]
             
             #record = [point, X, Y, Z, Title]
-            if self.print_bits & 256 : print 'ACCEPT RECORD:', point, X, Y, Z #, Title
+            if self.print_bits & 256 : print('ACCEPT RECORD:', point, X, Y, Z) #, Title
 
             self.arr_opt[self.quad,point,:] = [point, X, Y, Z]
 
         file.close()
 
-        if self.print_bits & 256 : print '\nArray of alignment info:\n', self.arr_opt
+        if self.print_bits & 256 : print('\nArray of alignment info:\n', self.arr_opt)
 
         self.arr = self.arr_opt
 

@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """GUI sets the calib directory from the instrument & experiment or selected non-standard directory."""
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -176,7 +177,7 @@ class GUIExpCalibDir(QtGui.QWidget) :
         if os.path.lexists(path_to_xtc_dir) : return        
         msg = 'XTC data are not seen on this computer for path: %s' % path_to_xtc_dir
         logger.warning(msg, __name__)
-        print msg
+        print(msg)
 
 
     def onButBro(self):

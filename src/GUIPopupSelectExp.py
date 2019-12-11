@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """Popup GUI for experiment selection"""
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -285,13 +286,13 @@ class GUIPopupSelectExp(QtGui.QDialog) :
 
         tab_ind = self.tab_bar.currentIndex()
         tab_name = str(self.tab_bar.tabText(tab_ind))
-        print 'Tab index: %d, name: %s' % (tab_ind, tab_name)
+        print('Tab index: %d, name: %s' % (tab_ind, tab_name))
         self.guiSelector()
 
         year = tab_name
         lst_expts = lst_exp_for_year(self.lst_exp, year)
         self.exp_name = selectFromListInPopupMenu(lst_expts)
-        print 'Selection:', self.exp_name
+        print('Selection:', self.exp_name)
         if self.exp_name is not None : self.close()
 
 
@@ -386,9 +387,9 @@ def test_all(tname) :
     lst_exp = sorted(os.listdir('/reg/d/psdm/SXR/'))
     #lst_exp = sorted(os.listdir('/reg/d/psdm/CXI/'))
     #print 'lst_exps:', lst_exp    
-    print 'years form the list of experiments', years(lst_exp)
-    print 'years and runs form the list of experiments', str(years_and_runs(lst_exp))
-    print 'experiments for 2016:', lst_exp_for_year(lst_exp, '2016')
+    print('years form the list of experiments', years(lst_exp))
+    print('years and runs form the list of experiments', str(years_and_runs(lst_exp)))
+    print('experiments for 2016:', lst_exp_for_year(lst_exp, '2016'))
 
     app = QtGui.QApplication(sys.argv)
 
@@ -397,14 +398,14 @@ def test_all(tname) :
     if tname == '2': exp_name = select_experiment_v2(lst_exp)
     if tname == '3': exp_name = select_experiment_v3(None, lst_exp)
 
-    print 'exp_name = %s' % exp_name 
+    print('exp_name = %s' % exp_name) 
 
 #------------------------------
 
 if __name__ == "__main__" :
     import sys; global sys
     tname = sys.argv[1] if len(sys.argv) > 1 else '3'
-    print 50*'_', '\nTest %s' % tname
+    print(50*'_', '\nTest %s' % tname)
     test_all(tname)
     sys.exit('End of Test %s' % tname)
 

@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
@@ -85,9 +86,9 @@ class CalibFile() :
 
     def print_member_data(self) :
         if self.is_calibfile : 
-            print 'path %s,  run range: %04d-%04d' % (self.path.rjust(14), self.begin, self.end)          
+            print('path %s,  run range: %04d-%04d' % (self.path.rjust(14), self.begin, self.end))          
         else :
-            print 'IS NOT A CALIBRATION FILE: %s' % self.path
+            print('IS NOT A CALIBRATION FILE: %s' % self.path)
                     
 #----------------------------------
 #----------------------------------
@@ -108,16 +109,16 @@ class CalibFileFinder() :
 
         if not os.path.exists(self.path) :
             msg = 'Path %s DOES NOT EXIST' % self.path
-            print msg
+            print(msg)
             logger.error(msg, __name__)
             return None
 
 #----------------------------------
 
     def print_member_data(self) :
-        print 'path_to_calib_types : %s' % self.path_to_calib_types         
-        print 'type                : %s' % self.type          
-        print 'path                : %s' % self.path          
+        print('path_to_calib_types : %s' % self.path_to_calib_types)         
+        print('type                : %s' % self.type)          
+        print('path                : %s' % self.path)          
 
 #----------------------------------
 
@@ -195,26 +196,26 @@ if __name__ == "__main__" :
     list_of_files = ['220-230.data', '220-end.data', '221-240.data', '528-end.data', '222-end.data', '659-800.data', '373-end.data', '79-end.data', '45-end.data'] 
 
 
-    print '\n\nTest class CalibFile'
-    print '\nShafled list of calibration files'
+    print('\n\nTest class CalibFile')
+    print('\nShafled list of calibration files')
     list_of_calib_files = []
     for file in list_of_files :
         calib_file = CalibFile(file)
         list_of_calib_files.append(calib_file)
         calib_file.print_member_data()
 
-    print '\nSorted list of calibration files'
+    print('\nSorted list of calibration files')
     for cfile in sorted(list_of_calib_files) :
         cfile.print_member_data()
 
-    print '\n\nTest class CalibFileFinder'
+    print('\n\nTest class CalibFileFinder')
     #cff = CalibFileFinder("/reg/d/psdm/CXI/cxitut13/calib/CsPad::CalibV1/CxiDs1.0:Cspad.0/", "offset_corr")
     cff = CalibFileFinder("/reg/d/psdm/MEC/meca1113/calib/CsPad::CalibV1/MecTargetChamber.0:Cspad.0", "pedestals")
     cff.print_member_data()
     runnum = 232
-    print 'For run %d: %s' % (runnum, cff.find_calib_file(runnum))
+    print('For run %d: %s' % (runnum, cff.find_calib_file(runnum)))
 
-    print '\n\nTest methods for run ranges:'
+    print('\n\nTest methods for run ranges:')
     list_of_cfiles = list_of_sorted_calib_files_from_list_of_files(list_of_files)
     dict_fname_range = dict_calib_file_actual_run_range(list_of_cfiles)
 
@@ -226,7 +227,7 @@ if __name__ == "__main__" :
         txt = '%s  run range %04d - %04d' % (fname.rjust(14), range[0], range[1])
         if range[0] == -1 : txt = '%s  file is not used' % fname.rjust(14)
 
-        print txt
+        print(txt)
 
     sys.exit ( "End of test" )
 

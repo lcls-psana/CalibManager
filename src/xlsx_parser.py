@@ -13,6 +13,7 @@
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from SVN --
@@ -41,7 +42,7 @@ def convert_xlsx_to_text(ifname, ofname='metrology.txt', print_bits=0):
     #member = arc.getinfo("xl/sharedStrings.xml")
     #arc.extract( member )
 
-    if print_bits & 1 : print 'Input file: %s' % ifname
+    if print_bits & 1 : print('Input file: %s' % ifname)
 
     list_ofnames = []
     dic_num_txt = {}
@@ -60,8 +61,8 @@ def convert_xlsx_to_text(ifname, ofname='metrology.txt', print_bits=0):
             if npoints == 8 : # This is cspad2x2
                 root, ext = os.path.splitext(ofname)          
                 fname = '%s-%d%s' % (root, num, ext) 
-                if print_bits & 2 : print 'Output file: %s' % fname
-                if print_bits & 4 : print txt
+                if print_bits & 2 : print('Output file: %s' % fname)
+                if print_bits & 4 : print(txt)
                 save_textfile(txt, fname)
                 list_ofnames.append(fname)
 
@@ -75,8 +76,8 @@ def convert_xlsx_to_text(ifname, ofname='metrology.txt', print_bits=0):
         for quad in range(4) :
            txt_tot += dic_num_txt[quad] + '\n'
 
-        if print_bits & 2 : print 'Output file: %s' % ofname
-        if print_bits & 4 : print txt_tot
+        if print_bits & 2 : print('Output file: %s' % ofname)
+        if print_bits & 4 : print(txt_tot)
         
         save_textfile(txt_tot, ofname)
         list_ofnames.append(ofname)
@@ -180,7 +181,7 @@ def find_element_text(el, tag) :
 def print_open_file(f) :
     """print per-string content from open file
     """
-    for line in f : print line
+    for line in f : print(line)
 
 #----------------------------------
 
@@ -209,13 +210,13 @@ def get_input_parameters() :
     if   nargs == 1 : return ifname, ofname
 
     if not os.path.exists(sys.argv[1]) :
-        print 'Input file %s DOES NOT EXIST!' % (sys.argv[1])
+        print('Input file %s DOES NOT EXIST!' % (sys.argv[1]))
         sys.exit ()
 
     if   nargs == 2 : return sys.argv[1], ofname
     elif nargs == 3 : return sys.argv[1], sys.argv[2]
 
-    print 'Command line for %s has a WRONG number of arguments: nargs=%d' % (sys.argv[0], nargs)
+    print('Command line for %s has a WRONG number of arguments: nargs=%d' % (sys.argv[0], nargs))
     sys.exit ()
 
 #----------------------------------

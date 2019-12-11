@@ -24,6 +24,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 #------------------------------
 
 import os
@@ -118,31 +119,31 @@ icon = QIcons()
 
 def test_QIcons() :
     print('Icon pathes:')
-    print icon.path_icon_contents
-    print icon.path_icon_mail_forward
-    print icon.path_icon_button_ok
-    print icon.path_icon_button_cancel
-    print icon.path_icon_exit
-    print icon.path_icon_home
-    print icon.path_icon_redo
-    print icon.path_icon_undo  
-    print icon.path_icon_reload
-    print icon.path_icon_save
-    print icon.path_icon_save_cfg
-    print icon.path_icon_edit
-    print icon.path_icon_browser
-    print icon.path_icon_monitor
-    print icon.path_icon_unknown
-    print icon.path_icon_plus
-    print icon.path_icon_minus
-    print icon.path_icon_logviewer
-    print icon.path_icon_lock
-    print icon.path_icon_unlock
-    print icon.path_icon_convert
-    print icon.path_icon_table
-    print icon.path_icon_folder_open
-    print icon.path_icon_folder_closed
-    print icon.path_icon_data
+    print(icon.path_icon_contents)
+    print(icon.path_icon_mail_forward)
+    print(icon.path_icon_button_ok)
+    print(icon.path_icon_button_cancel)
+    print(icon.path_icon_exit)
+    print(icon.path_icon_home)
+    print(icon.path_icon_redo)
+    print(icon.path_icon_undo)  
+    print(icon.path_icon_reload)
+    print(icon.path_icon_save)
+    print(icon.path_icon_save_cfg)
+    print(icon.path_icon_edit)
+    print(icon.path_icon_browser)
+    print(icon.path_icon_monitor)
+    print(icon.path_icon_unknown)
+    print(icon.path_icon_plus)
+    print(icon.path_icon_minus)
+    print(icon.path_icon_logviewer)
+    print(icon.path_icon_lock)
+    print(icon.path_icon_unlock)
+    print(icon.path_icon_convert)
+    print(icon.path_icon_table)
+    print(icon.path_icon_folder_open)
+    print(icon.path_icon_folder_closed)
+    print(icon.path_icon_data)
 
 #------------------------------
 

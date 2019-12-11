@@ -7,6 +7,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 Author Mikhail Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 
@@ -132,12 +133,12 @@ class GUIMain(QtGui.QWidget) :
 
         if not is_default :
    	    #print 'dict_opts', opts
-            print 'Optional parameters',\
+            print('Optional parameters',\
                   '\n  instr_name : %s' % cp.instr_name.value(),\
                   '\n  exp_name   : %s' % cp.exp_name.value(),\
                   '\n  calib_dir  : %s' % cp.calib_dir.value(),\
                   '\n  run_number : %s' % cp.str_run_number.value(),\
-                  '\n  detectors  : %s' % opts['detector']
+                  '\n  detectors  : %s' % opts['detector'])
 
  
     def printStyleInfo(self):
@@ -241,7 +242,7 @@ class GUIMain(QtGui.QWidget) :
         path = fnm.log_file_cpo()
         if gu.create_path(path) :
             logger.saveLogInFile(path)
-            if verb : print 'Log file: %s' % path
+            if verb : print('Log file: %s' % path)
         else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
 
 

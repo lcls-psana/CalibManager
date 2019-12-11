@@ -16,6 +16,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from SVN --
@@ -153,8 +154,8 @@ def print_run_attributes (ins, exp, run) :
     """Prints run attributes in formatted table 
     """
     for attr in run_attributes(ins, exp, run) :
-        print 'class: %s  name: %s  type (of the value): %s  value (optional): %s  description (optional):%s' \
-              % (attr['class'].ljust(16), attr['name'].ljust(32), attr['type'].ljust(8), str(attr['val']).ljust(8), attr['descr'].ljust(8))
+        print('class: %s  name: %s  type (of the value): %s  value (optional): %s  description (optional):%s' \
+              % (attr['class'].ljust(16), attr['name'].ljust(32), attr['type'].ljust(8), str(attr['val']).ljust(8), attr['descr'].ljust(8)))
 
 #------------------------------
 
@@ -179,7 +180,7 @@ def dict_runnum_dark (ins, exp, list_of_nums=None) :
     dict_rnd ={}
     for runnum in list_of_rn :
         dict_rnd[runnum] = is_calibration_tag_for_name(ins, exp, runnum, name='dark')
-    print '\n\ndict_runnum_dark consumed time (sec) =', time()-t0_sec
+    print('\n\ndict_runnum_dark consumed time (sec) =', time()-t0_sec)
     return dict_rnd
 
 #------------------------------
@@ -198,7 +199,7 @@ def calibration_runs (ins, exp) :
 def print_calibration_runs (ins, exp) :
     calibrans = calibration_runs (ins, exp)
     for r,v in calibrans.iteritems() :
-        print r,v
+        print(r,v)
     #print calibrans
 
 #------------------------------
@@ -229,11 +230,11 @@ def list_of_calibs_for_run (ins, exp, runnum) :
 
 def print_unique_detector_names () :
     for i, detname in enumerate(unique_detector_names()):
-        print '%4d : %s' %(i, detname)
+        print('%4d : %s' %(i, detname))
 
 def print_list_of_sources_for_det (det_name='CSPAD') :
     for i, detname in enumerate( list_of_sources_for_det (det_name)) :
-        print '%4d : %s' %(i, detname)
+        print('%4d : %s' %(i, detname))
 
 #------------------------------
 
@@ -251,23 +252,23 @@ def experiments(ins) :
 
 
 def test_find_detector_runs_for_instrument(ins, dtype) :
-    print '\nTest find detector runs containing "%s" in all experiments of %s' % (dtype, ins)
-    print 'experiments of "%s":' % ins
+    print('\nTest find detector runs containing "%s" in all experiments of %s' % (dtype, ins))
+    print('experiments of "%s":' % ins)
     patern = dtype.lower()
     for exp in experiments(ins) :
         runs = list_of_runnums (ins, exp)
-        print '  %s: nruns %4d' % (exp.ljust(9), len(runs))
+        print('  %s: nruns %4d' % (exp.ljust(9), len(runs)))
         for run in runs :
             dets = list_of_sources_in_run (ins, exp, run)
             for det in dets :
                 if patern in det.lower() :
-                    print '      run %4d: %s' % (run, det)
+                    print('      run %4d: %s' % (run, det))
 
 def test_find_detector_runs(dtype) :
-    print '\n\nTest find detector runs containing "%s" in all experiments' % dtype
+    print('\n\nTest find detector runs containing "%s" in all experiments' % dtype)
     #for ins in ('AMO','SXR','XPP','XCS','CXI','MEC','MFX','DIA','DET','MOB') :
     for ins in ('MFX','DIA') :
-        print '%s\n%s:' % (80*'_', ins)
+        print('%s\n%s:' % (80*'_', ins))
         test_find_detector_runs_for_instrument(ins, dtype)
 
 #------------------------------
@@ -278,50 +279,50 @@ def test_find_detector_runs(dtype) :
 
 def test_all()  :
 
-    print "\n\nTest detectors('XPP', 'xppa4513', 1):" 
-    print detectors('XPP', 'xppa4513', 1)
+    print("\n\nTest detectors('XPP', 'xppa4513', 1):") 
+    print(detectors('XPP', 'xppa4513', 1))
 
-    print "\n\nTest experiment_runs('XPP', 'xppa4513'):"
-    print experiment_runs('XPP', 'xppa4513')
+    print("\n\nTest experiment_runs('XPP', 'xppa4513'):")
+    print(experiment_runs('XPP', 'xppa4513'))
 
-    print "\n\nTest dict_run_type('CXI', 'cxic0213'):"
-    print dict_run_type('CXI', 'cxic0213')
+    print("\n\nTest dict_run_type('CXI', 'cxic0213'):")
+    print(dict_run_type('CXI', 'cxic0213'))
 
-    print "\n\nTest run_attributes('CXI', 'cxic0213', 215):"
-    print run_attributes('CXI', 'cxic0213', 215)
+    print("\n\nTest run_attributes('CXI', 'cxic0213', 215):")
+    print(run_attributes('CXI', 'cxic0213', 215))
 
-    print "\n\nTest print_run_attributes('CXI','cxic0213', 215):" 
+    print("\n\nTest print_run_attributes('CXI','cxic0213', 215):") 
     print_run_attributes('CXI','cxic0213', 215)
 
-    print "\n\nTest detectors('CXI','cxic0213', 215):" 
-    print detectors('CXI','cxic0213', 215)
+    print("\n\nTest detectors('CXI','cxic0213', 215):") 
+    print(detectors('CXI','cxic0213', 215))
 
     l = list_of_runnums('CXI','cxic0213')
-    print "\n\nTest list_of_run_nums('CXI','cxic0213'):\n", l 
+    print("\n\nTest list_of_run_nums('CXI','cxic0213'):\n", l) 
 
     d = dict_runnum_dark ('CXI','cxic0213',list_of_nums=[1,163,206,220])
-    print "Test dict_runnum_dark ('CXI','cxic0213',list_of_runnums=[1,163,206,220]):\n", d
+    print("Test dict_runnum_dark ('CXI','cxic0213',list_of_runnums=[1,163,206,220]):\n", d)
 
     d = dict_runnum_dark ('CXI','cxic0213')
-    print "Test dict_runnum_dark ('CXI','cxic0213'):\n", d
+    print("Test dict_runnum_dark ('CXI','cxic0213'):\n", d)
 
-    print "\n\nTest print_calibration_runs('CXI','cxic0213'):" 
+    print("\n\nTest print_calibration_runs('CXI','cxic0213'):") 
     print_calibration_runs('CXI','cxic0213')
 
-    print "\n\nTest : dict_of_recs_for_run ('CXI','cxic0213, 162)"
-    print dict_of_recs_for_run ('CXI','cxic0213', 162)
+    print("\n\nTest : dict_of_recs_for_run ('CXI','cxic0213, 162)")
+    print(dict_of_recs_for_run ('CXI','cxic0213', 162))
 
-    print "\n\nTest : comment_for_run ('CXI','cxic0213', 162)"
-    print comment_for_run ('CXI','cxic0213',162)
+    print("\n\nTest : comment_for_run ('CXI','cxic0213', 162)")
+    print(comment_for_run ('CXI','cxic0213',162))
 
-    print "\n\nTest : list_of_calibs_for_run('CXI','cxic0213', 162)"
-    print list_of_calibs_for_run('CXI','cxic0213',162)
+    print("\n\nTest : list_of_calibs_for_run('CXI','cxic0213', 162)")
+    print(list_of_calibs_for_run('CXI','cxic0213',162))
 
-    print "\n\nTest : unique_detector_names()"
+    print("\n\nTest : unique_detector_names()")
     print_unique_detector_names()
 
     l = list_of_runnums('XPP','xppc7014')
-    print "\n\nTest list_of_run_nums('XPP','xppc7014'):\n", l 
+    print("\n\nTest list_of_run_nums('XPP','xppc7014'):\n", l) 
 
     #det_name = 'cspad'
     #det_name = 'cspad2x2'
@@ -343,11 +344,11 @@ def test_all()  :
     #det_name = 'Acqiris'
 
     for det_name in ('cspad', 'cspad2x2', 'epix100a', 'pnccd', 'rayonix', 'jungfrau', 'epix10k', 'epix10ka') :
-      print "\n\nTest : list_of_sources_for_det ('%s')" % det_name
+      print("\n\nTest : list_of_sources_for_det ('%s')" % det_name)
       print_list_of_sources_for_det(det_name)
 
     exp = active_experiment ('XCS', station=0)
-    print '\n\nTest active_experiment ("XCS", station=0)', exp
+    print('\n\nTest active_experiment ("XCS", station=0)', exp)
 
 #------------------------------
 

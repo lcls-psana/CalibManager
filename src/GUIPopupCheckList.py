@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """Popup GUI"""
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -152,15 +153,15 @@ if __name__ == "__main__" :
     app = QtGui.QApplication(sys.argv)
     list_in = [['CSPAD1',True], ['CSPAD2x21', False], ['pNCCD1', True], ['Opal1', False], \
                ['CSPAD2',True], ['CSPAD2x22', False], ['pNCCD2', True], ['Opal2', False]]
-    for name,state in list_in : print  '%s checkbox is in state %s' % (name.ljust(10), state) 
+    for name,state in list_in : print('%s checkbox is in state %s' % (name.ljust(10), state)) 
     w = GUIPopupCheckList (None, list_in)
     #w.show()
     resp=w.exec_()
-    print 'resp=',resp
-    print 'QtGui.QDialog.Rejected: ', QtGui.QDialog.Rejected
-    print 'QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted
+    print('resp=',resp)
+    print('QtGui.QDialog.Rejected: ', QtGui.QDialog.Rejected)
+    print('QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted)
 
-    for name,state in list_in : print  '%s checkbox is in state %s' % (name.ljust(10), state) 
+    for name,state in list_in : print('%s checkbox is in state %s' % (name.ljust(10), state)) 
     #app.exec_()
 
 #------------------------------

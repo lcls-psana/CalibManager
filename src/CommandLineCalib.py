@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -300,7 +301,7 @@ class CommandLineCalib() :
                 self.print_dark_ave_batch_log()
                 return
 
-        print 'WARNING: Too many check cycles. Probably LSF is dead...'
+        print('WARNING: Too many check cycles. Probably LSF is dead...')
         
         #if self.bjpeds.autoRunStage :            
         #self.bjpeds.stop_auto_processing()
@@ -337,7 +338,7 @@ class CommandLineCalib() :
         path = fnm.log_file_cpo()
         if gu.create_path(path) :
             logger.saveLogInFile(path)
-            if verb : print 'Log file: %s' % path
+            if verb : print('Log file: %s' % path)
         else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
 
 

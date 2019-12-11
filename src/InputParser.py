@@ -12,6 +12,7 @@
 #------------------------------
 #  Module's version from SVN --
 #------------------------------
+from __future__ import print_function
 __version__ = "$Revision$"
 # $Source$
 
@@ -70,7 +71,7 @@ def run_GUIGrabSubmitELog() :
     #print 'args:\n', args
 
     #-----------------------------
-    print 'File name for I/O configuration parameters:', str(opts.cfname)
+    print('File name for I/O configuration parameters:', str(opts.cfname))
 
     sta = ''
     pos = opts.inssta.rfind(':')
@@ -89,9 +90,9 @@ def run_GUIGrabSubmitELog() :
              'cmd'    : opts.cmd
            }
 
-    print 'Start grabber for ELog with input parameters:'
+    print('Start grabber for ELog with input parameters:')
     for k,v in pars.items():
-        if k is not 'pas' : print '%9s : %s' % (k,v)
+        if k is not 'pas' : print('%9s : %s' % (k,v))
 
     lbws = LogBookWebService(**pars)
     #lbws.print_experiments()
@@ -106,9 +107,9 @@ def run_GUIGrabSubmitELog() :
              'cmd'    : opts.cmd
            }
 
-    print 'Open web service for copy messages in the instrumental ELog:'
+    print('Open web service for copy messages in the instrumental ELog:')
     for k,v in pars2.items():
-        if k is not 'pas' : print '%9s : %s' % (k,v)
+        if k is not 'pas' : print('%9s : %s' % (k,v))
 
     lbws2 = LogBookWebService(**pars2)
     #lbws2.print_experiments()
@@ -125,7 +126,7 @@ def run_GUIGrabSubmitELog() :
 
     #app.closeAllWindows()
     #QtGui.qApp=None
-    print 'Exit application...'
+    print('Exit application...')
     
 #-----------------------------
 #-----------------------------

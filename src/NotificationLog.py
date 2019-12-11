@@ -8,6 +8,7 @@ Usage ::
     nl = NotificationLog(fname='test-notification-log.txt', dict_add_fields={'mycom':'my-comment-is-here'})
     nl.add_record(mode='enabled')
 """
+from __future__ import print_function
 #------------------------------
 
 __version__ = "V2017-01-27"
@@ -119,7 +120,7 @@ class NotificationLog :
 
     def is_permitted(self) :
         s = self.get_enviroment(env='LOGNAME') == self.cname()
-        print 'is_permitted:', s
+        print('is_permitted:', s)
         return s
 
 
@@ -132,7 +133,7 @@ class NotificationLog :
         #print 'Note file: %s' % path
         if create_path(path, depth=5) :
             msg = 'Save record:\n  %s\n  in file: %s' % (rec, path)
-            print msg
+            print(msg)
             #logger.info(msg, self.__class__.__name__)
             save_textfile('%s\n'%rec, path, mode='a')
         
@@ -148,7 +149,7 @@ class NotificationLog :
  
 def test_notificationlog(tname) :
     _name = sys._getframe().f_code.co_name
-    print 'In %s' % _name
+    print('In %s' % _name)
     nl = NotificationLog(fname='test-notification-log.txt', dict_add_fields={'mycom':'my-comment-is-here'})
     nl.add_record(mode='enabled')
 
@@ -156,7 +157,7 @@ def test_notificationlog(tname) :
 
 if __name__ == "__main__" :
     tname = sys.argv[1] if len(sys.argv) > 1 else '0'
-    print 50*'_', '\nTest %s' % tname
+    print(50*'_', '\nTest %s' % tname)
     if   tname == '0': test_notificationlog(tname)
     elif tname == '1': test_notificationlog(tname)
     else : sys.exit('Test %s is not implemented' % tname)

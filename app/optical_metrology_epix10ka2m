@@ -6,6 +6,8 @@
                Confluence PSDM EPIX10KA2M and EPIX10KAQUAD - Metrology map from ChrisKenney
                Metrology from 2020-02-25 was done with Q0 in the lower-left corner...
 """
+from __future__ import print_function
+
 import os
 import sys
 import logging
@@ -78,7 +80,7 @@ class OpticalMetrologyEpix10ka2M() :
         self.proc_optical_metrology_data()
 
     def init_parameters(self) :
-        print str_command_line()
+        print(str_command_line())
         self.parser = option_parser()
         (popts, pargs) = self.parser.parse_args()
         self.ifname = pargs[0] if len(pargs) else popts.ifn # popts['ifn']
@@ -91,7 +93,7 @@ class OpticalMetrologyEpix10ka2M() :
 
 	loglevel = logging._levelNames.get(self.loglev, 'DEBUG')
         logging.basicConfig(format='%(levelname)s: %(message)s', level=loglevel)
-	print 'Logging level %s' % logging.getLevelName(loglevel)
+	print('Logging level %s' % logging.getLevelName(loglevel))
 
     def proc_optical_metrology_data(self) :
         from CalibManager.OpticAlignmentUtils import\

@@ -1,3 +1,4 @@
+from __future__ import print_function
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -63,11 +64,11 @@ def ws_configure_auth(ws_url, ws_login_user, ws_login_password):
         opener.add_handler(urllib2.HTTPBasicAuthHandler(password_mgr))
 
     except urllib2.URLError, reason:
-        print "ERROR: failed to set up Web Service authentication context due to: ", reason
+        print("ERROR: failed to set up Web Service authentication context due to: ", reason)
         sys.exit(1)
 
     except urllib2.HTTPError, code:
-        print "ERROR: failed to set up Web Service authentication context due to: ", code
+        print("ERROR: failed to set up Web Service authentication context due to: ", code)
         sys.exit(1)
 
 #----------------------------------
@@ -89,7 +90,7 @@ def ws_get_experiments (experiment=None, instrument=None, ws_url=None):
             the_page = response.read()
             result = simplejson.loads(the_page)
             if len(result) <= 0:
-                print "ERROR: no experiments are registered for instrument: %s" % instrument
+                print("ERROR: no experiments are registered for instrument: %s" % instrument)
 
             # if the experiment was explicitly requested in the command line then try to find
             # the one. Otherwise return the whole list
@@ -106,11 +107,11 @@ def ws_get_experiments (experiment=None, instrument=None, ws_url=None):
         return d
 
     except urllib2.URLError, reason:
-        print "ERROR: failed to get a list of experiment from Web Service due to: ", reason
+        print("ERROR: failed to get a list of experiment from Web Service due to: ", reason)
         sys.exit(1)
 
     except urllib2.HTTPError, code:
-        print "ERROR: failed to get a list of experiment from Web Service due to: ", code
+        print("ERROR: failed to get a list of experiment from Web Service due to: ", code)
         sys.exit(1)
 
 #----------------------------------
@@ -126,20 +127,20 @@ def ws_get_current_experiment (instrument, station, ws_url):
         the_page = response.read()
         result   = simplejson.loads(the_page)
         if len(result) <= 0:
-            print "ERROR: no experiments are registered for instrument:station %s:%s" % (instrument,station)
+            print("ERROR: no experiments are registered for instrument:station %s:%s" % (instrument,station))
 
         e = result['ResultSet']['Result']
         if e is not None:
             return e['name']
 
-        print "ERROR: no current experiment configured for this instrument:station %s:%s" % (instrument,station)
+        print("ERROR: no current experiment configured for this instrument:station %s:%s" % (instrument,station))
         sys.exit(1)
 
     except urllib2.URLError, reason:
-        print "ERROR: failed to get the current experiment info from Web Service due to: ", reason
+        print("ERROR: failed to get the current experiment info from Web Service due to: ", reason)
         sys.exit(1)
     except urllib2.HTTPError, code:
-        print "ERROR: failed to get the current experiment info from Web Service due to: ", code
+        print("ERROR: failed to get the current experiment info from Web Service due to: ", code)
         sys.exit(1)
 
 #----------------------------------
@@ -154,17 +155,17 @@ def ws_get_tags (id, ws_url):
         the_page = response.read()
         result = simplejson.loads(the_page)
         if result['Status'] != 'success':
-            print "ERROR: failed to obtain tags for experiment id=%d because of:" % id,result['Message']
+            print("ERROR: failed to obtain tags for experiment id=%d because of:" % id,result['Message'])
             sys.exit(1)
 
         #print 'Tags:', result['Tags']
         return result['Tags']
 
     except urllib2.URLError, reason:
-        print "ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, reason
+        print("ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, reason)
         sys.exit(1)
     except urllib2.HTTPError, code:
-        print "ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, code
+        print("ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, code)
         sys.exit(1)
 
 #----------------------------------
@@ -181,13 +182,13 @@ def submit_msg_to_elog(ws_url, usr, ins, sta, exp, cmd, logbook_experiments, lst
     if cmd is not None: child_output = os.popen(cmd).read()
 
     if (run != '') and (msg_id != '') :
-        print 'run', run
-        print 'message_id', msg_id
+        print('run', run)
+        print('message_id', msg_id)
 
         msg = "\nInconsistent input:" \
             + "\nRun number can't be used togher with the parent message ID." \
             + "\nChoose the right context to post the screenshot and try again." 
-        print msg
+        print(msg)
         return
 
     params = [
@@ -244,7 +245,7 @@ def submit_msg_to_elog(ws_url, usr, ins, sta, exp, cmd, logbook_experiments, lst
         #ERROR:  result: {'status': 'error', 'message': 'Run number 285 has not been found. Allowed range of runs is: 2..826.'}
 
         if result['status'] == 'success':
-            print 'New message ID:', result['message_id']
+            print('New message ID:', result['message_id'])
         #else :
         #    print 'Error:', result['message']
 
@@ -278,17 +279,17 @@ class LogBookWebService :
         self.cmd = cmd
         
         if self.ins is None:
-            print "No instrument name found among command line parameters"
+            print("No instrument name found among command line parameters")
             sys.exit(3)
 
         if self.url is None:
-            print "No web service URL found among command line parameters"
+            print("No web service URL found among command line parameters")
             sys.exit(3)
 
         if self.usr is None:
             self.usr = pwd.getpwuid(os.geteuid())[0]
-            print "User login name is not found among command line parameters" +\
-                  "\nTry to gess that the user name is " + self.usr
+            print("User login name is not found among command line parameters" +\
+                  "\nTry to gess that the user name is " + self.usr)
 
         # ----------------------------------------------------
         # Configure the authentication context for the service
@@ -312,7 +313,7 @@ class LogBookWebService :
             if exp == 'current':
                 self.exp = ws_get_current_experiment (self.ins, self.sta, self.url)
 
-                print 'Set current experiment:', self.exp
+                print('Set current experiment:', self.exp)
 
         # ------------------------------------------------------
         # Get a list of experiments for the specified instrument
@@ -332,8 +333,8 @@ class LogBookWebService :
 
 
     def print_experiments(self) :
-        print '\nlogbook_experiments:\n', self.logbook_experiments
-        print "\nself.get_list_of_tags():\n", self.get_list_of_tags()
+        print('\nlogbook_experiments:\n', self.logbook_experiments)
+        print("\nself.get_list_of_tags():\n", self.get_list_of_tags())
 
            # msg_id = self.lbws.post(tag, run, res, msg, des, path)
 
@@ -379,9 +380,9 @@ def test_LogBookWebService() :
             'cmd' : cmd
             }
 
-    print 'Start grabber for ELog with input parameters:'
+    print('Start grabber for ELog with input parameters:')
     for k,v in pars.items():
-        print '%9s : %s' % (k,v)
+        print('%9s : %s' % (k,v))
 
     lbws = LogBookWebService(**pars)
     lbws.print_experiments()

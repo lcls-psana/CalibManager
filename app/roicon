@@ -18,6 +18,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 __version__ = "$Revision$"
@@ -37,7 +38,7 @@ from optparse import OptionParser
 def image_of_sensors(gfname, afname=None, ofname='mask.txt', mbits=0xffff) :
     """ Makes and plot an image or mask of sensors for geometry file
     """
-    print 'Geometry file: %s' % gfname
+    print('Geometry file: %s' % gfname)
 
     geometry = GeometryAccess(gfname, 0)
     iX, iY = geometry.get_pixel_coord_indexes()
@@ -55,11 +56,11 @@ def image_of_sensors(gfname, afname=None, ofname='mask.txt', mbits=0xffff) :
     if afname is not None :
         mean = np.mean(arr)
         std  = np.std(arr)
-        print 'Input array mean=%f   std=%f' % (mean, std) 
+        print('Input array mean=%f   std=%f' % (mean, std)) 
         amp_range=[mean-2*std, mean+2*std]
 
     if mbits : arr *= geometry.get_pixel_mask(mbits=mbits)
-    print 'iX, iY, W shape:', iX.shape, iY.shape, arr.shape
+    print('iX, iY, W shape:', iX.shape, iY.shape, arr.shape)
 
     img = img_from_pixel_arrays(iX, iY, W=arr)
 
@@ -70,7 +71,7 @@ def image_of_sensors(gfname, afname=None, ofname='mask.txt', mbits=0xffff) :
     if ofext == '.npy' : np.save(ofname, img)
     else               : np.savetxt(ofname, img, fmt='%d', delimiter=' ')
 
-    print 'Image or mask of sensors is saved in the file %s' % ofname
+    print('Image or mask of sensors is saved in the file %s' % ofname)
 
 #------------------------------
 
@@ -81,9 +82,9 @@ def roi_mask_editor(ifname='image.txt', mfname='mask', mbits=0xffff) :
     #stream = os.popen(cmd_cat)
     #mask_base, mask_ext = os.path.splitext(mfname)
     cmd = 'med -i %s -m %s' % (ifname, mfname)
-    print 'Start process with mask editor by the command: %s' % cmd
+    print('Start process with mask editor by the command: %s' % cmd)
     output = getoutput(cmd)
-    print '%s' % output
+    print('%s' % output)
 
     #if mask_ext is not '.txt' : print 'Mask file name: %s' % (mask_base+'.txt')
 
@@ -96,14 +97,14 @@ def roi_mask_to_ndarray_v1(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt',
     ifext = os.path.splitext(ifname)[1]
     ofext = os.path.splitext(ofname)[1]
 
-    print '1. Load ROI mask from file: %s' % ifname
+    print('1. Load ROI mask from file: %s' % ifname)
     mask_roi = np.load(ifname) if ifext == '.npy' else np.loadtxt(ifname, dtype=np.uint16)
 
-    print '2. Define geometry from file: %s' % gfname
+    print('2. Define geometry from file: %s' % gfname)
     geometry = GeometryAccess(gfname, 0)
     iX, iY = geometry.get_pixel_coord_indexes()
     #arr = np.ones(iX.shape, dtype=np.uint16)
-    print '3. Check shapes of pixel image-index arrays iX, iY:', iX.shape, iY.shape
+    print('3. Check shapes of pixel image-index arrays iX, iY:', iX.shape, iY.shape)
 
     pixnum = np.arange(0, iX.size, 1, dtype=np.uint32)
     pixnum.shape = iX.shape
@@ -111,7 +112,7 @@ def roi_mask_to_ndarray_v1(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt',
     img_pixnum = img_from_pixel_arrays(iX, iY, W=pixnum, dtype=np.uint32, vbase=0)
     img = mask_roi * img_pixnum
 
-    print '4. Plot image of pixel numbers(color) in ndarray shaped by the ROI mask (CLOSE image to continue)'
+    print('4. Plot image of pixel numbers(color) in ndarray shaped by the ROI mask (CLOSE image to continue)')
     axim = gg.plotImageLarge(img_pixnum,amp_range=[0,iX.size], title='Image of pixel serial numbers')
     gg.move(400,10)
 
@@ -122,22 +123,22 @@ def roi_mask_to_ndarray_v1(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt',
     #mask_nda  = np.select([V==Vmax, indarr<0, indarr>Nbins1], [Nbins1, 0, Nbins1], default=mask_nda0)
     #mask_nda0 = map(f, iX, iY)
 
-    print '5. Evaluate ndarray with mask'
+    print('5. Evaluate ndarray with mask')
     mask_nda = np.bincount(img_pixnum.flatten(), weights=mask_roi.flatten(), minlength=iX.size)
     mask_nda[0] = mask_roi[iX.flatten()[0],iY.flatten()[0]]
     if mbits : mask_nda *= geometry.get_pixel_mask(mbits=mbits).flatten()
 
-    print '6. Cross-checks: shape of mask_nda: %s, mask_nda.size=%d, iX.size=%d ' % \
-          (mask_nda.shape, mask_nda.size, iX.size)
+    print('6. Cross-checks: shape of mask_nda: %s, mask_nda.size=%d, iX.size=%d ' % \
+          (mask_nda.shape, mask_nda.size, iX.size))
 
-    print '7. Save mask for ndarray in the file %s' % ofname
+    print('7. Save mask for ndarray in the file %s' % ofname)
     if ofext == '.npy' : np.save(ofname, mask_nda)
     else               :
         mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
-        print '6a. Re-shape for saving in txt to 2-d:', mask_nda.shape 
+        print('6a. Re-shape for saving in txt to 2-d:', mask_nda.shape) 
         np.savetxt(ofname, mask_nda, fmt='%d', delimiter=' ')
 
-    print '8. Test new mask-ndarray to generate image (CLOSE image to continue)'
+    print('8. Test new mask-ndarray to generate image (CLOSE image to continue)')
     mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
     axim = gg.plotImageLarge(mask_nda,amp_range=[0,1], figsize=(5,12), title='mask as ndarray')
     gg.move(400,10)
@@ -159,21 +160,21 @@ def roi_mask_to_ndarray(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt', mb
     ifext = os.path.splitext(ifname)[1]
     ofext = os.path.splitext(ofname)[1]
 
-    print '1. Load ROI mask from file: %s' % ifname
+    print('1. Load ROI mask from file: %s' % ifname)
     mask_roi = np.load(ifname) if ifext == '.npy' else np.loadtxt(ifname, dtype=np.uint16)
 
-    print '2. Define geometry from file: %s' % gfname
+    print('2. Define geometry from file: %s' % gfname)
     geometry = GeometryAccess(gfname, 0)
     iX, iY = geometry.get_pixel_coord_indexes()
     #arr = np.ones(iX.shape, dtype=np.uint16)
-    print '3. Check shapes of pixel image-index arrays iX, iY:', iX.shape, iY.shape
+    print('3. Check shapes of pixel image-index arrays iX, iY:', iX.shape, iY.shape)
 
-    print '4. Plot image of the mask'
+    print('4. Plot image of the mask')
     axim = gg.plotImageLarge(mask_roi,amp_range=[0,1], title='Image of the mask')
     gg.move(400,10)
     gg.show()
 
-    print '5. Evaluate ndarray with mask'
+    print('5. Evaluate ndarray with mask')
 
     #t0_sec = time()
     #def value_of_mask(r,c) : return mask_roi[r,c]    
@@ -184,17 +185,17 @@ def roi_mask_to_ndarray(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt', mb
 
     if mbits : mask_nda *= geometry.get_pixel_mask(mbits=mbits)
 
-    print '6. Cross-checks: shape of mask_nda: %s, mask_nda.size=%d, iX.size=%d ' % \
-          (mask_nda.shape, mask_nda.size, iX.size)
+    print('6. Cross-checks: shape of mask_nda: %s, mask_nda.size=%d, iX.size=%d ' % \
+          (mask_nda.shape, mask_nda.size, iX.size))
 
-    print '7. Save mask for ndarray in the file %s' % ofname
+    print('7. Save mask for ndarray in the file %s' % ofname)
     if ofext == '.npy' : np.save(ofname, mask_nda)
     else               :
         mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
-        print '7a. Re-shape for saving in txt to 2-d:', mask_nda.shape 
+        print('7a. Re-shape for saving in txt to 2-d:', mask_nda.shape) 
         np.savetxt(ofname, mask_nda, fmt='%d', delimiter=' ')
 
-    print '8. Test new mask-ndarray to generate image (CLOSE image to continue)'
+    print('8. Test new mask-ndarray to generate image (CLOSE image to continue)')
     mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
     axim = gg.plotImageLarge(mask_nda,amp_range=[0,1], figsize=(6,12), title='mask as ndarray')
     gg.move(400,10)
@@ -260,20 +261,20 @@ if __name__ == "__main__" :
     proc_name = os.path.basename(sys.argv[0])
 
     if len(sys.argv)==1 :
-        print 'Try command: %s -h' % proc_name
+        print('Try command: %s -h' % proc_name)
         sys.exit ('End of %s' % proc_name)
         
     (opts, args) = input_options_parser()
 
     if opts.verb :
-        print 'Command arguments:', ' '.join(sys.argv)
-        print '  opts:\n', opts
-        print '  args:\n', args
+        print('Command arguments:', ' '.join(sys.argv))
+        print('  opts:\n', opts)
+        print('  args:\n', args)
 
     if   opts.proc==1 : image_of_sensors   (opts.gfname, opts.afname, opts.ifname, opts.cbits)
     elif opts.proc==2 : roi_mask_editor    (opts.ifname, opts.mfname)
     elif opts.proc==3 : roi_mask_to_ndarray(opts.gfname, opts.mfname, opts.nfname, opts.cbits)
-    else : print 'Non-recognized process option; implemented options: -p1, -p2, and -p3'
+    else : print('Non-recognized process option; implemented options: -p1, -p2, and -p3')
 
     sys.exit ('End of %s' % proc_name)
 

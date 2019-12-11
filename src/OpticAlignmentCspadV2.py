@@ -14,6 +14,7 @@
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 __version__ = "$Revision$"
@@ -60,13 +61,13 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
     def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=07777, plot_bits=0377, exp='Any', det='CSPAD-XPP', n90=0):
         """Constructor."""
 
-        if print_bits &  1 : print 'Start OpticAlignmentCspadV2'
+        if print_bits &  1 : print('Start OpticAlignmentCspadV2')
 
         if fname is not None : self.fname = fname
         else                 : self.fname = '/reg/neh/home1/dubrovin/LCLS/CSPadMetrologyProc/metrology_standard.txt'
 
         if not os.path.lexists(self.fname) : 
-            if print_bits &  1 : print 'Non-available input file: ' + self.fname
+            if print_bits &  1 : print('Non-available input file: ' + self.fname)
             return
 
         self.path             = path
@@ -96,19 +97,19 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
 
     def present_results(self): 
 
-        if self.print_bits & 2 : print '\n' + self.txt_deviation_from_flatness()
-        if self.print_bits & 4 : print '\nQuality check in XY plane:\n', self.txt_qc_table_xy() 
-        if self.print_bits & 8 : print '\nQuality check in Z:\n', self.txt_qc_table_z()
+        if self.print_bits & 2 : print('\n' + self.txt_deviation_from_flatness())
+        if self.print_bits & 4 : print('\nQuality check in XY plane:\n', self.txt_qc_table_xy()) 
+        if self.print_bits & 8 : print('\nQuality check in Z:\n', self.txt_qc_table_z())
 
         center_txt_um  = self.txt_center_um_formatted_array (format='%6i  ')
         center_txt_pix = self.txt_center_pix_formatted_array(format='%7.2f  ')
         tilt_txt       = self.txt_tilt_formatted_array(format='%8.5f  ')
         geometry_txt   = self.txt_geometry()
 
-        if self.print_bits &  16 : print 'X, Y, and Z coordinates of the 2x1 center_global (um):\n' + center_txt_um
-        if self.print_bits &  32 : print '\nCalibration type "center_global" in pixels:\n' + center_txt_pix
-        if self.print_bits &  64 : print '\nCalibration type "tilt" - degree:\n' + tilt_txt
-        if self.print_bits & 128 : print '\nCalibration type "geometry"\n%s' % geometry_txt
+        if self.print_bits &  16 : print('X, Y, and Z coordinates of the 2x1 center_global (um):\n' + center_txt_um)
+        if self.print_bits &  32 : print('\nCalibration type "center_global" in pixels:\n' + center_txt_pix)
+        if self.print_bits &  64 : print('\nCalibration type "tilt" - degree:\n' + tilt_txt)
+        if self.print_bits & 128 : print('\nCalibration type "geometry"\n%s' % geometry_txt)
 
         if self.save_calib_files :
             self.create_directory(self.path)
@@ -119,12 +120,12 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
 
         if self.plot_bits & 1 :
             self.arr = self.arr_opt
-            print 'Draw array from metrology file'
+            print('Draw array from metrology file')
             self.drawOpticalAlignmentFile()
 
         if self.plot_bits & 2 :
             self.arr = self.arr_renum
-            print 'Draw array with re-numerated points for quads'
+            print('Draw array with re-numerated points for quads')
             self.drawOpticalAlignmentFile()
 
 #----------------------------------
@@ -133,7 +134,7 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
         """Reads the metrology.txt file with original optical measurements.
            The numereation of points is changed since 2012-02-26.
         """
-        if self.print_bits & 1 : print 'readOpticalAlignmentFile()'
+        if self.print_bits & 1 : print('readOpticalAlignmentFile()')
 
                                  # quad 0:3
                                    # point 1:32
@@ -155,28 +156,28 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
 
             if list_of_fields[0] == 'Quad' : # Treat quad header lines
                 self.quad = int(list_of_fields[1])
-                if self.print_bits & 256 : print 'Stuff for quad', self.quad  
+                if self.print_bits & 256 : print('Stuff for quad', self.quad)  
                 continue
 
             if list_of_fields[0] in ('Sensor', 'Point') : # Treat the title lines
-                if self.print_bits & 256 : print 'Comment line:', line  
+                if self.print_bits & 256 : print('Comment line:', line)  
                 continue
             
             if len(list_of_fields) != 4 : # Ignore lines with non-expected number of fields
-                if self.print_bits & 256 : print 'len(list_of_fields) =', len(list_of_fields),
-                if self.print_bits & 256 : print 'RECORD IS IGNORED due to unexpected format of the line:',line
+                if self.print_bits & 256 : print('len(list_of_fields) =', len(list_of_fields), end=' ')
+                if self.print_bits & 256 : print('RECORD IS IGNORED due to unexpected format of the line:',line)
                 continue              
 
             point, X, Y, Z = [int(v) for v in list_of_fields]
             
             #record = [point, X, Y, Z, Title]
-            if self.print_bits & 256 : print 'ACCEPT RECORD:', point, X, Y, Z #, Title
+            if self.print_bits & 256 : print('ACCEPT RECORD:', point, X, Y, Z) #, Title
 
             self.arr_opt[self.quad,point,:] = [point, X, Y, Z]
 
         file.close()
 
-        if self.print_bits & 256 : print 'Array of alignment info:\n', self.arr_opt
+        if self.print_bits & 256 : print('Array of alignment info:\n', self.arr_opt)
 
 
 #----------------------------------
@@ -188,7 +189,7 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
         elif n90 == 2 : return np.array([self.quad_r270, self.quad_r180, self.quad_r090, self.quad_r000]) 
         elif n90 == 3 : return np.array([self.quad_r180, self.quad_r090, self.quad_r000, self.quad_r270])
         else        :
-            print 'arrNumTransformationForN90: WRONG n90=%d, use n90 = 0, 1, 2, or 3' % n90
+            print('arrNumTransformationForN90: WRONG n90=%d, use n90 = 0, 1, 2, or 3' % n90)
             sys.exit('Exit on warning')
 
 
@@ -198,7 +199,7 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
         """The numereation of points is changed since 2012-02-26.
            Bring the numeration of points to old-standard.
         """
-        if self.print_bits & 256 : print 'changeNumerationToQuadsV1()'
+        if self.print_bits & 256 : print('changeNumerationToQuadsV1()')
 
                                        # quad 0:3
                                          # point 1:32
@@ -215,7 +216,7 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
                 self.arr_renum[quad,point,...] = self.arr_opt[quad,point_optical,...]
                 self.arr_renum[quad,point,0]   = point # change the point number from optical to standard
 
-        if self.print_bits & 256 : print 'Array with standard (per quad) numeration of points:\n', self.arr_renum
+        if self.print_bits & 256 : print('Array with standard (per quad) numeration of points:\n', self.arr_renum)
 
         self.arr = self.arr_renum
 

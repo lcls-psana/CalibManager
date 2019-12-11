@@ -15,6 +15,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 #------------------------------
 import sys
 import os
@@ -348,7 +349,7 @@ def get_list_of_dataset_par_names(fname, dsname=None):
     ds = f[dsname]
 
     for parName in ds.dtype.names :
-        print parName
+        print(parName)
         get_list_of_dataset_par_names.append(parName)
 
     f.close()
@@ -386,7 +387,7 @@ def get_list_of_dataset_par_indexes(dsname=None, parname=None):
     dspar = ds[parname]
 
     for parIndex in dspar.dtype.names :
-        print parIndex
+        print(parIndex)
         list_of_dataset_par_indexes.append(parIndex)
 
     f.close()
@@ -399,7 +400,7 @@ def get_list_of_dataset_par_indexes(dsname=None, parname=None):
 
 def usage() :
     #print '\nUsage: %s fname.h5' % os.path.basename(sys.argv[0])
-    print '\nUsage: python %s fname.h5' % (sys.argv[0])
+    print('\nUsage: python %s fname.h5' % (sys.argv[0]))
 
 #----------------------------------
 if __name__ == "__main__" :

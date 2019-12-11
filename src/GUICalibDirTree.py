@@ -1,3 +1,4 @@
+from __future__ import print_function
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -137,7 +138,7 @@ class GUICalibDirTree(QtGui.QWidget):
                 self.calib_type_list = self.calib_types_cspad2x2
                 self.calib_det_list  = self.calib_dets_cspad2x2
             else :
-                print 'UNKNOWN DETECTOR' 
+                print('UNKNOWN DETECTOR') 
 
             for d in self.calib_det_list :
                 itemd = QtGui.QStandardItem(QtCore.QString(d))

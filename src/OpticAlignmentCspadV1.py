@@ -12,6 +12,7 @@
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 __version__ = "$Revision$"
@@ -51,13 +52,13 @@ class OpticAlignmentCspadV1 (OpticAlignmentCspadMethods) :
 
     def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=0377, plot_bits=0377, exp='Any', det='CSPAD-CXI'):
         """Constructor."""
-        if print_bits &  1 : print 'Start OpticAlignmentCspadV1'
+        if print_bits &  1 : print('Start OpticAlignmentCspadV1')
 
         if fname is not None : self.fname = fname
         else                 : self.fname = '/reg/neh/home1/dubrovin/LCLS/CSPadMetrologyProc/metrology_standard.txt'
 
         if not os.path.lexists(self.fname) : 
-            if print_bits &  1 : print 'Non-available input file: ' + self.fname
+            if print_bits &  1 : print('Non-available input file: ' + self.fname)
             return
 
         self.path           = path
@@ -89,19 +90,19 @@ class OpticAlignmentCspadV1 (OpticAlignmentCspadMethods) :
 
     def present_results(self): 
 
-        if self.print_bits & 2 : print '\n' + self.txt_deviation_from_flatness()
-        if self.print_bits & 4 : print '\nQuality check in XY plane:\n', self.txt_qc_table_xy() 
-        if self.print_bits & 8 : print '\nQuality check in Z:\n', self.txt_qc_table_z()
+        if self.print_bits & 2 : print('\n' + self.txt_deviation_from_flatness())
+        if self.print_bits & 4 : print('\nQuality check in XY plane:\n', self.txt_qc_table_xy()) 
+        if self.print_bits & 8 : print('\nQuality check in Z:\n', self.txt_qc_table_z())
 
         center_txt_um  = self.txt_center_um_formatted_array (format='%6i  ')
         center_txt_pix = self.txt_center_pix_formatted_array(format='%7.2f  ')
         tilt_txt       = self.txt_tilt_formatted_array(format='%8.5f  ')
         geometry_txt   = self.txt_geometry()
         
-        if self.print_bits &  16 : print 'X, Y, and Z coordinates of the 2x1 CENTER (um):\n' + center_txt_um
-        if self.print_bits &  32 : print '\nCalibration type "center" in pixels:\n' + center_txt_pix
-        if self.print_bits &  64 : print '\nCalibration type "tilt" - degree:\n' + tilt_txt
-        if self.print_bits & 128 : print '\nCalibration type "geometry"\n' + geometry_txt
+        if self.print_bits &  16 : print('X, Y, and Z coordinates of the 2x1 CENTER (um):\n' + center_txt_um)
+        if self.print_bits &  32 : print('\nCalibration type "center" in pixels:\n' + center_txt_pix)
+        if self.print_bits &  64 : print('\nCalibration type "tilt" - degree:\n' + tilt_txt)
+        if self.print_bits & 128 : print('\nCalibration type "geometry"\n' + geometry_txt)
 
         if self.save_calib_files :
             self.create_directory(self.path)
@@ -115,7 +116,7 @@ class OpticAlignmentCspadV1 (OpticAlignmentCspadMethods) :
 
 
     def read_optical_alignment_file(self): 
-        if self.print_bits & 256 : print 'read_optical_alignment_file()'
+        if self.print_bits & 256 : print('read_optical_alignment_file()')
 
                                  # quad 0:3
                                    # point 1:32
@@ -127,22 +128,22 @@ class OpticAlignmentCspadV1 (OpticAlignmentCspadMethods) :
         for line in file:
 
             if len(line) == 1 : continue # ignore empty lines
-            if self.print_bits & 256 : print len(line),  ' Line: ', line
+            if self.print_bits & 256 : print(len(line),  ' Line: ', line)
 
             list_of_fields = line.split()
 
             if list_of_fields[0] == 'Quad' : # Treat quad header lines
                 self.quad = int(list_of_fields[1])
-                if self.print_bits & 256 : print 'Stuff for quad', self.quad  
+                if self.print_bits & 256 : print('Stuff for quad', self.quad)  
                 continue
 
             if list_of_fields[0] == 'Sensor' or list_of_fields[0] == 'Point' : # Treat the title lines
-                if self.print_bits & 256 : print 'Comment line:', line  
+                if self.print_bits & 256 : print('Comment line:', line)  
                 continue
             
             if len(list_of_fields) != 4 : # Ignore lines with non-expected number of fields
-                if self.print_bits & 256 : print 'len(list_of_fields) =', len(list_of_fields),
-                if self.print_bits & 256 : print 'RECORD IS IGNORED due to unexpected format of the line:',line
+                if self.print_bits & 256 : print('len(list_of_fields) =', len(list_of_fields), end=' ')
+                if self.print_bits & 256 : print('RECORD IS IGNORED due to unexpected format of the line:',line)
                 continue              
 
             #point = int(list_of_fields[0])
@@ -160,7 +161,7 @@ class OpticAlignmentCspadV1 (OpticAlignmentCspadMethods) :
             ##Title = list_of_fields[4]
             
             #record = [point, X, Y, Z, Title]
-            if self.print_bits & 256 : print 'ACCEPT RECORD:', point, X, Y, Z #, Title
+            if self.print_bits & 256 : print('ACCEPT RECORD:', point, X, Y, Z) #, Title
 
             self.arr[self.quad,point,0] = point
             self.arr[self.quad,point,1] = X

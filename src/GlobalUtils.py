@@ -17,6 +17,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision: 12682 $"
@@ -111,10 +112,10 @@ def get_list_of_files_in_dir(dirname) :
 
 
 def print_all_files_in_dir(dirname) :
-    print 'List of files in the dir.', dirname
+    print('List of files in the dir.', dirname)
     for fname in get_list_of_files_in_dir(dirname) :
-        print fname
-    print '\n'
+        print(fname)
+    print('\n')
 
 
 def get_list_of_files_in_dir_for_ext(dir, ext='.xtc'):
@@ -146,12 +147,12 @@ def get_list_of_files_in_dir_for_part_fname(dir, pattern='-r0022'):
 
 def print_list_of_files_in_dir(dirname, path_or_fname) :
     dname, fname = os.path.split(path_or_fname)     # i.e. ('work_corana', 'img-xcs-r0015-b0000.bin')
-    print 'print_list_of_files_in_dir():  directory:' + dirname + '  fname:' + fname
+    print('print_list_of_files_in_dir():  directory:' + dirname + '  fname:' + fname)
 
     for fname_in_dir in get_list_of_files_in_dir(dirname) :
         if fname in fname_in_dir :
-            print fname_in_dir    
-    print '\n'
+            print(fname_in_dir)    
+    print('\n')
 
 
 def get_path_owner(path) :
@@ -284,7 +285,7 @@ def batch_job_submit(command, queue='psnehq', log_file='batch-log.txt') :
     line_fields = out.split()
     if line_fields[0] != 'Job' :
         msg = 'EXIT: Unexpected response at batch submission:\nout: %s \nerr: %s'%(out, err)
-        print msg
+        print(msg)
         logger.warning(msg, __name__) 
         #sys.exit(msg)
         job_id_str = 'JOB_ID_IS_UNKNOWN'
@@ -316,7 +317,7 @@ def bsub_is_available() :
     if err != '' :
         msg = 'Check if bsub is available on this node:\n' + err + \
               '\nbsub IS NOT available in current configuration of your node... (try command: which bsub)\n'
-        print msg
+        print(msg)
         logger.warning(msg, __name__)         
         return False
     else :
@@ -447,8 +448,8 @@ def parse_xtc_path(path='.') :
         run_str = bname.split('-')[1]               # i.e. r0015
         run_num = int(run_str[1:])                  # i.e. 15
     except :
-        print 'Unexpected xtc file name:', bname 
-        print 'Use default instrument, experiment, run_str, run_num: ', instrument, experiment, run_str, run_num
+        print('Unexpected xtc file name:', bname) 
+        print('Use default instrument, experiment, run_str, run_num: ', instrument, experiment, run_str, run_num)
         return instrument, experiment, run_str, run_num
         pass
 
@@ -516,7 +517,7 @@ def list_of_calib_files_with_run_range(list_of_files) :
         list_out.append(str_range.replace('9999','end'))
 
     for range in sorted(list_out) :
-        print range
+        print(range)
 
         #beg = begin_run_from_calib_fname(file)
         #if beg is None : continue
@@ -580,15 +581,15 @@ def get_text_content_of_calib_dir_for_detector(path, det='cspad', subdir='CsPad:
 #----------------------------------
 
 def print_parsed_path(path) :                       # Output for path:
-    print 'print_parsed_path(path): path:',         # path/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc
-    print 'exists(path)  =', os.path.exists(path)   # True 
-    print 'splitext(path)=', os.path.splitext(path) # ('/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00', '.xtc')
-    print 'basename(path)=', os.path.basename(path) # e167-r0015-s00-c00.xtc
-    print 'dirname(path) =', os.path.dirname(path)  # /reg/d/psdm/XCS/xcsi0112/xtc
-    print 'lexists(path) =', os.path.lexists(path)  # True  
-    print 'isfile(path)  =', os.path.isfile(path)   # True  
-    print 'isdir(path)   =', os.path.isdir(path)    # False 
-    print 'split(path)   =', os.path.split(path)    # ('/reg/d/psdm/XCS/xcsi0112/xtc', 'e167-r0015-s00-c00.xtc') 
+    print('print_parsed_path(path): path:', end=' ')         # path/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc
+    print('exists(path)  =', os.path.exists(path))   # True 
+    print('splitext(path)=', os.path.splitext(path)) # ('/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00', '.xtc')
+    print('basename(path)=', os.path.basename(path)) # e167-r0015-s00-c00.xtc
+    print('dirname(path) =', os.path.dirname(path))  # /reg/d/psdm/XCS/xcsi0112/xtc
+    print('lexists(path) =', os.path.lexists(path))  # True  
+    print('isfile(path)  =', os.path.isfile(path))   # True  
+    print('isdir(path)   =', os.path.isdir(path))    # False 
+    print('split(path)   =', os.path.split(path))    # ('/reg/d/psdm/XCS/xcsi0112/xtc', 'e167-r0015-s00-c00.xtc') 
 
 #----------------------------------
 
@@ -1002,13 +1003,13 @@ def check_token(do_print=False) :
     status = True if 'Expire' in token else False
     timestamp = parse_token(token) if status else ''
     msg = 'Your AFS token %s %s' % ({True:'IS valid until', False:'IS NOT valid'}[status], timestamp)
-    if do_print : print msg
+    if do_print : print(msg)
     return status, msg
 
 
 def get_afs_token(do_print=False) :
     output = getoutput('aklog')
-    if do_print : print str(output)
+    if do_print : print(str(output))
     return output
 
 
@@ -1037,14 +1038,14 @@ def ready_to_start(check_bits=0777, fatal_bits=0777) :
     """Check availability of services and credentuals marked by the check_bits"""
 
     if check_bits & 1 and not is_good_lustre_version() :
-        print 'WARNING: The host "%s" uses old lustre driver version. CHANGE HOST !!!' % get_hostname()
+        print('WARNING: The host "%s" uses old lustre driver version. CHANGE HOST !!!' % get_hostname())
         if fatal_bits & 1 : return False
-	else              : print 'Continue with old lustre driver...'
+	else              : print('Continue with old lustre driver...')
 
     if check_bits & 2 and not has_kerberos_ticket() :
-        print 'WARNING: Kerberos ticket is missing. To get one use command: kinit'
+        print('WARNING: Kerberos ticket is missing. To get one use command: kinit')
         if fatal_bits & 2 : return False
-	else              : print 'Continue without Kerberos ticket...'
+	else              : print('Continue without Kerberos ticket...')
 
     if check_bits & 4 : 
         status, msg = check_token(do_print=False)
@@ -1052,22 +1053,22 @@ def ready_to_start(check_bits=0777, fatal_bits=0777) :
             get_afs_token(do_print=True)
             status, msg = check_token(do_print=False)
             if not status :
-                print 'WARNING: AFS token is missing. To get one use commands: kinit; aklog'
+                print('WARNING: AFS token is missing. To get one use commands: kinit; aklog')
                 if fatal_bits & 4 : return False
-	        else              : print 'Continue without AFS token...'
+	        else              : print('Continue without AFS token...')
 
     if check_bits & 8 : 
         host = get_hostname()
         if not 'psana' in host :
-            print 'WARNING:  Your are on host %s which may not have access to data.' % host
-            print 'SOLUTION: Use one of "psana" hosts (ssh psana).'
+            print('WARNING:  Your are on host %s which may not have access to data.' % host)
+            print('SOLUTION: Use one of "psana" hosts (ssh psana).')
             return False
 
     if check_bits & 16 : 
         user = get_login() # get_enviroment(env='USER')
         if user in ('amoopr', 'cxiopr', 'diaopr', 'mecopr', 'mfxopr', 'mobopr', 'monopr') :
-            print 'WARNING:  Account "%s" may not have permission to write files in the calib directory.' % user
-            print 'SOLUTION: Run this application under account of user - member of experimental group.'
+            print('WARNING:  Account "%s" may not have permission to write files in the calib directory.' % user)
+            print('SOLUTION: Run this application under account of user - member of experimental group.')
             return False
 
     return True
@@ -1104,11 +1105,11 @@ def text_sataus_of_lsf_hosts(farm='psnehfarm'):
 def msg_and_status_of_lsf(farm='psnehfarm', print_bits=0):
     """Checks the LSF status for requested farm"""
 
-    if print_bits & 1 : print 'farm =', farm
+    if print_bits & 1 : print('farm =', farm)
 
     cmd, output = text_sataus_of_lsf_hosts(farm)
 
-    if print_bits & 2 : print 'list_of_hosts:\n', output
+    if print_bits & 2 : print('list_of_hosts:\n', output)
     lines = output.split('\n')
 
        #HOST_NAME          STATUS       JL/U    MAX  NJOBS    RUN  SSUSP  USUSP    RSV 
@@ -1132,7 +1133,7 @@ def msg_and_status_of_lsf(farm='psnehfarm', print_bits=0):
     status = True if count_ok > 0 else False
 
     msg = 'Number of nodes:%d, ok:%d, closed:%d, unavail:%d, status:%s' %(count_nodes, count_ok, count_closed, count_unavail, status)
-    if print_bits & 4 : print msg
+    if print_bits & 4 : print(msg)
 
     txt = 'Command: %s\n%s\n%s' % (cmd, output, msg)
     return txt, status
@@ -1204,16 +1205,16 @@ def is_good_lustre_version() :
 if __name__ == "__main__" :
     import sys
 
-    print 'Time (sec) :', int( get_time_sec() )
+    print('Time (sec) :', int( get_time_sec() ))
 
-    print 'Time local :', get_current_local_time_tuple()
-    print 'Time (GMT) :', get_current_gm_time_tuple()
+    print('Time local :', get_current_local_time_tuple())
+    print('Time (GMT) :', get_current_gm_time_tuple())
 
-    print 'Time local :', get_current_local_time_stamp()
-    print 'Time (GMT) :', get_current_gm_time_stamp()
+    print('Time local :', get_current_local_time_stamp())
+    print('Time (GMT) :', get_current_gm_time_stamp())
 
     pwd = get_pwd()
-    print 'pwd =', pwd
+    print('pwd =', pwd)
     #print_all_files_in_dir(pwd)
 
     #command = 'ls -l'
@@ -1261,12 +1262,12 @@ if __name__ == "__main__" :
     #queue='psfehq' # psnehq, psfehq, psnehprioq, psfehprioq, psanaq
     #print 'LSF status: \n%s \nqueue:%s, status:%s' % (output, queue, status)
 
-    print 'CalibManager package revision: "%s"' % get_pkg_version()
+    print('CalibManager package revision: "%s"' % get_pkg_version())
 
     from FileNameManager import fnm
     #fname = fnm.log_file_cpo()
     fname = '/reg/g/psdm/logs/calibman/2016/09/2016-00-00-00:00:00-log-dubrovin-12345.txt'
-    print 'create directry and save file %s' % fname
+    print('create directry and save file %s' % fname)
     create_path(fname, depth=5)
      
     sys.exit("End of test")

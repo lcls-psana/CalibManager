@@ -21,6 +21,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from SVN --
@@ -94,11 +95,11 @@ class PackageVersions :
         try :
             #self.subproc_submit(cmd.split())
             output = getoutput(cmd)
-            if self.print_bits & 4 : print 'delete_old_tmp_files(...):\n', output
+            if self.print_bits & 4 : print('delete_old_tmp_files(...):\n', output)
             #stream = os.popen(cmd)
             #print stream.read()
         except :
-            if self.print_bits & 4 : print 'delete_old_tmp_files(...):\nSome problem with cleanup tmp files "%s"' % cmd
+            if self.print_bits & 4 : print('delete_old_tmp_files(...):\nSome problem with cleanup tmp files "%s"' % cmd)
 
 
     def make_logfiles_in_background_mode(self) :
@@ -112,7 +113,7 @@ class PackageVersions :
 
     def print_list_of_packages(self) :
         for pkg, fname in self.dict_pkg_fname.iteritems() :
-            print pkg, fname
+            print(pkg, fname)
 
 
     def get_text_from_log_for_pkg(self, pkg) :
@@ -121,7 +122,7 @@ class PackageVersions :
 
 
     def print_log_for_pkg(self, pkg) :
-        print self.get_text_from_log_for_pkg(pkg)
+        print(self.get_text_from_log_for_pkg(pkg))
 
 
     def get_revision_str(self, props) :
@@ -215,7 +216,7 @@ class PackageVersions :
 
 def test_packege_version(test_num):
 
-    print 'Test: %d' % test_num
+    print('Test: %d' % test_num)
 
     if not ready_to_start(check_bits=02, fatal_bits=02) : #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
         sys.exit('Not ready to start aplication yet...')
@@ -235,34 +236,34 @@ def test_packege_version(test_num):
 
     elif test_num == 2 :
         pkg = 'CalibManager'
-        print 'Package %s, version: %s' % (pkg, pv.get_pkg_version(pkg))
+        print('Package %s, version: %s' % (pkg, pv.get_pkg_version(pkg)))
         
     elif test_num == 3 :
-        print pv.text_version_for_all_packages()
+        print(pv.text_version_for_all_packages())
 
     elif test_num == 4 :
         pkg = 'CalibManager'
         rev = pv.get_pkg_revision(pkg)
         tag = pv.get_tag_for_rev(pkg,rev)
-        print 'Package %s, revision: %s, tag: %s' % (pkg, rev, tag)
+        print('Package %s, revision: %s, tag: %s' % (pkg, rev, tag))
 
     elif test_num == 5 :
         pkg = 'pdscalibdata'
         rev = pv.get_pkg_revision(pkg)
         tag = pv.get_tag_for_rev(pkg,rev)
-        print 'Package %s, revision: %s, tag: %s' % (pkg, rev, tag)
+        print('Package %s, revision: %s, tag: %s' % (pkg, rev, tag))
         
     elif test_num == 6 :
         pkg = 'CalibManager'
-        print 'Package %s latest tag: %s' % (pkg, pv.get_pkg_tag(pkg))
+        print('Package %s latest tag: %s' % (pkg, pv.get_pkg_tag(pkg)))
 
     elif test_num == 7 :
         txt = pv.text_rev_and_tag_for_all_packages()
-        print txt
+        print(txt)
 
 
     msg = 'Consumed time to test method = %7.3f sec' % (time()-t0_sec)
-    print msg
+    print(msg)
 
 #------------------------------
 
@@ -280,7 +281,7 @@ if __name__ == "__main__" :
         msg += '\n    6 - get_pkg_tag("CalibManager")'
         msg += '\n    7 - text_rev_and_tag_for_all_packages()'
         msg += '\n   -h - this help'
-        print msg
+        print(msg)
 
     else :
 

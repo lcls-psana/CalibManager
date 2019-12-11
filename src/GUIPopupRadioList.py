@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """Popup GUI"""
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -161,10 +162,10 @@ if __name__ == "__main__" :
     w = GUIPopupRadioList (None, dict_of_pars, win_title='Radio buttons', do_confirm=False)
     #w.show()
     resp=w.exec_()
-    print 'dict=',str(dict_of_pars)
-    print 'resp=',resp
-    print 'QtGui.QDialog.Rejected: ', QtGui.QDialog.Rejected
-    print 'QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted
+    print('dict=',str(dict_of_pars))
+    print('resp=',resp)
+    print('QtGui.QDialog.Rejected: ', QtGui.QDialog.Rejected)
+    print('QtGui.QDialog.Accepted: ', QtGui.QDialog.Accepted)
     #app.exec_()
 
 #------------------------------

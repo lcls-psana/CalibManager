@@ -1,6 +1,7 @@
 #!@PYTHON@
 #####!/usr/bin/env python
 #------------------------------
+from __future__ import print_function
 
 import os
 import sys
@@ -14,12 +15,12 @@ LOG_FILE = '/reg/g/psdm/logs/calibman/#YYYY-MM/calibfile.txt'
 
 def print_pars(args, opts, defs) :
     """Prints command and input parameters"""
-    print 'Command:', ' '.join(sys.argv)+\
+    print('Command:', ' '.join(sys.argv)+\
           '\nlaunches %s' % sys.argv[0].split('/')[-1] +\
           '\nwith argument %s and optional parameters:\n' % str(args)+\
-          '<key>      <value>          <default>'
+          '<key>      <value>          <default>')
     for k,v in opts.items() :
-        print '%s %s %s' % (k.ljust(10), str(v).ljust(16), str(defs[k]).ljust(16))
+        print('%s %s %s' % (k.ljust(10), str(v).ljust(16), str(defs[k]).ljust(16)))
 
 #------------------------------
 
@@ -58,12 +59,12 @@ def calibfile() :
     path     = '%s/%s/%s' % (ctypedir, ctype, cfname)
 
     if verbos :
-        print 'dettype  =  %s' % dettype
-        print 'calibgrp =  %s' % calibgrp
-        print 'clbdir   =  %s' % clbdir
-        print 'ctypedir =  %s' % ctypedir
-        print 'cfname   =  %s' % cfname
-        print 'path     =  %s' % path
+        print('dettype  =  %s' % dettype)
+        print('calibgrp =  %s' % calibgrp)
+        print('clbdir   =  %s' % clbdir)
+        print('ctypedir =  %s' % ctypedir)
+        print('cfname   =  %s' % cfname)
+        print('path     =  %s' % path)
 
     mode = pargs[0]
 
@@ -71,20 +72,20 @@ def calibfile() :
         gu.deploy_file(fname, ctypedir, ctype, cfname, lfname, verbos)
 
     elif mode == 'path' :
-        print 'Path: %s' % path
+        print('Path: %s' % path)
 
     elif mode == 'get' :
-        print 'Mode "%s"' % mode
+        print('Mode "%s"' % mode)
 	if os.path.exists(path) :
 	    cmd = 'cp %s %s' % (path, fname)
-            if verbos : print 'cmd: %s' % cmd
+            if verbos : print('cmd: %s' % cmd)
 	    os.system(cmd)
-	    print 'Saved file %s' % fname
+	    print('Saved file %s' % fname)
         else :
-            print 'Path "%s" DOES NOT EXIST' % path
+            print('Path "%s" DOES NOT EXIST' % path)
 
     else :
-        print 'Mode "%s" is UNKNOWN' % mode
+        print('Mode "%s" is UNKNOWN' % mode)
  
     #tstamp = gu.str_tstamp('%Y-%m-%dT%H:%M:%S', time())
     #logpref = rpu.log_batch_prefix(exp, run, procname)

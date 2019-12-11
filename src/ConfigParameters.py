@@ -4,6 +4,7 @@
    Created: 2017-02-18
    Author : Mikhail Dubrovin
 """
+from __future__ import print_function
 #--------------------------------
 
 import os
@@ -202,7 +203,7 @@ class ConfigParameters :
     def printListOfPars(self, name) :
         list_of_pars = self.getListOfPars(name)
 
-        print 'Parameters for list:', name
+        print('Parameters for list:', name)
         for par in list_of_pars :
             par.printParameter()
 

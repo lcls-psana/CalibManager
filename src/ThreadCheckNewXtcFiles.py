@@ -9,6 +9,7 @@
 #------------------------------------------------------------------------
 
 """ThreadCheckNewXtcFiles"""
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from SVN --
@@ -49,13 +50,13 @@ class ThreadCheckNewXtcFiles (QtCore.QThread) :
 
 
     def testConnection(self, text) :
-        print 'ThreadCheckNewXtcFiles: Signal is recieved ' + str(text)
+        print('ThreadCheckNewXtcFiles: Signal is recieved ' + str(text))
 
 
     def run( self ) :
         while True :
             self.counter += 1
-            if self.print_bits & 2 : print 'ThreadCheckNewXtcFiles id: %f, counter: %d' % (self.thread_id, self.counter)
+            if self.print_bits & 2 : print('ThreadCheckNewXtcFiles id: %f, counter: %d' % (self.thread_id, self.counter))
             if self.newXtcFileIsAvailable() :
                 self.emitSignalNewXtc()
             self.sleep(self.dt_sec)
@@ -63,8 +64,8 @@ class ThreadCheckNewXtcFiles (QtCore.QThread) :
 
     def newXtcFileIsAvailable( self ) :
         list_of_runs = fnm.get_list_of_xtc_run_nums()
-        if self.print_bits & 4 : print 'list_of_runs    : %s' % list_of_runs
-        if self.print_bits & 8 : print 'list_of_runs_old: %s' % self.list_of_runs_old
+        if self.print_bits & 4 : print('list_of_runs    : %s' % list_of_runs)
+        if self.print_bits & 8 : print('list_of_runs_old: %s' % self.list_of_runs_old)
 
         # If the experiment name has changed, it does not mean that new xtc is availble...
         if cp.exp_name.value() != self.exp_name :
@@ -86,6 +87,6 @@ class ThreadCheckNewXtcFiles (QtCore.QThread) :
     def emitSignalNewXtc( self ) :
         msg = 'thread_id:%f counter:%d last_run:%d' %(self.thread_id, self.counter, self.list_of_runs_old[-1])       
         self.emit( QtCore.SIGNAL('update(QString)'), msg )
-        if self.print_bits & 1 : print 'New xtc file is available, msg: %s' % msg
+        if self.print_bits & 1 : print('New xtc file is available, msg: %s' % msg)
 
 #---------------------

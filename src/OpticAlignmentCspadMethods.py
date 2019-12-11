@@ -14,6 +14,7 @@
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 __version__ = "$Revision$"
@@ -58,7 +59,7 @@ class OpticAlignmentCspadMethods :
 
     def evaluate_deviation_from_flatness(self) :
 
-        if self.print_bits & 256 : print '\nevaluate_deviation_from_flatness():'
+        if self.print_bits & 256 : print('\nevaluate_deviation_from_flatness():')
 
         ix = 1
         iy = 2
@@ -99,7 +100,7 @@ class OpticAlignmentCspadMethods :
 
                #print '  vort_norm=', vort_norm, '  norm =', norm, '  dev =', dev
                #print '  vort_norm=', vort_norm, '  norm =', norm, '  dev =', dev
-               if self.print_bits & 256 : print 'quad:%1d, segm:%2d,  dz3[um]: %8.3f' % (quad, segm, self.arr_dev_um[quad,segm])
+               if self.print_bits & 256 : print('quad:%1d, segm:%2d,  dz3[um]: %8.3f' % (quad, segm, self.arr_dev_um[quad,segm]))
 
 
 #----------------------------------
@@ -117,7 +118,7 @@ class OpticAlignmentCspadMethods :
 
     def evaluate_center_coordinates(self) :
 
-        if self.print_bits & 256 : print '\nevaluate_center_coordinates():'
+        if self.print_bits & 256 : print('\nevaluate_center_coordinates():')
 
         nquads = self.nquads
         nsegms = self.nsegms
@@ -153,7 +154,7 @@ class OpticAlignmentCspadMethods :
                            + self.arr[quad,icor3,iz]
                            + self.arr[quad,icor4,iz] ) 
 
-                if self.print_bits & 256 : print 'quad:%1d, segm:%2d,  X:%7d  Y:%7d, Z:%3d' % (quad, segm, X, Y, Z)
+                if self.print_bits & 256 : print('quad:%1d, segm:%2d,  X:%7d  Y:%7d, Z:%3d' % (quad, segm, X, Y, Z))
 
                 self.arrXmu[quad][segm] = X
                 self.arrYmu[quad][segm] = Y
@@ -192,7 +193,7 @@ class OpticAlignmentCspadMethods :
 
     def evaluate_length_width_angle(self, n90=0) :
 
-        if self.print_bits & 256 : print '\nevaluate_length_width_angle(n90=%d):' % n90
+        if self.print_bits & 256 : print('\nevaluate_length_width_angle(n90=%d):' % n90)
 
         nquads = self.nquads
         nsegms = self.nsegms
@@ -421,15 +422,15 @@ class OpticAlignmentCspadMethods :
 
     def create_directory(self, dir) : 
         if os.path.exists(dir) :
-            if self.print_bits & 1 : print 'Directory exists: %s' % dir
+            if self.print_bits & 1 : print('Directory exists: %s' % dir)
         else :
             os.makedirs(dir)
-            if self.print_bits & 1 : print 'Directory created: %s' % dir 
+            if self.print_bits & 1 : print('Directory created: %s' % dir) 
 
 #----------------------------------
 
     def save_text_file(self, fname, text) :
-        if self.print_bits & 256 : print 'Save text file: %s' % fname
+        if self.print_bits & 256 : print('Save text file: %s' % fname)
         f=open(fname,'w')
         f.write( text )
         f.close() 
@@ -441,7 +442,7 @@ class OpticAlignmentCspadMethods :
 #----------------------------------
 
     def drawOpticalAlignmentFile(self): 
-        print 'drawOpticalAlignmentFile()'
+        print('drawOpticalAlignmentFile()')
 
         sizex, sizey = shape = (100,100)
         #arr   = np.arange(sizex*sizey)
@@ -464,13 +465,13 @@ class OpticAlignmentCspadMethods :
 
         plt.show()
         fig.savefig(self.fname_plot_det)
-        print 'Image saved in file:', self.fname_plot_det
+        print('Image saved in file:', self.fname_plot_det)
 
 
 #----------------------------------
 
     def drawOneQuad(self,quad,axes):
-        print 'drawOneQuad(' + str(quad) + ')'
+        print('drawOneQuad(' + str(quad) + ')')
 
         line_point = 0
         self.xlp = [0,0,0,0,0]
@@ -508,7 +509,7 @@ class OpticAlignmentCspadMethods :
 #----------------------------------
 
     def drawQuadsSeparately(self): 
-        print 'drawQuadsSeparately()'
+        print('drawQuadsSeparately()')
 
         sizex, sizey = shape = (100,100)
         fig   = plt.figure(figsize=(10,10), dpi=100, facecolor='w',edgecolor='w',frameon=True)
@@ -523,7 +524,7 @@ class OpticAlignmentCspadMethods :
 
         plt.show()
         fig.savefig(self.fname_plot_quads)
-        print 'Image saved in file:', self.fname_plot_quads
+        print('Image saved in file:', self.fname_plot_quads)
 
 
 #----------------------------------
@@ -594,8 +595,8 @@ def input_option_parser(dir_def, fname_def) :
 
     (opts, args) = parser.parse_args()
 
-    print 'opts:\n', opts
-    print 'args:\n', args
+    print('opts:\n', opts)
+    print('args:\n', args)
 
     return (opts, args)
 

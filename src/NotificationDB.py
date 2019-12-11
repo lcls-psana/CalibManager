@@ -17,6 +17,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from SVN --
@@ -131,7 +132,7 @@ class NotificationDB :
 
 
     def msg_about_permission(self) :
-        print 'Sorry, this operation is not permitted!'
+        print('Sorry, this operation is not permitted!')
 
 
     def create_table(self) :
@@ -164,45 +165,45 @@ class NotificationDB :
 
 
     def print_pars(self) :
-        print 'server = %s' % self.server
-        print 'table  = %s' % self.table
+        print('server = %s' % self.server)
+        print('table  = %s' % self.table)
 
 #------------------------------
 
 def test_notification_db(ndb, test_num):
 
-    print 'Test: %d' % test_num
+    print('Test: %d' % test_num)
 
     if test_num == 0 :
-        print 'Create table for:'
+        print('Create table for:')
         ndb.print_pars()
-        print 'cmd_create_table(): ', ndb.cmd_create_table()
+        print('cmd_create_table(): ', ndb.cmd_create_table())
         ndb.create_table()
 
     elif test_num == 1 :
-        print 'DB content:'
+        print('DB content:')
         list_of_recs = ndb.get_list_of_recs_for_query(ndb.cmd_fetch())
-        print 'Resp:\n',
-        for rec in list_of_recs : print rec
+        print('Resp:\n', end=' ')
+        for rec in list_of_recs : print(rec)
 
     elif test_num == 2 :
-        print 'insert/submit a record in the DB'
+        print('insert/submit a record in the DB')
         ndb.insert_record(mode='enabled')
         #ndb.insert_record() # default: mode='self-disabled'
 
     elif test_num == 3 :
-        print 'Keys:  %s' % ndb.get_list_of_keys()
+        print('Keys:  %s' % ndb.get_list_of_keys())
 
     elif test_num == 4 :
-        print 'Values:'
-        for vals in ndb.get_list_of_values() : print vals
+        print('Values:')
+        for vals in ndb.get_list_of_values() : print(vals)
 
     elif test_num == 5 :
-        print 'DB parameters:'
+        print('DB parameters:')
         ndb.print_pars()
 
     elif test_num == 9 :
-        print 'Delete table:'
+        print('Delete table:')
         ndb.print_pars()
         ndb.delete_table()
 
@@ -219,7 +220,7 @@ def main_test(ndb):
         msg += '\n    4 - print values'        
         msg += '\n    5 - print DB parameters'        
         msg += '\n    9 - delete table ...'        
-        print msg
+        print(msg)
 
     else :
 

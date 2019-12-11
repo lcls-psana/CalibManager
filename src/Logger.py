@@ -49,6 +49,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 __version__ = "$Revision$"
@@ -137,7 +138,7 @@ class Logger :
             #print str_msg
 
         if self.print_bits & (1<<index) :
-            print self._stringForRecord(rec)
+            print(self._stringForRecord(rec))
 
 
     def _recordIsSelected(self, rec):
@@ -250,8 +251,8 @@ def test_Logger() :
     #logger.saveLogInFile()
     #logger.saveLogTotalInFile()
 
-    print 'getLogContent():\n',      logger.getLogContent()
-    print 'getLogContentTotal():\n', logger.getLogContentTotal()
+    print('getLogContent():\n',      logger.getLogContent())
+    print('getLogContentTotal():\n', logger.getLogContentTotal())
 
 #-----------------------------
 

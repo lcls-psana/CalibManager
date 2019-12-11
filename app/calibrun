@@ -12,6 +12,7 @@ part of it, please give an appropriate acknowledgement.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from CVS --

@@ -12,6 +12,7 @@ $Revision$
 
 @author Mikhai S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 # Properties substituted by SVN 
@@ -78,9 +79,9 @@ if __name__ == "__main__" :
     props = spcm
     pview = SvnPropsViewer(props)
     
-    print 'pview.get_pkg_revision()       :', pview.get_pkg_revision()
-    print 'pview.get_pkg_name()           :', pview.get_pkg_name()
-    print 'pview.get_prop_value(props.id) :', pview.get_prop_value(props.id)
+    print('pview.get_pkg_revision()       :', pview.get_pkg_revision())
+    print('pview.get_pkg_name()           :', pview.get_pkg_name())
+    print('pview.get_prop_value(props.id) :', pview.get_prop_value(props.id))
 
     sys.exit ( 'End of test' )
 

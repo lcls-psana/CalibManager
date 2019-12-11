@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """GUI for generic directory tree"""
+from __future__ import print_function
 
 #--------------------------------
 __version__ = "$Revision: 11469 $"
@@ -181,7 +182,7 @@ class GUIDirTree(QtGui.QWidget):
     def itemChanged(self, item):
         state = ['UNCHECKED', 'TRISTATE', 'CHECKED'][item.checkState()]
         msg = 'Item %s, is at state %s' % ( self.getFullNameFromItem(item),  state)
-        print msg
+        print(msg)
         #logger.info(msg, __name__)       
         #print 'col:', self.model.columnCount(self.model.indexFromItem(item))
         #print 'row:', self.model.rowCount(self.model.indexFromItem(item))
@@ -204,7 +205,7 @@ class GUIDirTree(QtGui.QWidget):
 
 
     def itemSelected(self, selected, deselected):
-        print  'Item selected: %s' % self.getFullNameFromIndex(selected)
+        print('Item selected: %s' % self.getFullNameFromIndex(selected))
 
         pass
         #msg1 = 'Item selected: %s' % self.getFullNameFromIndex(selected)

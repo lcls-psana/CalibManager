@@ -7,6 +7,7 @@
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 #------------------------------
 
 import os
@@ -54,7 +55,7 @@ class OpticalMetrologyCheck() :
         self.vrb = popts.vrb
         self.plt = popts.plt
         
-        if self.vrb & DEBUG: print 'In %s' % sys._getframe().f_code.co_name
+        if self.vrb & DEBUG: print('In %s' % sys._getframe().f_code.co_name)
         if self.vrb & INFO : print_command_line()
         if self.vrb & INFO : print_command_line_parameters(self.parser)
 
@@ -63,7 +64,7 @@ class OpticalMetrologyCheck() :
     def read_optical_metrology_file(self) : 
         """Reads the metrology.txt file with original optical measurements
         """
-        if self.vrb & INFO : print '%s\nIn %s: %s' % (60*'-', sys._getframe().f_code.co_name, self.ifname)
+        if self.vrb & INFO : print('%s\nIn %s: %s' % (60*'-', sys._getframe().f_code.co_name, self.ifname))
 
                                  # quad 0:3
                                    # point 1:32
@@ -84,11 +85,11 @@ class OpticalMetrologyCheck() :
             line = linef.strip('\n').strip()
 
             if not line : 
-                if self.vrb & INFO : print 'EMPTY LINE IS IGNORED'  
+                if self.vrb & INFO : print('EMPTY LINE IS IGNORED')  
                 continue   # discard empty strings
 
             if line[0] == '#' : # comment
-                if self.vrb & INFO : print 'COMMENT IS IGNORED : "%s"' % line  
+                if self.vrb & INFO : print('COMMENT IS IGNORED : "%s"' % line)  
                 continue
 
             list_of_fields = line.split()
@@ -96,25 +97,25 @@ class OpticalMetrologyCheck() :
 
             if field0.lower() == 'quad' : # Treat quad header lines
                 quad = int(list_of_fields[1])
-                if self.vrb & INFO : print 'IS RECOGNIZED QUAD: %d' % quad  
+                if self.vrb & INFO : print('IS RECOGNIZED QUAD: %d' % quad)  
                 continue
 
             if field0.lower() in ('point', 'sensor') : # Treat the title lines
-                if self.vrb & INFO : print 'TITLE LINE:     %s' % line  
+                if self.vrb & INFO : print('TITLE LINE:     %s' % line)  
                 continue
 
             if not field0.lstrip("-+").isdigit() :  # is 1-st field digital?
-                if self.vrb & INFO : print 'RECORD IS IGNORED due to unexpected format of the line: %s' % line 
+                if self.vrb & INFO : print('RECORD IS IGNORED due to unexpected format of the line: %s' % line) 
                 continue
             
             if len(list_of_fields) != 4 : # Ignore lines with non-expected number of fields
-                if self.vrb & INFO : print 'len(list_of_fields) =', len(list_of_fields),
-                if self.vrb & INFO : print 'RECORD IS IGNORED due to unexpected format of the line: %s' % line
+                if self.vrb & INFO : print('len(list_of_fields) =', len(list_of_fields), end=' ')
+                if self.vrb & INFO : print('RECORD IS IGNORED due to unexpected format of the line: %s' % line)
                 continue              
 
             n, x, y, z = [int(v) for v in list_of_fields]
             
-            if self.vrb & INFO : print 'ACCEPT RECORD: %3d %7d %7d %7d ' % (n, x, y, z)
+            if self.vrb & INFO : print('ACCEPT RECORD: %3d %7d %7d %7d ' % (n, x, y, z))
 
             self.arr_opt.append((n, x, y, z, quad))
 
@@ -135,7 +136,7 @@ class OpticalMetrologyCheck() :
            Input : self.arr
            Output: self.arr_segs
         """
-        if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+        if self.vrb & DEBUG : print('In %s' % (sys._getframe().f_code.co_name))
 
         npoints = self.arr.shape[0]
         nsegs = int(npoints/4)
@@ -148,23 +149,23 @@ class OpticalMetrologyCheck() :
             #print 'XXX nseg: %d  npoi: %d' % (nseg, npoi)
             self.arr_segs[nseg, npoi,:] = self.arr[i,:]
 
-        if self.vrb & DEBUG : print self.arr_segs
+        if self.vrb & DEBUG : print(self.arr_segs)
 
 #------------------------------
 
     def check_points_numeration(self) :
-        if self.vrb & INFO : print '%s\n%s' % (60*'-', sys._getframe().f_code.co_name)
+        if self.vrb & INFO : print('%s\n%s' % (60*'-', sys._getframe().f_code.co_name))
 
-        if is_correct_numeration(self.arr_segs[:,:,0].flatten()) : print 'OK - points in table are sequential' 
-        else : print 'WARNING - numeration of points in table is NOT sequential or started from non-x4 number'
+        if is_correct_numeration(self.arr_segs[:,:,0].flatten()) : print('OK - points in table are sequential') 
+        else : print('WARNING - numeration of points in table is NOT sequential or started from non-x4 number')
         
         nsegs = self.arr_segs.shape[0]
         for nseg in range(nsegs) :
             pnums = self.arr_segs[nseg,:,0]
-            print 'Measured segment %2d  point numbers: (%3d %3d %3d %3d)'%\
-                   (nseg, pnums[0], pnums[1], pnums[2], pnums[3]), 
-            if is_correct_numeration(pnums) : print 'OK - points in segment are sequential' 
-            else : print 'WARNING - numeration of points in segment is NOT sequential or started from non-x4 number'
+            print('Measured segment %2d  point numbers: (%3d %3d %3d %3d)'%\
+                   (nseg, pnums[0], pnums[1], pnums[2], pnums[3]), end=' ') 
+            if is_correct_numeration(pnums) : print('OK - points in segment are sequential') 
+            else : print('WARNING - numeration of points in segment is NOT sequential or started from non-x4 number')
 
 #------------------------------
 
@@ -176,18 +177,18 @@ class OpticalMetrologyCheck() :
             self.evaluate_length_width_angle(arr1seg)
             self.evaluate_deviation_from_flatness(arr1seg)
             if self.vrb & DEBUG : 
-                print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
+                print('segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um))
 
 #------------------------------
 
     def print_quality_check_tables(self) :
-        if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+        if self.vrb & DEBUG : print('In %s' % (sys._getframe().f_code.co_name))
 
         txt = self.txt_qc_table_xy()
-        print 'X-Y quality check for optical metrology measurements \n%s' % txt
+        print('X-Y quality check for optical metrology measurements \n%s' % txt)
 
         txt = self.txt_qc_table_z()
-        print  'Z quality check for optical metrology measurements \n%s' % txt
+        print('Z quality check for optical metrology measurements \n%s' % txt)
 
 
 #------------------------------
@@ -363,7 +364,7 @@ class OpticalMetrologyCheck() :
            Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
            Output: text of the quality check table
         """
-        if self.vrb & DEBUG : print '%s' % (sys._getframe().f_code.co_name)
+        if self.vrb & DEBUG : print('%s' % (sys._getframe().f_code.co_name))
 
         sepline = '%s\n' % (124*'-') 
         txt = sepline
@@ -394,7 +395,7 @@ class OpticalMetrologyCheck() :
            Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
            Output: text of the quality check table
         """
-        if self.vrb & DEBUG : print '%s' % (sys._getframe().f_code.co_name)
+        if self.vrb & DEBUG : print('%s' % (sys._getframe().f_code.co_name))
 
         sepline = '%s\n' % (137*'-') 
         txt = sepline
@@ -455,13 +456,13 @@ class OpticalMetrologyCheck() :
         import matplotlib.pyplot as plt;   global plt
         import matplotlib.lines  as lines; global lines
 
-        if self.vrb & DEBUG : print 'In %s' % (sys._getframe().f_code.co_name)
+        if self.vrb & DEBUG : print('In %s' % (sys._getframe().f_code.co_name))
 
         cmin, cmax = self.arr[:,1].min(), self.arr[:,1].max()
         rmin, rmax = self.arr[:,2].min(), self.arr[:,2].max()
 
-        if self.vrb & DEBUG : print 'rmin, rmax =', rmin, rmax
-        if self.vrb & DEBUG : print 'cmin, cmax =', cmin, cmax
+        if self.vrb & DEBUG : print('rmin, rmax =', rmin, rmax)
+        if self.vrb & DEBUG : print('cmin, cmax =', cmin, cmax)
 
         fig = plt.figure(figsize=(8,8), dpi=100, facecolor='w',edgecolor='w',frameon=True)
         axes = fig.add_axes((0.12, 0.08, 0.85, 0.88))        
@@ -479,7 +480,7 @@ class OpticalMetrologyCheck() :
         plt.show()
 
         fig.savefig(self.ofplot)
-        print 'Image saved in file: %s' % self.ofplot
+        print('Image saved in file: %s' % self.ofplot)
 
 #------------------------------
 
@@ -517,7 +518,7 @@ class OpticalMetrologyCheck() :
            Input : arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
            Output: text of the quality check table
         """
-        if self.vrb & DEBUG : print '%s' % (sys._getframe().f_code.co_name)
+        if self.vrb & DEBUG : print('%s' % (sys._getframe().f_code.co_name))
 
         self.lst_ds_um = []
         self.lst_dl_um = []
@@ -694,7 +695,7 @@ def hist1d(arr, bins=None, amp_range=None, weights=None, color=None, show_stat=T
 
 def save(fname='img.png', do_save=True, pbits=0377) :
     if not do_save : return
-    if pbits & 1 : print 'Save plot in file: %s' % fname 
+    if pbits & 1 : print('Save plot in file: %s' % fname) 
     plt.savefig(fname)
 
 #------------------------------
@@ -732,7 +733,7 @@ def is_correct_numeration(mylst) :
 
 def print_command_line(cmt='Command:\n') :
     """Prints command line"""
-    print cmt, ' '.join(sys.argv)
+    print(cmt, ' '.join(sys.argv))
 
 #------------------------------
 
@@ -742,11 +743,11 @@ def print_command_line_parameters(parser) :
     args = pargs                             # list of positional arguments
     opts = vars(popts)                       # dict of options
     defs = vars(parser.get_default_values()) # dict of default options
-    print 'Command:\n ', ' '.join(sys.argv)+\
+    print('Command:\n ', ' '.join(sys.argv)+\
           '\nArgument list: %s\nOptional parameters:\n' % str(args)+\
-          '  <key>      <value>              <default>'
+          '  <key>      <value>              <default>')
     for k,v in opts.items() :
-        print '  %s %s %s' % (k.ljust(10), str(v).ljust(20), str(defs[k]).ljust(20))
+        print('  %s %s %s' % (k.ljust(10), str(v).ljust(20), str(defs[k]).ljust(20)))
 
 #------------------------------
 

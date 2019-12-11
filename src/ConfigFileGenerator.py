@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
@@ -131,7 +132,7 @@ class ConfigFileGenerator :
             list_path_peds_rms    = gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_srcs)
             list_path_hotpix_mask = gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_srcs)
 
-            if self.do_test_print : print 'Detector selected: %10s' % (det_name), '  sources:', lst_srcs
+            if self.do_test_print : print('Detector selected: %10s' % (det_name), '  sources:', lst_srcs)
 
             for (self.source, self.fname_ave, self.fname_rms, self.fname_mask) in zip(lst_srcs, list_path_peds_ave, list_path_peds_rms, list_path_hotpix_mask) :
                 self.ind += 1 
@@ -488,7 +489,7 @@ class ConfigFileGenerator :
     def save_cfg_file (self, text, path) :
         msg = 'Save configuration file: %s' % path
         logger.info(msg,__name__)
-        if self.do_test_print : print msg
+        if self.do_test_print : print(msg)
         gu.save_textfile(text, path)
 
 #-----------------------------
@@ -508,10 +509,10 @@ if __name__ == "__main__" :
 
     cfg_test = ConfigFileGenerator (do_test=True)
 
-    print '\nTest make_psana_cfg_file_for_peds_scan()'
+    print('\nTest make_psana_cfg_file_for_peds_scan()')
     cfg_test.make_psana_cfg_file_for_peds_scan()
 
-    print '\nTest make_psana_cfg_file_for_peds_aver()'
+    print('\nTest make_psana_cfg_file_for_peds_aver()')
     cfg_test.make_psana_cfg_file_for_peds_aver()
 
     sys.exit ( 'End of test for ConfigFileGenerator' )

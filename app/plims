@@ -12,6 +12,7 @@ part of it, please give an appropriate acknowledgement.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from CVS --
@@ -90,9 +91,9 @@ if __name__ == "__main__" :
     if args != [] :
         if args[0] is not '' : pars['ifname'] = args[0]
 
-    print 'Start PlotImgSpe with input parameters:'
+    print('Start PlotImgSpe with input parameters:')
     for k,v in pars.items():
-	print '%16s : %s' % (k,v)
+	print('%16s : %s' % (k,v))
 
     app = QtGui.QApplication(sys.argv)
     w = PlotImgSpe(**pars)

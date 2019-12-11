@@ -5,6 +5,7 @@
    Created: 2017-06-08
    Author:  Mikhail Dubrovin
 """
+from __future__ import print_function
 #------------------------------
 
 import sys
@@ -48,7 +49,7 @@ class CompareGeometryFiles() :
         self.arr_centers1 = segment_center_coordinates(self.arr1)
         self.arr_centers2 = segment_center_coordinates(self.arr2)
 
-        if self.vrb : print 'arr_centers\n', self.arr_centers1
+        if self.vrb : print('arr_centers\n', self.arr_centers1)
 
 #------------------------------
 
@@ -71,10 +72,10 @@ class CompareGeometryFiles() :
         arr_c1 = self.arr_centers1 # shape = (nseg, 3(x,y,z))
         arr_c2 = self.arr_centers2
         self.diff_c = arr_c2 - arr_c1
-        if self.vrb : print 'center coordinate difference\n', self.diff_c
+        if self.vrb : print('center coordinate difference\n', self.diff_c)
 
         mdx, mdy, mdz = self.diff_c.mean(0)
-        print 'Mean (over segments) center coordinate offsets (um) dx=%.2f  dy=%.2f  dz=%.2f' % (mdx, mdy, mdz)
+        print('Mean (over segments) center coordinate offsets (um) dx=%.2f  dy=%.2f  dz=%.2f' % (mdx, mdy, mdz))
 
         xc1 = arr_c1[:,0]
         yc1 = arr_c1[:,1]
@@ -89,13 +90,13 @@ class CompareGeometryFiles() :
         dphic = phic2-phic1
 
         if self.vrb : 
-            print 'phic1 (deg):\n', phic1
-            print 'dphic (deg):\n', dphic
+            print('phic1 (deg):\n', phic1)
+            print('dphic (deg):\n', dphic)
 
         # radius-weighted mean value of the angle difference
         dphi_mean = -np.dot(rc1, dphic, out=None).sum() / rc1.sum()
 
-        print 'Radial-weighted mean of segment dphi (deg): %.3f' % dphi_mean
+        print('Radial-weighted mean of segment dphi (deg): %.3f' % dphi_mean)
 
         xc2rot, yc2rot = rotation(xc2, yc2, dphi_mean)
 
@@ -187,7 +188,7 @@ class CompareGeometryFiles() :
 
         fig.savefig(self.ofn)
 
-        print 'Image saved in file: %s' % self.ofn
+        print('Image saved in file: %s' % self.ofn)
 
 #------------------------------
 
@@ -297,7 +298,7 @@ def segment_center_coordinates_v1(arr1seg) :
 
 def print_command_line(cmt='Command:\n') :
     """Prints command line"""
-    print cmt, ' '.join(sys.argv)
+    print(cmt, ' '.join(sys.argv))
 
 #------------------------------
 

@@ -9,6 +9,7 @@
 #------------------------------------------------------------------------
 
 """ThreadWorker"""
+from __future__ import print_function
 
 #------------------------------
 #  Module's version from SVN --
@@ -46,13 +47,13 @@ class ThreadWorker (QtCore.QThread) :
 
 
     def testConnection(self, text) :
-        print 'ThreadWorker: Signal is recieved ' + str(text)
+        print('ThreadWorker: Signal is recieved ' + str(text))
 
 
     def run( self ) :
         while True :
             self.counter += 1
-            if self.print_bits & 2 : print '\nThreadWorker id, i:', self.thread_id, self.counter
+            if self.print_bits & 2 : print('\nThreadWorker id, i:', self.thread_id, self.counter)
             self.emitCheckStatusSignal()
             self.sleep(self.dt_sec)
             #time.sleep(1)
@@ -62,7 +63,7 @@ class ThreadWorker (QtCore.QThread) :
         msg = 'from work thread ' + str(self.thread_id) + '  check counter: ' + str(self.counter)
         self.emit( QtCore.SIGNAL('update(QString)'), msg)
 
-        if self.print_bits & 1 : print msg
+        if self.print_bits & 1 : print(msg)
 
         #self.emit( QtCore.SIGNAL('update(QString)'), \
         #           'from work thread ' + str(self.thread_id) +\

@@ -6,6 +6,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 Author: Mikhail Dubrovin
 """
+from __future__ import print_function
 #----------------------------
 __author__ = "Mikhail S. Dubrovin"
 #----------------------------
@@ -929,14 +930,14 @@ class ConfigParametersForApp(ConfigParameters) :
 #------------------------------
 
     def print_dict_of_det_data_types(self) :
-        print 'List of detector names and associated types:'
+        print('List of detector names and associated types:')
         for det, type in self.dict_of_det_data_types.items():
-            print '%10s : %s' % (det, type)
+            print('%10s : %s' % (det, type))
 
     def print_dict_of_det_calib_types(self) :
-        print 'List of detector names and associated calibration types:'
+        print('List of detector names and associated calibration types:')
         for det, type in self.dict_of_det_calib_types.items():
-            print '%10s : %s' % (det, type)
+            print('%10s : %s' % (det, type))
 
 #------------------------------
 
