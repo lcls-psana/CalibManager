@@ -63,11 +63,11 @@ def ws_configure_auth(ws_url, ws_login_user, ws_login_password):
 
         opener.add_handler(urllib2.HTTPBasicAuthHandler(password_mgr))
 
-    except urllib2.URLError, reason:
+    except urllib2.URLError as reason:
         print("ERROR: failed to set up Web Service authentication context due to: ", reason)
         sys.exit(1)
 
-    except urllib2.HTTPError, code:
+    except urllib2.HTTPError as code:
         print("ERROR: failed to set up Web Service authentication context due to: ", code)
         sys.exit(1)
 
@@ -106,11 +106,11 @@ def ws_get_experiments (experiment=None, instrument=None, ws_url=None):
                     d[e['name']] = ws_get_tags(e['id'], ws_url)
         return d
 
-    except urllib2.URLError, reason:
+    except urllib2.URLError as reason:
         print("ERROR: failed to get a list of experiment from Web Service due to: ", reason)
         sys.exit(1)
 
-    except urllib2.HTTPError, code:
+    except urllib2.HTTPError as code:
         print("ERROR: failed to get a list of experiment from Web Service due to: ", code)
         sys.exit(1)
 
@@ -136,10 +136,10 @@ def ws_get_current_experiment (instrument, station, ws_url):
         print("ERROR: no current experiment configured for this instrument:station %s:%s" % (instrument,station))
         sys.exit(1)
 
-    except urllib2.URLError, reason:
+    except urllib2.URLError as reason:
         print("ERROR: failed to get the current experiment info from Web Service due to: ", reason)
         sys.exit(1)
-    except urllib2.HTTPError, code:
+    except urllib2.HTTPError as code:
         print("ERROR: failed to get the current experiment info from Web Service due to: ", code)
         sys.exit(1)
 
@@ -161,10 +161,10 @@ def ws_get_tags (id, ws_url):
         #print 'Tags:', result['Tags']
         return result['Tags']
 
-    except urllib2.URLError, reason:
+    except urllib2.URLError as reason:
         print("ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, reason)
         sys.exit(1)
-    except urllib2.HTTPError, code:
+    except urllib2.HTTPError as code:
         print("ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, code)
         sys.exit(1)
 
@@ -251,12 +251,12 @@ def submit_msg_to_elog(ws_url, usr, ins, sta, exp, cmd, logbook_experiments, lst
 
         return result
 
-    except urllib2.URLError, reason:
+    except urllib2.URLError as reason:
         msg = 'Submit New Message Error ' + str(reason)
         #print msg
         return {'status': 'error', 'message': msg}
 
-    except urllib2.HTTPError, code:
+    except urllib2.HTTPError as code:
         msg = 'Submit New Message Error ' + str(code)
         #print msg
         return {'status': 'error', 'message': msg}
