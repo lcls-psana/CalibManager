@@ -50,7 +50,7 @@ class OpticAlignmentCspadV1 (OpticAlignmentCspadMethods) :
 
     pixelSize = 109.92
 
-    def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=0377, plot_bits=0377, exp='Any', det='CSPAD-CXI'):
+    def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=0o377, plot_bits=0o377, exp='Any', det='CSPAD-CXI'):
         """Constructor."""
         if print_bits &  1 : print('Start OpticAlignmentCspadV1')
 

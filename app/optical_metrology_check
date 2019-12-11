@@ -693,7 +693,7 @@ def hist1d(arr, bins=None, amp_range=None, weights=None, color=None, show_stat=T
 
 #------------------------------
 
-def save(fname='img.png', do_save=True, pbits=0377) :
+def save(fname='img.png', do_save=True, pbits=0o377) :
     if not do_save : return
     if pbits & 1 : print('Save plot in file: %s' % fname) 
     plt.savefig(fname)

@@ -58,7 +58,7 @@ class OpticAlignmentCspadV2 (OpticAlignmentCspadMethods) :
 
     quad_n90_in_det = [1,0,3,2]
 
-    def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=07777, plot_bits=0377, exp='Any', det='CSPAD-XPP', n90=0):
+    def __init__(self, fname=None, path='calib-tmp', save_calib_files=True, print_bits=0o7777, plot_bits=0o377, exp='Any', det='CSPAD-XPP', n90=0):
         """Constructor."""
 
         if print_bits &  1 : print('Start OpticAlignmentCspadV2')

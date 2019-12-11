@@ -117,7 +117,7 @@ if __name__ == "__main__" :
            'epix100a-3925999620-0996513537-2080374794-1794135040-0940361739-2398406657-0419430424.h5'\
            if len(sys.argv) == 1 else sys.argv[1]
 
-    log.setPrintBits(0377)
+    log.setPrintBits(0o377)
 
     app = QtGui.QApplication(sys.argv)
     ex  = H5WTreeInMainWindow(None, fname)

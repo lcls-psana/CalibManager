@@ -98,7 +98,7 @@ class GUIMaskEditor(Frame) :
         self.edi_roi_mask_img = QtGui.QLineEdit(self.fname_roi_mask_img.value())
         self.edi_roi_mask_nda = QtGui.QLineEdit(self.fname_roi_mask_nda.value())
         self.edi_mask_cbits   = QtGui.QLineEdit(str(self.sensor_mask_cbits.value()))
-        self.edi_mask_cbits.setValidator(QtGui.QDoubleValidator(0,0177777,3,self))
+        self.edi_mask_cbits.setValidator(QtGui.QDoubleValidator(0,0o177777,3,self))
 
         self.grid = QtGui.QGridLayout()
         self.grid_row = 0

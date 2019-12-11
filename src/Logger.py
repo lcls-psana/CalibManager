@@ -208,21 +208,21 @@ class Logger :
         return log_txt
 
 
-    def saveLogInFile(self, fname=None, mode=0666):
+    def saveLogInFile(self, fname=None, mode=0o666):
         """Save content of the selected log records in the text file"""
         if fname is None : fname_log = self.fname
         else             : fname_log = fname
         self._saveTextInFile(self.getLogContent(), fname_log, mode)
 
 
-    def saveLogTotalInFile(self, fname=None, mode=0666):
+    def saveLogTotalInFile(self, fname=None, mode=0o666):
         """Save content of all log records in the text file"""
         if fname is None : fname_log = self.fname_total
         else             : fname_log = fname
         self._saveTextInFile(self.getLogContentTotal(), fname_log, mode)
 
 
-    def _saveTextInFile(self, text, fname='log.txt', mode=0666):
+    def _saveTextInFile(self, text, fname='log.txt', mode=0o666):
         self.debug('saveTextInFile: ' + fname, self.name)
         f=open(fname,'w')
         f.write(text)
@@ -239,7 +239,7 @@ def test_Logger() :
 
     #logger.setLevel('debug')
     logger.setLevel('warning')
-    logger.setPrintBits(0177777) # print messages
+    logger.setPrintBits(0o177777) # print messages
     
     logger.debug   ('This is a test message 1', __name__)
     logger.info    ('This is a test message 2', __name__)

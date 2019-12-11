@@ -405,7 +405,7 @@ def usage() :
 #----------------------------------
 if __name__ == "__main__" :
 
-    log.setPrintBits(0377)
+    log.setPrintBits(0o377)
     #fname = sys.argv[1] if len(sys.argv)==2 else '/reg/d/psdm/CXI/cxitut13/hdf5/cxitut13-r0135.h5'    
     fname = sys.argv[1] if len(sys.argv)==2 else '/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5'    
     print_hdf5_file_structure(fname)

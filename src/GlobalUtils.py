@@ -82,7 +82,7 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
 
 #-----------------------------
 
-def create_directory(dir, mode=0777) :
+def create_directory(dir, mode=0o777) :
     #print 'create_directory: %s' % dir
     if os.path.exists(dir) :
         logger.debug('Directory exists: ' + dir, __name__) 
@@ -93,7 +93,7 @@ def create_directory(dir, mode=0777) :
         logger.debug('Directory created: ' + dir, __name__) 
 
 
-def create_path(path, depth=5, mode=0777) : 
+def create_path(path, depth=5, mode=0o777) : 
     # Creates missing path for /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
     # if path to file exists return True, othervise False
     subdirs = path.strip('/').split('/')
@@ -1034,7 +1034,7 @@ def parse_token(token) :
 
 #---------------------------------
 
-def ready_to_start(check_bits=0777, fatal_bits=0777) :
+def ready_to_start(check_bits=0o777, fatal_bits=0o777) :
     """Check availability of services and credentuals marked by the check_bits"""
 
     if check_bits & 1 and not is_good_lustre_version() :

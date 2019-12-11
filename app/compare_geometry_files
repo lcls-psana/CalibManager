@@ -38,7 +38,7 @@ class CompareGeometryFiles() :
 
     def retrieve_geometry_data(self) :
 
-        pbits = 0377 if self.vrb else 0
+        pbits = 0o377 if self.vrb else 0
 
         self.geo1 = GeometryAccess(self.gf1, pbits)
         self.geo2 = GeometryAccess(self.gf2, pbits)

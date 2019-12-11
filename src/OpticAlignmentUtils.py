@@ -48,7 +48,7 @@ def rotate_vector_xy(v, angle_deg) :
 
 #--------------------
 
-def create_directory(dir, mode=0777) : # 0o777
+def create_directory(dir, mode=0o777) : # 0o777
     if os.path.exists(dir) :
         pass
         #logger.info('Directory exists: ', dir, __name__) 
@@ -61,7 +61,7 @@ def create_directory(dir, mode=0777) : # 0o777
 
 #--------------------
 
-def save_textfile(text, path, accmode=0777) :
+def save_textfile(text, path, accmode=0o777) :
     """Saves text in file specified by path. mode: 'w'-write, 'a'-append 
     """
     f=open(path,'w')

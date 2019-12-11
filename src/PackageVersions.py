@@ -218,10 +218,10 @@ def test_packege_version(test_num):
 
     print('Test: %d' % test_num)
 
-    if not ready_to_start(check_bits=02, fatal_bits=02) : #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
+    if not ready_to_start(check_bits=0o2, fatal_bits=0o2) : #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
         sys.exit('Not ready to start aplication yet...')
 
-    pv = PackageVersions(print_bits=0377)
+    pv = PackageVersions(print_bits=0o377)
 
     t0_sec = time()
 

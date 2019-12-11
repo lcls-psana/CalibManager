@@ -247,7 +247,7 @@ if __name__ == "__main__" :
     fname0='/reg/d/psdm/xpp/xppl7416/calib/epix100a/'\
            'epix100a-3925999620-0996513537-2080374794-1794135040-0940361739-2398406657-0419430424.h5'
     fname = sys.argv[1] if len(sys.argv)==2 else fname0    
-    log.setPrintBits(0377)
+    log.setPrintBits(0o377)
 
     app = QtGui.QApplication(sys.argv)
     ex  = H5WTree(None, fname)

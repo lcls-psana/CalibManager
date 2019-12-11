@@ -147,8 +147,8 @@ class OpticalMetrologyEpix10ka2M() :
         logger.info('geometry constants:\n%s' % geo_cons)
 
         dir = os.path.dirname(self.ofname)
-        create_directory(dir, mode=0777)
-        save_textfile(geo_cons, self.ofname, accmode=0660)
+        create_directory(dir, mode=0o777)
+        save_textfile(geo_cons, self.ofname, accmode=0o660)
         logger.info('geometry constants saved in file %s' % self.ofname)
 
 #--------------------
