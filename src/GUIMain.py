@@ -254,7 +254,7 @@ class GUIMain(QtGui.QWidget) :
 
 
     def add_record_in_db(self):
-        from NotificationDB import *
+        from NotificationDB import NotificationDB
         try :
             ndb = NotificationDB()
             ndb.add_record()
