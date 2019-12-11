@@ -85,27 +85,27 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
 def create_directory(dir, mode=0o777) :
     #print 'create_directory: %s' % dir
     if os.path.exists(dir) :
-        logger.debug('Directory exists: ' + dir, __name__) 
+        logger.debug('Directory exists: ' + dir, __name__)
     else :
         os.makedirs(dir)
         os.chmod(dir, mode)
         #os.system(cmd)
-        logger.debug('Directory created: ' + dir, __name__) 
+        logger.debug('Directory created: ' + dir, __name__)
 
 
-def create_path(path, depth=5, mode=0o777) : 
+def create_path(path, depth=5, mode=0o777) :
     # Creates missing path for /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
     # if path to file exists return True, othervise False
     subdirs = path.strip('/').split('/')
     cpath = ''
     for i,sd in enumerate(subdirs[:-1]) :
-        cpath += '/%s'% sd 
+        cpath += '/%s'% sd
         if i<depth : continue
         create_directory(cpath, mode)
         #print 'create_path: %s' % cpath
 
     return os.path.exists(cpath)
-    
+
 
 def get_list_of_files_in_dir(dirname) :
     return os.listdir(dirname)
@@ -121,8 +121,8 @@ def print_all_files_in_dir(dirname) :
 def get_list_of_files_in_dir_for_ext(dir, ext='.xtc'):
     """Returns the list of files in the directory for specified extension or None if directory is None."""
     if dir is None : return []
-    if not os.path.exists(dir) : return [] 
-    
+    if not os.path.exists(dir) : return []
+
     list_of_files_in_dir = os.listdir(dir)
     list_of_files = []
     for fname in list_of_files_in_dir :
@@ -134,8 +134,8 @@ def get_list_of_files_in_dir_for_ext(dir, ext='.xtc'):
 def get_list_of_files_in_dir_for_part_fname(dir, pattern='-r0022'):
     """Returns the list of files in the directory for specified file name pattern or [] - empty list."""
     if dir is None : return []
-    if not os.path.exists(dir) : return [] 
-    
+    if not os.path.exists(dir) : return []
+
     list_of_files_in_dir = os.listdir(dir)
     list_of_files = []
     for fname in list_of_files_in_dir :
@@ -151,7 +151,7 @@ def print_list_of_files_in_dir(dirname, path_or_fname) :
 
     for fname_in_dir in get_list_of_files_in_dir(dirname) :
         if fname in fname_in_dir :
-            print(fname_in_dir)    
+            print(fname_in_dir)
     print('\n')
 
 
@@ -173,7 +173,7 @@ def get_path_mode(path) :
 def get_tempfile(mode='r+b',suffix='.txt') :
     tf = tempfile.NamedTemporaryFile(mode=mode,suffix=suffix)
     return tf # .name
- 
+
 #----------------------------------
 
 def call(command_seq, shell=False) :
@@ -205,7 +205,7 @@ def subproc(command_seq, env=None, shell=False) : # for example, command_seq=['b
 #    poster = message_poster.message_poster_self ( inst, experiment=expt )
 #
 #    if resp == 'None' : msg_id = poster.post ( msg, attachments=[fname_att], run_num=run, tags=tag )
-#    else              : msg_id = poster.post ( msg, attachments=[fname_att], parent_message_id = int(resp) )    
+#    else              : msg_id = poster.post ( msg, attachments=[fname_att], parent_message_id = int(resp) )
 #
 #    msg_in_log = 'Message with id: %d is submitted to ELog' % (msg_id)
 #
@@ -220,7 +220,7 @@ def subproc(command_seq, env=None, shell=False) : # for example, command_seq=['b
 #    my_env = os.environ
 #    pypath = my_env.get('PYTHONPATH', '')
 #    my_env['PYTHONPATH'] = pypath + \
-#                  ':/reg/g/pcds/pds/grabber/lib/python2.7/site-packages/' 
+#                  ':/reg/g/pcds/pds/grabber/lib/python2.7/site-packages/'
 #    command_seq = ['/reg/g/pcds/pds/grabber/bin/LogBookPost_self.py',
 #                   '-i', inst,
 #                   '-e', expt,
@@ -250,7 +250,7 @@ def subproc(command_seq, env=None, shell=False) : # for example, command_seq=['b
 #    str_command_seq = ''
 #    for v in command_seq : str_command_seq += v + ' '
 #
-#    logger.info('command_seq: ' + str_command_seq, __name__) 
+#    logger.info('command_seq: ' + str_command_seq, __name__)
 #
 #    #==================
 #    #out, err = 'submission procedure must be uncommented...', 'Responce should be ok, but...'
@@ -286,7 +286,7 @@ def batch_job_submit(command, queue='psnehq', log_file='batch-log.txt') :
     if line_fields[0] != 'Job' :
         msg = 'EXIT: Unexpected response at batch submission:\nout: %s \nerr: %s'%(out, err)
         print(msg)
-        logger.warning(msg, __name__) 
+        logger.warning(msg, __name__)
         #sys.exit(msg)
         job_id_str = 'JOB_ID_IS_UNKNOWN'
     else :
@@ -295,19 +295,19 @@ def batch_job_submit(command, queue='psnehq', log_file='batch-log.txt') :
     if err != '' :
         msg = ''
         if 'job being submitted without an AFS token' in err :
-            msg = err + '      This warning does not matter for jobs on LCLS NFS, continue' 
+            msg = err + '      This warning does not matter for jobs on LCLS NFS, continue'
         else :
             msg = '\n' + 80*'!' + '\n' + err + 80*'!' + '\n'
 
-        logger.warning(msg, __name__) 
+        logger.warning(msg, __name__)
 
-    logger.info(out, __name__) 
+    logger.info(out, __name__)
 
     return job_id_str, out, err
 
 
 def batch_job_check(job_id_str, queue='psnehq') :
-    out, err = subproc(['bjobs', '-q', queue, job_id_str])    
+    out, err = subproc(['bjobs', '-q', queue, job_id_str])
     if err != '' : return err + '\n' + out
     else         : return out
 
@@ -318,7 +318,7 @@ def bsub_is_available() :
         msg = 'Check if bsub is available on this node:\n' + err + \
               '\nbsub IS NOT available in current configuration of your node... (try command: which bsub)\n'
         print(msg)
-        logger.warning(msg, __name__)         
+        logger.warning(msg, __name__)
         return False
     else :
         return True
@@ -335,9 +335,9 @@ def batch_job_kill(job_id_str) :
 def batch_job_status(job_id_str, queue='psnehq') :
     """Returns the batch job status, for example 'RUN', 'PEND', 'EXIT', 'DONE', etc."""
     p = subprocess.Popen(['bjobs', '-q', queue, job_id_str], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    p.wait() # short time waiting untill submission is done, 
+    p.wait() # short time waiting untill submission is done,
     err = p.stderr.read() # reads entire file
-    if err != '' : logger.warning('batch_job_status:\n' + err, __name__) 
+    if err != '' : logger.warning('batch_job_status:\n' + err, __name__)
     status = None
     lines  = p.stdout.readlines() # returns the list of lines in file
     #for line in lines : print 'batch_job_status: ' + line
@@ -345,14 +345,14 @@ def batch_job_status(job_id_str, queue='psnehq') :
     line   = lines[1].strip('\n')
     status = line.split()[2]
     #print 'status: ', status
-    return status # it might None, 'RUN', 'PEND', 'EXIT', 'DONE', etc 
+    return status # it might None, 'RUN', 'PEND', 'EXIT', 'DONE', etc
 
 
 def batch_job_status_and_nodename(job_id_str, queue='psnehq') :
     p = subprocess.Popen(['bjobs', '-q', queue, job_id_str], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    p.wait() # short time waiting untill submission is done, 
+    p.wait() # short time waiting untill submission is done,
     err = p.stderr.read() # reads entire file
-    if err != '' : logger.warning('batch_job_status_and_nodename:\n' + err, __name__) 
+    if err != '' : logger.warning('batch_job_status_and_nodename:\n' + err, __name__)
     status = None
     lines  = p.stdout.readlines() # returns the list of lines in file
     if len(lines)<2 : return None, None
@@ -360,9 +360,9 @@ def batch_job_status_and_nodename(job_id_str, queue='psnehq') :
     fields = line.split()
     #for field in fields :
     #    print field,
-    #print ' '    
+    #print ' '
     status, nodename = fields[2], fields[5]
-    return status, nodename # status might None, 'RUN', 'PEND', 'EXIT', 'DONE', etc 
+    return status, nodename # status might None, 'RUN', 'PEND', 'EXIT', 'DONE', etc
 
 
 def remove_file(path) :
@@ -370,33 +370,33 @@ def remove_file(path) :
 
     logger.debug('remove: ' + path, __name__)
     p = subprocess.Popen(['rm', path], stdout=subprocess.PIPE)
-    p.wait() # short time waiting untill submission is done, 
+    p.wait() # short time waiting untill submission is done,
 
 #----------------------------------
 
 def load_textfile(path) :
     """Returns entire content of the text file or standard str presentation of numpy array for *.npy file
-    """ 
+    """
     ext = os.path.splitext(path)[1]
     if ext == '.npy' : return str(np.load(path))
-    
+
     f=open(path,'r')
     text = f.read()
-    f.close() 
+    f.close()
     return text
 
 #----------------------------------
 
 def save_textfile(text, path, mode='w') :
-    """Saves text in file specified by path. mode: 'w'-write, 'a'-append 
+    """Saves text in file specified by path. mode: 'w'-write, 'a'-append
     """
     f=open(path,mode)
     f.write(text)
-    f.close() 
+    f.close()
 
 #----------------------------------
 
-def xtc_fname_parser_helper(part, prefix) :    
+def xtc_fname_parser_helper(part, prefix) :
     """In parsing the xtc file name, this function extracts the string after expected prefix, i.e. 'r0123' -> '0123'"""
     if len(part)>1 and part[0] == prefix :
         try :
@@ -409,7 +409,7 @@ def xtc_fname_parser_helper(part, prefix) :
 def parse_xtc_file_name(fname):
     """Parse the file name like e170-r0003-s00-c00.xtc and return ('170', '0003', '00', '00', '.xtc')"""
     name, _ext = os.path.splitext(fname) # i.e. ('e167-r0015-s00-c00', '.xtc')
-    #print 'name, _ext = ', name, _ext 
+    #print 'name, _ext = ', name, _ext
     parts = name.split('-') # it gives parts = ('e167', 'r0015', 's00', 'c00')
 
     _expnum = None
@@ -430,7 +430,7 @@ def parse_xtc_file_name(fname):
 
 #----------------------------------
 # assumes: path = .../<inst>/<experiment>/xtc/<file-name>.xtc
-#        i.e         /reg/data/ana12/xcs/xcsi0112/xtc/e167-r0020-s00-c00.xtc 
+#        i.e         /reg/data/ana12/xcs/xcsi0112/xtc/e167-r0020-s00-c00.xtc
 #        or          /reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc
 def parse_xtc_path(path='.') :
 
@@ -448,7 +448,7 @@ def parse_xtc_path(path='.') :
         run_str = bname.split('-')[1]               # i.e. r0015
         run_num = int(run_str[1:])                  # i.e. 15
     except :
-        print('Unexpected xtc file name:', bname) 
+        print('Unexpected xtc file name:', bname)
         print('Use default instrument, experiment, run_str, run_num: ', instrument, experiment, run_str, run_num)
         return instrument, experiment, run_str, run_num
         pass
@@ -459,17 +459,17 @@ def parse_xtc_path(path='.') :
     if n_fields < 4 :
         msg1 = 'Unexpected xtc dirname: %s: Number of fields in dirname = %d' % (dirname, n_fields)
         msg2 = 'Use default instrument, experiment, run_str, run_num: %s %s %s %d' % (instrument, experiment, run_str, run_num)
-        logger.warning( msg1+msg2, __name__)         
+        logger.warning( msg1+msg2, __name__)
         return instrument, experiment, run_str, run_num
-            
+
     xtc_subdir = fields[-1]                         # i.e. xtc
     experiment = fields[-2]                         # i.e. xcsi0112
-    instrument = fields[-3].upper()                 # i.e. XCS 
+    instrument = fields[-3].upper()                 # i.e. XCS
     msg = 'Set instrument, experiment, run_str, run_num: %s %s %s %d' % (instrument, experiment, run_str, run_num)
-    logger.debug( msg, __name__)         
+    logger.debug( msg, __name__)
 
     return instrument, experiment, run_str, run_num
-    
+
 #----------------------------------
 # assumes: path = /reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc
 def parse_xtc_path_v0(path='.') :
@@ -481,8 +481,8 @@ def parse_xtc_path_v0(path='.') :
 
     pos = path.find('/reg/d/psdm/')
     if pos != -1 :
-        fields = path.split('/') 
-        instrument = fields[4].upper()              # i.e. XCS 
+        fields = path.split('/')
+        instrument = fields[4].upper()              # i.e. XCS
         experiment = fields[5]                      # i.e. xcsi0112
         bname   = os.path.basename(path)            # i.e. e167-r0015-s00-c00.xtc
     try:
@@ -491,7 +491,7 @@ def parse_xtc_path_v0(path='.') :
     except : pass
 
     return instrument, experiment, run_str, run_num
-    
+
 #----------------------------------
 
 def xtc_fname_for_all_chunks(path='e167-r0015-s00-c00.xtc') :
@@ -512,7 +512,7 @@ def list_of_calib_files_with_run_range(list_of_files) :
     list_out = []
     for file in list_of_files :
         #print file,
-        str_range = run_range_from_calib_fname(file) 
+        str_range = run_range_from_calib_fname(file)
         if str_range is None : continue
         list_out.append(str_range.replace('9999','end'))
 
@@ -542,7 +542,7 @@ def get_text_content_of_calib_dir_for_detector(path, det='cspad', subdir='CsPad:
     list_of_fnames = os.listdir(path)
 
     if list_of_fnames == [] :
-        txt += '\n' + (level+1)*'    ' + 'Directory IS EMPTY!'        
+        txt += '\n' + (level+1)*'    ' + 'Directory IS EMPTY!'
         return txt
 
     if level == 3 :
@@ -570,26 +570,26 @@ def get_text_content_of_calib_dir_for_detector(path, det='cspad', subdir='CsPad:
         cond2 = level==2 and (file == calib_type or calib_type is None)
 
         if not ( cond0 or cond1 or cond2) : continue
-        
+
         txt +='\n' + (level+1)*'    ' + file
 
         path_to_child = os.path.join(path, file)
         if os.path.isdir(path_to_child) : txt += get_text_content_of_calib_dir_for_detector(path_to_child, det, subdir, level=level+1, calib_type=calib_type)
-             
+
     return txt
 
 #----------------------------------
 
 def print_parsed_path(path) :                       # Output for path:
     print('print_parsed_path(path): path:', end=' ')         # path/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc
-    print('exists(path)  =', os.path.exists(path))   # True 
+    print('exists(path)  =', os.path.exists(path))   # True
     print('splitext(path)=', os.path.splitext(path)) # ('/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00', '.xtc')
     print('basename(path)=', os.path.basename(path)) # e167-r0015-s00-c00.xtc
     print('dirname(path) =', os.path.dirname(path))  # /reg/d/psdm/XCS/xcsi0112/xtc
-    print('lexists(path) =', os.path.lexists(path))  # True  
-    print('isfile(path)  =', os.path.isfile(path))   # True  
-    print('isdir(path)   =', os.path.isdir(path))    # False 
-    print('split(path)   =', os.path.split(path))    # ('/reg/d/psdm/XCS/xcsi0112/xtc', 'e167-r0015-s00-c00.xtc') 
+    print('lexists(path) =', os.path.lexists(path))  # True
+    print('isfile(path)  =', os.path.isfile(path))   # True
+    print('isdir(path)   =', os.path.isdir(path))    # False
+    print('split(path)   =', os.path.split(path))    # ('/reg/d/psdm/XCS/xcsi0112/xtc', 'e167-r0015-s00-c00.xtc')
 
 #----------------------------------
 
@@ -618,7 +618,7 @@ def get_cwd() :
 def get_hostname() :
     #return os.uname()[1]
     return socket.gethostname()
- 
+
 def get_enviroment(env='USER') :
     """Returns the value of specified by string name environment variable or (str) 'None'
     """
@@ -638,7 +638,7 @@ def get_pid() :
 
 def split_string(str,separator='-s') :
     #print 'split_string("' + str + '") by the separator: "' + separator + '"'
-    str_pref, str_suff = str.split(separator, 1) 
+    str_pref, str_suff = str.split(separator, 1)
     return str_pref, str_suff
 
 #----------------------------------
@@ -664,7 +664,7 @@ def get_item_second_to_last_name(dsname):
     """Returns the 2nd to last part of the full item name"""
     path1,name1 = os.path.split(str(dsname))
     path2,name2 = os.path.split(str(path1))
-    return name2 
+    return name2
 
 #----------------------------------
 
@@ -677,7 +677,7 @@ def get_item_third_to_last_name(dsname):
 
     str(name3)
 
-    return name3 
+    return name3
 
 #----------------------------------
 
@@ -764,7 +764,7 @@ def changeCheckBoxListInPopupMenu(list, win_title='Set check boxes'):
     response = popupMenu.exec_()
 
     if   response == QtGui.QDialog.Accepted :
-        logger.debug('New checkbox list is accepted', __name__)         
+        logger.debug('New checkbox list is accepted', __name__)
         return 1
     elif response == QtGui.QDialog.Rejected :
         logger.debug('Will use old checkbox list', __name__)
@@ -787,22 +787,22 @@ def selectRadioButtonInPopupMenu(dict_of_pars, win_title='Select option', do_con
 
 def get_array_from_file(fname, dtype=np.float32) :
     if fname is None or fname=='' :
-        logger.warning('File name is not specified...', __name__)         
+        logger.warning('File name is not specified...', __name__)
         return None
-        
+
     elif os.path.lexists(fname) :
 
         fname_ext = os.path.splitext(fname)[1]
         #print 'fname_ext', fname_ext
 
-        logger.info('Get array from file: ' + fname, __name__)         
+        logger.info('Get array from file: ' + fname, __name__)
 
         if fname_ext == '.npy' :
             return np.load(fname) # load as binary
         else :
             return np.loadtxt(fname, dtype=dtype)
     else :
-        logger.warning(fname + ' is not available', __name__)         
+        logger.warning(fname + ' is not available', __name__)
         return None
 
 #----------------------------------
@@ -814,13 +814,13 @@ def get_image_array_from_file(fname, dtype=np.float32) :
         return None
 
     img_arr = None
-        
+
     if   arr.size == 32*185*388 : # CSPAD
-        arr.shape = (32*185,388) 
+        arr.shape = (32*185,388)
         img_arr = cspadimg.get_cspad_raw_data_array_image(arr)
 
     elif arr.size == 185*388*2 : # CSPAD2x2
-        #arr.shape = (185,388,2) 
+        #arr.shape = (185,388,2)
         img_arr = cspad2x2img.get_cspad2x2_non_corrected_image_for_raw_data_array(arr)
 
     elif arr.ndim == 2 : # Use it as any camera 2d image
@@ -830,7 +830,7 @@ def get_image_array_from_file(fname, dtype=np.float32) :
         msg = 'Array loaded from file: %s\n has shape: %s, size: %s, ndim: %s' % \
               (fname, str(arr.shape), str(arr.size), str(arr.ndim))
         msg += '\nIs not recognized as image'
-        logger.warning(msg, __name__)         
+        logger.warning(msg, __name__)
         return None
 
     return img_arr
@@ -839,17 +839,17 @@ def get_image_array_from_file(fname, dtype=np.float32) :
 
 def get_text_list_from_file(fname) :
     if not os.path.lexists(fname) :
-        logger.warning(fname + ' is not available', __name__)         
+        logger.warning(fname + ' is not available', __name__)
         return None
-    logger.info('Read and return as a 2-d tuple text array from file: ' + fname, __name__)         
+    logger.info('Read and return as a 2-d tuple text array from file: ' + fname, __name__)
 
-    list_recs = []    
+    list_recs = []
     f=open(fname,'r')
     for line in f :
         if len(line) == 1 : continue # line is empty
         fields = line.rstrip('\n').split() #,1)
         list_recs.append(fields)
-    f.close() 
+    f.close()
     return list_recs
 
 #----------------------------------
@@ -886,7 +886,7 @@ def printStyleInfo(widg):
 
 #----------------------------------
 
-def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):       
+def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
 
     path = str( QtGui.QFileDialog.getSaveFileName(parent,
                                                   caption   = dial_title,
@@ -901,7 +901,7 @@ def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 
 #----------------------------------
 
-def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):       
+def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
 
     path = str(QtGui.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter))
     dname, fname = os.path.split(path)
@@ -909,7 +909,7 @@ def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
         logger.info('Input directiry name or file name is empty... keep file path unchanged...')
         #print 'Input directiry name or file name is empty... keep file path unchanged...'
         return None
-    logger.info('Input file: ' + path, 'get_open_fname_through_dialog_box') 
+    logger.info('Input file: ' + path, 'get_open_fname_through_dialog_box')
     #print 'Input file: ' + path
     return path
 
@@ -1030,7 +1030,7 @@ def parse_token(token) :
         #date_object = datetime.strptime(timestamp, '%b %d %H:%M')
         #print 'date_object', str(date_object)
 
-    return timestamp 
+    return timestamp
 
 #---------------------------------
 
@@ -1040,14 +1040,14 @@ def ready_to_start(check_bits=0o777, fatal_bits=0o777) :
     if check_bits & 1 and not is_good_lustre_version() :
         print('WARNING: The host "%s" uses old lustre driver version. CHANGE HOST !!!' % get_hostname())
         if fatal_bits & 1 : return False
-	else              : print('Continue with old lustre driver...')
+        else              : print('Continue with old lustre driver...')
 
     if check_bits & 2 and not has_kerberos_ticket() :
         print('WARNING: Kerberos ticket is missing. To get one use command: kinit')
         if fatal_bits & 2 : return False
-	else              : print('Continue without Kerberos ticket...')
+        else              : print('Continue without Kerberos ticket...')
 
-    if check_bits & 4 : 
+    if check_bits & 4 :
         status, msg = check_token(do_print=False)
         if not status :
             get_afs_token(do_print=True)
@@ -1055,16 +1055,16 @@ def ready_to_start(check_bits=0o777, fatal_bits=0o777) :
             if not status :
                 print('WARNING: AFS token is missing. To get one use commands: kinit; aklog')
                 if fatal_bits & 4 : return False
-	        else              : print('Continue without AFS token...')
+                else              : print('Continue without AFS token...')
 
-    if check_bits & 8 : 
+    if check_bits & 8 :
         host = get_hostname()
         if not 'psana' in host :
             print('WARNING:  Your are on host %s which may not have access to data.' % host)
             print('SOLUTION: Use one of "psana" hosts (ssh psana).')
             return False
 
-    if check_bits & 16 : 
+    if check_bits & 16 :
         user = get_login() # get_enviroment(env='USER')
         if user in ('amoopr', 'cxiopr', 'diaopr', 'mecopr', 'mfxopr', 'mobopr', 'monopr') :
             print('WARNING:  Account "%s" may not have permission to write files in the calib directory.' % user)
@@ -1083,7 +1083,7 @@ def text_status_of_queues(lst_of_queues=['psanaq', 'psnehq', 'psfehq', 'psnehpri
 
 def msg_and_status_of_queue(queue='psnehq') :
     """Returns status of queue for command: bqueues <queue-name>"""
-       #QUEUE_NAME      PRIO STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN  SUSP 
+       #QUEUE_NAME      PRIO STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN  SUSP
        #psanacsq        115  Open:Active       -    -    -    -     0     0     0     0
     cmd, txt = text_status_of_queues([queue])
     lines = txt.split('\n')
@@ -1100,7 +1100,7 @@ def text_sataus_of_lsf_hosts(farm='psnehfarm'):
     """Returns text output of the command: bhosts farm"""
     cmd = 'bhosts %s' % farm
     return cmd, getoutput(cmd)
-    
+
 
 def msg_and_status_of_lsf(farm='psnehfarm', print_bits=0):
     """Checks the LSF status for requested farm"""
@@ -1112,7 +1112,7 @@ def msg_and_status_of_lsf(farm='psnehfarm', print_bits=0):
     if print_bits & 2 : print('list_of_hosts:\n', output)
     lines = output.split('\n')
 
-       #HOST_NAME          STATUS       JL/U    MAX  NJOBS    RUN  SSUSP  USUSP    RSV 
+       #HOST_NAME          STATUS       JL/U    MAX  NJOBS    RUN  SSUSP  USUSP    RSV
        #psanacs001         unavail         -     16      0      0      0      0      0
        #psanacs002         closed          -     16     16     16      0      0      0
        #psanacs003         ok              -     16      0      0      0      0      0
@@ -1162,7 +1162,7 @@ def get_pkg_tag(pkg_name='CalibManager') :
         return version
     except :
         return 'V-is-N/A'
-    
+
 #----------------------------------
 
 def is_good_lustre_version() :
@@ -1194,10 +1194,10 @@ def is_good_lustre_version() :
 #        if os.path.lexists(fname) :
 #            return gu.get_array_from_file( fname )
 #        else :
-#            logger.warning(fname + ' is not available', __name__)         
+#            logger.warning(fname + ' is not available', __name__)
 #            return None
 
-#    
+#
 #----------------------------------
 #
 #  In case someone decides to run this module
@@ -1218,7 +1218,7 @@ if __name__ == "__main__" :
     #print_all_files_in_dir(pwd)
 
     #command = 'ls -l'
-    #job_id_str, out, err = batch_job_submit(command, 'psnehq', 'log-ls.txt') 
+    #job_id_str, out, err = batch_job_submit(command, 'psnehq', 'log-ls.txt')
     #print 'err =', err
     #print 'out =', out
     #print 'job_id_str =', job_id_str
@@ -1245,7 +1245,7 @@ if __name__ == "__main__" :
     #print 'Test 2:\n' + get_text_content_of_calib_dir_for_detector(path='/reg/d/psdm/XPP/xpptut13/calib/', subdir='CsPad2x2::CalibV1', det='CSPAD2x2')
 #    print 'Test 3:\n' + get_text_content_of_calib_dir_for_detector(path='/reg/d/psdm/XPP/xpptut13/calib', subdir='CsPad::CalibV1', det='CSPAD', calib_type='tilt')
 
-    #list_of_files = ['220-230.data', '220-end.data', '221-240.data', '528-end.data', '222-end.data', '659-800.data', '373-end.data', '79-end.data', '45-end.data'] 
+    #list_of_files = ['220-230.data', '220-end.data', '221-240.data', '528-end.data', '222-end.data', '659-800.data', '373-end.data', '79-end.data', '45-end.data']
     #list_of_calib_files_with_run_range(list_of_files)
 
     #status, msg = check_token(do_print=True)
@@ -1269,7 +1269,7 @@ if __name__ == "__main__" :
     fname = '/reg/g/psdm/logs/calibman/2016/09/2016-00-00-00:00:00-log-dubrovin-12345.txt'
     print('create directry and save file %s' % fname)
     create_path(fname, depth=5)
-     
+
     sys.exit("End of test")
 
 #----------------------------------

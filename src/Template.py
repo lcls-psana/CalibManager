@@ -9,7 +9,7 @@
 
 """Brief one-line description of the module.
 
-This software was developed for the LCLS project.  If you use all or 
+This software was developed for the LCLS project.  If you use all or
 part of it, please give an appropriate acknowledgment.
 
 @version $Id$
@@ -73,18 +73,18 @@ def foo ( x ) :
 class Template ( object ) :
     """Brief description of a class.
 
-    Full description of this class. The whole purpose of this class is 
+    Full description of this class. The whole purpose of this class is
     to serve as an example for LCLS users. It shows the structure of
-    the code inside the class. Class can have class (static) variables, 
-    which can be private or public. It is good idea to define constructor 
-    for your class (in Python there is only one constructor). Put your 
+    the code inside the class. Class can have class (static) variables,
+    which can be private or public. It is good idea to define constructor
+    for your class (in Python there is only one constructor). Put your
     public methods after constructor, and private methods after public.
     """
 
     #--------------------
     #  Class variables --
     #--------------------
-    publicStaticVariable = 0 
+    publicStaticVariable = 0
     __privateStaticVariable = "A string"
 
     #----------------
@@ -93,7 +93,7 @@ class Template ( object ) :
     def __init__ ( self, x, y ) :
         """Constructor.
 
-        Explanation of what it does. So it does that and that, and also 
+        Explanation of what it does. So it does that and that, and also
         that, but only if x is equal to that and y is not None.
 
         - x   first parameter
@@ -101,10 +101,10 @@ class Template ( object ) :
         """
 
         # call ctor for base class explicitly
-        
+
 
         # define instance variables
-        self.__x = x                  # private 
+        self.__x = x                  # private
         self._p = None                # "protected"
         self.y = y                    # public
 
@@ -120,7 +120,7 @@ class Template ( object ) :
         - y   second parameter
         - return    return value
         """
-    	if self.__x > x :
+        if self.__x > x :
             return self.y
         else:
             self._p = self.__myPrivateMethod ( y )

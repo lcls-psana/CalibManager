@@ -8,7 +8,7 @@
 
 """CommandLineCalib is intended for command line calibration of dark runs
 
-This software was developed for the SIT project.  If you use all or 
+This software was developed for the SIT project.  If you use all or
 part of it, please give an appropriate acknowledgment.
 
 @version $Id$
@@ -49,7 +49,7 @@ class CommandLineCalib() :
         self.name = 'CommandLineCalib'
 
         #print '__name__', __name__ # CalibManager.CommandLineCalib
-        cp.commandlinecalib = self 
+        cp.commandlinecalib = self
 
         self.args = args
         self.opts = opts
@@ -79,7 +79,7 @@ class CommandLineCalib() :
         self.print_list_of_files_dark_in_work_dir()
 
         self.deploy_calib_files()
-        
+
         self.save_log_file()
         #self.add_record_in_db()
 
@@ -90,31 +90,31 @@ class CommandLineCalib() :
         self.print_bits = self.opts['print_bits']
         logger.setPrintBits(self.print_bits)
 
-	docfg = self.loadcfg = self.opts['loadcfg']
+        docfg = self.loadcfg = self.opts['loadcfg']
 
-	if self.opts['runnum'] is None :
+        if self.opts['runnum'] is None :
             appname = os.path.basename(sys.argv[0])
-	    msg = self.sep + 'This command line calibration interface should be launched with parameters.'\
+            msg = self.sep + 'This command line calibration interface should be launched with parameters.'\
                   +'\nTo see the list of parameters use command: %s -h' % appname\
                   +'\nIf the "%s" is launched after "calibman" most of parameters may be already set.' % appname\
-	          +'\nBut, at least run number must be specified as an optional parameter, try command:\n    %s -r <number> -L'%(appname)\
+                  +'\nBut, at least run number must be specified as an optional parameter, try command:\n    %s -r <number> -L'%(appname)\
                   + self.sep
             self.log(msg,4)
-	    return False
+            return False
         self.runnum = self.opts['runnum']
         self.str_run_number = '%04d' % self.runnum
 
-	if self.opts['runrange'] is None :
+        if self.opts['runrange'] is None :
             self.str_run_range = '%s-end' % self.runnum
         else :
-            self.str_run_range = self.opts['runrange'] 
+            self.str_run_range = self.opts['runrange']
 
         self.exp_name = cp.exp_name.value_def()
-	self.exp_name = cp.exp_name.value() if docfg and self.opts['exp'] is None else self.opts['exp']
+        self.exp_name = cp.exp_name.value() if docfg and self.opts['exp'] is None else self.opts['exp']
         if self.exp_name is None or self.exp_name == cp.exp_name.value_def() :
-	    self.log('\nWARNING: EXPERIMENT NAME IS NOT DEFINED...'\
+            self.log('\nWARNING: EXPERIMENT NAME IS NOT DEFINED...'\
                      + '\nAdd optional parameter -e <exp-name>',4)
-	    return False
+            return False
 
         if self.opts['detector'] is None :
             self.det_name = cp.det_name.value() if docfg else cp.det_name.value_def()
@@ -131,9 +131,9 @@ class CommandLineCalib() :
         #self.log(msg,1)
 
         if self.det_name == cp.det_name.value_def() :
-	    self.log('\nWARNING: DETECTOR NAMES ARE NOT DEFINED...'\
+            self.log('\nWARNING: DETECTOR NAMES ARE NOT DEFINED...'\
                      + '\nAdd optional parameter -d <det-names>, ex.: -d CSPAD,CSPAD2x2 etc',4)
-	    return False
+            return False
 
         self.event_code  = cp.bat_dark_sele.value()  if self.opts['event_code']  is None else self.opts['event_code']
         self.scan_events = cp.bat_dark_scan.value()  if self.opts['scan_events'] is None else self.opts['scan_events']
@@ -149,12 +149,12 @@ class CommandLineCalib() :
         self.rmsnhi      = cp.mask_rmsnhi.value() if self.opts['rmsnhi'] is None else self.opts['rmsnhi']
 
         self.workdir     = cp.dir_work.value()  if self.opts['workdir'] is None else self.opts['workdir']
-	#self.queue       = cp.bat_queue.value() if self.opts['queue'] is None else self.opts['queue']
-	self.queue       = self.opts['queue']
-	#self.logfile     = cp.log_file.value()  if self.opts['logfile']  is None else self.opts['logfile']
+        #self.queue       = cp.bat_queue.value() if self.opts['queue'] is None else self.opts['queue']
+        self.queue       = self.opts['queue']
+        #self.logfile     = cp.log_file.value()  if self.opts['logfile']  is None else self.opts['logfile']
 
-	self.process     = self.opts['process'] 
-	self.deploy      = self.opts['deploy'] 
+        self.process     = self.opts['process']
+        self.deploy      = self.opts['deploy']
         self.instr_name  = self.exp_name[:3]
 
         self.timeout_sec = cp.job_timeout_sec.value()
@@ -181,13 +181,13 @@ class CommandLineCalib() :
         cp.mask_max_thr    .setValue(self.thr_int_max)
         cp.mask_rms_thr_min.setValue(self.thr_rms_min)
         cp.mask_rms_thr_max.setValue(self.thr_rms_max)
-	cp.det_name        .setValue(self.det_name)
+        cp.det_name        .setValue(self.det_name)
         cp.mask_intnlo     .setValue(self.intnlo)
         cp.mask_intnhi     .setValue(self.intnhi)
         cp.mask_rmsnlo     .setValue(self.rmsnlo)
         cp.mask_rmsnhi     .setValue(self.rmsnhi)
 
-        #cp.log_file      .setValue(self.logfile)          
+        #cp.log_file      .setValue(self.logfile)
 
         return True
 
@@ -222,7 +222,7 @@ class CommandLineCalib() :
         + '\n     deploy        : %s' % self.deploy\
         + '\n     loadcfg       : %s' % self.loadcfg\
         + '\n     print_bits    : %s' % self.print_bits
-        #+ '\nself.logfile       : ' % self.logfile     
+        #+ '\nself.logfile       : ' % self.logfile
 
         self.log(msg,1)
 
@@ -255,7 +255,7 @@ class CommandLineCalib() :
             self.log(self.sep + 'Begin dark run data processing interactively',1)
         else :
             self.log(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
-                  + '\nAdd "-P" option in the command line to process files\n',4) 
+                  + '\nAdd "-P" option in the command line to process files\n',4)
             return
 
         self.bjpeds = BatchJobPedestals(self.runnum)
@@ -293,7 +293,7 @@ class CommandLineCalib() :
             sleep(dt)
             sum_dt += dt
             status = self.bjpeds.status_for_peds_files_essential()
-            str_bj_stat, msg_bj_stat = self.bjpeds.status_batch_job_for_peds_aver() 
+            str_bj_stat, msg_bj_stat = self.bjpeds.status_batch_job_for_peds_aver()
 
             self.log('%3d sec: Files %s available. %s' % (sum_dt, {False:'ARE NOT', True:'ARE'}[status], msg_bj_stat), 1)
 
@@ -302,8 +302,8 @@ class CommandLineCalib() :
                 return
 
         print('WARNING: Too many check cycles. Probably LSF is dead...')
-        
-        #if self.bjpeds.autoRunStage :            
+
+        #if self.bjpeds.autoRunStage :
         #self.bjpeds.stop_auto_processing()
 
 #------------------------------
@@ -314,9 +314,9 @@ class CommandLineCalib() :
         #self.log(msg,1)
 
         if self.deploy :
-            self.log(self.sep + 'Begin deployment of calibration files',1) 
+            self.log(self.sep + 'Begin deployment of calibration files',1)
             s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False)
-            if s : 
+            if s :
                 self.log('\nProblem with deployment of calibration files...',2)
             else :
                 self.log('\nDeployment of calibration files is completed',1)
@@ -359,7 +359,7 @@ class CommandLineCalib() :
 #        except :
 #            pass
 
- 
+
     def print_list_of_files_dark_in_work_dir(self) :
         lst = self.get_list_of_files_dark_in_work_dir()
         msg = self.sep + 'List of files in work directory for command "ls %s*"' % fnm.path_prefix_dark()
@@ -380,7 +380,7 @@ class CommandLineCalib() :
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_of_srcs) \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_of_srcs) \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs) \
-             + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(),   lst_of_srcs) 
+             + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(),   lst_of_srcs)
 
 
     def print_list_of_types_and_sources_from_xtc(self) :
@@ -399,9 +399,9 @@ class CommandLineCalib() :
         path = fnm.path_peds_aver_batch_log()
         if not os.path.exists(path) :
             msg = 'File: %s does not exist' % path
-            self.log(msg,2)            
+            self.log(msg,2)
             return
-        
+
         txt = self.sep + 'psana log file %s:\n\n' % path \
             + gu.load_textfile(path) \
             + 'End of psana log file %s' % path
