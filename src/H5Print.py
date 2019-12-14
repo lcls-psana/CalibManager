@@ -64,7 +64,7 @@ def str_hdf5_item_structure(msg, g, offset='    ') :
         sys.exit('EXECUTION IS TERMINATED')
 
     if isinstance(g, h5py.File) or isinstance(g, h5py.Group) :
-        for key,val in dict(g).iteritems() :
+        for key,val in dict(g).items() :
             subg = val
             #print offset, key, #,"   ", subg.name #, val, subg.len(), type(subg),
             msg += '%s%s' % (offset, key) #,"   ", subg.name #, val, subg.len(), type(subg),
@@ -263,8 +263,8 @@ def print_file_info(file):
     """Prints attributes and all other available info for group or data"""
     msg =   "file.name           = %s" % file.name\
         + "\nfile.attrs          = %s" % str(file.attrs)\
-        + "\nfile.attrs.keys()   = %s" % str(file.attrs.keys())\
-        + "\nfile.attrs.values() = %s" % str(file.attrs.values())\
+        + "\nfile.attrs.keys()   = %s" % str(list(file.attrs.keys()))\
+        + "\nfile.attrs.values() = %s" % str(list(file.attrs.values()))\
         + "\nfile.id             = %s" % str(file.id)\
         + "\nfile.ref            = %s" % str(file.ref)\
         + "\nfile.parent         = %s" % str(file.parent)\
@@ -279,7 +279,7 @@ def print_file_info(file):
 def print_group_items(g):
     """Prints items in this group"""
 
-    list_of_items = g.items()
+    list_of_items = list(g.items())
     Nitems = len(list_of_items)
     log.info('Number of items in the group = %d' % Nitems)
     #print "g.items() = ", list_of_items
@@ -296,9 +296,9 @@ def print_attributes(ds):
     log.info('Number of attrs.  = %d' % Nattrs)
     if Nattrs != 0 :
         msg = '  ds.attrs          = %s\n  ds.attrs.keys()   = %s\n  ds.attrs.values() = %s\n  Attributes :' %\
-              (str(ds.attrs), str(ds.attrs.keys()), str(ds.attrs.values()))
+              (str(ds.attrs), str(list(ds.attrs.keys())), str(list(ds.attrs.values())))
         log.info(msg)
-        for key,val in dict(ds.attrs).iteritems() :
+        for key,val in dict(ds.attrs).items() :
             log.info('%24s : %s' % (key, val))
 
 #------------------------------

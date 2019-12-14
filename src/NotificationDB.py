@@ -36,7 +36,7 @@ import GlobalUtils          as     gu
 
 #------------------------------
 
-class NotificationDB :
+class NotificationDB(object) :
     """Is intended for submission of notification records in db
     """
 
@@ -97,7 +97,7 @@ class NotificationDB :
     def cmd_insert_record(self) :
         info_dict = self.get_info_dict()
         str_of_keys = ', '.join(info_dict.keys())
-        str_of_vals = str(info_dict.values()).strip('[]')
+        str_of_vals = str(list(info_dict.values())).strip('[]')
         #print str_of_keys
         #print str_of_vals
         #INSERT INTO example (name, age) VALUES('Timmy Mellowman', '23' );
@@ -119,12 +119,12 @@ class NotificationDB :
 
 
     def get_list_of_values(self) :
-        return [rec.values() for rec in self.get_list_of_recs()]
+        return [list(rec.values()) for rec in self.get_list_of_recs()]
 
 
     def get_list_of_keys(self) :
         cmd = """SELECT * FROM %s WHERE id=1;""" % self.table
-        return self.get_list_of_recs_for_query(cmd)[0].keys()
+        return list(self.get_list_of_recs_for_query(cmd)[0].keys())
 
 
     def is_permitted(self) :

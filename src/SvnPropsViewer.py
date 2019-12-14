@@ -25,7 +25,7 @@ import sys
 
 #------------------------------
 
-class SvnPropsViewer :
+class SvnPropsViewer(object) :
 
 #------------------------------
 

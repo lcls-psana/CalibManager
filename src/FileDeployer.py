@@ -252,7 +252,7 @@ def get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, base_path, ca
 
 #-----------------------------
 
-class FileDeployer :
+class FileDeployer(object) :
     """Collection of methods for file deployment in calibration directory tree"""
 
     def __init__ ( self ) :

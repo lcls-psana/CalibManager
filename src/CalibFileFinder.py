@@ -26,7 +26,7 @@ from Logger                   import logger
 
 #------------------------------
 
-class CalibFile() :
+class CalibFile(object) :
     """Calib file name, run range, etc
     """
     max_run_number = 9999
@@ -93,7 +93,7 @@ class CalibFile() :
 #----------------------------------
 #----------------------------------
 
-class CalibFileFinder() :
+class CalibFileFinder(object) :
     """Calib file name, run range, etc
     """
     max_run_number = 9999

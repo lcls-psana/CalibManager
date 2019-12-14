@@ -31,7 +31,7 @@ import AppDataPath as apputils # My version, added in path the '../../data:'
 
 #------------------------------
 
-class ConfigFileGenerator :
+class ConfigFileGenerator(object) :
     """Generates the configuration files for psana from current configuration parameters
     """
 
@@ -435,7 +435,7 @@ class ConfigFileGenerator :
 
     def print_substitution_dict (self) :
         logger.debug('Substitution dictionary:',__name__)
-        for k,v in self.d_subs.iteritems() :
+        for k,v in self.d_subs.items() :
             msg = '%s : %s' % (k.ljust(16), v.ljust(32))
             logger.debug(msg)
 
@@ -466,7 +466,7 @@ class ConfigFileGenerator :
         """
         logger.debug('Make text for: ' + self.path_in,__name__)
 
-        self.keys   = self.d_subs.keys()
+        self.keys   = list(self.d_subs.keys())
 
         txt = ''
         fin = open(self.path_in, 'r')

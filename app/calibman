@@ -55,7 +55,7 @@ def input_options_parser() :
 
 #------------------------------
 
-class StartCalibManager :
+class StartCalibManager(object) :
 
     def __init__ ( self ) :
         """Start application"""

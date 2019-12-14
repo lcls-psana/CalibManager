@@ -6,6 +6,7 @@
    Author:  Mikhail Dubrovin
 """
 from __future__ import print_function
+from __future__ import division
 #------------------------------
 
 import sys
@@ -19,7 +20,7 @@ from pyimgalgos.GlobalGraphics import hist1d, move, save #, show
 from PSCalib.GeometryObject import rotation
 #------------------------------
 
-class CompareGeometryFiles() :
+class CompareGeometryFiles(object) :
     """Check optical metrology measurements"""
 
     def __init__(self) :

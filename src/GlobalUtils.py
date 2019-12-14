@@ -20,6 +20,8 @@ If you use all or part of it, please give an appropriate acknowledgment.
 from __future__ import print_function
 
 #--------------------------------
+from future import standard_library
+standard_library.install_aliases()
 __version__ = "$Revision: 12682 $"
 #--------------------------------
 
@@ -33,7 +35,7 @@ from time import localtime, gmtime, strftime, clock, time, sleep
 import tempfile
 
 import numpy as np
-from commands import getoutput
+from subprocess import getoutput
 
 #import commands # use 'subprocess' instead of 'commands'
 import subprocess # for subprocess.Popen
@@ -417,7 +419,7 @@ def parse_xtc_file_name(fname):
     _stream = None
     _chunk  = None
 
-    parts = map( xtc_fname_parser_helper, parts, ['e', 'r', 's', 'c'] )
+    parts = list(map( xtc_fname_parser_helper, parts, ['e', 'r', 's', 'c'] ))
 
     if None not in parts :
         _expnum = parts[0]

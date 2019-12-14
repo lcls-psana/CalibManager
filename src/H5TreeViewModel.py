@@ -97,7 +97,7 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
 
         d = dict(g)
         list_keys = sorted(d.keys())
-        list_vals = d.values()
+        list_vals = list(d.values())
         #print 'list_keys =', list_keys 
 
         for key in list_keys:

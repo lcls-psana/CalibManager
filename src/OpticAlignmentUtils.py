@@ -6,6 +6,7 @@
     Usage:
     from CalibManager.OpticAlignmentUtils import *
 """
+from __future__ import division
 #--------------------
 
 import os

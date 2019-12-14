@@ -143,7 +143,7 @@ class GUIPopupCheckList(QtGui.QDialog) :
 
     def fill_output_list(self):
         """Fills output list"""
-        for cbx,[k,name,state] in self.dict_of_items.iteritems() :
+        for cbx,[k,name,state] in self.dict_of_items.items() :
             self.list_in_out[k] = [name,state]
 
 #------------------------------

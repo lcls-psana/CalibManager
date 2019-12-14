@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import division
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -206,7 +207,7 @@ class PlotImgSpeWidget (QtGui.QWidget) :
 
     def get_xy_img_center(self):
         xmin,xmax,ymin,ymax = self.imsh.get_extent()
-        return abs(ymin-ymax)/2, abs(xmax-xmin)/2  # return in terms of row, column ????
+        return abs(ymin-ymax)//2, abs(xmax-xmin)//2  # return in terms of row, column ????
 
 
     def get_img_shape(self):

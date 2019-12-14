@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import division
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
@@ -482,7 +483,7 @@ class GUIMaskEditor(Frame) :
 
         if ofext == '.npy' : np.save(ofname, mask_nda)
         else               :
-            mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
+            mask_nda.shape = [iX.size//iX.shape[-1],iX.shape[-1]]
             logger.info('Mask ndarray is re-shape for saving in txt to 2-d: %s' % str(mask_nda.shape),  __name__) 
             np.savetxt(ofname, mask_nda, fmt='%d', delimiter=' ')
 

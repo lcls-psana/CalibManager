@@ -11,6 +11,8 @@ from __future__ import print_function
 #------------------------------
 #  Module's version from SVN --
 #------------------------------
+from future import standard_library
+standard_library.install_aliases()
 __version__ = "$Revision$"
 # $Source$
 
@@ -27,7 +29,7 @@ import os
 #import os
 import os.path
 
-import httplib
+import http.client
 import mimetools
 import mimetypes
 import pwd
@@ -40,8 +42,7 @@ import tempfile
 #from Tkinter import *
 #from ScrolledText import *
 
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
 from poster.streaminghttp import register_openers
 from poster.encode import multipart_encode, MultipartParam
  
@@ -58,16 +59,16 @@ def ws_configure_auth(ws_url, ws_login_user, ws_login_password):
 
         # Then configure and add a handler for Apache Basic Authentication
         #
-        password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None, ws_url, ws_login_user, ws_login_password)
 
-        opener.add_handler(urllib2.HTTPBasicAuthHandler(password_mgr))
+        opener.add_handler(urllib.request.HTTPBasicAuthHandler(password_mgr))
 
-    except urllib2.URLError as reason:
+    except urllib.error.URLError as reason:
         print("ERROR: failed to set up Web Service authentication context due to: ", reason)
         sys.exit(1)
 
-    except urllib2.HTTPError as code:
+    except urllib.error.HTTPError as code:
         print("ERROR: failed to set up Web Service authentication context due to: ", code)
         sys.exit(1)
 
@@ -85,8 +86,8 @@ def ws_get_experiments (experiment=None, instrument=None, ws_url=None):
 
         for url in urls:
 
-            req = urllib2.Request(url)
-            response = urllib2.urlopen(req)
+            req = urllib.request.Request(url)
+            response = urllib.request.urlopen(req)
             the_page = response.read()
             result = simplejson.loads(the_page)
             if len(result) <= 0:
@@ -106,11 +107,11 @@ def ws_get_experiments (experiment=None, instrument=None, ws_url=None):
                     d[e['name']] = ws_get_tags(e['id'], ws_url)
         return d
 
-    except urllib2.URLError as reason:
+    except urllib.error.URLError as reason:
         print("ERROR: failed to get a list of experiment from Web Service due to: ", reason)
         sys.exit(1)
 
-    except urllib2.HTTPError as code:
+    except urllib.error.HTTPError as code:
         print("ERROR: failed to get a list of experiment from Web Service due to: ", code)
         sys.exit(1)
 
@@ -122,8 +123,8 @@ def ws_get_current_experiment (instrument, station, ws_url):
     if station != '' : url += '&station='+station
 
     try:
-        req      = urllib2.Request(url)
-        response = urllib2.urlopen(req)
+        req      = urllib.request.Request(url)
+        response = urllib.request.urlopen(req)
         the_page = response.read()
         result   = simplejson.loads(the_page)
         if len(result) <= 0:
@@ -136,10 +137,10 @@ def ws_get_current_experiment (instrument, station, ws_url):
         print("ERROR: no current experiment configured for this instrument:station %s:%s" % (instrument,station))
         sys.exit(1)
 
-    except urllib2.URLError as reason:
+    except urllib.error.URLError as reason:
         print("ERROR: failed to get the current experiment info from Web Service due to: ", reason)
         sys.exit(1)
-    except urllib2.HTTPError as code:
+    except urllib.error.HTTPError as code:
         print("ERROR: failed to get the current experiment info from Web Service due to: ", code)
         sys.exit(1)
 
@@ -150,8 +151,8 @@ def ws_get_tags (id, ws_url):
     url = ws_url+'/LogBook/RequestUsedTagsAndAuthors.php?id='+id;
 
     try:
-        req = urllib2.Request(url)
-        response = urllib2.urlopen(req)
+        req = urllib.request.Request(url)
+        response = urllib.request.urlopen(req)
         the_page = response.read()
         result = simplejson.loads(the_page)
         if result['Status'] != 'success':
@@ -161,10 +162,10 @@ def ws_get_tags (id, ws_url):
         #print 'Tags:', result['Tags']
         return result['Tags']
 
-    except urllib2.URLError as reason:
+    except urllib.error.URLError as reason:
         print("ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, reason)
         sys.exit(1)
-    except urllib2.HTTPError as code:
+    except urllib.error.HTTPError as code:
         print("ERROR: failed to get a list of tags for experiment id=%d from Web Service due to: " % id, code)
         sys.exit(1)
 
@@ -235,8 +236,8 @@ def submit_msg_to_elog(ws_url, usr, ins, sta, exp, cmd, logbook_experiments, lst
     try:
 
         #print 'Try to submit message: \nurl: ', url, '\ndatagen:', datagen, '\nheaders:' , headers
-        req = urllib2.Request(url, datagen, headers)
-        response = urllib2.urlopen(req)
+        req = urllib.request.Request(url, datagen, headers)
+        response = urllib.request.urlopen(req)
         the_page = response.read()
         result = simplejson.loads(the_page)
 
@@ -251,12 +252,12 @@ def submit_msg_to_elog(ws_url, usr, ins, sta, exp, cmd, logbook_experiments, lst
 
         return result
 
-    except urllib2.URLError as reason:
+    except urllib.error.URLError as reason:
         msg = 'Submit New Message Error ' + str(reason)
         #print msg
         return {'status': 'error', 'message': msg}
 
-    except urllib2.HTTPError as code:
+    except urllib.error.HTTPError as code:
         msg = 'Submit New Message Error ' + str(code)
         #print msg
         return {'status': 'error', 'message': msg}
@@ -266,7 +267,7 @@ def submit_msg_to_elog(ws_url, usr, ins, sta, exp, cmd, logbook_experiments, lst
 #----------------------------------
 #----------------------------------
 
-class LogBookWebService :
+class LogBookWebService(object) :
 
     #def __init__(self, ins='AMO', sta='', exp='amodaq09', url='https://pswww.slac.stanford.edu/ws-auth', usr='amoopr', pas=None) :
     def __init__(self, ins=None, sta=None, exp=None, url=None, usr=None, pas=None, cmd=None) :

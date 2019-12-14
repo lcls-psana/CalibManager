@@ -32,7 +32,7 @@ import RegDBUtils           as     ru
 
 #-----------------------------
 
-class BatchLogScanParser :
+class BatchLogScanParser(object) :
     """Extracts EventKeys from batch log scan files
     """
 
@@ -205,7 +205,7 @@ class BatchLogScanParser :
 
     def get_list_of_type_sources(self) :
         self.parse_batch_log_peds_scan()
-        return zip(self.list_of_types, self.list_of_sources)
+        return list(zip(self.list_of_types, self.list_of_sources))
 
 
     def list_of_types_and_sources_for_detector(self, det_name) :

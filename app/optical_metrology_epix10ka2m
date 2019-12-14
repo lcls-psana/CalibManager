@@ -71,7 +71,7 @@ def default_constants_epix10ka2m() :
 
 #--------------------
 
-class OpticalMetrologyEpix10ka2M() :
+class OpticalMetrologyEpix10ka2M(object) :
     """Optical metrology measurements processing for Epix10ka2M"""
 
     def __init__(self) :

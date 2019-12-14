@@ -60,7 +60,7 @@ from time import localtime, strftime
 
 #------------------------------
 
-class Logger :
+class Logger(object) :
     """Logbook for messages.
     """
     levels = ['debug','info','warning','error','critical']

@@ -33,7 +33,7 @@ import CalibManager.AppDataPath as apputils # for icons
 
 #------------------------------
 
-class QIcons() :
+class QIcons(object) :
     """A singleton storage of icons with caching.
     """
     def __init__(self) :

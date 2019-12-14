@@ -8,6 +8,7 @@
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
+from __future__ import division
 #------------------------------
 
 import os
@@ -22,7 +23,7 @@ INFO, WARNING, ERROR, CRITICAL, DEBUG = (1,2,4,8,16)
 
 #------------------------------
 
-class OpticalMetrologyCheck() :
+class OpticalMetrologyCheck(object) :
     """Check optical metrology measurements"""
 
     def __init__(self) :
@@ -139,12 +140,12 @@ class OpticalMetrologyCheck() :
         if self.vrb & DEBUG : print('In %s' % (sys._getframe().f_code.co_name))
 
         npoints = self.arr.shape[0]
-        nsegs = int(npoints/4)
+        nsegs = npoints//4
         self.arr_segs = np.empty(shape=(nsegs, 4, 5), dtype=np.int64)
 
         npoints = nsegs*4
         for i in range(npoints) :
-            nseg = i/4 # [0, npoints/4]
+            nseg = i//4 # [0, npoints/4]
             npoi = i%4 # [0,3]
             #print 'XXX nseg: %d  npoi: %d' % (nseg, npoi)
             self.arr_segs[nseg, npoi,:] = self.arr[i,:]

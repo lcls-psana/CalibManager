@@ -192,7 +192,7 @@ class GUIDarkList(QtGui.QWidget) :
     def create_or_use_guidarklistitem(self, run_num) :
         """Creates QListWidgetItem and GUIDarkListItem objects for the 1st time and add them to self.list or use existing from the dictionary
         """
-        if run_num in self.dict_guidarklistitem.keys() :
+        if run_num in list(self.dict_guidarklistitem.keys()) :
             #print 'Use existing GUIDarkListItem object for run %d' % run_num
             item, widg = self.dict_guidarklistitem[run_num]
             widg.updateButtons(self.type, self.comment, self.xtc_in_dir)
@@ -211,13 +211,13 @@ class GUIDarkList(QtGui.QWidget) :
 
 
     def setItemsHidden(self) :        
-        for run, (item, widg) in self.dict_guidarklistitem.iteritems() :
+        for run, (item, widg) in self.dict_guidarklistitem.items() :
             self.list.setItemHidden (item, True)
             #print 'Hide item for run %d' % run
  
 
     def removeItemWidgets(self) :     
-        for run, (item, widg) in self.dict_guidarklistitem.iteritems() :
+        for run, (item, widg) in self.dict_guidarklistitem.items() :
             self.list.removeItemWidget(item)
             widg.close()
 

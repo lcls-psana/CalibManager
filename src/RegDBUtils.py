@@ -198,7 +198,7 @@ def calibration_runs (ins, exp) :
 
 def print_calibration_runs (ins, exp) :
     calibrans = calibration_runs (ins, exp)
-    for r,v in calibrans.iteritems() :
+    for r,v in calibrans.items() :
         print(r,v)
     #print calibrans
 

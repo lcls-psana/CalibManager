@@ -19,15 +19,18 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
+from __future__ import division
 
 #------------------------------
+from future import standard_library
+standard_library.install_aliases()
 __version__ = "$Revision$"
 #------------------------------
 
 import os
 import sys
 from time import time
-from commands import getoutput
+from subprocess import getoutput
 import numpy as np
 from PSCalib.GeometryAccess import GeometryAccess, img_from_pixel_arrays
 import pyimgalgos.GlobalGraphics as gg # for test purpose
@@ -134,12 +137,12 @@ def roi_mask_to_ndarray_v1(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt',
     print('7. Save mask for ndarray in the file %s' % ofname)
     if ofext == '.npy' : np.save(ofname, mask_nda)
     else               :
-        mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
+        mask_nda.shape = [iX.size//iX.shape[-1],iX.shape[-1]]
         print('6a. Re-shape for saving in txt to 2-d:', mask_nda.shape) 
         np.savetxt(ofname, mask_nda, fmt='%d', delimiter=' ')
 
     print('8. Test new mask-ndarray to generate image (CLOSE image to continue)')
-    mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
+    mask_nda.shape = [iX.size//iX.shape[-1],iX.shape[-1]]
     axim = gg.plotImageLarge(mask_nda,amp_range=[0,1], figsize=(5,12), title='mask as ndarray')
     gg.move(400,10)
 
@@ -191,12 +194,12 @@ def roi_mask_to_ndarray(gfname, ifname='roi-mask.txt', ofname='mask-nda.txt', mb
     print('7. Save mask for ndarray in the file %s' % ofname)
     if ofext == '.npy' : np.save(ofname, mask_nda)
     else               :
-        mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
+        mask_nda.shape = [iX.size//iX.shape[-1],iX.shape[-1]]
         print('7a. Re-shape for saving in txt to 2-d:', mask_nda.shape) 
         np.savetxt(ofname, mask_nda, fmt='%d', delimiter=' ')
 
     print('8. Test new mask-ndarray to generate image (CLOSE image to continue)')
-    mask_nda.shape = [iX.size/iX.shape[-1],iX.shape[-1]]
+    mask_nda.shape = [iX.size//iX.shape[-1],iX.shape[-1]]
     axim = gg.plotImageLarge(mask_nda,amp_range=[0,1], figsize=(6,12), title='mask as ndarray')
     gg.move(400,10)
 

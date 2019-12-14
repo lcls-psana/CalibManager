@@ -16,6 +16,7 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
+from __future__ import division
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -37,7 +38,7 @@ from BatchLogScanParser       import blsp # Just in order to instatiate it
 import FileDeployer           as     fdmets
 
 #------------------------------
-class CommandLineCalib() :
+class CommandLineCalib(object) :
     """Command line calibration of dark runs
 
     @see FileNameManager, ConfigFileGenerator, ConfigParametersForApp, BatchJobPedestals, BatchLogScanParser, FileDeployer, Logger

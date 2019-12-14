@@ -73,7 +73,7 @@ def save_textfile(text, path, mode='w') :
 
 #------------------------------
 
-class NotificationLog :
+class NotificationLog(object) :
     """Is intended to submit notification records in the log file
     """
 
@@ -96,7 +96,7 @@ class NotificationLog :
         info_dict['pid']  = '%d' % os.getpid()
 
         # add user-defined fields
-        for k,v in self.dict_add_fields.iteritems() :
+        for k,v in self.dict_add_fields.items() :
             info_dict[k]  = v[1]
         return info_dict
 
@@ -127,7 +127,7 @@ class NotificationLog :
     def add_record(self, mode='enabled') : #  mode='self-disabled'
         if mode=='self-disabled' and self.is_permitted() : return
         d = self.get_info_dict()
-        rec = ' '.join(['%s:%s'%(k,str(v)) for k,v in d.iteritems()])
+        rec = ' '.join(['%s:%s'%(k,str(v)) for k,v in d.items()])
         #print 'add_record rec:', rec
         path = self.fname # note_fname() if self.fname is None else fname
         #print 'Note file: %s' % path

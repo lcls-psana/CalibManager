@@ -15,6 +15,7 @@
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
+from __future__ import division
 
 #------------------------------
 __version__ = "$Revision$"
@@ -35,7 +36,7 @@ import GlobalUtils as gu
 
 #----------------------------------
 
-class OpticAlignmentCspadMethods :
+class OpticAlignmentCspadMethods(object) :
     """OpticAlignmentCspadMethods"""
 
     pixelSize = 109.92

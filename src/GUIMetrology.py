@@ -549,7 +549,7 @@ class GUIMetrology(Frame) :
 
 
     def list_metrology_alignment_const_fnames(self) : 
-        return self.dict_metrology_alignment_const_fname_for_type().values()
+        return list(self.dict_metrology_alignment_const_fname_for_type().values())
 
 
     def onButDeploy(self):
@@ -607,7 +607,7 @@ class GUIMetrology(Frame) :
         #print 'dst_fname      ', dst_fname
 
         list_of_cmds = []
-        for type, fname in self.dict_metrology_alignment_const_fname_for_type().iteritems() :
+        for type, fname in self.dict_metrology_alignment_const_fname_for_type().items() :
             dst_path = os.path.join(dst_calib_dir, dst_calib_type, dst_source, type, dst_fname)
             cmd = 'cp %s %s' % (fname, dst_path)
             list_of_cmds.append(cmd)

@@ -26,6 +26,8 @@ from __future__ import print_function
 #------------------------------
 #  Module's version from SVN --
 #------------------------------
+from future import standard_library
+standard_library.install_aliases()
 __version__ = "$Revision$"
 # $Source$
 
@@ -36,7 +38,7 @@ __version__ = "$Revision$"
 import sys
 import os
 import subprocess # for subprocess.Popen
-from commands import getoutput
+from subprocess import getoutput
 import tempfile
 from time import time, sleep
 
@@ -73,7 +75,7 @@ def get_tempfname(mode='w+b',prefix='calibman-',suffix='.txt') :
 
 #------------------------------
 
-class PackageVersions :
+class PackageVersions(object) :
     """Get info about tags of packages involved in the project
     """
     def __init__(self, list_of_pkgs = ['CalibManager', 'ImgAlgos', 'PSCalib', 'pdscalibdata', 'CSPadPixCoords'], print_bits=0) :
@@ -106,13 +108,13 @@ class PackageVersions :
         """Returns dictionary with temporary file names for packages as keys"""
 
         self.dict_pkg_fname = {pkg:get_tempfname() for pkg in self.list_of_pkgs}
-        for pkg, fname in self.dict_pkg_fname.iteritems() :
+        for pkg, fname in self.dict_pkg_fname.items() :
             cmd = 'psvn tags %s' % pkg
             subproc_submit(cmd.split(), fname)
 
 
     def print_list_of_packages(self) :
-        for pkg, fname in self.dict_pkg_fname.iteritems() :
+        for pkg, fname in self.dict_pkg_fname.items() :
             print(pkg, fname)
 
 
