@@ -26,7 +26,7 @@ import sys
 import os
 from time import sleep
 
-from Logger                   import logger
+from CalibManager.Logger                   import logger
 
 from FileNameManager          import fnm
 #from ConfigFileGenerator      import cfg

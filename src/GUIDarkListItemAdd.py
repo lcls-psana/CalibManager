@@ -15,7 +15,7 @@ __version__ = "$Revision$"
 from PyQt4 import QtGui, QtCore
 
 from ConfigParametersForApp import cp
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 import GlobalUtils          as     gu
 from GUIDarkMoreOpts        import *
 

@@ -30,7 +30,7 @@ from PyQt4 import QtGui, QtCore
 from ConfigParametersForApp import cp
 
 #from CalibManager.Frame     import Frame
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 from FileNameManager        import fnm
 
 from CorAna.MaskEditor import MaskEditor

@@ -27,7 +27,7 @@ from ConfigParametersForApp import cp
 
 #from GUILogger            import *
 #from FileNameManager      import fnm
-from Logger               import logger
+from CalibManager.Logger               import logger
 from GUIConfig            import * # GUIConfig
 from GUIDark              import GUIDark
 from GUIData              import GUIData 

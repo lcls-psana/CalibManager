@@ -22,7 +22,7 @@ __version__ = "$Revision$"
 
 import os
 
-from Logger                   import logger
+from CalibManager.Logger                   import logger
 
 #------------------------------
 

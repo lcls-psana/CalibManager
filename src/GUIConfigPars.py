@@ -15,7 +15,7 @@ from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 import GlobalUtils          as     gu
 
 #------------------------------

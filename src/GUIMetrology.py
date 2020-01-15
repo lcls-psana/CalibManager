@@ -27,7 +27,7 @@ from PyQt4 import QtGui, QtCore
 from CalibManager.Frame     import Frame
 from ConfigParametersForApp import cp
 
-from Logger               import logger
+from CalibManager.Logger               import logger
 from FileNameManager      import fnm
 from GUIFileBrowser       import *
 from GUIRange             import *

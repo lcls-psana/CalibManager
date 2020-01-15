@@ -13,7 +13,7 @@ __version__ = "$Revision$"
 from PyQt4 import QtGui, QtCore
 
 from ConfigParametersForApp import cp
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 from FileNameManager        import fnm
 from GUIDarkListItem        import *
 import GlobalUtils          as     gu

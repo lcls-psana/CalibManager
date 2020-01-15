@@ -15,7 +15,7 @@ from PyQt4 import QtGui, QtCore
 from ConfigParametersForApp import cp
 from GUIConfigPars          import GUIConfigPars
 from GUIConfigFile          import GUIConfigFile
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 
 #------------------------------
 

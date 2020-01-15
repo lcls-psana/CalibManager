@@ -22,7 +22,7 @@ __version__ = "$Revision$"
 import os
 from PyQt4 import QtGui, QtCore
 
-from Logger import logger
+from CalibManager.Logger import logger
 from ConfigParametersForApp import cp
 
 #------------------------------

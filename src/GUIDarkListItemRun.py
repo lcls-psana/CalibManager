@@ -15,7 +15,7 @@ import time   # for sleep(sec)
 from time import time 
 
 from ConfigParametersForApp import cp
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
 from BatchJobPedestals      import *

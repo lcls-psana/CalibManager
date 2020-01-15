@@ -20,7 +20,7 @@ from PyQt4 import QtGui, QtCore
 from ConfigParametersForApp import cp
 import GlobalUtils          as     gu
 from FileNameManager        import fnm
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 from GUIPopupSelectExp      import select_experiment_v3
 
 #------------------------------

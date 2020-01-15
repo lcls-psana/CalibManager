@@ -11,7 +11,7 @@ from __future__ import print_function
 __author__ = "Mikhail S. Dubrovin"
 #----------------------------
 
-from Logger import logger
+from CalibManager.Logger import logger
 from ConfigParameters import *
 from PyQt4 import QtGui, QtCore
 import AppDataPath as apputils # for icons

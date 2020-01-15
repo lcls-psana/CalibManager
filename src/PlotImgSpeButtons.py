@@ -24,7 +24,7 @@ import os
 from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 from GUIHelp                import *
 import GlobalUtils          as     gu
 from GUIRangeIntensity      import *

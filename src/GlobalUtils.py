@@ -40,7 +40,7 @@ from subprocess import getoutput
 #import commands # use 'subprocess' instead of 'commands'
 import subprocess # for subprocess.Popen
 
-from Logger import logger
+from CalibManager.Logger import logger
 from PyQt4 import QtGui, QtCore
 #from LogBook import message_poster
 from GUIPopupCheckList import *

@@ -25,7 +25,7 @@ import sys
 import os
 
 from ConfigParametersForApp   import cp
-from Logger                   import logger
+from CalibManager.Logger                   import logger
 import GlobalUtils            as     gu
 
 from PyQt4 import QtGui, QtCore # need it in order to use QtCore.QObject for connect

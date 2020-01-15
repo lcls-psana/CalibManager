@@ -23,7 +23,7 @@ __version__ = "$Revision$"
 import os
 
 from ConfigParametersForApp import cp
-from Logger                 import logger
+from CalibManager.Logger                 import logger
 from FileNameManager        import fnm
 import GlobalUtils          as     gu
 

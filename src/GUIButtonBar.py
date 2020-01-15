@@ -29,7 +29,7 @@ from PyQt4 import QtGui, QtCore
 from ConfigParametersForApp import cp
 
 from GUILogger            import *
-from Logger               import logger
+from CalibManager.Logger               import logger
 from FileNameManager      import fnm
 
 #------------------------------

@@ -17,7 +17,7 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-#from Logger import logger
+#from CalibManager.Logger import logger
 #from ConfigParametersForApp import cp
 #import CalibManager.AppDataPath as apputils # for icons
 
