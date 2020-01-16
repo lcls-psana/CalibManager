@@ -26,7 +26,7 @@ import sys
 import numpy
 import numpy as np
 import math
-from time import localtime, gmtime, strftime, clock, time, sleep
+from time import localtime, gmtime, strftime, time, sleep
 
 import matplotlib.pyplot as plt
 import matplotlib.lines  as lines

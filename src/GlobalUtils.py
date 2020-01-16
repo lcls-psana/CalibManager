@@ -30,7 +30,11 @@ import pwd
 import socket
 import getpass
 #import time
-from time import localtime, gmtime, strftime, clock, time, sleep
+from time import localtime, gmtime, strftime, time, sleep
+try:
+  from time import clock # removed in python 3.8
+except ImportError:
+  from time import perf_counter as clock
 #from datetime import datetime
 import tempfile
 
