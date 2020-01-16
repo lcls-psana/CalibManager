@@ -25,7 +25,7 @@ import sys
 import os
 import random
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore
 from .ConfigParametersForApp import confpars as cp
 from .FileNameManager        import fnm
 
@@ -34,6 +34,7 @@ from .FileNameManager        import fnm
 #---------------------
 
 class ThreadCheckNewXtcFiles (QtCore.QThread) :
+    update = QtCore.pyqtSignal('QString')
 
     def __init__ ( self, parent=None, dt_sec=60, print_bits=0 ) :
         QtCore.QThread.__init__(self, parent)
@@ -47,7 +48,7 @@ class ThreadCheckNewXtcFiles (QtCore.QThread) :
         self.list_of_runs_old = []
 
         cp.thread_check_new_xtc_files = self
-        self.connect( self, QtCore.SIGNAL('update(QString)'), self.testConnection )
+        self.update['QString'].connect(self.testConnection)
 
 
     def testConnection(self, text) :
@@ -87,7 +88,7 @@ class ThreadCheckNewXtcFiles (QtCore.QThread) :
 
     def emitSignalNewXtc( self ) :
         msg = 'thread_id:%f counter:%d last_run:%d' %(self.thread_id, self.counter, self.list_of_runs_old[-1])       
-        self.emit( QtCore.SIGNAL('update(QString)'), msg )
+        self.update.emit(msg)
         if self.print_bits & 1 : print('New xtc file is available, msg: %s' % msg)
 
 #---------------------

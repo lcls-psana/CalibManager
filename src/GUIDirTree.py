@@ -16,18 +16,24 @@ __version__ = "$Revision: 11469 $"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
 #------------------------------
 
-class GUIDirTree(QtGui.QWidget):
+try:
+    QString = unicode
+except NameError:
+    # Python 3
+    QString = str
+
+class GUIDirTree(QtWidgets.QWidget):
 
     def __init__(self, parent=None, dir_top='.') :
         #super(GUIQTreeView, self).__init__(parent)
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.dir_top = dir_top
 
@@ -35,7 +41,7 @@ class GUIDirTree(QtGui.QWidget):
  
         #self.view = QtGui.QListView()
         #self.view = QtGui.QTableView()
-        self.view = QtGui.QTreeView()
+        self.view = QtWidgets.QTreeView()
  
         self.make_model() # defines self.model
 
@@ -44,7 +50,7 @@ class GUIDirTree(QtGui.QWidget):
         #self.view.expandAll()
         self.view.setAnimated(True)
  
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.view)
 
         if parent is None :
@@ -69,10 +75,10 @@ class GUIDirTree(QtGui.QWidget):
 
 
     def connect_item_selected_to(self, recipient) :
-        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), recipient)
+        self.view.selectionModel().currentChanged[QModelIndex, QModelIndex].connect(recipient)
 
     def disconnect_item_selected_from(self, recipient) :
-        self.disconnect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), recipient)
+        self.view.selectionModel().currentChanged[QModelIndex, QModelIndex].disconnect(recipient)
 
     def connect_item_changed_to(self, recipient) :
         self.model.itemChanged.connect(recipient)
@@ -109,7 +115,7 @@ class GUIDirTree(QtGui.QWidget):
 
         item_parent = self.model.invisibleRootItem() if item is None else item
 
-        item_add = QtGui.QStandardItem(QtCore.QString(os.path.basename(path)))
+        item_add = QtGui.QStandardItem(QString(os.path.basename(path)))
         item_parent.appendRow(item_add)
 
         if os.path.isfile(path) :
@@ -256,7 +262,7 @@ class GUIDirTree(QtGui.QWidget):
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     fname = sys.argv[1] if len(sys.argv) > 1 else '/reg/d/psdm/detector/calib'
     widget = GUIDirTree (None, fname)
     widget.show()

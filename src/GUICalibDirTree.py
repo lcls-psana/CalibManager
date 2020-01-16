@@ -14,7 +14,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
@@ -22,7 +22,13 @@ from .FileNameManager        import fnm
 
 #------------------------------
 
-class GUICalibDirTree(QtGui.QWidget):
+try:
+    QString = unicode
+except NameError:
+    # Python 3
+    QString = str
+
+class GUICalibDirTree(QtWidgets.QWidget):
 
     calib_types_cspad = [
         'center'
@@ -82,7 +88,7 @@ class GUICalibDirTree(QtGui.QWidget):
 
     def __init__(self, parent=None) :
         #super(GUIQTreeView, self).__init__(parent)
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.setGeometry(100, 100, 200, 600)
         self.setWindowTitle('Item selection tree')
@@ -93,19 +99,19 @@ class GUICalibDirTree(QtGui.QWidget):
 
         #self.view = QtGui.QListView()
         #self.view = QtGui.QTableView()
-        self.view = QtGui.QTreeView()
+        self.view = QtWidgets.QTreeView()
         self.view.setModel(self.model)
         #self.view.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         #self.view.expandAll()
         self.view.setAnimated(True)
  
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.view)
 
         if parent is None :
             self.setLayout(vbox)
 
-        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), self.itemSelected)
+        self.view.selectionModel().currentChanged[QModelIndex, QModelIndex].connect(self.itemSelected)
         #self.view.clicked.connect(self.someMethod1)       # This works
         #self.view.doubleClicked.connect(self.someMethod2) # This works
         self.model.itemChanged.connect(self.itemChanged)
@@ -127,7 +133,7 @@ class GUICalibDirTree(QtGui.QWidget):
             #print 'det, vers =', det, vers
 
             parentItem = self.model.invisibleRootItem() 
-            itemv = QtGui.QStandardItem(QtCore.QString(v))
+            itemv = QtGui.QStandardItem(QString(v))
             itemv.setIcon(cp.icon_folder_closed)
             #itemv.setCheckable(True) 
             parentItem.appendRow(itemv)
@@ -142,13 +148,13 @@ class GUICalibDirTree(QtGui.QWidget):
                 print('UNKNOWN DETECTOR') 
 
             for d in self.calib_det_list :
-                itemd = QtGui.QStandardItem(QtCore.QString(d))
+                itemd = QtGui.QStandardItem(QString(d))
                 itemd.setIcon(cp.icon_folder_closed)
                 #itemd.setCheckable(True) 
                 itemv.appendRow(itemd)
  
                 for t in self.calib_type_list :
-                    itemt = QtGui.QStandardItem(QtCore.QString(t))
+                    itemt = QtGui.QStandardItem(QString(t))
                     itemt.setIcon(cp.icon_folder_closed)
                     itemt.setCheckable(True) 
                     itemd.appendRow(itemt)
@@ -257,7 +263,7 @@ class GUICalibDirTree(QtGui.QWidget):
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUICalibDirTree()
     widget.show()
     app.exec_()

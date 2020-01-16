@@ -18,7 +18,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 #------------------------------
 
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 import CalibManager.H5TreeViewModel as h5model
 from   CalibManager.QIcons import icon
 import CalibManager.H5Print as printh5
@@ -26,11 +26,11 @@ from   CalibManager.H5Logger import log
 
 #------------------------------
 
-class H5WTree(QtGui.QWidget) :
+class H5WTree(QtWidgets.QWidget) :
     """Shows the HDF5 file tree-structure and allows to select data items.
     """
     def __init__(self, parent=None, fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5') :
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.actExpColl = parent.actExpColl if parent is not None else None
 
@@ -51,7 +51,7 @@ class H5WTree(QtGui.QWidget) :
 
         #self.view = QtGui.QListView()
         #self.view = QtGui.QTableView()
-        self.view = QtGui.QTreeView()
+        self.view = QtWidgets.QTreeView()
         self.view.setModel(self.model)
         #print 'Root is decorated ? ', self.view.rootIsDecorated() # Returns True
         #self.view.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
@@ -60,12 +60,12 @@ class H5WTree(QtGui.QWidget) :
         #self.setCentralWidget(self.view)
 
 
-        self.vbox = QtGui.QVBoxLayout(self) 
+        self.vbox = QtWidgets.QVBoxLayout(self) 
         self.vbox.addWidget(self.view)
  
         self.setLayout(self.vbox)
 
-        self.connect(self.view.selectionModel(), QtCore.SIGNAL('currentChanged(QModelIndex, QModelIndex)'), self.cellSelected)        
+        self.view.selectionModel().currentChanged[QModelIndex, QModelIndex].connect(self.cellSelected)
 
         #self.view.clicked.connect(self.someMethod1)       # This works
         #self.view.doubleClicked.connect(self.someMethod2) # This works
@@ -249,7 +249,7 @@ if __name__ == "__main__" :
     fname = sys.argv[1] if len(sys.argv)==2 else fname0    
     log.setPrintBits(0o377)
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = H5WTree(None, fname)
     ex.show()
     app.exec_()

@@ -23,10 +23,16 @@ from __future__ import print_function
 
 import sys
 import h5py
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 from CalibManager.QIcons import icon
 
 #------------------------------
+
+try:
+    QString = unicode
+except NameError:
+    # Python 3
+    QString = str
 
 class H5TreeViewModel(QtGui.QStandardItemModel) :
     """Makes QtGui.QStandardItemModel for QtGui.QTreeView.
@@ -81,7 +87,7 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
 
         if isinstance(g, h5py.Dataset):
             #print offset, "(Dateset)   len =", g.shape #, subg.dtype
-            item = QtGui.QStandardItem(QtCore.QString(g.key()))
+            item = QtGui.QStandardItem(QString(g.key()))
             item.setAccessibleDescription(self.str_data)
             self.parent_item.appendRow(item)            
         else:
@@ -106,7 +112,7 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
             #subg = val
             subg = d[key]
 
-            item = QtGui.QStandardItem(QtCore.QString(key))
+            item = QtGui.QStandardItem(QString(key))
             #print '    k=', key, #,"   ", subg.name #, val, subg.len(), type(subg), 
             if isinstance(subg, h5py.Dataset):
                 #print " (Dateset)   len =", subg.shape #, subg.dtype
@@ -417,11 +423,11 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
         for k in range(0, 6):
             parent_item = self.invisibleRootItem()
             for i in range(0, k):
-                item = QtGui.QStandardItem(QtCore.QString("itemA %0 %1").arg(k).arg(i))
+                item = QtGui.QStandardItem(QString("itemA %0 %1").arg(k).arg(i))
                 item.setIcon(self.icon_data)
                 item.setCheckable(True) 
                 parent_item.appendRow(item)
-                item = QtGui.QStandardItem(QtCore.QString("itemB %0 %1").arg(k).arg(i))
+                item = QtGui.QStandardItem(QString("itemB %0 %1").arg(k).arg(i))
                 item.setIcon(self.icon_folder_closed)
                 parent_item.appendRow(item)
                 parent_item = item
@@ -432,7 +438,7 @@ class H5TreeViewModel(QtGui.QStandardItemModel) :
 if __name__ == "__main__" :    
     import sys
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     m = H5TreeViewModel(parent=None, fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5')
 
     #sys.exit('Module is not supposed to be run as main module')

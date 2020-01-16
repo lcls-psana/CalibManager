@@ -22,7 +22,7 @@ __version__ = "$Revision$"
 
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 
@@ -31,14 +31,14 @@ from .ConfigParametersForApp import cp
 from CalibManager.Logger               import logger
 from .GUIConfig            import * # GUIConfig
 from .GUIDark              import GUIDark
-from .GUIData              import GUIData 
+from .GUIData              import GUIData
 from .GUIROIMask           import GUIROIMask
 from .GUIFileManager       import GUIFileManager
-from .GUIGeometry          import GUIGeometry 
+from .GUIGeometry          import GUIGeometry
 from . import GlobalUtils        as     gu
 
 #---------------------
-class GUIMainTabs(QtGui.QWidget) :
+class GUIMainTabs(QtWidgets.QWidget) :
     """GUI for tabs support in GUIMain.
     """
     list_of_tabs = [ 'Dark'
@@ -57,7 +57,7 @@ class GUIMainTabs(QtGui.QWidget) :
 
         self.name = 'GUIMainTabs'
         self.myapp = app
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         cp.setIcons()
  
@@ -69,13 +69,13 @@ class GUIMainTabs(QtGui.QWidget) :
 
         self.gui_win = None
 
-        self.hboxW = QtGui.QHBoxLayout()
+        self.hboxW = QtWidgets.QHBoxLayout()
 
         self.makeTabBar()
         self.guiSelector()
 
-        if self.orientation == 'H' : self.box = QtGui.QVBoxLayout(self) 
-        else :                       self.box = QtGui.QHBoxLayout(self) 
+        if self.orientation == 'H' : self.box = QtWidgets.QVBoxLayout(self) 
+        else :                       self.box = QtWidgets.QHBoxLayout(self) 
 
         self.box.addWidget(self.tab_bar)
         self.box.addLayout(self.hboxW)
@@ -107,7 +107,7 @@ class GUIMainTabs(QtGui.QWidget) :
 
     def makeTabBar(self,mode=None) :
         #if mode is not None : self.tab_bar.close()
-        self.tab_bar = QtGui.QTabBar()
+        self.tab_bar = QtWidgets.QTabBar()
 
         #len(self.list_of_tabs)
         for tab_name in self.list_of_tabs :
@@ -118,13 +118,13 @@ class GUIMainTabs(QtGui.QWidget) :
             self.tab_bar.setTabTextColor(tab_ind, QtGui.QColor('blue')) #gray, red, grayblue
 
         if self.orientation == 'H' :
-            self.tab_bar.setShape(QtGui.QTabBar.RoundedNorth)
+            self.tab_bar.setShape(QtWidgets.QTabBar.RoundedNorth)
         else :
-            self.tab_bar.setShape(QtGui.QTabBar.RoundedWest)
+            self.tab_bar.setShape(QtWidgets.QTabBar.RoundedWest)
 
         self.setTabByName(cp.current_tab.value())
             
-        self.connect(self.tab_bar, QtCore.SIGNAL('currentChanged(int)'), self.onTabBar)
+        self.tab_bar.currentChanged[int].connect(self.onTabBar)
 
 
     def setTabByName(self, tab_name) :
@@ -215,7 +215,7 @@ class GUIMainTabs(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIMainTabs()
     ex.move(QtCore.QPoint(50,50))
     ex.show()

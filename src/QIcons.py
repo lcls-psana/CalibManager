@@ -28,7 +28,7 @@ from __future__ import print_function
 #------------------------------
 
 import os
-from PyQt4 import QtGui#, QtCore
+from PyQt5 import QtCore, QtGui#, QtWidgets
 import CalibManager.AppDataPath as apputils # for icons
 
 #------------------------------
@@ -149,7 +149,7 @@ def test_QIcons() :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     icon.set_icons()
     test_QIcons()
     sys.exit(0)

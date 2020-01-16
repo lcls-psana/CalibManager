@@ -29,7 +29,7 @@ from .ConfigParametersForApp   import cp
 from CalibManager.Logger                   import logger
 from . import GlobalUtils            as     gu
 
-from PyQt4 import QtGui, QtCore # need it in order to use QtCore.QObject for connect
+from PyQt5 import QtCore # need it in order to use QtCore.QObject for connect
 
 #-----------------------------
 
@@ -197,14 +197,14 @@ class BatchJob(QtCore.QObject) : # need in QtCore.QObject in order to connect to
     def connectToThread1(self):
         if cp.commandlinecalib is not None : return
 
-        try : self.connect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
+        try : cp.thread1.update['QString'].connect(self.updateStatus)
         except : logger.warning('connectToThread1 IS FAILED !!!', __name__)
 
 
     def disconnectFromThread1(self):
         if cp.commandlinecalib is not None : return
 
-        try : self.disconnect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
+        try : cp.thread1.update['QString'].disconnect(self.updateStatus)
         except : logger.warning('disconnectFromThread1 IS FAILED !!!', __name__)
 
 

@@ -19,15 +19,16 @@ If you use all or part of it, please give an appropriate acknowledgment.
 #------------------------------
 
 from CalibManager.H5WTree import *
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 #------------------------------
 
-class H5WTreeInMainWindow(QtGui.QMainWindow) :
+class H5WTreeInMainWindow(QtWidgets.QMainWindow) :
     """Shows the HDF5 file tree-structure and allows to select data items.
     """
 
     def __init__(self, parent=None, fname='/reg/g/psdm/detector/calib/epix100a/epix100a-test.h5'):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
 
         self.fname = fname
         self.list_of_checked_item_names = []
@@ -48,27 +49,27 @@ class H5WTreeInMainWindow(QtGui.QMainWindow) :
         self.icon_print         = icon.icon_print
         self.icon_expcoll       = icon.icon_expand
 
-        self.actExit         = QtGui.QAction(self.icon_exit,     'Exit',           self)
-        self.actApply        = QtGui.QAction(self.icon_apply,    'Apply',          self)
-        self.actReset        = QtGui.QAction(self.icon_reset,    'Reset',          self)
-        self.actRetreve      = QtGui.QAction(self.icon_retreve,  'Retreve',        self)
-        self.actExpand       = QtGui.QAction(self.icon_expand,   'Expand',         self)
-        self.actCollapse     = QtGui.QAction(self.icon_collapse, 'Collapse',       self)
-        self.actExpColl      = QtGui.QAction(self.icon_expcoll,  'Expand tree',    self)
-        self.actExpCheck     = QtGui.QAction(self.icon_expcheck, 'Expand checked', self)
-        self.actPrint        = QtGui.QAction(self.icon_print,    'Print tree',     self)
+        self.actExit         = QtWidgets.QAction(self.icon_exit,     'Exit',           self)
+        self.actApply        = QtWidgets.QAction(self.icon_apply,    'Apply',          self)
+        self.actReset        = QtWidgets.QAction(self.icon_reset,    'Reset',          self)
+        self.actRetreve      = QtWidgets.QAction(self.icon_retreve,  'Retreve',        self)
+        self.actExpand       = QtWidgets.QAction(self.icon_expand,   'Expand',         self)
+        self.actCollapse     = QtWidgets.QAction(self.icon_collapse, 'Collapse',       self)
+        self.actExpColl      = QtWidgets.QAction(self.icon_expcoll,  'Expand tree',    self)
+        self.actExpCheck     = QtWidgets.QAction(self.icon_expcheck, 'Expand checked', self)
+        self.actPrint        = QtWidgets.QAction(self.icon_print,    'Print tree',     self)
 
         self.h5wtree = H5WTree(self, fname)
 
-        self.connect(self.actExit,     QtCore.SIGNAL('triggered()'), self.h5wtree.processExit)
-        self.connect(self.actApply,    QtCore.SIGNAL('triggered()'), self.h5wtree.processApply)
-        self.connect(self.actReset,    QtCore.SIGNAL('triggered()'), self.h5wtree.processReset)
-        self.connect(self.actRetreve,  QtCore.SIGNAL('triggered()'), self.h5wtree.processRetreve)
-        self.connect(self.actExpand,   QtCore.SIGNAL('triggered()'), self.h5wtree.processExpand)
-        self.connect(self.actCollapse, QtCore.SIGNAL('triggered()'), self.h5wtree.processCollapse)
-        self.connect(self.actExpColl,  QtCore.SIGNAL('triggered()'), self.h5wtree.processExpColl)
-        self.connect(self.actExpCheck, QtCore.SIGNAL('triggered()'), self.h5wtree.processExpCheck)
-        self.connect(self.actPrint,    QtCore.SIGNAL('triggered()'), self.h5wtree.processPrint)
+        self.actExit.triggered.connect(self.h5wtree.processExit)
+        self.actApply.triggered.connect(self.h5wtree.processApply)
+        self.actReset.triggered.connect(self.h5wtree.processReset)
+        self.actRetreve.triggered.connect(self.h5wtree.processRetreve)
+        self.actExpand.triggered.connect(self.h5wtree.processExpand)
+        self.actCollapse.triggered.connect(self.h5wtree.processCollapse)
+        self.actExpColl.triggered.connect(self.h5wtree.processExpColl)
+        self.actExpCheck.triggered.connect(self.h5wtree.processExpCheck)
+        self.actPrint.triggered.connect(self.h5wtree.processPrint)
         #self.connect(self.actExit,     QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
 
         self.menubar = self.menuBar()
@@ -119,7 +120,7 @@ if __name__ == "__main__" :
 
     log.setPrintBits(0o377)
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = H5WTreeInMainWindow(None, fname)
     ex.show()
     app.exec_()

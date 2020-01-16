@@ -11,7 +11,7 @@ __version__ = "$Revision$"
 
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
@@ -25,7 +25,7 @@ from time import time
 
 #------------------------------
 
-class GUIDarkList(QtGui.QWidget) :
+class GUIDarkList(QtWidgets.QWidget) :
     """GUI for the list of widgers"""
 
     def __init__(self, parent=None) :
@@ -52,7 +52,7 @@ class GUIDarkList(QtGui.QWidget) :
         #self.det_name       = cp.det_name
 
         #QtGui.QGroupBox.__init__(self, 'Runs', parent)
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.setGeometry(100, 100, 800, 300)
         self.setWindowTitle('List of dark runs')
@@ -62,12 +62,12 @@ class GUIDarkList(QtGui.QWidget) :
 
         #self.list = QtGui.QListWidget(parent=self)
         # Use singleton object
-        if cp.dark_list is None : self.list = cp.dark_list = QtGui.QListWidget()
+        if cp.dark_list is None : self.list = cp.dark_list = QtWidgets.QListWidget()
         else                    : self.list = cp.dark_list
 
         self.updateList()
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.list)
         self.setLayout(vbox)
 
@@ -87,12 +87,12 @@ class GUIDarkList(QtGui.QWidget) :
 
 
     def connectToThreadWorker(self):
-        try : self.connect(cp.thread_check_new_xtc_files, QtCore.SIGNAL('update(QString)'), self.signalReciever)
+        try : cp.thread_check_new_xtc_files.update['QString'].connect(self.signalReciever)
         except : logger.warning('connectToThreadWorker is failed', __name__)
 
 
     def disconnectFromThreadWorker(self):
-        try : self.disconnect(cp.thread_check_new_xtc_files, QtCore.SIGNAL('update(QString)'), self.signalReciever)
+        try : cp.thread_check_new_xtc_files.update['QString'].disconnect(self.signalReciever)
         except : pass
 
 
@@ -201,7 +201,7 @@ class GUIDarkList(QtGui.QWidget) :
         else :
             #print 'Create new GUIDarkListItem object for run %d' % run_num
             str_run_num = '%04d'%run_num
-            item = QtGui.QListWidgetItem(str_run_num, self.list)
+            item = QtWidgets.QListWidgetItem(str_run_num, self.list)
             widg = GUIDarkListItem(self, str_run_num, self.type, self.comment, self.xtc_in_dir)  
             self.dict_guidarklistitem[run_num] = [item, widg]
             item.setTextColor(QtGui.QColor(0, 0, 0, alpha=0)) # set item text invisible. All pars in the range [0,255]
@@ -308,7 +308,7 @@ class GUIDarkList(QtGui.QWidget) :
 
     def setStyle(self):
         self.setMinimumSize(760,80)
-        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.setStyleSheet(cp.styleBkgd)
         self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
 
@@ -413,7 +413,7 @@ class GUIDarkList(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIDarkList()
     #w.setStatusMessage('Test of GUIDarkList...')
     #w.statusOfDir('./')

@@ -14,7 +14,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from CalibManager.Frame     import Frame
 from .ConfigParametersForApp import cp
@@ -35,24 +35,24 @@ class GUIHelp(Frame) :
         try : self.setWindowIcon(cp.icon_help)
         except : pass
 
-        self.box_txt    = QtGui.QTextEdit()
-        self.tit_status = QtGui.QLabel('Status:')
-        self.but_close  = QtGui.QPushButton('Close') 
+        self.box_txt    = QtWidgets.QTextEdit()
+        self.tit_status = QtWidgets.QLabel('Status:')
+        self.but_close  = QtWidgets.QPushButton('Close') 
 
-        self.hboxM = QtGui.QHBoxLayout()
+        self.hboxM = QtWidgets.QHBoxLayout()
         self.hboxM.addWidget( self.box_txt )
 
-        self.hboxB = QtGui.QHBoxLayout()
+        self.hboxB = QtWidgets.QHBoxLayout()
         self.hboxB.addWidget(self.tit_status)
         self.hboxB.addStretch(4)     
         self.hboxB.addWidget(self.but_close)
 
-        self.vbox  = QtGui.QVBoxLayout()
+        self.vbox  = QtWidgets.QVBoxLayout()
         self.vbox.addLayout(self.hboxM)
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
         
-        self.connect(self.but_close, QtCore.SIGNAL('clicked()'), self.onClose)
+        self.but_close.clicked.connect(self.onClose)
  
         self.setHelpMessage(msg)
 
@@ -126,7 +126,7 @@ class GUIHelp(Frame) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIHelp()
     w.setHelpMessage('This is a test message to test methods of GUIHelp...')
     w.show()

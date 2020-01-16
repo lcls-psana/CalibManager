@@ -13,7 +13,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
@@ -22,12 +22,12 @@ from . import GlobalUtils          as     gu
 #---------------------
 
 #class GUIStatus(QtGui.QWidget) :
-class GUIStatus(QtGui.QGroupBox) :
+class GUIStatus(QtWidgets.QGroupBox) :
     """GUI State"""
 
     def __init__(self, parent=None, msg='No message in GUIStatus...') :
 
-        QtGui.QGroupBox.__init__(self, 'State', parent)
+        QtWidgets.QGroupBox.__init__(self, 'State', parent)
         #QtGui.QWidget.__init__(self, parent)
         self.setGeometry(100, 100, 300, 60)
         self.setWindowTitle('GUI Status')
@@ -42,12 +42,12 @@ class GUIStatus(QtGui.QGroupBox) :
         self.calib_dir      = cp.calib_dir
         self.current_tab    = cp.current_tab
 
-        self.box_txt        = QtGui.QTextEdit(self)
+        self.box_txt        = QtWidgets.QTextEdit(self)
         #self.tit_status     = QtGui.QLabel(' State ', self)
 
         #self.setTitle('My status')
 
-        self.vbox  = QtGui.QVBoxLayout()
+        self.vbox  = QtWidgets.QVBoxLayout()
         self.vbox.addWidget(self.box_txt)
         self.setLayout(self.vbox)
 
@@ -163,7 +163,7 @@ class GUIStatus(QtGui.QGroupBox) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     w = GUIStatus()
     w.setStatusMessage('Test of GUIStatus...')
     #w.statusOfDir('./')

@@ -13,7 +13,7 @@ __version__ = "$Revision$"
 
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from . import GlobalUtils          as     gu
@@ -22,7 +22,7 @@ from .GUIRange               import *
 
 #------------------------------
 
-class GUIDarkControlBar(QtGui.QWidget) :
+class GUIDarkControlBar(QtWidgets.QWidget) :
     """GUI sets the configuration parameters for instrument, experiment, and run number"""
 
     char_expand  = cp.char_expand
@@ -31,7 +31,7 @@ class GUIDarkControlBar(QtGui.QWidget) :
 
     def __init__(self,parent=None) :
 
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.parent = parent
         self.dark_list_show_runs = cp.dark_list_show_runs
@@ -46,25 +46,25 @@ class GUIDarkControlBar(QtGui.QWidget) :
         self.setGeometry(100, 50, 590, 36)
         self.setWindowTitle('Dark Control Bar')
 
-        self.labRuns = QtGui.QLabel('Show runs')
-        self.labDets = QtGui.QLabel('  for detectors:')
+        self.labRuns = QtWidgets.QLabel('Show runs')
+        self.labDets = QtWidgets.QLabel('  for detectors:')
 
         self.guirange  = GUIRange(None,\
                                   str(self.dark_list_run_min.value()),\
                                   str(self.dark_list_run_max.value()),\
                                   txt_from='', txt_to=':')
  
-        self.butRuns = QtGui.QPushButton(self.dark_list_show_runs.value() + self.char_expand)
+        self.butRuns = QtWidgets.QPushButton(self.dark_list_show_runs.value() + self.char_expand)
         self.butRuns.setFixedWidth(90)
-        self.butDets = QtGui.QPushButton(self.dark_list_show_dets.value() + self.char_expand)
+        self.butDets = QtWidgets.QPushButton(self.dark_list_show_dets.value() + self.char_expand)
         self.butDets.setFixedWidth(110)
-        self.butUpdate = QtGui.QPushButton("Update list")
+        self.butUpdate = QtWidgets.QPushButton("Update list")
         #self.butRuns.setMaximumWidth(90)
 
-        self.cbx_deploy_hotpix = QtGui.QCheckBox('Deploy hotpix mask')
+        self.cbx_deploy_hotpix = QtWidgets.QCheckBox('Deploy hotpix mask')
         self.cbx_deploy_hotpix.setChecked( cp.dark_deploy_hotpix.value() )
         
-        self.hbox = QtGui.QHBoxLayout() 
+        self.hbox = QtWidgets.QHBoxLayout() 
         self.hbox.addWidget(self.labRuns)
         self.hbox.addWidget(self.butRuns)
         self.hbox.addWidget(self.guirange)
@@ -77,12 +77,12 @@ class GUIDarkControlBar(QtGui.QWidget) :
         self.setLayout(self.hbox)
 
         #self.connect(self.ediExp,     QtCore.SIGNAL('editingFinished ()'), self.processEdiExp)
-        self.connect(self.butRuns,     QtCore.SIGNAL('clicked()'),          self.onButRuns)
-        self.connect(self.butDets,     QtCore.SIGNAL('clicked()'),          self.onButDets)
-        self.connect(self.butUpdate,   QtCore.SIGNAL('clicked()'),          self.onButUpdate)
-        self.connect(self.cbx_deploy_hotpix, QtCore.SIGNAL('stateChanged(int)'), self.on_cbx) 
+        self.butRuns.clicked.connect(self.onButRuns)
+        self.butDets.clicked.connect(self.onButDets)
+        self.butUpdate.clicked.connect(self.onButUpdate)
+        self.cbx_deploy_hotpix.stateChanged[int].connect(self.on_cbx)
 
-        self.connect(self.guirange, QtCore.SIGNAL('update(QString)'), self.updateRunRange)
+        self.guirange.update['QString'].connect(self.updateRunRange)
 
         self.showToolTips()
         self.setStyle()
@@ -235,7 +235,7 @@ class GUIDarkControlBar(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUIDarkControlBar ()
     widget.show()
     app.exec_()

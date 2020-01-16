@@ -24,7 +24,7 @@ __version__ = "$Revision$"
 import os
 import numpy as np
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 #-----------------------------
 # Imports for other modules --
@@ -32,18 +32,18 @@ from PyQt4 import QtGui, QtCore
 
 #from CalibManager.Frame   import Frame
 from CalibManager.Logger  import logger
-from .GUIMaskEditor        import * 
+from .GUIMaskEditor        import *
 
 #------------------------------
 #class GUIROIMask(Frame) : 
-class GUIROIMask(QtGui.QWidget) :
+class GUIROIMask(QtWidgets.QWidget) :
     """QWidger wrapping ROI mask processing.
     """
 
     def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIROIMask'
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         #Frame.__init__(self, parent, mlw=1)
 
         self.setGeometry(10, 25, 800, 300)
@@ -52,12 +52,12 @@ class GUIROIMask(QtGui.QWidget) :
         self.win = GUIMaskEditor(self)
         #self.lab_status = QtGui.QLabel('Status: ')
 
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addWidget(self.win)
         self.vbox.addStretch(1)
         #self.vbox.addWidget(self.lab_status)
 
-        self.hbox = QtGui.QHBoxLayout() 
+        self.hbox = QtWidgets.QHBoxLayout() 
         self.hbox.addStretch(1)
         self.hbox.addLayout(self.vbox)
         self.hbox.addStretch(1)
@@ -118,7 +118,7 @@ class GUIROIMask(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIROIMask()
     ex.show()
     app.exec_()

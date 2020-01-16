@@ -11,7 +11,7 @@ __version__ = "$Revision$"
 #--------------------------------
 #import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from .GUIConfigPars          import GUIConfigPars
@@ -20,22 +20,22 @@ from CalibManager.Logger                 import logger
 
 #------------------------------
 
-class GUIConfig(QtGui.QWidget) :
+class GUIConfig(QtWidgets.QWidget) :
     """GUI with tabs for configuration management"""
 
     def __init__(self, parent=None) :
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setGeometry(1, 1, 600, 200)
         self.setWindowTitle('Files')
 
-        self.lab_title  = QtGui.QLabel     ('Configuration settings')
-        self.lab_status = QtGui.QLabel     ('Status: ')
-        self.but_close  = QtGui.QPushButton('&Close') 
-        self.but_save   = QtGui.QPushButton('&Save') 
-        self.but_show   = QtGui.QPushButton('Show &Image') 
+        self.lab_title  = QtWidgets.QLabel     ('Configuration settings')
+        self.lab_status = QtWidgets.QLabel     ('Status: ')
+        self.but_close  = QtWidgets.QPushButton('&Close') 
+        self.but_save   = QtWidgets.QPushButton('&Save') 
+        self.but_show   = QtWidgets.QPushButton('Show &Image') 
 
-        self.hboxW = QtGui.QHBoxLayout()
-        self.hboxB = QtGui.QHBoxLayout()
+        self.hboxW = QtWidgets.QHBoxLayout()
+        self.hboxB = QtWidgets.QHBoxLayout()
         self.hboxB.addWidget(self.lab_status)
         self.hboxB.addStretch(1)     
         self.hboxB.addWidget(self.but_close)
@@ -48,7 +48,7 @@ class GUIConfig(QtGui.QWidget) :
         self.makeTabBar()
         self.guiSelector()
 
-        self.vbox = QtGui.QVBoxLayout()   
+        self.vbox = QtWidgets.QVBoxLayout()   
         #cp.guiworkresdirs = GUIWorkResDirs()
         #self.vbox.addWidget(cp.guiworkresdirs)
         self.vbox.addWidget(self.lab_title)
@@ -58,9 +58,9 @@ class GUIConfig(QtGui.QWidget) :
         self.vbox.addLayout(self.hboxB)
         self.setLayout(self.vbox)
 
-        self.connect( self.but_close, QtCore.SIGNAL('clicked()'), self.onClose )
-        self.connect( self.but_save,  QtCore.SIGNAL('clicked()'), self.onSave )
-        self.connect( self.but_show,  QtCore.SIGNAL('clicked()'), self.onShow )
+        self.but_close.clicked.connect(self.onClose)
+        self.but_save.clicked.connect(self.onSave)
+        self.but_show.clicked.connect(self.onShow)
 
         self.showToolTips()
         self.setStyle()
@@ -93,7 +93,7 @@ class GUIConfig(QtGui.QWidget) :
 
     def makeTabBar(self,mode=None) :
         #if mode is not None : self.tab_bar.close()
-        self.tab_bar = QtGui.QTabBar()
+        self.tab_bar = QtWidgets.QTabBar()
 
         #Uses self.list_file_types
         self.ind_tab_0 = self.tab_bar.addTab( self.list_file_types[0] )
@@ -101,7 +101,7 @@ class GUIConfig(QtGui.QWidget) :
 
         self.tab_bar.setTabTextColor(self.ind_tab_0, QtGui.QColor('magenta'))
         self.tab_bar.setTabTextColor(self.ind_tab_1, QtGui.QColor('magenta'))
-        self.tab_bar.setShape(QtGui.QTabBar.RoundedNorth)
+        self.tab_bar.setShape(QtWidgets.QTabBar.RoundedNorth)
 
         #self.tab_bar.setTabEnabled(1, False)
         #self.tab_bar.setTabEnabled(2, False)
@@ -117,7 +117,7 @@ class GUIConfig(QtGui.QWidget) :
 
         logger.debug(' make_tab_bar - set mode: ' + cp.current_config_tab.value(), __name__)
 
-        self.connect(self.tab_bar, QtCore.SIGNAL('currentChanged(int)'), self.onTabBar)
+        self.tab_bar.currentChanged[int].connect(self.onTabBar)
 
 
     def guiSelector(self):
@@ -214,7 +214,7 @@ class GUIConfig(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     widget = GUIConfig ()
     widget.show()
     app.exec_()

@@ -16,7 +16,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from .FileNameManager        import fnm
@@ -24,23 +24,29 @@ from CalibManager.Logger                 import logger
 from . import GlobalUtils          as     gu
 
 #------------------------------
-class GUIStatusTable(QtGui.QWidget) :
+try:
+    QString = unicode
+except NameError:
+    # Python 3
+    QString = str
+
+class GUIStatusTable(QtWidgets.QWidget) :
     """Status table of files from the list"""
 
     dict_status = {True  : 'Yes',
                    False : 'No' }
 
     def __init__ ( self, parent=None, list_of_files=[], list_expected=[], title='') :
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setGeometry(50, 100, 750, 500)
         self.setWindowTitle('Files ststus table')
 
         self.title = title
 
-        self.table = QtGui.QTableWidget(self)
+        self.table = QtWidgets.QTableWidget(self)
         self.makeTable(list_of_files, list_expected)
  
-        self.vbox = QtGui.QVBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
         self.vbox.addWidget(self.table)
         self.vbox.addStretch(1)     
  
@@ -58,7 +64,7 @@ class GUIStatusTable(QtGui.QWidget) :
 
 
     def disconnectFromThread1(self):
-        try : self.disconnect( cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus )
+        try : cp.thread1.update['QString'].disconnect(self.updateStatus)
         except : pass
 
 
@@ -108,13 +114,13 @@ class GUIStatusTable(QtGui.QWidget) :
         for i, fname in enumerate(list_of_files) :
 
             file_struct = os.path.exists(fname)
-            item_fname  = QtGui.QTableWidgetItem( os.path.basename(fname) )
+            item_fname  = QtWidgets.QTableWidgetItem( os.path.basename(fname) )
             #item_struct = QtGui.QTableWidgetItem( self.dict_status[file_struct] )
-            item_struct = QtGui.QTableWidgetItem( self.checkNameStructure(fname, self.list_expected) )
-            item_ctime  = QtGui.QTableWidgetItem( 'N/A' )
-            item_size   = QtGui.QTableWidgetItem( 'N/A' )
-            item_owner  = QtGui.QTableWidgetItem( 'N/A' )
-            item_mode   = QtGui.QTableWidgetItem( 'N/A' )
+            item_struct = QtWidgets.QTableWidgetItem( self.checkNameStructure(fname, self.list_expected) )
+            item_ctime  = QtWidgets.QTableWidgetItem( 'N/A' )
+            item_size   = QtWidgets.QTableWidgetItem( 'N/A' )
+            item_owner  = QtWidgets.QTableWidgetItem( 'N/A' )
+            item_mode   = QtWidgets.QTableWidgetItem( 'N/A' )
 
             item_struct.setTextAlignment(QtCore.Qt.AlignCenter)
             item_ctime .setTextAlignment(QtCore.Qt.AlignCenter)
@@ -246,7 +252,7 @@ class GUIStatusTable(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     list_dir = sorted(os.listdir('./'))
     print(list_dir)
     #widget = GUIStatusTable (parent=None, list_of_files=list_dir)

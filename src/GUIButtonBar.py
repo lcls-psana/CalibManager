@@ -25,7 +25,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 
@@ -35,14 +35,14 @@ from .FileNameManager      import fnm
 
 #------------------------------
 
-class GUIButtonBar(QtGui.QWidget) :
+class GUIButtonBar(QtWidgets.QWidget) :
     """Main GUI for main button bar.
     """
     def __init__(self, parent=None, app=None) :
 
         self.name = 'GUIButtonBar'
         self.myapp = app
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         cp.setIcons()
 
@@ -52,12 +52,12 @@ class GUIButtonBar(QtGui.QWidget) :
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
  
-        self.butSave     = QtGui.QPushButton('Save')
-        self.butExit     = QtGui.QPushButton('Exit')
-        self.butFile     = QtGui.QPushButton(u'GUI \u2192 &File')
-        self.butELog     = QtGui.QPushButton(u'GUI \u2192 &ELog')
-        self.butLogger   = QtGui.QPushButton('Logger')
-        self.butFBrowser = QtGui.QPushButton('File Browser')
+        self.butSave     = QtWidgets.QPushButton('Save')
+        self.butExit     = QtWidgets.QPushButton('Exit')
+        self.butFile     = QtWidgets.QPushButton(u'GUI \u2192 &File')
+        self.butELog     = QtWidgets.QPushButton(u'GUI \u2192 &ELog')
+        self.butLogger   = QtWidgets.QPushButton('Logger')
+        self.butFBrowser = QtWidgets.QPushButton('File Browser')
 
         self.butELog    .setIcon(cp.icon_mail_forward)
         self.butFile    .setIcon(cp.icon_save)
@@ -67,7 +67,7 @@ class GUIButtonBar(QtGui.QWidget) :
         self.butSave    .setIcon(cp.icon_save_cfg)
         #self.butStop    .setIcon(cp.icon_stop)
 
-        self.hboxB = QtGui.QHBoxLayout() 
+        self.hboxB = QtWidgets.QHBoxLayout() 
         self.hboxB.addWidget(self.butLogger  )
         self.hboxB.addWidget(self.butFBrowser)
         self.hboxB.addWidget(self.butFile    )
@@ -78,10 +78,10 @@ class GUIButtonBar(QtGui.QWidget) :
 
         self.setLayout(self.hboxB)
 
-        self.connect(self.butExit     ,  QtCore.SIGNAL('clicked()'), self.onExit    )
-        self.connect(self.butLogger   ,  QtCore.SIGNAL('clicked()'), self.onLogger  )
-        self.connect(self.butSave     ,  QtCore.SIGNAL('clicked()'), self.onSave    )
-        self.connect(self.butFile     ,  QtCore.SIGNAL('clicked()'), self.onFile    )
+        self.butExit.clicked.connect(self.onExit)
+        self.butLogger.clicked.connect(self.onLogger)
+        self.butSave.clicked.connect(self.onSave)
+        self.butFile.clicked.connect(self.onFile)
         #self.connect(self.butELog    ,  QtCore.SIGNAL('clicked()'), self.onELog    )
         #self.connect(self.butFBrowser,  QtCore.SIGNAL('clicked()'), self.onFBrowser)
 
@@ -169,11 +169,11 @@ class GUIButtonBar(QtGui.QWidget) :
         logger.debug('onFile', self.name)
         path  = fnm.path_gui_image()
         #dir, fname = os.path.split(path)
-        path  = str(QtGui.QFileDialog.getSaveFileName(self,
+        path  = str(QtWidgets.QFileDialog.getSaveFileName(self,
                                                       caption='Select file to save the GUI',
                                                       directory = path,
                                                       filter = '*.png'
-                                                      ))
+                                                      ))[0]
         if path == '' :
             logger.debug('Saving is cancelled.', self.name)
             return
@@ -258,7 +258,7 @@ class GUIButtonBar(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIButtonBar()
     ex.show()
     app.exec_()

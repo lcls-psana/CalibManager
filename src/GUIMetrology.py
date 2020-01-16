@@ -23,7 +23,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from CalibManager.Frame     import Frame
 from .ConfigParametersForApp import cp
@@ -71,32 +71,32 @@ class GUIMetrology(Frame) :
   
         #self.titFileXlsx = QtGui.QLabel('File xlsx:')
 
-        self.ediFileXlsx = QtGui.QLineEdit ( fnm.path_metrology_xlsx() )
+        self.ediFileXlsx = QtWidgets.QLineEdit ( fnm.path_metrology_xlsx() )
         self.ediFileXlsx.setReadOnly(True)
 
-        self.ediFileText = QtGui.QLineEdit ( fnm.path_metrology_text() ) # cp.fname_metrology_text.value_def() )
+        self.ediFileText = QtWidgets.QLineEdit ( fnm.path_metrology_text() ) # cp.fname_metrology_text.value_def() )
         self.ediFileText.setReadOnly(True)
 
-        self.butFileXlsx  = QtGui.QPushButton(' 1. Select xlsx file:')
-        self.butConvert   = QtGui.QPushButton(' 2. Convert xlsx to text file(s)')
-        self.butFileText  = QtGui.QPushButton(' 3. Select text file:')
-        self.butEvaluate  = QtGui.QPushButton(' 4. Evaluate')
-        self.butDeploy    = QtGui.QPushButton(' 5. Deploy')
-        self.butList      = QtGui.QPushButton('List')
-        self.butRemove    = QtGui.QPushButton('Remove')
-        self.butViewOffice= QtGui.QPushButton('View xlsx')
-        self.butViewText  = QtGui.QPushButton('View text')
-        self.butScript    = QtGui.QPushButton(self.script + cp.char_expand )
-        self.butSrc       = QtGui.QPushButton(self.source_name + cp.char_expand )
-        self.labSrc       = QtGui.QLabel('for detector')
-        self.labScript    = QtGui.QLabel('using script')
+        self.butFileXlsx  = QtWidgets.QPushButton(' 1. Select xlsx file:')
+        self.butConvert   = QtWidgets.QPushButton(' 2. Convert xlsx to text file(s)')
+        self.butFileText  = QtWidgets.QPushButton(' 3. Select text file:')
+        self.butEvaluate  = QtWidgets.QPushButton(' 4. Evaluate')
+        self.butDeploy    = QtWidgets.QPushButton(' 5. Deploy')
+        self.butList      = QtWidgets.QPushButton('List')
+        self.butRemove    = QtWidgets.QPushButton('Remove')
+        self.butViewOffice= QtWidgets.QPushButton('View xlsx')
+        self.butViewText  = QtWidgets.QPushButton('View text')
+        self.butScript    = QtWidgets.QPushButton(self.script + cp.char_expand )
+        self.butSrc       = QtWidgets.QPushButton(self.source_name + cp.char_expand )
+        self.labSrc       = QtWidgets.QLabel('for detector')
+        self.labScript    = QtWidgets.QLabel('using script')
         self.guirange     = GUIRange()
 
         self.butViewOffice .setIcon(cp.icon_monitor)
         self.butViewText   .setIcon(cp.icon_monitor)
         #self.butConvert    .setIcon(cp.icon_convert)
 
-        self.grid = QtGui.QGridLayout()
+        self.grid = QtWidgets.QGridLayout()
         self.grid_row = 0
         self.grid.addWidget(self.butFileXlsx,   self.grid_row,   0)
         self.grid.addWidget(self.ediFileXlsx,   self.grid_row,   1, 1, 8)
@@ -120,22 +120,22 @@ class GUIMetrology(Frame) :
         self.grid.addWidget(self.guirange,      self.grid_row+4, 3, 1, 5)
         #self.setLayout(self.grid)
           
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addLayout(self.grid)
         self.vbox.addStretch(1)
         self.setLayout(self.vbox)
 
-        self.connect( self.butFileXlsx,   QtCore.SIGNAL('clicked()'), self.onButFileXlsx   ) 
-        self.connect( self.butFileText,   QtCore.SIGNAL('clicked()'), self.onButFileText   ) 
-        self.connect( self.butViewOffice, QtCore.SIGNAL('clicked()'), self.onButViewOffice )
-        self.connect( self.butViewText,   QtCore.SIGNAL('clicked()'), self.onButViewText   )
-        self.connect( self.butConvert,    QtCore.SIGNAL('clicked()'), self.onButConvert    )
-        self.connect( self.butRemove,     QtCore.SIGNAL('clicked()'), self.onButRemove     )
-        self.connect( self.butList,       QtCore.SIGNAL('clicked()'), self.onButList       )
-        self.connect( self.butEvaluate,   QtCore.SIGNAL('clicked()'), self.onButEvaluate   )
-        self.connect( self.butDeploy,     QtCore.SIGNAL('clicked()'), self.onButDeploy     )
-        self.connect( self.butScript,     QtCore.SIGNAL('clicked()'), self.onButScript     )
-        self.connect( self.butSrc,        QtCore.SIGNAL('clicked()'), self.onButSrc        )
+        self.butFileXlsx.clicked.connect(self.onButFileXlsx)
+        self.butFileText.clicked.connect(self.onButFileText)
+        self.butViewOffice.clicked.connect(self.onButViewOffice)
+        self.butViewText.clicked.connect(self.onButViewText)
+        self.butConvert.clicked.connect(self.onButConvert)
+        self.butRemove.clicked.connect(self.onButRemove)
+        self.butList.clicked.connect(self.onButList)
+        self.butEvaluate.clicked.connect(self.onButEvaluate)
+        self.butDeploy.clicked.connect(self.onButDeploy)
+        self.butScript.clicked.connect(self.onButScript)
+        self.butSrc.clicked.connect(self.onButSrc)
  
         self.showToolTips()
         self.setStyle()
@@ -271,7 +271,7 @@ class GUIMetrology(Frame) :
         dname, fname = os.path.split(path)
         msg = 'dir : %s   file : %s' % (dname, fname)
         logger.info(msg, __name__)
-        path = str( QtGui.QFileDialog.getOpenFileName(self, 'Open file', dname, filter=filter) )
+        path = str( QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', dname, filter=filter) )[0]
         dname, fname = os.path.split(path)
 
         if dname == '' or fname == '' :
@@ -634,7 +634,7 @@ class GUIMetrology(Frame) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIMetrology()
     ex.show()
     app.exec_()

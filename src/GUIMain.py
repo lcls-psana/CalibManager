@@ -15,7 +15,7 @@ from __future__ import absolute_import
 import os
 import sys
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 import time   # for sleep(sec)
 
 from CalibManager.ConfigParametersForApp import cp
@@ -27,14 +27,14 @@ from CalibManager.PackageVersions        import PackageVersions
 
 #------------------------------
 
-class GUIMain(QtGui.QWidget) :
+class GUIMain(QtWidgets.QWidget) :
     """Main GUI for calibration management project.
     """
     def __init__(self, parent=None, app=None, **dict_opts) :
 
         self.name = 'GUIMain'
         self.myapp = app
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.log_rec_on_start()
 
@@ -60,16 +60,16 @@ class GUIMain(QtGui.QWidget) :
         self.setOptionalPars(dict_opts)
 
         #self.guitree  = GUICalibDirTree()
-        self.guitabs   = GUIMainTabs(self) # QtGui.QTextEdit()
+        self.guitabs   = GUIMainTabs(self) # QtWidgets.QTextEdit()
         self.guilogger = GUILogger(show_buttons=False)
         self.guiinsexpdirdet = GUIInsExpDirDet(self)
 
-        self.vsplit = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.vsplit = QtWidgets.QSplitter(QtCore.Qt.Vertical)
         self.vsplit.addWidget(self.guitabs)
         self.vsplit.addWidget(self.guilogger)
         #self.vsplit.moveSplitter(0,200)
 
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         #self.vbox.addWidget(self.guibuttonbar)
         self.vbox.addWidget(self.guiinsexpdirdet)
         #self.vbox.addLayout(self.hboxB) 
@@ -294,7 +294,7 @@ class GUIMain(QtGui.QWidget) :
 #------------------------------
 
 if __name__ == "__main__" :
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIMain()
     ex.show()
     app.exec_()

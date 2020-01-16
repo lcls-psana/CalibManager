@@ -24,7 +24,7 @@ __version__ = "$Revision$"
 import os
 import numpy as np
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from CalibManager.Frame                  import Frame
 from CalibManager.ConfigParametersForApp import cp
@@ -59,28 +59,28 @@ class GUIDataImage(Frame) :
         self.palette = QtGui.QPalette()
         self.resetColorIsSet = False
 
-        self.lab_status = QtGui.QLabel('Status: ')
+        self.lab_status = QtWidgets.QLabel('Status: ')
 
-        self.but_geo_in      = QtGui.QPushButton('  1. Select geometry input file')
-        self.but_geo_out     = QtGui.QPushButton('Output geo file')
-        self.but_geo_img_nda = QtGui.QPushButton('  2. Select ndarray for image file')
-        self.but_geo         = QtGui.QPushButton('  3. Launch\n  command:')
+        self.but_geo_in      = QtWidgets.QPushButton('  1. Select geometry input file')
+        self.but_geo_out     = QtWidgets.QPushButton('Output geo file')
+        self.but_geo_img_nda = QtWidgets.QPushButton('  2. Select ndarray for image file')
+        self.but_geo         = QtWidgets.QPushButton('  3. Launch\n  command:')
 
-        self.but_plot        = QtGui.QPushButton('Plot')
-        self.but_view        = QtGui.QPushButton('View')
+        self.but_plot        = QtWidgets.QPushButton('Plot')
+        self.but_view        = QtWidgets.QPushButton('View')
 
-        self.edi_geo_in      = QtGui.QLineEdit (self.fname_geo_in.value())
-        self.edi_geo_out     = QtGui.QLineEdit (self.fname_geo_out.value())
-        self.edi_geo_img_nda = QtGui.QLineEdit (self.fname_geo_img_nda.value())
-        self.edi_geo         = QtGui.QTextEdit ('Command is here')
+        self.edi_geo_in      = QtWidgets.QLineEdit (self.fname_geo_in.value())
+        self.edi_geo_out     = QtWidgets.QLineEdit (self.fname_geo_out.value())
+        self.edi_geo_img_nda = QtWidgets.QLineEdit (self.fname_geo_img_nda.value())
+        self.edi_geo         = QtWidgets.QTextEdit ('Command is here')
 
         #self.lab_geo        = QtGui.QLabel('Command:') 
-        self.lab_log_level  = QtGui.QLabel('Optional arguments:    Log level') 
-        self.box_log_level  = QtGui.QComboBox(self) 
+        self.lab_log_level  = QtWidgets.QLabel('Optional arguments:    Log level') 
+        self.box_log_level  = QtWidgets.QComboBox(self) 
         self.box_log_level.addItems(self.list_geo_log_levels)
         self.box_log_level.setCurrentIndex(self.list_geo_log_levels.index(self.geo_log_level.value()))
 
-        self.grid = QtGui.QGridLayout()
+        self.grid = QtWidgets.QGridLayout()
         self.grid_row = 0
         self.grid.addWidget(self.but_geo_in,        self.grid_row,     0, 1, 4)
         self.grid.addWidget(self.edi_geo_in,        self.grid_row,     4, 1, 6)
@@ -101,23 +101,23 @@ class GUIDataImage(Frame) :
         self.grid.addWidget(self.but_plot,          self.grid_row+8,   8)
         self.grid.addWidget(self.but_view,          self.grid_row+8,   9)
 
-        self.hboxS = QtGui.QHBoxLayout()
+        self.hboxS = QtWidgets.QHBoxLayout()
         self.hboxS.addWidget(self.lab_status)
         self.hboxS.addStretch(1)     
 
-        self.vbox = QtGui.QVBoxLayout() 
+        self.vbox = QtWidgets.QVBoxLayout() 
         self.vbox.addLayout(self.grid)
         self.vbox.addStretch(1)
         self.vbox.addLayout(self.hboxS) 
         self.setLayout(self.vbox)
 
-        self.connect(self.but_geo_in     , QtCore.SIGNAL('clicked()'), self.on_but_geo_in     ) 
-        self.connect(self.but_geo_out    , QtCore.SIGNAL('clicked()'), self.on_but_geo_out    ) 
-        self.connect(self.but_geo_img_nda, QtCore.SIGNAL('clicked()'), self.on_but_geo_img_nda) 
-        self.connect(self.but_geo        , QtCore.SIGNAL('clicked()'), self.on_but_geo        ) 
-        self.connect(self.but_plot       , QtCore.SIGNAL('clicked()'), self.on_but_plot       ) 
-        self.connect(self.but_view       , QtCore.SIGNAL('clicked()'), self.on_but_view       ) 
-        self.connect(self.box_log_level  , QtCore.SIGNAL('currentIndexChanged(int)'), self.on_box_log_level)
+        self.but_geo_in.clicked.connect(self.on_but_geo_in)
+        self.but_geo_out.clicked.connect(self.on_but_geo_out)
+        self.but_geo_img_nda.clicked.connect(self.on_but_geo_img_nda)
+        self.but_geo.clicked.connect(self.on_but_geo)
+        self.but_plot.clicked.connect(self.on_but_plot)
+        self.but_view.clicked.connect(self.on_but_view)
+        self.box_log_level.currentIndexChanged[int].connect(self.on_box_log_level)
  
         self.showToolTips()
         self.setStyle()
@@ -264,9 +264,9 @@ class GUIDataImage(Frame) :
         msg = 'Current dir: %s   file: %s' % (dname, fname)
         logger.info(msg, __name__)
         
-        path = str(QtGui.QFileDialog.getSaveFileName(self, 'Save file', path, filter=filter)) \
+        path = str(QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', path, filter=filter)) \
                if mode == 'save' else \
-               str(QtGui.QFileDialog.getOpenFileName(self, 'Open file', path, filter=filter))
+               str(QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', path, filter=filter))[0]
 
         dname, fname = os.path.split(path)
 
@@ -356,7 +356,7 @@ class GUIDataImage(Frame) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIDataImage()
     ex.show()
     app.exec_()

@@ -14,7 +14,7 @@ __author__ = "Mikhail S. Dubrovin"
 
 from CalibManager.Logger import logger
 from .ConfigParameters import *
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui
 from . import AppDataPath as apputils # for icons
 
 import PSCalib.GlobalUtils as gu

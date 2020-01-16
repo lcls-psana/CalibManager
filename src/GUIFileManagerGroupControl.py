@@ -26,7 +26,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 
@@ -45,7 +45,7 @@ from .GUIRange               import *
 #------------------------------
 
 #class GUIFileManagerGroupControl(Frame) :
-class GUIFileManagerGroupControl(QtGui.QWidget) :
+class GUIFileManagerGroupControl(QtWidgets.QWidget) :
     """Sub GUI for Group File Manager.
     """
     char_expand = cp.char_expand
@@ -55,7 +55,7 @@ class GUIFileManagerGroupControl(QtGui.QWidget) :
 
         self.name = 'GUIFileManagerGroupControl'
         self.myapp = app
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         #Frame.__init__(self, parent, mlw=0)
 
         self.setGeometry(10, 25, 130, 300)
@@ -70,16 +70,16 @@ class GUIFileManagerGroupControl(QtGui.QWidget) :
  
         self.guirange  = GUIRange(None, self.str_run_from, self.str_run_to, txt_from='')
 
-        self.but_move   = QtGui.QPushButton('-> Move ->')
-        self.but_copy   = QtGui.QPushButton('-> Copy -> ')
-        self.but_delete = QtGui.QPushButton('Delete')
-        self.but_list   = QtGui.QPushButton('<- List')
-        self.but_view   = QtGui.QPushButton('<- View')
-        self.but_plot   = QtGui.QPushButton('<- Plot')
-        self.lab_from   = QtGui.QLabel('Run valid from')
+        self.but_move   = QtWidgets.QPushButton('-> Move ->')
+        self.but_copy   = QtWidgets.QPushButton('-> Copy -> ')
+        self.but_delete = QtWidgets.QPushButton('Delete')
+        self.but_list   = QtWidgets.QPushButton('<- List')
+        self.but_view   = QtWidgets.QPushButton('<- View')
+        self.but_plot   = QtWidgets.QPushButton('<- Plot')
+        self.lab_from   = QtWidgets.QLabel('Run valid from')
         #self.but_copy  .setIcon(cp.icon_monitor)
 
-        self.vboxW = QtGui.QVBoxLayout() 
+        self.vboxW = QtWidgets.QVBoxLayout() 
         self.vboxW.addStretch(1)
         self.vboxW.addWidget( self.but_list   )
         self.vboxW.addWidget( self.but_view   )
@@ -94,12 +94,12 @@ class GUIFileManagerGroupControl(QtGui.QWidget) :
         
         self.setLayout(self.vboxW)
 
-        self.connect( self.but_move,   QtCore.SIGNAL('clicked()'), self.onButMove ) 
-        self.connect( self.but_copy,   QtCore.SIGNAL('clicked()'), self.onButCopy ) 
-        self.connect( self.but_list,   QtCore.SIGNAL('clicked()'), self.onButList ) 
-        self.connect( self.but_view,   QtCore.SIGNAL('clicked()'), self.onButView ) 
-        self.connect( self.but_plot,   QtCore.SIGNAL('clicked()'), self.onButPlot ) 
-        self.connect( self.but_delete, QtCore.SIGNAL('clicked()'), self.onButDelete ) 
+        self.but_move.clicked.connect(self.onButMove)
+        self.but_copy.clicked.connect(self.onButCopy)
+        self.but_list.clicked.connect(self.onButList)
+        self.but_view.clicked.connect(self.onButView)
+        self.but_plot.clicked.connect(self.onButPlot)
+        self.but_delete.clicked.connect(self.onButDelete)
   
         self.showToolTips()
         self.setStyle()
@@ -395,7 +395,7 @@ class GUIFileManagerGroupControl(QtGui.QWidget) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex  = GUIFileManagerGroupControl()
     ex.show()
     app.exec_()

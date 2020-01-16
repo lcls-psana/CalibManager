@@ -22,6 +22,12 @@ from __future__ import absolute_import
 
 #--------------------------------
 from future import standard_library
+try:
+    QString = unicode
+except NameError:
+    # Python 3
+    QString = str
+
 standard_library.install_aliases()
 __version__ = "$Revision: 12682 $"
 #--------------------------------
@@ -46,7 +52,7 @@ from subprocess import getoutput
 import subprocess # for subprocess.Popen
 
 from CalibManager.Logger import logger
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 #from LogBook import message_poster
 from .GUIPopupCheckList import *
 from .GUIPopupRadioList import *
@@ -752,7 +758,7 @@ def get_gm_time_str(time_sec, fmt='%Y-%m-%d %H:%M:%S %Z'):
 
 def selectFromListInPopupMenu(list):
     """Shows the list as a pop-up menu and returns the selected item as a string or None"""
-    popupMenu = QtGui.QMenu()
+    popupMenu = QtWidgets.QMenu()
     for item in list :
         popupMenu.addAction(item)
 
@@ -770,10 +776,10 @@ def changeCheckBoxListInPopupMenu(list, win_title='Set check boxes'):
     popupMenu.move(QtGui.QCursor.pos())
     response = popupMenu.exec_()
 
-    if   response == QtGui.QDialog.Accepted :
+    if   response == QtWidgets.QDialog.Accepted :
         logger.debug('New checkbox list is accepted', __name__)
         return 1
-    elif response == QtGui.QDialog.Rejected :
+    elif response == QtWidgets.QDialog.Rejected :
         logger.debug('Will use old checkbox list', __name__)
         return 0
     else                                    :
@@ -788,7 +794,7 @@ def selectRadioButtonInPopupMenu(dict_of_pars, win_title='Select option', do_con
     popupMenu = GUIPopupRadioList(None, dict_of_pars, win_title, do_confirm)
     #popupMenu.move(QtCore.QPoint(50,50))
     popupMenu.move(QtGui.QCursor.pos()-QtCore.QPoint(100,100))
-    return popupMenu.exec_() # QtGui.QDialog.Accepted or QtGui.QDialog.Rejected
+    return popupMenu.exec_() # QtWidgets.QDialog.Accepted or QtWidgets.QDialog.Rejected
 
 #----------------------------------
 
@@ -895,11 +901,11 @@ def printStyleInfo(widg):
 
 def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
 
-    path = str( QtGui.QFileDialog.getSaveFileName(parent,
+    path = str( QtWidgets.QFileDialog.getSaveFileName(parent,
                                                   caption   = dial_title,
                                                   directory = path0,
                                                   filter    = filter
-                                                  ) )
+                                                  ) )[0]
     if path == '' :
         logger.debug('Saving is cancelled.', 'get_save_fname_through_dialog_box')
         return None
@@ -910,7 +916,7 @@ def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 
 def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
 
-    path = str(QtGui.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter))
+    path = str(QtWidgets.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter))[0]
     dname, fname = os.path.split(path)
     if dname == '' or fname == '' :
         logger.info('Input directiry name or file name is empty... keep file path unchanged...')
@@ -925,9 +931,9 @@ def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 def confirm_dialog_box(parent=None, text='Please confirm that you aware!', title='Please acknowledge') :
         """Pop-up MODAL box for confirmation"""
 
-        mesbox = QtGui.QMessageBox(parent, windowTitle=title,
+        mesbox = QtWidgets.QMessageBox(parent, windowTitle=title,
                                            text=text,
-                                           standardButtons=QtGui.QMessageBox.Ok)
+                                           standardButtons=QtWidgets.QMessageBox.Ok)
                #standardButtons=QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
         #mesbox.setDefaultButton(QtGui.QMessageBox.Ok)
         #mesbox.setMinimumSize(400, 200)
@@ -953,11 +959,11 @@ def confirm_dialog_box(parent=None, text='Please confirm that you aware!', title
 def confirm_or_cancel_dialog_box(parent=None, text='Please confirm or cancel', title='Confirm or cancel') :
         """Pop-up MODAL box for confirmation"""
 
-        mesbox = QtGui.QMessageBox(parent, windowTitle=title,
+        mesbox = QtWidgets.QMessageBox(parent, windowTitle=title,
                                            text=text,
-                                           standardButtons=QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+                                           standardButtons=QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
                #standardButtons=QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
-        mesbox.setDefaultButton(QtGui.QMessageBox.Ok)
+        mesbox.setDefaultButton(QtWidgets.QMessageBox.Ok)
         #mesbox.setMinimumSize(400, 200)
         #style = "background-color: rgb(255, 200, 220); color: rgb(0, 0, 100);" # Pinkish
         #style = "background-color: rgb(255, 255, 220); color: rgb(0, 0, 0);" # Yellowish
@@ -965,8 +971,8 @@ def confirm_or_cancel_dialog_box(parent=None, text='Please confirm or cancel', t
 
         clicked = mesbox.exec_() # DISPLAYS THE QMessageBox HERE
 
-        if   clicked == QtGui.QMessageBox.Ok     : return True
-        elif clicked == QtGui.QMessageBox.Cancel : return False
+        if   clicked == QtWidgets.QMessageBox.Ok     : return True
+        elif clicked == QtWidgets.QMessageBox.Cancel : return False
         else                                     : return False
 
 #----------------------------------
@@ -974,9 +980,9 @@ def confirm_or_cancel_dialog_box(parent=None, text='Please confirm or cancel', t
 def help_dialog_box(parent=None, text='Help message goes here', title='Help') :
         """Pop-up NON-MODAL box for help etc."""
 
-        messbox = QtGui.QMessageBox(parent, windowTitle=title,
+        messbox = QtWidgets.QMessageBox(parent, windowTitle=title,
                                            text=text,
-                                           standardButtons=QtGui.QMessageBox.Close)
+                                           standardButtons=QtWidgets.QMessageBox.Close)
         #messbox.setStyleSheet (cp.styleBkgd)
         messbox.setWindowModality (QtCore.Qt.NonModal)
         messbox.setModal (False)

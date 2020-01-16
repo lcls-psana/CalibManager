@@ -16,7 +16,7 @@ __version__ = "$Revision$"
 
 import os
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 from .FileNameManager        import fnm
@@ -25,23 +25,23 @@ from . import GlobalUtils          as     gu
 
 #------------------------------
 
-class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
+class GUIAnyFilesStatusTable ( QtWidgets.QWidget ) :
     """Status table of files from the list"""
 
     dict_status = {True  : 'Yes',
                    False : 'No' }
 
     def __init__ ( self, parent=None, list_of_files=[], title='') :
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setGeometry(50, 100, 600, 500)
         self.setWindowTitle('Files status table')
 
         self.title = title
 
-        self.table = QtGui.QTableWidget(self)
+        self.table = QtWidgets.QTableWidget(self)
         self.makeTable(list_of_files)
  
-        self.vbox = QtGui.QVBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
         self.vbox.addWidget(self.table)
         self.vbox.addStretch(1)     
  
@@ -54,12 +54,12 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
 
 
     def connectToThread1(self):
-        try : self.connect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
+        try : cp.thread1.update['QString'].connect(self.updateStatus)
         except : logger.warning('connectToThread1 is failed', __name__)
 
 
     def disconnectFromThread1(self):
-        try : self.disconnect(cp.thread1, QtCore.SIGNAL('update(QString)'), self.updateStatus)
+        try : cp.thread1.update['QString'].disconnect(self.updateStatus)
         except : pass
 
 
@@ -107,14 +107,14 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
         for i, fname in enumerate(list_of_files) :
 
             file_struct = os.path.exists(fname)
-            item_fname  = QtGui.QTableWidgetItem(os.path.basename(fname))
+            item_fname  = QtWidgets.QTableWidgetItem(os.path.basename(fname))
             #item_struct = QtGui.QTableWidgetItem(self.dict_status[file_struct])
             #item_struct = QtGui.QTableWidgetItem(self.checkNameStructure(fname, self.list_expected))
             #item_struct = QtGui.QTableWidgetItem('N/A')
-            item_ctime  = QtGui.QTableWidgetItem('N/A')
-            item_size   = QtGui.QTableWidgetItem('N/A')
-            item_owner  = QtGui.QTableWidgetItem('N/A')
-            item_mode   = QtGui.QTableWidgetItem('N/A')
+            item_ctime  = QtWidgets.QTableWidgetItem('N/A')
+            item_size   = QtWidgets.QTableWidgetItem('N/A')
+            item_owner  = QtWidgets.QTableWidgetItem('N/A')
+            item_mode   = QtWidgets.QTableWidgetItem('N/A')
 
             item_fname.setBackgroundColor(cp.colorTabItem)
             item_ctime.setBackgroundColor(cp.colorTabItem)
@@ -262,7 +262,7 @@ class GUIAnyFilesStatusTable ( QtGui.QWidget ) :
 
 if __name__ == "__main__" :
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     list_dir = sorted(os.listdir('./'))
     print(list_dir)
     #widget = GUIAnyFilesStatusTable(parent=None, list_of_files=list_dir)
