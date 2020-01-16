@@ -3,12 +3,12 @@
 
 """This script starts stand alone version of the PlotImgSpe.
 
-This software was developed for the LCLS project.  If you use all or 
+This software was developed for the LCLS project.  If you use all or
 part of it, please give an appropriate acknowledgement.
 
 @see RelatedModule
 
-@version $Id$ 
+@version $Id$
 
 @author Mikhail S. Dubrovin
 """
@@ -42,15 +42,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 def input_options_parser() :
 
-    #ifname_def = ''        
-    ifname_def = './roi-img'        
+    #ifname_def = ''
+    ifname_def = './roi-img'
     ofname_def = './fig.png'
     title_def  = 'Image viewer'
-    rot90_def  = 0           
-    mirror_def = False       
+    rot90_def  = 0
+    mirror_def = False
     expand_def = True
     fexmod_def = False
-    verb_def   = False       
+    verb_def   = False
 
     parser = OptionParser(description='Optional input parameters.', usage ='usage: %prog [options] args')
     parser.add_option('-i', '--ifname',  dest='ifname', default=ifname_def, action='store', type='string', help='input image file name, default = %s' % ifname_def)
@@ -65,7 +65,7 @@ def input_options_parser() :
 
     (opts, args) = parser.parse_args()
     return (opts, args)
- 
+
 #---------------------------------
 #
 # run application when launched as a main module
@@ -77,12 +77,12 @@ if __name__ == "__main__" :
     #print 'opts:\n', opts
     #print 'args:\n', args
 
-    pars = {'parent'          : None, 
-            'arr'             : None, 
-            'ifname'          : opts.ifname, 
-            'ofname'          : opts.ofname, 
-            'title'           : opts.title, 
-            'orient'          : opts.rot90, 
+    pars = {'parent'          : None,
+            'arr'             : None,
+            'ifname'          : opts.ifname,
+            'ofname'          : opts.ofname,
+            'title'           : opts.title,
+            'orient'          : opts.rot90,
             'y_is_flip'       : opts.mirror,
             'is_expanded'     : opts.expand,
             'verb'            : opts.verb,
@@ -93,7 +93,7 @@ if __name__ == "__main__" :
 
     print('Start PlotImgSpe with input parameters:')
     for k,v in pars.items():
-	print('%16s : %s' % (k,v))
+        print('%16s : %s' % (k,v))
 
     app = QtWidgets.QApplication(sys.argv)
     w = PlotImgSpe(**pars)

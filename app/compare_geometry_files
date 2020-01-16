@@ -90,7 +90,7 @@ class CompareGeometryFiles(object) :
         rc1   = radius(xc1, yc1)
         dphic = phic2-phic1
 
-        if self.vrb : 
+        if self.vrb :
             print('phic1 (deg):\n', phic1)
             print('dphic (deg):\n', dphic)
 
@@ -151,7 +151,7 @@ class CompareGeometryFiles(object) :
            title ='Segment center Z difference', xlabel='dz[mm]', ylabel='Segments',\
            fnm='his-dz-mm.png')
         #---------
-   
+
         plt.show()
 
 #------------------------------
@@ -160,8 +160,8 @@ class CompareGeometryFiles(object) :
         import matplotlib.pyplot as plt;   global plt
         import matplotlib.lines  as lines; global lines
 
-	arr1 = self.arr1
-	arr2 = self.arr2
+        arr1 = self.arr1
+        arr2 = self.arr2
         arr_centers1 = self.arr_centers1
         arr_centers2 = self.arr_centers2
 
@@ -169,8 +169,8 @@ class CompareGeometryFiles(object) :
         rmin, rmax = arr1[:,:,1].min(), arr1[:,:,1].max()
 
         fig = plt.figure(figsize=(9.5,9.5), dpi=100, facecolor='w',edgecolor='w',frameon=True)
-        axes = fig.add_axes((0.12, 0.08, 0.85, 0.88))        
-        #axes  = fig.add_subplot(111)        
+        axes = fig.add_axes((0.12, 0.08, 0.85, 0.88))
+        #axes  = fig.add_subplot(111)
 
         axes.set_xlim((cmin-marg, cmax+marg))
         axes.set_ylim((rmin-marg, rmax+marg))
@@ -210,7 +210,7 @@ def plot_corner_points(axes, arr, color='r') :
         xlp = arr[s, :, 0]; xp = xlp.tolist(); xp.append(xlp[0])
         ylp = arr[s, :, 1]; yp = ylp.tolist(); yp.append(ylp[0])
         #zlp = arr[s, :, 2]; zp = zlp.tolist(); yp.append(zlp[0])
-        line = lines.Line2D(xp, yp, linewidth=1, color=color)        
+        line = lines.Line2D(xp, yp, linewidth=1, color=color)
         axes.add_artist(line)
 
         #for p in range(4) :
@@ -237,7 +237,7 @@ def plot_center_points_v1(axes, arr, color='r') :
 #------------------------------
 
 def array_of_segment_corner_points(geo) :
-    """From geo object returns np.arr of (x,y,z) points for all segment corners 
+    """From geo object returns np.arr of (x,y,z) points for all segment corners
        arr.shape=(nsegs,4,3) # (nsegs, ncorners, (x,y,z))
     """
 
@@ -262,9 +262,9 @@ def array_of_segment_corner_points(geo) :
 
         #print s, ' x0=', arrx[inds0]
 
-        lst_seg_points.append((arrx[inds0], arry[inds0], arrz[inds0]))	    
-        lst_seg_points.append((arrx[inds1], arry[inds1], arrz[inds1]))	    
-        lst_seg_points.append((arrx[inds2], arry[inds2], arrz[inds2]))	    
+        lst_seg_points.append((arrx[inds0], arry[inds0], arrz[inds0]))
+        lst_seg_points.append((arrx[inds1], arry[inds1], arrz[inds1]))
+        lst_seg_points.append((arrx[inds2], arry[inds2], arrz[inds2]))
         lst_seg_points.append((arrx[inds3], arry[inds3], arrz[inds3]))
 
     arr = np.array(lst_seg_points) # has a shape = (nsegs * 4corners, (x,y,z))
@@ -318,24 +318,24 @@ def option_parser() :
     from optparse import OptionParser
 
     def_gf1 = 'geometry-cxi04216-53-end.data'
-    def_gf2 = 'geometry-camera1-in-ds1-cxi10416-r0028.data' 
-    def_ofn = 'fig-geo-diff.png' 
+    def_gf2 = 'geometry-camera1-in-ds1-cxi10416-r0028.data'
+    def_ofn = 'fig-geo-diff.png'
     def_vrb = False
- 
+
     h_gf1   = 'geometry file 1, default = %s' % def_gf1
     h_gf2   = 'geometry file 2, default = %s' % def_gf2
     h_ofn   = 'output plot file name, default = %s'  % def_ofn
     h_vrb   = 'verbosity, default = %s' % str(def_vrb)
- 
+
     parser = OptionParser(description='Comparison of two geometry files', usage=usage())
     parser.add_option('-1', '--gf1', default=def_gf1, action='store', type='string', help=h_gf1)
     parser.add_option('-2', '--gf2', default=def_gf2, action='store', type='string', help=h_gf2)
     parser.add_option('-o', '--ofn', default=def_ofn, action='store', type='string', help=h_ofn)
     parser.add_option('-v', '--vrb', default=def_vrb, action='store_true',           help=h_vrb)
     #parser.add_option('-v', '--vrb', default=def_vrb, action='store', type='int',    help=h_vrb)
-   
+
     return parser
- 
+
 #------------------------------
 
 if __name__ == '__main__' :

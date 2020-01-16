@@ -46,7 +46,7 @@ def calibfile() :
         defs = vars(parser.get_default_values())
         print_pars(args, opts, defs)
 
-    if len(pargs) != 1 : 
+    if len(pargs) != 1 :
         parser.print_help()
         sys.exit('WARNING: command argument is missing. Check input parameters')
 
@@ -76,30 +76,30 @@ def calibfile() :
 
     elif mode == 'get' :
         print('Mode "%s"' % mode)
-	if os.path.exists(path) :
-	    cmd = 'cp %s %s' % (path, fname)
+        if os.path.exists(path) :
+            cmd = 'cp %s %s' % (path, fname)
             if verbos : print('cmd: %s' % cmd)
-	    os.system(cmd)
-	    print('Saved file %s' % fname)
+            os.system(cmd)
+            print('Saved file %s' % fname)
         else :
             print('Path "%s" DOES NOT EXIST' % path)
 
     else :
         print('Mode "%s" is UNKNOWN' % mode)
- 
+
     #tstamp = gu.str_tstamp('%Y-%m-%dT%H:%M:%S', time())
     #logpref = rpu.log_batch_prefix(exp, run, procname)
     #logfname = '%s-%s.txt' % (logpref, tstamp)
 
 #------------------------------
 
-def usage() : 
+def usage() :
     return "\n%prog <mode> -f <fname> -e <experiment> -r <run-number> -s <full-source> -B <run-number-begin> ]"\
            "\n    where <mode> stands for deploy/path/get"\
            "\n  Ex.: %prog path   -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
            "\n       %prog get    -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
            "\n       %prog deploy -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"
- 
+
 #------------------------------
 
 def input_option_parser() :
@@ -119,7 +119,7 @@ def input_option_parser() :
     h_source = ', default = %s' % d_source
     h_exp    = 'experiment name, default = %s' % d_exp
     h_runrng = 'run range, default = %s' % d_runrng
-    h_ctype  = 'calibration constants type, default = %s' % d_ctype 
+    h_ctype  = 'calibration constants type, default = %s' % d_ctype
     h_clbdir = 'non-default (local) calibration directory, default = %s' % d_clbdir
     h_lfname = 'log file name, default = %s' % d_lfname
     h_verbos = 'verbosity , default = %s' % d_verbos
@@ -135,7 +135,7 @@ def input_option_parser() :
     parser.add_option('-v', '--verbos', default=d_verbos, action='store_true',           help=h_verbos)
 
     return parser
-  
+
 #------------------------------
 
 if __name__ == "__main__" :
