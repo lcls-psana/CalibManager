@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -14,14 +15,14 @@ from PyQt4 import QtGui, QtCore
 import time   # for sleep(sec)
 from time import time 
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-import GlobalUtils          as     gu
-from FileNameManager        import fnm
-from BatchJobPedestals      import *
-import FileDeployer         as     fdmets
-from BatchLogScanParser     import blsp # Just in order to instatiate it
-from GUIRange               import *
+from . import GlobalUtils          as     gu
+from .FileNameManager        import fnm
+from .BatchJobPedestals      import *
+from . import FileDeployer         as     fdmets
+from .BatchLogScanParser     import blsp # Just in order to instatiate it
+from .GUIRange               import *
 
 #------------------------------
 

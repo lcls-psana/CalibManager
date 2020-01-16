@@ -16,6 +16,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -24,9 +25,9 @@ __version__ = "$Revision$"
 import sys
 import os
 
-from ConfigParametersForApp   import cp
+from .ConfigParametersForApp   import cp
 from CalibManager.Logger                   import logger
-import GlobalUtils            as     gu
+from . import GlobalUtils            as     gu
 
 from PyQt4 import QtGui, QtCore # need it in order to use QtCore.QObject for connect
 

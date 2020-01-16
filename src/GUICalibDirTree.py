@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -15,9 +16,9 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-from FileNameManager        import fnm
+from .FileNameManager        import fnm
 
 #------------------------------
 

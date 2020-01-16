@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """GUI works with dark runs"""
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -16,12 +17,12 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
-from GUIStatus              import *
-from GUIDarkControlBar      import *
-from GUIDarkList            import *
+from .GUIStatus              import *
+from .GUIDarkControlBar      import *
+from .GUIDarkList            import *
 
 #------------------------------
 

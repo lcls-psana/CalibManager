@@ -8,6 +8,7 @@
 
 """GUI sets the calib directory from the instrument & experiment or selected non-standard directory."""
 from __future__ import print_function
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -17,11 +18,11 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
-import GlobalUtils          as     gu
-from FileNameManager        import fnm
+from .ConfigParametersForApp import cp
+from . import GlobalUtils          as     gu
+from .FileNameManager        import fnm
 from CalibManager.Logger                 import logger
-from GUIPopupSelectExp      import select_experiment_v3
+from .GUIPopupSelectExp      import select_experiment_v3
 
 #------------------------------
 

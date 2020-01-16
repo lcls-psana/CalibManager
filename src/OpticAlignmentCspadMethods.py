@@ -16,6 +16,7 @@
 """
 from __future__ import print_function
 from __future__ import division
+from __future__ import absolute_import
 
 #------------------------------
 __version__ = "$Revision$"
@@ -32,7 +33,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines  as lines
 
 from optparse import OptionParser
-import GlobalUtils as gu
+from . import GlobalUtils as gu
 
 #----------------------------------
 

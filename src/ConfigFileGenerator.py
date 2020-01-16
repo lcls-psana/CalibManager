@@ -16,18 +16,19 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
+from __future__ import absolute_import
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
 
 import os
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-from FileNameManager        import fnm
-import GlobalUtils          as     gu
+from .FileNameManager        import fnm
+from . import GlobalUtils          as     gu
 
-import AppDataPath as apputils # My version, added in path the '../../data:'
+from . import AppDataPath as apputils # My version, added in path the '../../data:'
 
 #------------------------------
 

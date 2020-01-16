@@ -8,6 +8,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 Author Mikhail Dubrovin
 """
 from __future__ import print_function
+from __future__ import absolute_import
 
 #------------------------------
 
@@ -254,7 +255,7 @@ class GUIMain(QtGui.QWidget) :
 
 
     def add_record_in_db(self):
-        from NotificationDB import NotificationDB
+        from .NotificationDB import NotificationDB
         try :
             ndb = NotificationDB()
             ndb.add_record()

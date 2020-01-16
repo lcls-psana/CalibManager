@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -14,10 +15,10 @@ import os
 import stat
 #import socket
 
-from ConfigParametersForApp import cp
-from   Logger               import logger
-import GlobalUtils          as     gu
-from FileNameManager        import fnm
+from .ConfigParametersForApp import cp
+from   .Logger               import logger
+from . import GlobalUtils          as     gu
+from .FileNameManager        import fnm
 
 #------------------------------
 

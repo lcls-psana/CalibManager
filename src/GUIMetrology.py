@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -25,19 +26,19 @@ import os
 from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 
 from CalibManager.Logger               import logger
-from FileNameManager      import fnm
-from GUIFileBrowser       import *
-from GUIRange             import *
-from FileDeployer         import fd
-import GlobalUtils        as     gu
+from .FileNameManager      import fnm
+from .GUIFileBrowser       import *
+from .GUIRange             import *
+from .FileDeployer         import fd
+from . import GlobalUtils        as     gu
 
-from xlsx_parser              import convert_xlsx_to_text
-from OpticAlignmentCspadV1    import OpticAlignmentCspadV1
-from OpticAlignmentCspadV2    import OpticAlignmentCspadV2
-from OpticAlignmentCspad2x2V1 import OpticAlignmentCspad2x2V1
+from .xlsx_parser              import convert_xlsx_to_text
+from .OpticAlignmentCspadV1    import OpticAlignmentCspadV1
+from .OpticAlignmentCspadV2    import OpticAlignmentCspadV2
+from .OpticAlignmentCspad2x2V1 import OpticAlignmentCspad2x2V1
 
 #------------------------------
 

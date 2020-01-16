@@ -14,16 +14,17 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
 
 import sys
 
-from BatchJob import *
-from FileNameManager          import fnm
-from ConfigFileGenerator      import cfg
-from ConfigParametersForApp   import cp
+from .BatchJob import *
+from .FileNameManager          import fnm
+from .ConfigFileGenerator      import cfg
+from .ConfigParametersForApp   import cp
 
 #-----------------------------
 

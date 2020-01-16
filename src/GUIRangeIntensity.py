@@ -15,12 +15,13 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
 
-from GUIRange import *
+from .GUIRange import *
 
 #------------------------------
 class GUIRangeIntensity(GUIRange) :

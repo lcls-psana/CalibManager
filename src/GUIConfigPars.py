@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -14,9 +15,9 @@ import os
 from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-import GlobalUtils          as     gu
+from . import GlobalUtils          as     gu
 
 #------------------------------
 

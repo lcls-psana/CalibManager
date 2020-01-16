@@ -7,14 +7,15 @@ If you use all or part of it, please give an appropriate acknowledgment.
 Author: Mikhail Dubrovin
 """
 from __future__ import print_function
+from __future__ import absolute_import
 #----------------------------
 __author__ = "Mikhail S. Dubrovin"
 #----------------------------
 
 from CalibManager.Logger import logger
-from ConfigParameters import *
+from .ConfigParameters import *
 from PyQt4 import QtGui, QtCore
-import AppDataPath as apputils # for icons
+from . import AppDataPath as apputils # for icons
 
 import PSCalib.GlobalUtils as gu
 

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -15,11 +16,11 @@ __version__ = "$Revision$"
 from PyQt4 import QtGui, QtCore
 
 #from CalibManager.Frame     import Frame
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
-from GUIStatus                   import *
-from GUIFileManagerSingleControl import *
+from .GUIStatus                   import *
+from .GUIFileManagerSingleControl import *
 
 #------------------------------
 

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -16,13 +17,13 @@ import unicodedata
 from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-import GlobalUtils          as     gu
-from FileNameManager        import fnm
+from . import GlobalUtils          as     gu
+from .FileNameManager        import fnm
 
-from GUIDarkListItemRun     import *
-from GUIDarkListItemAdd     import *
+from .GUIDarkListItemRun     import *
+from .GUIDarkListItemAdd     import *
 
 #------------------------------
 

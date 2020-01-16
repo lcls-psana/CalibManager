@@ -16,6 +16,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -24,11 +25,11 @@ __version__ = "$Revision$"
 import os
 from time import sleep
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-from FileNameManager        import fnm
-import GlobalUtils          as     gu
-import RegDBUtils           as     ru
+from .FileNameManager        import fnm
+from . import GlobalUtils          as     gu
+from . import RegDBUtils           as     ru
 
 #-----------------------------
 

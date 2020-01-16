@@ -13,6 +13,7 @@
 #  Module's version from SVN --
 #------------------------------
 from __future__ import print_function
+from __future__ import absolute_import
 __version__ = "$Revision$"
 # $Source$
 
@@ -62,7 +63,7 @@ def input_options_parser() :
 # python /reg/g/pcds/pds/grabber/bin/grelog.py -i AMO -e amodaq09 -u amoopr -p pcds -w https://pswww.slac.stanford.edu/ws-auth
 # grelog.py -i AMO -e amodaq09 -u amoopr -w https://pswww.slac.stanford.edu/ws-auth
 #---------------------------------
-from LogBookWebService import LogBookWebService
+from .LogBookWebService import LogBookWebService
 
 def run_GUIGrabSubmitELog() :
 

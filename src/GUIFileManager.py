@@ -6,6 +6,7 @@
 #------------------------------------------------------------------------
 
 """GUI wrapper for Single and Group file managers"""
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -15,9 +16,9 @@ __version__ = "$Revision$"
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
-from GUIFileManagerSingle   import *
-from GUIFileManagerGroup    import *
+from .ConfigParametersForApp import cp
+from .GUIFileManagerSingle   import *
+from .GUIFileManagerGroup    import *
 from CalibManager.Logger                 import logger
 
 #------------------------------

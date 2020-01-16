@@ -17,6 +17,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 
 #------------------------------
 #  Module's version from SVN --
@@ -28,7 +29,7 @@ __version__ = "$Revision$"
 #  Imports of standard modules --
 #--------------------------------
 
-from NotificationDB import *
+from .NotificationDB import *
 
 #------------------------------
 

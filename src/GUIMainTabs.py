@@ -14,6 +14,7 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -23,18 +24,18 @@ __version__ = "$Revision$"
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 
 #from GUILogger            import *
 #from FileNameManager      import fnm
 from CalibManager.Logger               import logger
-from GUIConfig            import * # GUIConfig
-from GUIDark              import GUIDark
-from GUIData              import GUIData 
-from GUIROIMask           import GUIROIMask
-from GUIFileManager       import GUIFileManager
-from GUIGeometry          import GUIGeometry 
-import GlobalUtils        as     gu
+from .GUIConfig            import * # GUIConfig
+from .GUIDark              import GUIDark
+from .GUIData              import GUIData 
+from .GUIROIMask           import GUIROIMask
+from .GUIFileManager       import GUIFileManager
+from .GUIGeometry          import GUIGeometry 
+from . import GlobalUtils        as     gu
 
 #---------------------
 class GUIMainTabs(QtGui.QWidget) :

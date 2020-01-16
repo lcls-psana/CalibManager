@@ -15,6 +15,7 @@ part of it, please give an appropriate acknowledgment.
 @version $Id$ 
 @author Mikhail S. Dubrovin
 """
+from __future__ import absolute_import
 #--------------------------------
 __version__ = "$Revision$"
 #--------------------------------
@@ -25,11 +26,11 @@ from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
 from CalibManager.Logger                 import logger
-from GUIHelp                import *
-import GlobalUtils          as     gu
-from GUIRangeIntensity      import *
-from FileNameManager        import fnm
-from ConfigParametersForApp import cp
+from .GUIHelp                import *
+from . import GlobalUtils          as     gu
+from .GUIRangeIntensity      import *
+from .FileNameManager        import fnm
+from .ConfigParametersForApp import cp
 from CorAna.ArrFileExchange import *
 
 #---------------------

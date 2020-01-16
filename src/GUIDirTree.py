@@ -8,6 +8,7 @@
 
 """GUI for generic directory tree"""
 from __future__ import print_function
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision: 11469 $"
@@ -17,7 +18,7 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
 #------------------------------

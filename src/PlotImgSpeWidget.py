@@ -16,6 +16,7 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 from __future__ import division
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -39,7 +40,7 @@ from   matplotlib.ticker import MaxNLocator, NullFormatter
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 
 #---------------------
 

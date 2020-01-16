@@ -17,6 +17,7 @@ part of it, please give an appropriate acknowledgment.
 """
 from __future__ import print_function
 from __future__ import division
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -28,14 +29,14 @@ from time import sleep
 
 from CalibManager.Logger                   import logger
 
-from FileNameManager          import fnm
+from .FileNameManager          import fnm
 #from ConfigFileGenerator      import cfg
-from ConfigParametersForApp   import cp
+from .ConfigParametersForApp   import cp
 
-from BatchJobPedestals        import *
-from BatchLogScanParser       import blsp # Just in order to instatiate it
+from .BatchJobPedestals        import *
+from .BatchLogScanParser       import blsp # Just in order to instatiate it
 
-import FileDeployer           as     fdmets
+from . import FileDeployer           as     fdmets
 
 #------------------------------
 class CommandLineCalib(object) :

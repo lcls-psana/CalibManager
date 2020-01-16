@@ -6,6 +6,7 @@
 #------------------------------------------------------------------------
 
 """GUI for geometry"""
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -15,9 +16,9 @@ __version__ = "$Revision$"
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
-from GUIMetrology           import *
-from GUIAlignment           import *
+from .ConfigParametersForApp import cp
+from .GUIMetrology           import *
+from .GUIAlignment           import *
 from CalibManager.Logger                 import logger
 
 #------------------------------

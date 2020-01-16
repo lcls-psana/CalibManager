@@ -10,6 +10,7 @@
 
 """ThreadWorker"""
 from __future__ import print_function
+from __future__ import absolute_import
 
 #------------------------------
 #  Module's version from SVN --
@@ -25,7 +26,7 @@ import os
 import random
 
 from PyQt4 import QtGui, QtCore
-from ConfigParametersForApp import confpars as cp
+from .ConfigParametersForApp import confpars as cp
 
 #---------------------
 #  Class definition --

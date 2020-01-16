@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -14,10 +15,10 @@ __version__ = "$Revision$"
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
-import GlobalUtils          as     gu
-from GUILogger              import *
-from GUIRange               import *
+from .ConfigParametersForApp import cp
+from . import GlobalUtils          as     gu
+from .GUILogger              import *
+from .GUIRange               import *
 
 #------------------------------
 

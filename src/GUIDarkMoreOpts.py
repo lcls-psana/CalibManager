@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -14,13 +15,13 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from   ConfigParametersForApp import cp
-from   Logger                 import logger
-import GlobalUtils            as     gu
-from   FileNameManager        import fnm
-from   GUIFileBrowser         import *
-from   PlotImgSpe             import *
-import FileDeployer           as     fdmets
+from   .ConfigParametersForApp import cp
+from   .Logger                 import logger
+from . import GlobalUtils            as     gu
+from   .FileNameManager        import fnm
+from   .GUIFileBrowser         import *
+from   .PlotImgSpe             import *
+from . import FileDeployer           as     fdmets
 
 #------------------------------
 

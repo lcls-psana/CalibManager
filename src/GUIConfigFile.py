@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------
 
 """GUI for configuration file parameters management"""
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -17,7 +18,7 @@ import os
 from PyQt4 import QtGui, QtCore
 
 from CalibManager.Frame     import Frame
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
 #------------------------------

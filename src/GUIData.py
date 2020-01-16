@@ -6,6 +6,7 @@
 #------------------------------------------------------------------------
 
 """GUI for data processing/imaging"""
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -15,10 +16,10 @@ __version__ = "$Revision$"
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-from GUIDataAverage         import GUIDataAverage
-from GUIDataImage           import GUIDataImage
+from .GUIDataAverage         import GUIDataAverage
+from .GUIDataImage           import GUIDataImage
 
 #------------------------------
 

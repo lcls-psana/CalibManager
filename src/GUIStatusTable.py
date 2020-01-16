@@ -8,6 +8,7 @@
 
 """GUIStatusTable GUI shows the status table for the list of files"""
 from __future__ import print_function
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -17,10 +18,10 @@ import os
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
-from FileNameManager        import fnm
+from .ConfigParametersForApp import cp
+from .FileNameManager        import fnm
 from CalibManager.Logger                 import logger
-import GlobalUtils          as     gu
+from . import GlobalUtils          as     gu
 
 #------------------------------
 class GUIStatusTable(QtGui.QWidget) :

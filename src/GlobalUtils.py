@@ -18,6 +18,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
+from __future__ import absolute_import
 
 #--------------------------------
 from future import standard_library
@@ -47,13 +48,13 @@ import subprocess # for subprocess.Popen
 from CalibManager.Logger import logger
 from PyQt4 import QtGui, QtCore
 #from LogBook import message_poster
-from GUIPopupCheckList import *
-from GUIPopupRadioList import *
+from .GUIPopupCheckList import *
+from .GUIPopupRadioList import *
 
 import PyCSPadImage.CSPAD2x2ImageUtils as cspad2x2img
 import PyCSPadImage.CSPADImageUtils    as cspadimg
 
-from CalibFileFinder import *
+from .CalibFileFinder import *
 import PSCalib.GlobalUtils as cgu
 
 #-----------------------------
@@ -1270,7 +1271,7 @@ if __name__ == "__main__" :
 
     print('CalibManager package revision: "%s"' % get_pkg_version())
 
-    from FileNameManager import fnm
+    from .FileNameManager import fnm
     #fname = fnm.log_file_cpo()
     fname = '/reg/g/psdm/logs/calibman/2016/09/2016-00-00-00:00:00-log-dubrovin-12345.txt'
     print('create directry and save file %s' % fname)

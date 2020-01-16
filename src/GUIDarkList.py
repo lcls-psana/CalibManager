@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #--------------------------------------------------------------------------
 # File and Version Information:
 #  $Id$
@@ -12,13 +13,13 @@ __version__ = "$Revision$"
 
 from PyQt4 import QtGui, QtCore
 
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-from FileNameManager        import fnm
-from GUIDarkListItem        import *
-import GlobalUtils          as     gu
-import RegDBUtils           as     ru
-from BatchLogScanParser     import blsp
+from .FileNameManager        import fnm
+from .GUIDarkListItem        import *
+from . import GlobalUtils          as     gu
+from . import RegDBUtils           as     ru
+from .BatchLogScanParser     import blsp
 
 from time import time
 

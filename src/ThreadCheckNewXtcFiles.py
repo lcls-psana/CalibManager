@@ -10,6 +10,7 @@
 
 """ThreadCheckNewXtcFiles"""
 from __future__ import print_function
+from __future__ import absolute_import
 
 #------------------------------
 #  Module's version from SVN --
@@ -25,8 +26,8 @@ import os
 import random
 
 from PyQt4 import QtGui, QtCore
-from ConfigParametersForApp import confpars as cp
-from FileNameManager        import fnm
+from .ConfigParametersForApp import confpars as cp
+from .FileNameManager        import fnm
 
 #---------------------
 #  Class definition --

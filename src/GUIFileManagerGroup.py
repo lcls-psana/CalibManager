@@ -8,6 +8,7 @@
 #------------------------------------------------------------------------
 
 """GUI for Group File Manager"""
+from __future__ import absolute_import
 
 #--------------------------------
 __version__ = "$Revision$"
@@ -18,13 +19,13 @@ __version__ = "$Revision$"
 from PyQt4 import QtGui, QtCore
 
 #from CalibManager.Frame     import Frame
-from ConfigParametersForApp import cp
+from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
-from GUIStatus                  import *
-from GUIFileManagerGroupControl import *
-from GUIDirTree                 import *
-from GUIExpCalibDir             import *
+from .GUIStatus                  import *
+from .GUIFileManagerGroupControl import *
+from .GUIDirTree                 import *
+from .GUIExpCalibDir             import *
 
 #------------------------------
 
