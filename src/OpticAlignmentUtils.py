@@ -217,7 +217,7 @@ def get_segment_vectors(arr1seg, iorgn=0) :
     """Returns segment vectors relative to its (x,y) origin point.
        (x,y) origin is a one of [0,3] corner, not necessarily pixel(0,0). 
        For quality check origin corner does not matter.
-       For real geometry it is important to ge correct tilt angles.
+       For real geometry it is important to get correct tilt angles.
 
        1) makes dictionary of 3 vectors from segment origin corner to 3 other corners,
        2) orders dictionary by vector length and assign them to vS1, vL1, and vD1,

@@ -13,6 +13,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-03-12 Mikhail S. Dubrovin
+Tag: V01-00-22
+- app/optical_metrology_epix10ka2m - add --rot for detector orientation in optical measurements
+
 2019-01-24 Mikhail S. Dubrovin
 Tag: V01-00-21
 - add optical metrology processing script for epix10ka2m
