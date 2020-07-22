@@ -13,6 +13,12 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-07-22 Mikhail S. Dubrovin
+Tag: V01-00-23
+- fix code for changed xtc file name pattern from eNNN-r0146-s00-c00.xtc to detdaq18-r0146-s00-c00.xtc
+	modified:   FileNameManager.py
+	modified:   GlobalUtils.py
+
 2020-03-12 Mikhail S. Dubrovin
 Tag: V01-00-22
 - app/optical_metrology_epix10ka2m - add --rot for detector orientation in optical measurements

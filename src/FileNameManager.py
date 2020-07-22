@@ -171,8 +171,8 @@ class FileNameManager :
         for fname in self.get_list_of_xtc_files() :
             if fname.find(pattern) != -1 :
                 #print fname
-                expnum, runnum, stream, chunk, ext = gu.parse_xtc_file_name(fname) # Parse: e170-r0003-s00-c00.xtc
-                return self.path_to_xtc_dir() + 'e' + expnum + '-r' + runnum + '-*.xtc' 
+                exp, runnum, stream, chunk, ext = gu.parse_xtc_file_name(fname) # Parse: e170-r0003-s00-c00.xtc
+                return self.path_to_xtc_dir() + exp + '-r' + runnum + '-*.xtc' 
 
         return None
 
