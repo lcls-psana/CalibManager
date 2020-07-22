@@ -78,6 +78,7 @@ def intOrNone(value):
 def list_of_int_from_list_of_str(list_in):
     """Converts  ['0001', '0202', '0203', '0204',...] to [1, 202, 203, 204,...]
     """
+    if list_in is None: return None
     list_out = []
     for item in list_in :
         list_out.append(int(item))
@@ -424,13 +425,14 @@ def parse_xtc_file_name(fname):
     name, _ext = os.path.splitext(fname) # i.e. ('e167-r0015-s00-c00', '.xtc')
     #print 'name, _ext = ', name, _ext
     parts = name.split('-') # it gives parts = ('e167', 'r0015', 's00', 'c00')
+                            # M.D. 2020-07-22: need to support new pattern... detdaq18-r0145-s01-c19.xtc
 
     _expnum = None
     _runnum = None
     _stream = None
     _chunk  = None
 
-    parts = list(map( xtc_fname_parser_helper, parts, ['e', 'r', 's', 'c'] ))
+    parts[1:] = map(xtc_fname_parser_helper, parts[1:], ['r', 's', 'c'])
 
     if None not in parts :
         _expnum = parts[0]
