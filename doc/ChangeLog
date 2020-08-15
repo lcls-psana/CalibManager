@@ -13,6 +13,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-08-15 Mikhail S. Dubrovin
+Tag: V01-00-24
+- update optical_metrology_epix10ka2m
+	modified:   app/optical_metrology_check
+	modified:   app/optical_metrology_epix10ka2m
+	modified:   src/OpticAlignmentUtils.py
+
 2020-07-22 Mikhail S. Dubrovin
 Tag: V01-00-23
 - fix code for changed xtc file name pattern from eNNN-r0146-s00-c00.xtc to detdaq18-r0146-s00-c00.xtc

@@ -35,7 +35,7 @@ class OpticalMetrologyCheck() :
         self.print_quality_check_tables()
         if self.plt : 
             self.plot_metrology_data()
-
+        if self.his : 
             self.fill_histograms()
             self.plot_histograms(self.ofpref, do_save=True, hwin_x0y0=(0,50))
 
@@ -53,6 +53,7 @@ class OpticalMetrologyCheck() :
         self.toz = popts.toz
         self.vrb = popts.vrb
         self.plt = popts.plt
+        self.his = popts.his
         
         if self.vrb & DEBUG: print 'In %s' % sys._getframe().f_code.co_name
         if self.vrb & INFO : print_command_line()
@@ -769,6 +770,7 @@ def option_parser() :
     d_ofp = './om' 
     d_psz = 109.92
     d_plt = True
+    d_his = True
     d_txy = 60
     d_toz = 100
     d_vrb = 15
@@ -777,6 +779,7 @@ def option_parser() :
     h_ofp   = 'output file(s) prefix, default = %s' % d_ofp 
     h_psz   = 'pixel size (um)-micrometer, default = %s' % d_psz 
     h_plt   = 'plot image, default = %s' % str(d_plt)
+    h_his   = 'plot histograms, default = %s' % str(d_his)
     h_txy   = 'tolerance to deviatyion in x-y plane [um], default = %.2f' % d_txy
     h_toz   = 'tolerance to deviatyion in z [um], default = %.2f' % d_toz
     h_vrb   = 'verbosity, default = %s' % str(d_vrb)
@@ -788,6 +791,7 @@ def option_parser() :
     parser.add_option('-x', '--txy', default=d_txy, action='store', type='float',  help=h_txy)
     parser.add_option('-z', '--toz', default=d_toz, action='store', type='float',  help=h_toz)
     parser.add_option('-p', '--plt', default=d_plt, action='store_false',          help=h_plt)
+    parser.add_option('-H', '--his', default=d_his, action='store_false',          help=h_his)
     parser.add_option('-v', '--vrb', default=d_vrb, action='store', type='int',    help=h_vrb)
   
     return parser
