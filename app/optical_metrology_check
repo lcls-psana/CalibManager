@@ -54,6 +54,7 @@ class OpticalMetrologyCheck() :
         self.vrb = popts.vrb
         self.plt = popts.plt
         self.his = popts.his
+        self.gfn = popts.gfn
         
         if self.vrb & DEBUG: print 'In %s' % sys._getframe().f_code.co_name
         if self.vrb & INFO : print_command_line()
@@ -476,6 +477,7 @@ class OpticalMetrologyCheck() :
 
         self.plot_points(axes)
         self.plot_centers(axes)
+        self.plot_geometry_file(axes)
 
         plt.show()
 
@@ -493,6 +495,8 @@ class OpticalMetrologyCheck() :
             line = lines.Line2D(xp, yp, linewidth=1, color='r')        
             axes.add_artist(line)
 
+            print('segment %02d: xp:' % nseg, xp)
+
             for point in range(4) :
                 n, x, y, z, q = arr_segs[nseg, point, :]
                 plt.text(x, y, str(n), fontsize=8, color='k', ha='left', rotation=45)
@@ -506,6 +510,52 @@ class OpticalMetrologyCheck() :
             x_um, y_um, z_um = self.segment_center_coordinates(arr1seg)
             #if self.vrb & 256 : print 'segment center x, y, z (um) = %.1f, %.1f, %.1f' % (x_um, y_um, z_um)
             plt.text(x_um, y_um, str(nseg), fontsize=8, color='k', ha='left', rotation=0)
+
+#------------------------------
+
+    def plot_geometry_file(self, axes) :
+        print('geometry file name: %s' % str(self.gfn))
+        if self.gfn is None: return
+        from Detector.GlobalUtils import print_ndarr, info_ndarr, divide_protected
+        from pyimgalgos.GlobalUtils import print_command_line_parameters, print_ndarr, reshape_to_3d
+        from PSCalib.GeometryAccess import GeometryAccess, img_from_pixel_arrays       
+        geo = GeometryAccess(self.gfn, 0)
+        #iX, iY = geo.get_pixel_coord_indexes()
+        X, Y, Z = geo.get_pixel_coords() # oname=None, oindex=0, do_tilt=True)
+        arrx = reshape_to_3d(X)
+        arry = reshape_to_3d(Y)
+
+        #print_ndarr(arrx, 'X pixel coordinates')
+        #print_ndarr(arry, 'Y pixel coordinates')
+
+        # find DAQ segment 0 center in geometry
+        xc = arrx[0]
+        yc = arry[0]
+        seg0cgeo_x = np.mean((xc[0,0], xc[0,-1], xc[-1,-1], xc[-1,0]))
+        seg0cgeo_y = np.mean((yc[0,0], yc[0,-1], yc[-1,-1], yc[-1,0]))
+        print('seg0cgeo_x: %.1f' % seg0cgeo_x)
+        print('seg0cgeo_y: %.1f' % seg0cgeo_y)
+
+        # find DAQ segment 0 center in optical geometry (3), or (15), ...
+        seg0copm_x = np.mean(self.arr_segs[15, :, 1])
+        seg0copm_y = np.mean(self.arr_segs[15, :, 2])            
+        print('seg0copm_x: %.1f' % seg0copm_x)
+        print('seg0copm_y: %.1f' % seg0copm_y)
+
+        xoffset = seg0copm_x - seg0cgeo_x # 527000
+        yoffset = seg0copm_y - seg0cgeo_y # 939250
+
+        nsegs = arrx.shape[0]
+        for s in range(16):
+            xc = arrx[s] + xoffset
+            yc = arry[s] + yoffset
+            xcor = (xc[0,0], xc[0,-1], xc[-1,-1], xc[-1,0], xc[0,0])
+            ycor = (yc[0,0], yc[0,-1], yc[-1,-1], yc[-1,0], yc[0,0])
+
+            print('segment %02d: x corner coordinates: ' % s, xcor)
+
+            line = lines.Line2D(xcor, ycor, linewidth=1, color='b')        
+            axes.add_artist(line)
 
 #------------------------------
 #------------------------------
@@ -767,13 +817,14 @@ def option_parser() :
     from optparse import OptionParser
 
     d_ifn = './optical_metrology.txt'
-    d_ofp = './om' 
+    d_ofp = './optmet' 
     d_psz = 109.92
     d_plt = True
-    d_his = True
+    d_his = False
     d_txy = 60
     d_toz = 100
     d_vrb = 15
+    d_gfn = None
  
     h_ifn   = 'input file name, default = %s' % d_ifn
     h_ofp   = 'output file(s) prefix, default = %s' % d_ofp 
@@ -783,6 +834,7 @@ def option_parser() :
     h_txy   = 'tolerance to deviatyion in x-y plane [um], default = %.2f' % d_txy
     h_toz   = 'tolerance to deviatyion in z [um], default = %.2f' % d_toz
     h_vrb   = 'verbosity, default = %s' % str(d_vrb)
+    h_gfn   = 'input geometry file name, default = %s' % d_gfn
  
     parser = OptionParser(description='Check optical metrology measurements', usage=usage())
     parser.add_option('-i', '--ifn', default=d_ifn, action='store', type='string', help=h_ifn)
@@ -791,8 +843,9 @@ def option_parser() :
     parser.add_option('-x', '--txy', default=d_txy, action='store', type='float',  help=h_txy)
     parser.add_option('-z', '--toz', default=d_toz, action='store', type='float',  help=h_toz)
     parser.add_option('-p', '--plt', default=d_plt, action='store_false',          help=h_plt)
-    parser.add_option('-H', '--his', default=d_his, action='store_false',          help=h_his)
+    parser.add_option('-H', '--his', default=d_his, action='store_true',           help=h_his)
     parser.add_option('-v', '--vrb', default=d_vrb, action='store', type='int',    help=h_vrb)
+    parser.add_option('-g', '--gfn', default=d_gfn, action='store', type='string', help=h_gfn)
   
     return parser
  
