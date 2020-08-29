@@ -136,7 +136,7 @@ def read_optical_metrology_file(fname='metrology.txt'):
 
 #--------------------
 
-def make_table_of_segments(arr):
+def make_table_of_segments(arr,qoff=0):
     """Reshape optical metrology table to arr_segs;
        arr_segs.shape=(nsegs, 4(points-per-segment), 5(n, x, y, z, q))
        NOTE: npoints may not nesserely be dividable by 4...
@@ -157,7 +157,15 @@ def make_table_of_segments(arr):
         nseg = i//4 # [0, npoints/4]
         npoi = i%4 # [0,3]
         #print 'XXX nseg: %d  npoi: %d' % (nseg, npoi)
-        arr_segs[nseg, npoi,:] = arr[i,:]
+
+        #apply qoff to sdegment index
+        seginq = nseg%4
+        q = (nseg//4 + qoff)%4
+        s = q*4 + seginq
+        print 'XXXXXX seg: %2d quad:%d quad+off:%d seg_off:%2d' % (nseg, nseg//4, q, s)
+
+        arr_segs[s, npoi,:] = arr[i,:]
+        #arr_segs[nseg, npoi,:] = arr[i,:]
 
     return arr_segs
 
@@ -522,7 +530,7 @@ def segment_metrology_constants(arr1seg, iorgn):
 #--------------------
 
 def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_deg, segnums_in_daq,\
-                       def_constants, center_offset, det_orientation_deg):
+                          def_constants, center_offset_optmet, center_ip_twister, usez):
     """Returns list/tuple of per-segment geometry constants
     """
     #logger.debug('%s\nIn %s' % (60*'-', sys._getframe().f_code.co_name))
@@ -574,6 +582,11 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
         #apply offset of panel coordinates from optical metrology frame to quad center
         for s in range(nsegs_in_quad):
             arr_quads[q,s,:2] -= quad_center
+            if not usez:
+                arr_quads[q,s,2] = 0 #Z
+                arr_quads[q,s,7] = 0 # tilt Y
+                arr_quads[q,s,8] = 0 # tilt X
+                
         #print 'offset quad center:\n', arr_quads[q,:,:2]
 
         quad_deg = quad_orientation_deg[q]
@@ -584,7 +597,8 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
             v = arr_quads[q,s,:3]
             v_rot = rotate_vector_xy(v, quad_deg)
             arr_quads[q,s,:3] = v_rot[:3] # z is not changing
-            arr_quads[q,s,3] += quad_deg  # account for quad rorartion
+            arr_quads[q,s,3] += quad_deg  # account for quad rotartion
+            arr_quads[q,s,3] %= 360
             #xrot, yrot = rotation(x, y, quad_deg)
 
             seg_daq = segnums_in_daq[q][s]
@@ -602,11 +616,11 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
     logger.info('\nnumber of quads in metrology %d of total expected in camera %d' % (nquads, nquads_tot))
     logger.debug('\nquad centers from metrology:\n%s\n'  % str(arr_quad_center)+\
                  '\naveraged over quads center:\n%s'     % str(camera_center)+\
-                 '\n\ncamera center from input pars:\n%s'% str(center_offset))
+                 '\n\ncamera center from input pars:\n%s'% str(center_offset_optmet))
 
     #print 'camera_center evaluated as an averaged quad center:\n', camera_center
 
-    _center_offset = center_offset if nquads != nquads_tot else camera_center
+    _center_offset_optmet = center_offset_optmet if nquads != nquads_tot else camera_center
 
     #print '\nmake list of constants'
     list_geo_recs = []
@@ -614,20 +628,21 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
         name_par, ip, name_obj, io = rec[:4]
         rec_new = (name_quad, ip, name_seg, io) + tuple(arr_quads_daq[ip,io,:])\
                   if ip<nquads and io<nsegs and name_par==name_quad and name_obj==name_seg else\
-                  rec[:4] + tuple(arr_quad_center[io] - np.array(_center_offset)) + rec[6:]\
+                  rec[:4] + tuple(arr_quad_center[io] - np.array(_center_offset_optmet)) + rec[6:]\
                   if io<nquads and name_obj==name_quad else\
                   rec
 
         list_geo_recs.append(list(rec_new))
 
-    list_geo_recs[-1][7] = det_orientation_deg
+    #list_geo_recs[-1][7] = <z-angler>
+    list_geo_recs[-1][4:10] = center_ip_twister
 
     logger.info('constants form list_geo_recs:\n%s' % str_geo_constants(list_geo_recs))
     return list_geo_recs
 
 #--------------------
 
-def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq):
+def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq, center_ip_twister, usez):
                        #, nsegs_in_quad, quad_orientation_deg, center_offset):
     """Returns list/tuple of per-segment geometry constants
     """
@@ -646,6 +661,7 @@ def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq):
 
     list_of_twisters =[]
     for s in range(nsegs):
+
         iorgn = arr_iorgn[s]
         arr1seg = arr_segs[s,:,:]
         q = arr1seg[0,4]
@@ -666,7 +682,12 @@ def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq):
     logger.debug('det_center:\n%s' % str(det_center))
 
     arr_of_twisters[:,:3] -= det_center
+    arr_of_twisters[:,3] %= 360 # for example 540 -> 180
     #logger.debug('arr_of_twisters after center offset:\n%s' % str(arr_of_twisters))
+    if not usez:
+        arr_of_twisters[:,2] = 0 # Z
+        arr_of_twisters[:,7] = 0 # tilt Y
+        arr_of_twisters[:,8] = 0 # tilt X
 
     # combine list of segment rercords
     dict_geo_recs = {}
@@ -678,7 +699,7 @@ def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq):
 
     list_geo_recs = [dict_geo_recs[seg_daq] for seg_daq in range(nsegs)]
     # add last record
-    list_geo_recs.append(last_record_v1(name_subd, ind_subd))
+    list_geo_recs.append(last_record_v1(name_subd, ind_subd, center_ip_twister))
 
     #list_of_pars_str = [FMT % pars for pars in list_of_pars]
     logger.debug('constants form list_geo_recs:\n%s' % str_geo_constants(list_geo_recs))
@@ -686,8 +707,9 @@ def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq):
     return list_geo_recs
 
 
-def last_record_v1(name_subd, ind_subd):
-    return ('IP', 0, name_subd, ind_subd, 0, 0,  1000000, 0, 0, 0, 0, 0, 0)
+def last_record_v1(name_subd, ind_subd, ip_twister):
+    return ('IP', 0, name_subd, ind_subd) + ip_twister + (0, 0, 0)
+    #return ('IP', 0, name_subd, ind_subd, 0, 0,  1000000, 0, 0, 0, 0, 0, 0)
 
 #--------------------
 
@@ -730,7 +752,7 @@ def str_geo_constants_hat():
 
 #--------------------
 
-def default_constants_epix10ka2m():
+def default_constants_epix10ka2m_v0():
     # HDR PARENT IND     OBJECT IND    X0[um]   Y0[um]   Z0[um]   ROT-Z ROT-Y ROT-X     TILT-Z   TILT-Y   TILT-X
     SENSOR   = 'EPIX10KA:V1'
     QUAD     = 'QUAD'
@@ -762,7 +784,34 @@ def default_constants_epix10ka2m():
         (CAMERA, 0,    QUAD  , 2,     38450,   -42850,        0,     270,     0,     0,    0,  0,  0),\
         (CAMERA, 0,    QUAD  , 3,    -42850,   -38450,        0,     180,     0,     0,    0,  0,  0),\
 
-        (IP    , 0,    CAMERA, 0,         0,        0,  1000000,      90,     0,     0,    0,  0,  0)\
+        (IP    , 0,    CAMERA, 0,         0,        0,   100000,      90,     0,     0,    0,  0,  0)\
+    )
+
+#--------------------
+
+def default_constants_epix10ka2m_v1():
+    # HDR PARENT IND  OBJECT IND    X0[um]   Y0[um]   Z0[um]     ROT-Z   ROT-Y   ROT-X TILT-Z TILT-YTILT-X
+    SENSOR   = 'EPIX10KA:V1'
+    CAMERA   = 'CAMERA'
+    IP       = 'IP'
+    return (
+      (CAMERA,  0,  SENSOR,  0,    -59032,    23573,        0,     270,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  1,    -59026,    64317,        0,     270,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  2,    -17405,    23567,        0,     270,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  3,    -17039,    63692,        0,     270,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  4,     23423,    59147,        0,     180,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  5,     64071,    59039,        0,     180,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  6,     23779,    17334,        0,     180,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  7,     63997,    17181,        0,     180,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  8,     59152,   -23403,        0,      90,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR,  9,     58942,   -64143,        0,      90,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR, 10,     17468,   -23658,        0,      90,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR, 11,     17029,   -63871,        0,      90,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR, 12,    -23591,   -59310,        0,       0,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR, 13,    -64155,   -59056,        0,       0,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR, 14,    -23622,   -17240,        0,       0,      0,      0,   0,   0,   0),\
+      (CAMERA,  0,  SENSOR, 15,    -63991,   -17169,        0,       0,      0,      0,   0,   0,   0),\
+      (    IP,  0,  CAMERA,  0,         0,        0,   100000,      90,      0,      0,   0,   0,   0)\
     )
 
 #--------------------
@@ -781,12 +830,19 @@ class OpticalMetrologyEpix10ka2M():
     def init_parameters(self):
         (popts, pargs) = self.parser.parse_args()
         self.ifname = pargs[0] if len(pargs) else popts.ifn # popts['ifn']
+        #self.ifname = popts.ifn # popts['ifn']
         self.ofname = popts.ofn # popts['ofn']
         self.xc     = popts.xc
         self.yc     = popts.yc
+        self.xcip   = popts.xcip
+        self.ycip   = popts.ycip
+        self.zcip   = popts.zcip
+        self.azip   = popts.azip
         self.rot    = popts.rot
+        self.qoff   = popts.qoff
         self.loglev = popts.log
         self.vers   = popts.vers
+        self.usez   = popts.usez
 
         msg = 'Command: %s' % ' '.join(sys.argv)
         logger.info(msg)
@@ -806,11 +862,13 @@ class OpticalMetrologyEpix10ka2M():
 
         DET_ORIENTATION_DEG = (90,180,270,0)[irot]
 
+        CENTER_IP_TWISTER = (self.xcip, self.ycip, self.zcip, self.azip, 0, 0)
+
         QUAD_ORIENTATION_DEG =\
            ((  0, 90,180,270),\
             ( 90,180,270,  0),\
             (180,270,  0, 90),\
-            (270,  0, 90,180))[irot]
+            (270,  0, 90,180))[(self.rot+self.qoff)%4] #[self.rot%4]
  
         # metrology point index in range [0,3] for "origin" - 0 pixel in DAQ
         SEG_XY_ORIGIN_EPIX10KA2M =\
@@ -819,13 +877,13 @@ class OpticalMetrologyEpix10ka2M():
             (3,3,3,3, 0,0,0,0, 1,1,1,1, 2,2,2,2),\
             (0,0,0,0, 1,1,1,1, 2,2,2,2, 3,3,3,3))[irot]
 
-        DEF_CONSTANTS = default_constants_epix10ka2m()
-        CENTER_OFFSET = (self.xc, self.yc)
+        DEF_CONSTANTS = default_constants_epix10ka2m_v0()
+        CENTER_OFFSET_OPTMET = (self.xc, self.yc)
         
-        arr_points = read_optical_metrology_file(fname='optical_metrology.txt')
+        arr_points = read_optical_metrology_file(fname=self.ifname)
         logger.debug('Array of points:\n%s' % str(arr_points))
         
-        arr_segs = make_table_of_segments(arr_points)
+        arr_segs = make_table_of_segments(arr_points) #, self.qoff)
         logger.debug('Array of segments:\n%s' % str(arr_segs))
         
         check_points_numeration(arr_segs)
@@ -836,7 +894,7 @@ class OpticalMetrologyEpix10ka2M():
         
         lst = geometry_constants_v0(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M, NSEGS_IN_QUAD_EPIX10KA2M,\
                                  QUAD_ORIENTATION_DEG, METROLOGY_SEGNUMS_IN_DAQ, DEF_CONSTANTS,\
-                                 CENTER_OFFSET, DET_ORIENTATION_DEG)
+                                 CENTER_OFFSET_OPTMET, CENTER_IP_TWISTER, self.usez)
         cons = str_geo_constants(lst)
         cmts = str_comment(('detector:Epix10ka2M experiment:abcd01234',\
                             'constants generated from optical metrology',\
@@ -896,12 +954,6 @@ class OpticalMetrologyEpix10ka2M():
                                     (3,2,0,1,  5,7,6,4,  8,9,11,10,  14,12,13,15),\
                                     (1,3,2,0,  4,5,7,6,  10,8,9,11,  15,14,12,13))[irot]
 
-        #QUAD_ORIENTATION_DEG =\
-        #   ((  0, 90,180,270),\
-        #    (270,  0, 90,180),\
-        #    (180,270,  0, 90),\
-        #    ( 90,180,270,  0))[irot]
- 
         # metrology point index in range [0,3] for "origin" - 0 pixel in DAQ
         SEG_XY_ORIGIN_EPIX10KA2M =\
            ((1,1,1,1, 2,2,2,2, 3,3,3,3, 0,0,0,0),\
@@ -909,13 +961,14 @@ class OpticalMetrologyEpix10ka2M():
             (3,3,3,3, 0,0,0,0, 1,1,1,1, 2,2,2,2),\
             (0,0,0,0, 1,1,1,1, 2,2,2,2, 3,3,3,3))[irot]
 
-        DEF_CONSTANTS = default_constants_epix10ka2m()
-        CENTER_OFFSET = (self.xc, self.yc)
+        DEF_CONSTANTS = default_constants_epix10ka2m_v1()
+        #CENTER_OFFSET_OPTMET = (self.xc, self.yc)
+        CENTER_IP_TWISTER = (self.xcip, self.ycip, self.zcip, self.azip, 0, 0)
         
-        arr_points = read_optical_metrology_file(fname='optical_metrology.txt')
+        arr_points = read_optical_metrology_file(fname=self.ifname)
         logger.debug('Array of points:\n%s' % str(arr_points))
         
-        arr_segs = make_table_of_segments(arr_points)
+        arr_segs = make_table_of_segments(arr_points, self.qoff)
         logger.debug('Array of segments:\n%s' % str(arr_segs))
         
         check_points_numeration(arr_segs)
@@ -924,8 +977,8 @@ class OpticalMetrologyEpix10ka2M():
         
         logger.info('default constants:\n%s' % str_geo_constants(DEF_CONSTANTS))
         
-        lst = geometry_constants_v1(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M, DEF_CONSTANTS, METROLOGY_SEGNUMS_IN_DAQ)
-                                 #, NSEGS_IN_QUAD_EPIX10KA2M, QUAD_ORIENTATION_DEG, CENTER_OFFSET)
+        lst = geometry_constants_v1(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M, DEF_CONSTANTS,\
+                      METROLOGY_SEGNUMS_IN_DAQ, CENTER_IP_TWISTER, self.usez)
 
         #====================
         #sys.exit('TEST EXIT')
@@ -946,8 +999,6 @@ class OpticalMetrologyEpix10ka2M():
         save_textfile(geo_cons, self.ofname, accmode=0660)
         logger.info('geometry constants saved in file %s' % self.ofname)
 
-#--------------------
-#--------------------
 #--------------------
 
 if __name__ == "__main__":

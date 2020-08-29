@@ -6,6 +6,7 @@
                Confluence PSDM EPIX10KA2M and EPIX10KAQUAD - Metrology map from ChrisKenney
                Metrology from 2020-02-25 was done with Q0 in the lower-left corner...
     2020-08-12 add parameter --vers to generate constants without quads for uniform detector.
+    2020-08-25 add parameters --xip, --yip, --zip, --azip, --qoff, --usez.
 """
 
 from CalibManager.OpticAlignmentUtils import OpticalMetrologyEpix10ka2M
@@ -42,16 +43,28 @@ def option_parser():
     d_log = 'DEBUG'
     d_xc  = 78000
     d_yc  = -4150
+    d_xcip= 0
+    d_ycip= 0
+    d_zcip= 10000 # 10cm
+    d_azip= 90
     d_rot = 0
+    d_qoff= 0
     d_vers= 1
+    d_usez= True
   
     h_ifn = 'input file name, default = %s' % d_ifn
     h_ofn = 'output file(s) name, default = %s' % d_ofn 
     h_log = 'logging level from list (%s), default = %s' % (LEVEL_NAMES, d_log)
-    h_xc  = 'x coordinate [um] of camera center in optical frame, default = %d' % d_xc
-    h_yc  = 'y coordinate [um] of camera center in optical frame, default = %d' % d_yc
-    h_rot = 'detector rotation in optical metrology: 0-Q0 upper-left, 3-Q0 down-left , default = %s' % d_rot
+    h_xc  = 'x coordinate [um] of camera center offset in optical frame (if nquads<4), default = %d' % d_xc
+    h_yc  = 'y coordinate [um] of camera center offset in optical frame (if nquads<4), default = %d' % d_yc
+    h_xcip= 'x coordinate [um] of camera center relative IP, default = %d' % d_xcip
+    h_ycip= 'y coordinate [um] of camera center relative IP, default = %d' % d_ycip
+    h_zcip= 'z coordinate [um] of camera center relative IP, default = %d' % d_zcip
+    h_azip= 'angle [deg] of camera Z rotation around IP, default = %.3f' % d_azip
+    h_rot = 'detector rotation in optical metrology: 0-Q0 upper-left, 3-Q0 down-left , default = %d' % d_rot
+    h_qoff= 'quad index offset relative to DAQ (works in v0 only), default = %d' % d_qoff
     h_vers= 'processor version = 0-quads, 1-monolitic, default = %s' % d_vers
+    h_usez= 'use z from optical metrology, otherwise zeros, default = %s' % d_usez
   
     parser = OptionParser(description='Optical metrology processing for Epix10ka2M', usage=usage())
     parser.add_option('-i', '--ifn', default=d_ifn, action='store', type='string', help=h_ifn)
@@ -59,8 +72,14 @@ def option_parser():
     parser.add_option('-l', '--log', default=d_log, action='store', type='string', help=h_log)
     parser.add_option('-x', '--xc',  default=d_xc,  action='store', type='int',    help=h_xc)
     parser.add_option('-y', '--yc',  default=d_yc,  action='store', type='int',    help=h_yc)
+    parser.add_option('-X', '--xcip',default=d_xcip,action='store', type='int',    help=h_xcip)
+    parser.add_option('-Y', '--ycip',default=d_ycip,action='store', type='int',    help=h_ycip)
+    parser.add_option('-Z', '--zcip',default=d_zcip,action='store', type='int',    help=h_zcip)
+    parser.add_option('-A', '--azip',default=d_azip,action='store', type='float',  help=h_azip)
     parser.add_option('-r', '--rot', default=d_rot, action='store', type='int',    help=h_rot)
+    parser.add_option('-q', '--qoff',default=d_qoff,action='store', type='int',    help=h_qoff)
     parser.add_option('-v', '--vers',default=d_vers,action='store', type='int',    help=h_vers)
+    parser.add_option('-N', '--usez',default=d_usez,action='store_false',          help=h_usez)
 
     return parser
 

@@ -13,6 +13,11 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-08-28 Mikhail S. Dubrovin
+Tag: V01-00-25 - update app/optical_metrology_epix10ka2m
+	modified:   app/optical_metrology_epix10ka2m
+	modified:   src/OpticAlignmentUtils.py
+
 2020-08-15 Mikhail S. Dubrovin
 Tag: V01-00-24
 - update optical_metrology_epix10ka2m
