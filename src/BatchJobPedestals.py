@@ -1,22 +1,12 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#------------------------------------------------------------------------
+#----
 
 """Deals with batch jobs for dark runs (pedestals)
 
 This software was developed for the LCLS project.
 If you use all or part of it, please give an appropriate acknowledgment.
 
-@version $Id$
-
 @author Mikhail S. Dubrovin
 """
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
 
 import sys
 

@@ -1,39 +1,21 @@
 #!@PYTHON@
-#--------------------------------------------------------------------------
 
 """Command line for dark run calibration 
 
-This software was developed for the LCLS project.  If you use all or 
-part of it, please give an appropriate acknowledgement.
-
-@see RelatedModule
-
-@version $Id$ 
+This software was developed for the LCLS project.
+If you use all or part of it, please give an appropriate acknowledgement.
 
 @author Mikhail S. Dubrovin
 """
 
-#------------------------------
-#  Module's version from CVS --
-#------------------------------
-__version__ = "$Revision$"
-# $Source$
-
-#--------------------------------
-#  Imports
-#--------------------------------
 import sys
 import os
 from time import time, strftime, localtime
-#import matplotlib
-#matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
-
 from CalibManager.GlobalUtils import ready_to_start
 from CalibManager.CommandLineCalib import *
-
 from optparse import OptionParser
 
-#-----------------------------
+#----
 
 def input_options_parser() :
     com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'
@@ -70,7 +52,7 @@ def input_options_parser() :
     (opts, args) = parser.parse_args()
     return (opts, args)
  
-#---------------------------------
+#----
 
 if __name__ == "__main__" :
 
@@ -93,4 +75,4 @@ if __name__ == "__main__" :
     msg = '%s End of %s, consumed time = %.3f(sec)' % (ts2, appname, time()-t0_sec)
     sys.exit(msg)
 
-#---------------------------------
+#----

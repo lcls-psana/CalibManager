@@ -13,6 +13,17 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-10-15 Mikhail S. Dubrovin
+Tag: V01-00-26
+- FileDeployer - turned off automatic saving of constants to DCS/HDF5
+- FileNameManager - use os.path.join for xtc path
+- other cosmetics
+	modified:   src/FileDeployer.py
+	modified:   FileNameManager.py
+	modified:   ../app/calibrun
+	modified:   BatchJobPedestals.py
+	modified:   CommandLineCalib.py
+
 2020-08-28 Mikhail S. Dubrovin
 Tag: V01-00-25 - update app/optical_metrology_epix10ka2m
 	modified:   app/optical_metrology_epix10ka2m

@@ -1,23 +1,11 @@
 #--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#   CommandLineCalib...
-#------------------------------------------------------------------------
-
 """CommandLineCalib is intended for command line calibration of dark runs
 
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@version $Id$
-
 @author Mikhail S. Dubrovin
 """
-
-#--------------------------------
-__version__ = "$Revision$"
 #--------------------------------
 
 import sys
@@ -27,7 +15,6 @@ from time import sleep
 from Logger                   import logger
 
 from FileNameManager          import fnm
-#from ConfigFileGenerator      import cfg
 from ConfigParametersForApp   import cp
 
 from BatchJobPedestals        import *
