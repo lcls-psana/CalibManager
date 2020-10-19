@@ -51,6 +51,7 @@ def option_parser():
     d_qoff= 0
     d_vers= 1
     d_usez= True
+    d_docorr= True
   
     h_ifn = 'input file name, default = %s' % d_ifn
     h_ofn = 'output file(s) name, default = %s' % d_ofn 
@@ -65,6 +66,7 @@ def option_parser():
     h_qoff= 'quad index offset relative to DAQ (works in v0 only), default = %d' % d_qoff
     h_vers= 'processor version = 0-quads, 1-monolitic, default = %s' % d_vers
     h_usez= 'use z from optical metrology, otherwise zeros, default = %s' % d_usez
+    h_docorr= 'apply detector center mean offset and tilt correction to points, default = %s' % d_docorr
   
     parser = OptionParser(description='Optical metrology processing for Epix10ka2M', usage=usage())
     parser.add_option('-i', '--ifn', default=d_ifn, action='store', type='string', help=h_ifn)
@@ -80,6 +82,7 @@ def option_parser():
     parser.add_option('-q', '--qoff',default=d_qoff,action='store', type='int',    help=h_qoff)
     parser.add_option('-v', '--vers',default=d_vers,action='store', type='int',    help=h_vers)
     parser.add_option('-N', '--usez',default=d_usez,action='store_false',          help=h_usez)
+    parser.add_option('-C', '--docorr',default=d_docorr,action='store_false',      help=h_docorr)
 
     return parser
 

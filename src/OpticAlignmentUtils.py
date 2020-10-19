@@ -72,7 +72,7 @@ def save_textfile(text, path, accmode=0o777):
 
 #--------------------
 
-def read_optical_metrology_file(fname='metrology.txt'): 
+def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_correction=True): 
     """Reads the metrology.txt file with original optical measurements
        and returns array of records [(n, x, y, z, quad),]
     """
@@ -132,7 +132,80 @@ def read_optical_metrology_file(fname='metrology.txt'):
     file.close()
 
     arr = np.array(arr_opt, dtype= np.int32)
+
+    if apply_offset_and_tilt_correction:
+        correct_detector_center_offset(arr)
+        correct_detector_tilt(arr)
+
     return arr # _opt
+
+#--------------------
+
+def correct_detector_center_offset(arr):
+    """Subtract x,y,z mean offset from point coordinates
+    """
+    logger.debug('correct_detector_center_offset')
+    logger.debug('raw array of points:\n%s' % str(arr))
+    coords = arr[:,1:4]
+    logger.debug('point coords:\n%s' % str(coords))
+
+    det_center = np.mean(coords, axis=0).astype(np.int32)
+    logger.debug('det_center: %s' % str(det_center))
+
+    arr[:,1:4] -= det_center
+
+#--------------------
+
+def correct_detector_tilt(arr):
+    """Correct for common detector tilt around x,y axes which may happen in optical metrology
+    """
+    logger.debug('in correct_detector_tilt')
+    n = arr[:,0]
+    x = arr[:,1].astype(np.float64)
+    y = arr[:,2].astype(np.float64)
+    z = arr[:,3].astype(np.float64)
+    q = arr[:,4]
+    logger.debug('  point n: %s' % str(n))
+    logger.debug('  point x: %s' % str(x))
+    logger.debug('  point y: %s' % str(y))
+    logger.debug('  point z: %s' % str(z))
+    logger.debug('  point q: %s' % str(q))
+
+    wx_tilt = z * np.sign(x) # weight*angle = |x| * z/x
+    wx      = np.absolute(x)
+    wy_tilt = z * np.sign(y) # weight*angle = |y| * z/y
+    wy      = np.absolute(y)
+
+    tilt_x = np.sum(wx_tilt)/np.sum(wx)
+    tilt_y = np.sum(wy_tilt)/np.sum(wy)
+
+    logger.debug('  mean tilts[rad] around x: %.6f y: %.6f' % (tilt_x, tilt_y))
+    logger.debug('  mean tilts[deg] around x: %.6f y: %.6f' % (degrees(tilt_x), degrees(tilt_y)))
+
+    arr[:,3] -= (tilt_x*x + tilt_y*y).astype(np.int32) # point z-coordinate correction
+
+    #exit('TEST EXIT')
+
+#--------------------
+
+def correct_twisters(arr_of_twisters, usez):
+    """Apply x,y,z mean offset to all panel twisters
+       push rotation angle in range [0,360]
+       correct z and tilts for usez parameter
+    """
+    seg_centers = arr_of_twisters[:,:3]
+    logger.debug('seg_centers:\n%s' % str(seg_centers))
+
+    det_center = np.mean(seg_centers, axis=0)
+    logger.debug('det_center:\n%s' % str(det_center))
+
+    arr_of_twisters[:,:3] -= det_center
+    arr_of_twisters[:,3] %= 360 # for example 540 -> 180
+    #logger.debug('arr_of_twisters after center offset:\n%s' % str(arr_of_twisters))
+    if not usez:
+        arr_of_twisters[:,2] = 0 # Z
+        arr_of_twisters[:,7] = 0 # tilt Y
+        arr_of_twisters[:,8] = 0 # tilt X
 
 #--------------------
 
@@ -675,19 +748,7 @@ def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq, ce
     arr_of_twisters = np.array(list_of_twisters)
     #logger.debug('arr_of_twisters:\n%s' % str(arr_of_twisters))
 
-    seg_centers = arr_of_twisters[:,:3]
-    logger.debug('seg_centers:\n%s' % str(seg_centers))
-
-    det_center = np.mean(seg_centers, axis=0)
-    logger.debug('det_center:\n%s' % str(det_center))
-
-    arr_of_twisters[:,:3] -= det_center
-    arr_of_twisters[:,3] %= 360 # for example 540 -> 180
-    #logger.debug('arr_of_twisters after center offset:\n%s' % str(arr_of_twisters))
-    if not usez:
-        arr_of_twisters[:,2] = 0 # Z
-        arr_of_twisters[:,7] = 0 # tilt Y
-        arr_of_twisters[:,8] = 0 # tilt X
+    correct_twisters(arr_of_twisters, usez)
 
     # combine list of segment rercords
     dict_geo_recs = {}
@@ -843,6 +904,7 @@ class OpticalMetrologyEpix10ka2M():
         self.loglev = popts.log
         self.vers   = popts.vers
         self.usez   = popts.usez
+        self.docorr = popts.docorr
 
         msg = 'Command: %s' % ' '.join(sys.argv)
         logger.info(msg)
@@ -880,9 +942,9 @@ class OpticalMetrologyEpix10ka2M():
         DEF_CONSTANTS = default_constants_epix10ka2m_v0()
         CENTER_OFFSET_OPTMET = (self.xc, self.yc)
         
-        arr_points = read_optical_metrology_file(fname=self.ifname)
+        arr_points = read_optical_metrology_file(fname=self.ifname, apply_offset_and_tilt_correction=self.docorr)
         logger.debug('Array of points:\n%s' % str(arr_points))
-        
+
         arr_segs = make_table_of_segments(arr_points) #, self.qoff)
         logger.debug('Array of segments:\n%s' % str(arr_segs))
         
@@ -965,9 +1027,9 @@ class OpticalMetrologyEpix10ka2M():
         #CENTER_OFFSET_OPTMET = (self.xc, self.yc)
         CENTER_IP_TWISTER = (self.xcip, self.ycip, self.zcip, self.azip, 0, 0)
         
-        arr_points = read_optical_metrology_file(fname=self.ifname)
+        arr_points = read_optical_metrology_file(fname=self.ifname, apply_offset_and_tilt_correction=self.docorr)
         logger.debug('Array of points:\n%s' % str(arr_points))
-        
+
         arr_segs = make_table_of_segments(arr_points, self.qoff)
         logger.debug('Array of segments:\n%s' % str(arr_segs))
         

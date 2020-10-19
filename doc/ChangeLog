@@ -1,17 +1,18 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#  $Revision$
-#
-# Description:
-#  ChangeLog file for package CalibManager
-#------------------------------------------------------------------------
+#-----------------------------------------
+# ChangeLog file for package CalibManager
+#-----------------------------------------
 
 Package author: Mikhail S. Dubrovin
 
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+
+2020-10-19 Mikhail S. Dubrovin
+Tag: V01-00-27
+- correct measured point x,y,z coordinates to get rid of detector tilt in opt met.
+	modified:   app/optical_metrology_epix10ka2m  - add option -C to switch off tilt correction
+ 	modified:   src/OpticAlignmentUtils.py
 
 2020-10-15 Mikhail S. Dubrovin
 Tag: V01-00-26
