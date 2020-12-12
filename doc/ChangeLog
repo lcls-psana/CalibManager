@@ -1,17 +1,41 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#  $Revision$
-#
-# Description:
-#  ChangeLog file for package CalibManager
-#------------------------------------------------------------------------
+#-----------------------------------------
+# ChangeLog file for package CalibManager
+#-----------------------------------------
 
 Package author: Mikhail S. Dubrovin
 
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+
+2020-10-19 Mikhail S. Dubrovin
+Tag: V01-00-27
+- correct measured point x,y,z coordinates to get rid of detector tilt in opt met.
+	modified:   app/optical_metrology_epix10ka2m  - add option -C to switch off tilt correction
+ 	modified:   src/OpticAlignmentUtils.py
+
+2020-10-15 Mikhail S. Dubrovin
+Tag: V01-00-26
+- FileDeployer - turned off automatic saving of constants to DCS/HDF5
+- FileNameManager - use os.path.join for xtc path
+- other cosmetics
+	modified:   src/FileDeployer.py
+	modified:   FileNameManager.py
+	modified:   ../app/calibrun
+	modified:   BatchJobPedestals.py
+	modified:   CommandLineCalib.py
+
+2020-08-28 Mikhail S. Dubrovin
+Tag: V01-00-25 - update app/optical_metrology_epix10ka2m
+	modified:   app/optical_metrology_epix10ka2m
+	modified:   src/OpticAlignmentUtils.py
+
+2020-08-15 Mikhail S. Dubrovin
+Tag: V01-00-24
+- update optical_metrology_epix10ka2m
+	modified:   app/optical_metrology_check
+	modified:   app/optical_metrology_epix10ka2m
+	modified:   src/OpticAlignmentUtils.py
 
 2020-07-22 Mikhail S. Dubrovin
 Tag: V01-00-23

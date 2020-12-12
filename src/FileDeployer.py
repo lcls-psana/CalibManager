@@ -130,16 +130,12 @@ def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
     msg =  '\nTentative DCS deployment commands:\n' + '\n'.join(list_of_deploy_commands)
     logger.info(msg, __name__)
 
-    #list_src_cbx = [[src,True] for src in list_of_sources]
-    #if ask_confirm :
-    #    resp = gu.changeCheckBoxListInPopupMenu(list_src_cbx, win_title='Confirm depl. for:')
-    #    if resp != 1 :
-    #        logger.info('Deployment is cancelled!', __name__)
-    #        return
-
-    for cmd in list_of_deploy_commands :
+    if False: # 2020-10-15
+      for cmd in list_of_deploy_commands :
         #print 'cmd: ', cmd
         if is_allowed_command_dcs(cmd, list_src_cbx) : procDeployCommandDCS(cmd, mode)
+    else:
+        logger.warning('automatic deployment to DCS/HDF5 is turned off', __name__)
 
     return 0
 

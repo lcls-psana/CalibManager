@@ -1,17 +1,8 @@
 #--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#   CommandLineCalib...
-#------------------------------------------------------------------------
-
 """CommandLineCalib is intended for command line calibration of dark runs
 
 This software was developed for the SIT project.  If you use all or
 part of it, please give an appropriate acknowledgment.
-
-@version $Id$
 
 @author Mikhail S. Dubrovin
 """
@@ -20,23 +11,20 @@ from __future__ import division
 from __future__ import absolute_import
 
 #--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
 
 import sys
 import os
 from time import sleep
 
-from CalibManager.Logger                   import logger
+from CalibManager.Logger import logger
 
-from .FileNameManager          import fnm
-#from ConfigFileGenerator      import cfg
-from .ConfigParametersForApp   import cp
+from FileNameManager import fnm
+from ConfigParametersForApp import cp
 
-from .BatchJobPedestals        import *
-from .BatchLogScanParser       import blsp # Just in order to instatiate it
+from .BatchJobPedestals import *
+from .BatchLogScanParser import blsp # Just in order to instatiate it
 
-from . import FileDeployer           as     fdmets
+from . import FileDeployer as fdmets
 
 #------------------------------
 class CommandLineCalib(object) :
