@@ -315,8 +315,8 @@ if __name__ == "__main__":
 #    print 'fnm.path_hotpix_mask(): ', fnm.path_hotpix_mask()
 #    print 'fnm.path_satpix_mask(): ', fnm.path_satpix_mask()
 
-    if ntest == 1: print 'fnm.log_file_cpo(): ', fnm.log_file_cpo()
+    if ntest == 1: print('fnm.log_file_cpo(): ', fnm.log_file_cpo())
 
-    sys.exit ( 'End of test for FileNameManager' )
+    sys.exit( 'End of test for FileNameManager' )
 
 #------------------------------

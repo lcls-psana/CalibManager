@@ -236,7 +236,7 @@ def make_table_of_segments(arr,qoff=0):
         seginq = nseg%4
         q = (nseg//4 + qoff)%4
         s = q*4 + seginq
-        print 'XXXXXX seg: %2d quad:%d quad+off:%d seg_off:%2d' % (nseg, nseg//4, q, s)
+        print('XXXXXX seg: %2d quad:%d quad+off:%d seg_off:%2d' % (nseg, nseg//4, q, s))
 
         arr_segs[s, npoi,:] = arr[i,:]
         #arr_segs[nseg, npoi,:] = arr[i,:]
@@ -964,13 +964,13 @@ class OpticalMetrologyEpix10ka2M():
                             'processor version %d - panels-quads-detector' % self.vers))
         hat  = str_geo_constants_hat()
 
-	geo_cons = '%s%s\n%s' % (cmts, hat, cons)
+        geo_cons = '%s%s\n%s' % (cmts, hat, cons)
 
         logger.info('geometry constants:\n%s' % geo_cons)
 
         dname = os.path.dirname(self.ofname)
         create_directory(dname, mode=0o777)
-        save_textfile(geo_cons, self.ofname, accmode=0660)
+        save_textfile(geo_cons, self.ofname, accmode=0o660)
         logger.info('geometry constants saved in file %s' % self.ofname)
 
     #--------------------
@@ -1053,13 +1053,13 @@ class OpticalMetrologyEpix10ka2M():
                             'processor version %d - panels only, no quads' % self.vers))
         hat  = str_geo_constants_hat()
 
-	geo_cons = '%s%s\n%s' % (cmts, hat, cons)
+        geo_cons = '%s%s\n%s' % (cmts, hat, cons)
 
         logger.info('geometry constants:\n%s' % geo_cons)
 
         dname = os.path.dirname(self.ofname)
         create_directory(dname, mode=0o777)
-        save_textfile(geo_cons, self.ofname, accmode=0660)
+        save_textfile(geo_cons, self.ofname, accmode=0o660)
         logger.info('geometry constants saved in file %s' % self.ofname)
 
 #--------------------
