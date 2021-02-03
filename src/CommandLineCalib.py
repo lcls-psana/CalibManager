@@ -18,8 +18,8 @@ from time import sleep
 
 from CalibManager.Logger import logger
 
-from FileNameManager import fnm
-from ConfigParametersForApp import cp
+from .FileNameManager import fnm
+from .ConfigParametersForApp import cp
 
 from .BatchJobPedestals import *
 from .BatchLogScanParser import blsp # Just in order to instatiate it

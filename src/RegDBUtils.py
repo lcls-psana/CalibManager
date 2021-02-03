@@ -34,7 +34,7 @@ from time import time # for test purpose only
 #from time import localtime, gmtime, strftime, clock, time, sleep
 #import numpy as np
 
-from RegDB import experiment_info
+from . import experiment_info
 
 #------------------------------
 
