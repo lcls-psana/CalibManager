@@ -9,6 +9,8 @@ Please describe any modifications that you made to the package in the reverse ti
 #-----------------------------
 
 2020-02-04 Mikhail Dubrovin
+Tag: V02-00-01
+multiple fixes for qt4->qt5
 - Fix multiple issues due to pretty bad automatic conversion from pyqt4 to pyqt5
 - GUIPopupSelectExp.pyself.accept() add self.done(QtWidgets.QDialog.Accepted)
 	othervise exec_ doe not return correct response
