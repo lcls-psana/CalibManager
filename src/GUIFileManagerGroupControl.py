@@ -133,7 +133,7 @@ class GUIFileManagerGroupControl(QtWidgets.QWidget) :
         
         self.setMinimumSize(130, 200)
         self.setFixedWidth(130)
-        self.setContentsMargins (QtCore.QMargins(0,-9,0,-9))
+        self.layout().setContentsMargins(2,0,2,0)
 
         self.setStyleButtons()
         #self.setVisible(True)

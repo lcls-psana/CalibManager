@@ -67,7 +67,6 @@ class GUIDark(QtWidgets.QWidget) :
 
 
     def setStyle(self):
-        self.setContentsMargins (QtCore.QMargins(-5,-5,-5, 2))
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         #self.vsplit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Ignored)
         #self.setMinimumSize(790,210)
@@ -78,7 +77,7 @@ class GUIDark(QtWidgets.QWidget) :
         #self.vsplit.moveSplitter(300, self.vsplit.indexOf(self.vwidg))
         #self.setBaseSize(750,700)
         #self.setStyleSheet(cp.styleBkgd)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     #def resizeEvent(self, e):

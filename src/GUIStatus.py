@@ -75,10 +75,7 @@ class GUIStatus(QtWidgets.QGroupBox) :
         self.box_txt   .setReadOnly   (True)
         #self.box_txt   .setStyleSheet (cp.styleBkgd)
         self.box_txt   .setStyleSheet (cp.styleWhiteFixed)
-        #self.setContentsMargins(QtCore.QMargins(10,20,10,10))
-        #self.setContentsMargins(-5,8,-5,-5)
-        self.setContentsMargins(0,8,0,0)
-        #self.setContentsMargins(-9,-9,-9,-9)
+        self.layout().setContentsMargins(2,4,2,2)
 
         #self.setMinimumHeight(60)
         self.setMinimumSize(300,60)

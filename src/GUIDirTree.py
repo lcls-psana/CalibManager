@@ -240,7 +240,7 @@ class GUIDirTree(QtWidgets.QWidget):
         self.setWindowTitle('Item selection tree')
         self.setGeometry(100, 100, 500, 700)
         self.setMinimumWidth(200)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     #def resizeEvent(self, e):

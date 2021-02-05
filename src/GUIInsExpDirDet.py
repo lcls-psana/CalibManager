@@ -10,19 +10,15 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
-
 import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .ConfigParametersForApp import cp
-from . import GlobalUtils          as     gu
-from .FileNameManager        import fnm
+from CalibManager.ConfigParametersForApp import cp
+from CalibManager import GlobalUtils     as     gu
+from CalibManager.FileNameManager        import fnm
 from CalibManager.Logger                 import logger
-from .GUIPopupSelectExp      import select_experiment_v3
+from CalibManager.GUIPopupSelectExp      import select_experiment_v3
 
 #------------------------------
 
@@ -122,7 +118,7 @@ class GUIInsExpDirDet(QtWidgets.QWidget) :
         self.ediDir.setEnabled(False)            
 
         self.butBro .setIcon(cp.icon_browser)
-        self.setContentsMargins(-5,-5,-5,-9) # (QtCore.QMargins(-9,-9,-9,-9))        
+        self.layout().setContentsMargins(2,2,2,0)
 
         self.setStyleButtons()
         
@@ -218,6 +214,9 @@ class GUIInsExpDirDet(QtWidgets.QWidget) :
         if self.list_of_exp is None : self.list_of_exp=sorted(os.listdir(dir))
         #item_selected = gu.selectFromListInPopupMenu(self.list_of_exp)
         item_selected = select_experiment_v3(self.butExp, self.list_of_exp)
+
+        #print('XXX item_selected', item_selected)
+
         if item_selected is None : return          # selection is cancelled
         #if item_selected == self.exp_name.value() : return # selected the same item 
 

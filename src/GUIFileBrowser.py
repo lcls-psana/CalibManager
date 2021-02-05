@@ -101,7 +101,7 @@ class GUIFileBrowser(QtWidgets.QWidget) :
         self.but_close .setStyleSheet(cp.styleButton)
         self.box_txt   .setReadOnly  (not self.is_editable)
         self.box_txt   .setStyleSheet(cp.styleWhiteFixed) 
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     def setListOfFiles(self, list):

@@ -213,7 +213,7 @@ class GUIStatusTable(QtWidgets.QWidget) :
         #self.setFixedWidth(100)
         #self.table.setFixedHeight(500)
         self.table.setMinimumHeight(300)
-        self.setContentsMargins(-9,-9,-9,-9)
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     #def resizeEvent(self, e):

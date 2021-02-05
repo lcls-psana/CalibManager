@@ -11,16 +11,10 @@
 This software was developed for the SIT project.  If you use all or 
 part of it, please give an appropriate acknowledgment.
 
-@version $Id$ 
-
 @author Mikhail S. Dubrovin
 """
 from __future__ import division
 from __future__ import absolute_import
-
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
 
 import sys
 import os
@@ -158,7 +152,7 @@ class PlotImgSpeWidget (QtWidgets.QWidget) :
         self.axcb = self.fig.add_axes([0.15, 0.03, 0.78, 0.028])
   
         if self.arr is not None : self.on_draw()
-        #self.setContentsMargins(-9,-9,-9,-9)
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     def connectZoomMode(self):

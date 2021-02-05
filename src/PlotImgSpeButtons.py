@@ -191,7 +191,7 @@ class PlotImgSpeButtons(Frame) :
         self.vbox.addStretch(1)
 
         self.setLayout(self.vbox)
-        #self.setContentsMargins(QtCore.QMargins(0,-5,0,-5))
+        self.layout().setContentsMargins(5,2,5,2)
         self.setPannel()
 
 

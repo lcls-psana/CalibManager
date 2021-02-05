@@ -3,35 +3,23 @@
 
 """This script starts the CalibManager GUI and other threads for signal exchange
 
-This software was developed for the LCLS project.  If you use all or
-part of it, please give an appropriate acknowledgement.
-
-@see RelatedModule
-
-@version $Id$
+This software was developed for the LCLS project.
+If you use all or part of it, please give an appropriate acknowledgement.
 
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
 
 #------------------------------
-#  Module's version from SVN --
-#------------------------------
-__version__ = "$Revision$"
-# $Source$
-
-#-------------------
-#  Import modules --
-#-------------------
 
 import sys
 import os
 
 if __name__ == "__main__" :
     import matplotlib
-    matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
+    matplotlib.use('Qt5Agg') # forse Agg rendering to a Qt5 canvas (backend)
 
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 from CalibManager.GUIMain import GUIMain
 from CalibManager.GlobalUtils import ready_to_start
 from CalibManager.ThreadWorker import ThreadWorker
@@ -64,6 +52,8 @@ class StartCalibManager(object) :
 
         if not ready_to_start(check_bits=0o31, fatal_bits=0o31) : #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
             sys.exit('Not ready to start aplication ...')
+
+        #QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
         print("Start Calibration Manager GUI")
         app = QtWidgets.QApplication(sys.argv)

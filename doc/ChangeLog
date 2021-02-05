@@ -2,13 +2,66 @@
 # ChangeLog file for package CalibManager
 #-----------------------------------------
 
-Package author: Mikhail S. Dubrovin
+Package author: Mikhail Dubrovin
 
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
 
-2020-10-19 Mikhail S. Dubrovin
+2020-02-04 Mikhail Dubrovin
+- Fix multiple issues due to pretty bad automatic conversion from pyqt4 to pyqt5
+- GUIPopupSelectExp.pyself.accept() add self.done(QtWidgets.QDialog.Accepted)
+	othervise exec_ doe not return correct response
+- multiple modules:
+  -        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+  +        self.layout().setContentsMargins(0,0,0,0)
+- GUIDarkList.py
+  -            item.setTextColor(QtGui.QColor(0, 0, 0, alpha=0))
+  +            item.setForeground(QtGui.QBrush(QtGui.QColor(0,0,0,alpha=0), QtCore.Qt.SolidPattern))
+  -            self.list.setItemHidden (item, True/False)
+  +            item.setHidden(True/False)
+- in app/calibman
+  + #QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling) - does not work???
+  Qt4Agg -> Qt5Agg
+- in ConfigParametersForApp.py change default queue from psnehhiprioq to psanaq
+
+	modified:   app/calibman
+	modified:   doc/ChangeLog
+	modified:   src/ConfigParametersForApp.py
+	modified:   src/Frame.py
+	modified:   src/GUIAnyFilesStatusTable.py
+	modified:   src/GUICalibDirTree.py
+	modified:   src/GUIDark.py
+	modified:   src/GUIDarkControlBar.py
+	modified:   src/GUIDarkList.py
+	modified:   src/GUIDarkListItem.py
+	modified:   src/GUIDarkListItemAdd.py
+	modified:   src/GUIDarkListItemRun.py
+	modified:   src/GUIDarkMoreOpts.py
+	modified:   src/GUIDirTree.py
+	modified:   src/GUIExpCalibDir.py
+	modified:   src/GUIFileBrowser.py
+	modified:   src/GUIFileManagerGroup.py
+	modified:   src/GUIFileManagerGroupControl.py
+	modified:   src/GUIFileManagerSingle.py
+	modified:   src/GUIFileManagerSingleControl.py
+	modified:   src/GUIInsExpDirDet.py
+	modified:   src/GUILogger.py
+	modified:   src/GUIMain.py
+	modified:   src/GUIMainTabs.py
+	modified:   src/GUIPopupSelectExp.py
+	modified:   src/GUIRange.py
+	modified:   src/GUIStatus.py
+	modified:   src/GUIStatusTable.py
+	modified:   src/H5WTree.py
+	modified:   src/PlotImgSpe.py
+	modified:   src/PlotImgSpeButtons.py
+	modified:   src/PlotImgSpeWidget.py
+
+2020-12-11 Tag: V02-00-00 py2->py3?
+2020-10-15 Tag: V01-01-00 py2->py3?
+
+2020-10-19 Mikhail Dubrovin
 Tag: V01-00-27
 - correct measured point x,y,z coordinates to get rid of detector tilt in opt met.
 	modified:   app/optical_metrology_epix10ka2m  - add option -C to switch off tilt correction

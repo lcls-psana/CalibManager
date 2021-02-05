@@ -13,13 +13,13 @@ __version__ = "$Revision$"
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .ConfigParametersForApp import cp
-from CalibManager.Logger                 import logger
-from .FileNameManager        import fnm
-from .GUIDarkListItem        import *
-from . import GlobalUtils          as     gu
-from . import RegDBUtils           as     ru
-from .BatchLogScanParser     import blsp
+from CalibManager.ConfigParametersForApp import cp
+from CalibManager.Logger     import logger
+from CalibManager.FileNameManager        import fnm
+from CalibManager.GUIDarkListItem        import *
+from CalibManager import GlobalUtils    as     gu
+from CalibManager import RegDBUtils     as     ru
+from CalibManager.BatchLogScanParser     import blsp
 
 from time import time
 
@@ -145,11 +145,13 @@ class GUIDarkList(QtWidgets.QWidget) :
         self.list_of_run_nums_in_dir = gu.list_of_int_from_list_of_str(self.list_of_run_strs_in_dir) # [1, 202, 203, 204,...]
         self.list_of_run_nums_in_regdb = ru.list_of_runnums(self.instr_name.value(), self.exp_name.value())
 
-        #print 'list_of_run_nums_in_dir  :', self.list_of_run_nums_in_dir
-        #print 'list_of_run_nums_in_regdb:', self.list_of_run_nums_in_regdb
-        #print '\nA. Consumed time (sec) =', time()-self.t0_sec
-        #print 'Begin to construct the list of items for %s' % self.exp_name.value()
+        #print('list_of_run_nums_in_dir  :', self.list_of_run_nums_in_dir)
+        #print('list_of_run_nums_in_regdb:', self.list_of_run_nums_in_regdb)
+        #print('\nA. Consumed time (sec) =', time()-self.t0_sec)
+        #print('Begin to construct the list of items for %s' % self.exp_name.value())
 
+        logger.debug('\nlist_of_run_nums_in_dir  :' + str(self.list_of_run_nums_in_dir)\
+                    +'\nlist_of_run_nums_in_regdb:' + str(self.list_of_run_nums_in_regdb), __name__)
         
         if self.list_of_run_nums_in_regdb == [] : self.list_of_runs = self.list_of_run_nums_in_dir
         else                                    : self.list_of_runs = self.list_of_run_nums_in_regdb
@@ -177,7 +179,8 @@ class GUIDarkList(QtWidgets.QWidget) :
 
             item, widg = self.create_or_use_guidarklistitem(run_num)
 
-            self.list.setItemHidden (item, False)
+            #self.list.setItemHidden (item, False)
+            item.setHidden(False)
 
             record = run_num, item, widg
             self.list_of_visible_records.append(record)
@@ -204,8 +207,9 @@ class GUIDarkList(QtWidgets.QWidget) :
             item = QtWidgets.QListWidgetItem(str_run_num, self.list)
             widg = GUIDarkListItem(self, str_run_num, self.type, self.comment, self.xtc_in_dir)  
             self.dict_guidarklistitem[run_num] = [item, widg]
-            item.setTextColor(QtGui.QColor(0, 0, 0, alpha=0)) # set item text invisible. All pars in the range [0,255]
-            item.setFlags ( QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable  | QtCore.Qt.ItemIsUserCheckable )
+            #item.setTextColor(QtGui.QColor(0, 0, 0, alpha=0)) # set item text invisible. All pars in the range [0,255]
+            item.setForeground(QtGui.QBrush(QtGui.QColor(0,0,0,alpha=0), QtCore.Qt.SolidPattern))
+            item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsUserCheckable)
             item.setSizeHint(widg.size())
             self.list.setItemWidget(item, widg)
             return item, widg
@@ -213,7 +217,8 @@ class GUIDarkList(QtWidgets.QWidget) :
 
     def setItemsHidden(self) :        
         for run, (item, widg) in self.dict_guidarklistitem.items() :
-            self.list.setItemHidden (item, True)
+            #self.list.setItemHidden (item, True)
+            item.setHidden(True)
             #print 'Hide item for run %d' % run
  
 
@@ -310,7 +315,7 @@ class GUIDarkList(QtWidgets.QWidget) :
         self.setMinimumSize(760,80)
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.setStyleSheet(cp.styleBkgd)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
 
         #self.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
         #self.list.adjustSize()

@@ -95,7 +95,7 @@ class H5WTree(QtWidgets.QWidget) :
     def set_style(self):
         self.setGeometry(10, 10, 350, 700)
         self.setWindowTitle('HDF5 tree, select items')
-        self.setContentsMargins(-9,-9,-9,-9)
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     def closeEvent(self, event): # if the 'x' (in the top-right corner of the window) is clicked

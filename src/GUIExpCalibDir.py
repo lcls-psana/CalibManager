@@ -99,7 +99,7 @@ class GUIExpCalibDir(QtWidgets.QWidget) :
         self.ediDir.setEnabled(False)            
 
         self.butBro .setIcon(cp.icon_browser)
-        self.setContentsMargins(-5,-5,-5,-9) # (QtCore.QMargins(-9,-9,-9,-9))        
+        self.layout().setContentsMargins(2,2,2,0)
 
         self.setStyleButtons()
         

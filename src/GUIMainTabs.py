@@ -102,7 +102,7 @@ class GUIMainTabs(QtWidgets.QWidget) :
     def setStyle(self):
         self.setMinimumHeight(250)
         #self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
  
 
     def makeTabBar(self,mode=None) :

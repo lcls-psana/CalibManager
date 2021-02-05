@@ -118,7 +118,7 @@ class GUILogger(QtWidgets.QWidget) :
         self.but_save  .setVisible(self.show_buttons)
         self.but_close .setVisible(self.show_buttons)
 
-        if not self.show_buttons : self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        if not self.show_buttons: self.layout().setContentsMargins(0,0,0,0)
         self.setMinimumHeight(50)
         self.setMinimumSize(300,50)
         #self.setBaseSize(500,200)

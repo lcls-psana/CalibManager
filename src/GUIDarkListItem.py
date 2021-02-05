@@ -125,7 +125,7 @@ class GUIDarkListItem(Frame) :
         #self.edi_from .setAlignment (QtCore.Qt.AlignRight)
         #if self.edi_from.isReadOnly() : self.edi_from.setStyleSheet (cp.styleEditInfo)
 
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9, 0))
+        self.layout().setContentsMargins(0,0,0,9)
 
 
     #def resizeEvent(self, e):

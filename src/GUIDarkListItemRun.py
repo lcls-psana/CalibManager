@@ -139,8 +139,7 @@ class GUIDarkListItemRun(QtWidgets.QWidget) :
 
         #self.but_go.setEnabled(self.str_run_number != 'None' and self.lab_rnum.isEnabled())
 
-        self.setContentsMargins (QtCore.QMargins(0,-9,0,-9))
-        #self.setContentsMargins (QtCore.QMargins(0,5,0,0))
+        self.layout().setContentsMargins(9,0,9,0)
 
         self.setStatusStyleOfButtons()
 

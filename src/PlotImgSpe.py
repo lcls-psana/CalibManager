@@ -86,7 +86,7 @@ class PlotImgSpe(QtWidgets.QWidget) :
         #self.main_frame.setLayout(vbox)
         #self.setCentralWidget(self.main_frame)
         #---------------------
-        self.setContentsMargins(-9,-9,-9,-9)
+        self.layout().setContentsMargins(0,0,0,0)
         #cp.plotimgspe = self
 
 

@@ -80,7 +80,7 @@ class GUIDarkMoreOpts(QtWidgets.QWidget) :
         self.hbox.addStretch(1)     
 
         #self.wbox = QtGui.QWidget()
-        #self.wbox.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        #self.layout().setContentsMargins(0,0,0,0)
         #self.wbox.setFixedWidth(650)
         #self.wbox.setLayout(self.hbox)
         
@@ -153,10 +153,7 @@ class GUIDarkMoreOpts(QtWidgets.QWidget) :
         self.but_view.setFixedWidth(90)
         self.but_plot.setFixedWidth(60)
 
-        #self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
-        self.setContentsMargins (QtCore.QMargins(-5,-5,-5,-5))
-        #self.setContentsMargins (QtCore.QMargins(10,10,10,10))
-        #self.setContentsMargins (QtCore.QMargins(0,5,0,0))
+        self.layout().setContentsMargins(2,2,2,2)
 
         #self.but_srcs.setVisible( self.cbx_dark_more.isChecked() )
         #self.but_sxtc.setVisible( self.cbx_dark_more.isChecked() )

@@ -35,8 +35,10 @@ class ConfigParametersForApp(ConfigParameters) :
     #char_shrink    = u'\u25B6' # solid right-head triangle
     #char_shrink    = u'\u25B7' # open right-head triangle 
 
-    list_of_queues = ['psnehhiprioq', 'psfehhiprioq', 'psnehprioq', 'psfehprioq', 'psanaq',    'psnehq',    'psfehq']
-    list_of_farms  = ['psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
+    #list_of_queues = ['psnehhiprioq', 'psfehhiprioq', 'psnehprioq', 'psfehprioq', 'psanaq',    'psnehq',    'psfehq']
+    #list_of_farms  = ['psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
+    list_of_queues = ['psanaq',    'psnehhiprioq', 'psfehhiprioq', 'psnehprioq', 'psfehprioq', 'psnehq',    'psfehq']
+    list_of_farms  = ['psanafarm', 'psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psnehfarm', 'psfehfarm']
     dict_of_queue_farm = dict(zip(list_of_queues, list_of_farms))
 
     list_of_instr     = ['AMO', 'SXR', 'XPP', 'XCS', 'CXI', 'MEC', 'MFX', 'DET', 'DIA', 'USR', 'MOB']
@@ -97,7 +99,8 @@ class ConfigParametersForApp(ConfigParameters) :
 
         #self.thread_check_new_xtc_files = None
 
-        if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psnehhiprioq')
+        #if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psnehhiprioq')
+        if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psanaq')
 
 #------------------------------
 

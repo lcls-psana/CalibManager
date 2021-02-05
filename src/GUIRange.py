@@ -16,9 +16,6 @@ part of it, please give an appropriate acknowledgment.
 @author Mikhail S. Dubrovin
 """
 from __future__ import absolute_import
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
 
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -101,7 +98,7 @@ class GUIRange(QtWidgets.QWidget) :
             self.setMinimumSize(100,32)
 
         #self.setFixedHeight(40)
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
 
         self.edi_from.setFixedWidth(40)
         self.edi_to  .setFixedWidth(40)

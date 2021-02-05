@@ -69,7 +69,7 @@ class GUIFileManagerSingle(QtWidgets.QWidget) :
 
 
     def setStyle(self):
-        self.setContentsMargins (QtCore.QMargins(-5,-5,-5,2))
+        self.layout().setContentsMargins(2,2,2,5)
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         #self.vsplit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Ignored)
         #self.setMinimumSize(790,210)

@@ -161,7 +161,7 @@ class GUIFileManagerSingleControl(QtWidgets.QWidget) :
         
         self.setMinimumSize(630,100)
         self.setFixedHeight(100)
-        self.setContentsMargins (QtCore.QMargins(0,-9,0,-9))
+        self.layout().setContentsMargins(2,0,2,0)
 
         #self.but_copy.setFixedWidth(100)
         #self.but_delete.setFixedWidth(100)

@@ -224,7 +224,7 @@ class GUIAnyFilesStatusTable ( QtWidgets.QWidget ) :
         self.setMinimumWidth(self.table.width())
         self.setFixedHeight(self.table.height())
         #self.setMinimumSize(self.table.size())
-        self.setContentsMargins(-9,-9,-9,-9)
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     #def resizeEvent(self, e):

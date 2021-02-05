@@ -9,10 +9,6 @@
 """Popup GUI for experiment selection"""
 from __future__ import print_function
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
-
 import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -137,11 +133,6 @@ class GUIPopupList(QtWidgets.QDialog) :
                 item = QtWidgets.QListWidgetItem(exp, self.list)
                 item.setFont(QtGui.QFont('Monospace', 11, QtGui.QFont.Normal)) # Bold))
 
-
-
-
-
-
         #self.list.scrollToItem(item)
 
         #self.list.setItemWidget(item, widg)
@@ -157,7 +148,7 @@ class GUIPopupList(QtWidgets.QDialog) :
         #self.setMaximumWidth(600)
         #self.setStyleSheet(cp.styleBkgd)
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.FramelessWindowHint)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
         #self.setStyleSheet(cp.styleBkgd)
         #self.but_cancel.setStyleSheet(cp.styleButton)
         #self.but_apply.setStyleSheet(cp.styleButton)
@@ -177,9 +168,11 @@ class GUIPopupList(QtWidgets.QDialog) :
         self.name_sel = item.text()
         if self.name_sel in self.years : return # ignore selection of year
         if self.name_sel in self.runs  : return # ignore selection of run
-        #print self.name_sel
+        #print('XXX self.name_sel:', self.name_sel)
         #logger.debug('Selected experiment %s' % self.name_sel, __name__)  
         self.accept()
+        #print('XXX done:')
+        self.done(QtWidgets.QDialog.Accepted)
 
 
     def event(self, e):
@@ -187,12 +180,14 @@ class GUIPopupList(QtWidgets.QDialog) :
         #print 'event.type', e.type()
         if e.type() == QtCore.QEvent.WindowDeactivate :
             self.reject()
+            self.done(QtWidgets.QDialog.Rejected)
         return QtWidgets.QDialog.event(self, e)
     
 
     def closeEvent(self, event):
         #logger.info('closeEvent', __name__)
         self.reject()
+        self.done(QtWidgets.QDialog.Rejected)
 
 
     def selectedName(self):
@@ -202,11 +197,13 @@ class GUIPopupList(QtWidgets.QDialog) :
     def onCancel(self):
         #logger.debug('onCancel', __name__)
         self.reject()
+        self.done(QtWidgets.QDialog.Rejected)
 
 
     def onApply(self):
         #logger.debug('onApply', __name__)  
         self.accept()
+        self.done(QtWidgets.QDialog.Accepted)
 
 #------------------------------  
 
@@ -307,7 +304,7 @@ class GUIPopupSelectExp(QtWidgets.QDialog) :
         self.setMinimumWidth(200)
         self.setMaximumWidth(500)
         #self.setStyleSheet(cp.styleBkgd)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
         self.move(QtGui.QCursor.pos())
 
         #self.setMouseTracking(1)
@@ -373,9 +370,15 @@ def select_experiment_v3(parent, lst_exp) :
     w = GUIPopupList(parent, lst_exp)
     ##w.show()
     resp=w.exec_()
-    if   resp == QtWidgets.QDialog.Accepted : return w.selectedName()
-    elif resp == QtWidgets.QDialog.Rejected : return None
-    else : return None
+    #print('XXX resp:', resp, w.selectedName())
+    #QtWidgets.QDialog.Accepted is 1
+    #QtWidgets.QDialog.Rejected is 0
+
+    #if   resp == QtWidgets.QDialog.Accepted : return w.selectedName()
+    #elif resp == QtWidgets.QDialog.Rejected : return None
+    #else : return None
+
+    return w.selectedName()
 
 #------------------------------
 #------------------------------

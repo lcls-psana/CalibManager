@@ -54,7 +54,7 @@ class GUIDarkListItemAdd(QtWidgets.QWidget) :
 
 
     def setStyle(self):
-        self.setContentsMargins (QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
         self.setStyleSheet(cp.styleBkgd)
 
 

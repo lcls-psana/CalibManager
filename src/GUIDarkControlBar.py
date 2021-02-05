@@ -106,7 +106,8 @@ class GUIDarkControlBar(QtWidgets.QWidget) :
         self.labRuns.setStyleSheet(cp.styleLabel)
         self.labDets.setStyleSheet(cp.styleLabel)
         self.setStyleButtons()
-        self.setContentsMargins(QtCore.QMargins(-9,-10,-9,-10)) # L, T, R, B
+        #self.setContentsMargins(QtCore.QMargins(-9,-10,-9,-10)) # L, T, R, B
+        self.layout().setContentsMargins(0,0,0,0)
         #self.setMinimumSize(390,28)
         self.setMinimumWidth(562)
         self.setFixedHeight(30)

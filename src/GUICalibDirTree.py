@@ -244,7 +244,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
         self.setMinimumWidth(150)
         self.setMaximumWidth(500)
         self.setMinimumHeight(500)
-        self.setContentsMargins(QtCore.QMargins(-9,-9,-9,-9))
+        self.layout().setContentsMargins(0,0,0,0)
 
 
     #def resizeEvent(self, e):
