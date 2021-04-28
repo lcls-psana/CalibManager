@@ -7,15 +7,8 @@ from __future__ import absolute_import
 #  GUIFileManagerSingle...
 #------------------------------------------------------------------------
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
-
-#import os
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-#from CalibManager.Frame     import Frame
 from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 

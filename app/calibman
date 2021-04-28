@@ -15,6 +15,11 @@ from __future__ import print_function
 import sys
 import os
 
+# get rid of error-massages:
+#   libGL error: unable to load driver: swrast_dri.so
+#   libGL error: failed to load driver: swrast
+os.environ['LIBGL_ALWAYS_INDIRECT'] = '1' #export LIBGL_ALWAYS_INDIRECT=1
+
 if __name__ == "__main__" :
     import matplotlib
     matplotlib.use('Qt5Agg') # forse Agg rendering to a Qt5 canvas (backend)

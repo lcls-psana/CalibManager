@@ -917,8 +917,8 @@ def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 #----------------------------------
 
 def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
-
-    path = str(QtWidgets.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter))[0]
+    path = QtWidgets.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter)[0]
+    #print('XXX get_open_fname_through_dialog_box path: %s' % path)
     dname, fname = os.path.split(path)
     if dname == '' or fname == '' :
         logger.info('Input directiry name or file name is empty... keep file path unchanged...')

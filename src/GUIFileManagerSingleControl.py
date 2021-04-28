@@ -8,18 +8,12 @@
 
 """Sub-GUI for GUIFileManagerSingle.
 
-This software was developed for the SIT project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
-
-@version $Id$
+This software was developed for the SIT project.
+If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
 from __future__ import absolute_import
-
-#---------------------------------
-__version__ = "$Revision$"
-#---------------------------------
 
 import os
 
@@ -27,7 +21,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from .ConfigParametersForApp import cp
 
-#from CalibManager.Frame     import Frame
 from CalibManager.Logger                 import logger
 from .FileNameManager        import fnm
 
@@ -40,7 +33,6 @@ from .GUIRange               import *
 
 #------------------------------
 
-#class GUIFileManagerSingleControl(Frame) :
 class GUIFileManagerSingleControl(QtWidgets.QWidget) :
     """Main GUI for main button bar.
     """
@@ -67,13 +59,13 @@ class GUIFileManagerSingleControl(QtWidgets.QWidget) :
 
         self.guirange  = GUIRange(None, self.str_run_from, self.str_run_to)
  
-        self.lab_src        = QtWidgets.QLabel('for detector')
-        self.lab_type       = QtWidgets.QLabel('calib type')
-        self.but_src        = QtWidgets.QPushButton(self.source_name + self.char_expand)
-        self.but_type       = QtWidgets.QPushButton(self.calib_type + self.char_expand)
+        self.lab_src  = QtWidgets.QLabel('for detector')
+        self.lab_type = QtWidgets.QLabel('calib type')
+        self.but_src  = QtWidgets.QPushButton(self.source_name + self.char_expand)
+        self.but_type = QtWidgets.QPushButton(self.calib_type + self.char_expand)
 
         self.lab_file = QtWidgets.QLabel('File:')
-        self.edi_file = QtWidgets.QLineEdit ( self.path_fm_selected.value() ) # fnm.path_to_calib_dir() )
+        self.edi_file = QtWidgets.QLineEdit(self.path_fm_selected.value()) # fnm.path_to_calib_dir()
         self.edi_file.setReadOnly(True)
  
         self.but_move   = QtWidgets.QPushButton('Move')
@@ -374,12 +366,14 @@ class GUIFileManagerSingleControl(QtWidgets.QWidget) :
     def onButBrowse(self):
         logger.debug('onButBrowse', __name__)
         path0 = self.selectDirFromPopupMenu(self.str_path())
+        logger.debug('selected directory: %s' % path0)
         if path0 is None : return
         if path0 is '' :
             path = path0
         else :
             file_filter = 'Files (*.txt *.data *.dat HISTORY)\nAll files (*)'
             path = gu.get_open_fname_through_dialog_box(self, path0, 'Select file', filter=file_filter)
+            logger.debug('selected path: %s' % path)
             if path is None or path == '' :
                 logger.debug('File selection is cancelled...', __name__)
                 return

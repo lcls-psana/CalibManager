@@ -973,7 +973,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.styleTitle        = self.styleBlueM
         self.styleLabel        = self.styleBlue
         self.styleEdit         = self.styleWhite
-        self.styleEditInfo     = self.styleBkgd # self.styleGreenish
+        self.styleEditInfo     = self.styleGreenish # self.styleBkgd
         #self.styleEditInfo     = self.styleGreenish
         #self.styleEditInfo     = self.styleGreenish # Bluish
         self.styleEditBad      = self.styleRedBkgd
