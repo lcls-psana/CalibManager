@@ -9,6 +9,10 @@ Please describe any modifications that you made to the package in the reverse ti
 #-----------------------------
 
 2020-05-06 Mikhail Dubrovin
+Tag: V02-00-04
+- BatchJobPedestals.py - convert byte to str for py3
+
+2020-05-06 Mikhail Dubrovin
 Tag: V02-00-03
 - for app calibrun add code to generatete zero-pedestals and geometry for rayonix, clean-up code
  - new file:   ../data/scripts/geometry-rayonix.template

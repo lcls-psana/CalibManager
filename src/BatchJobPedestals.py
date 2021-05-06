@@ -112,7 +112,9 @@ class BatchJobPedestals(BatchJob) :
         logscan = fnm.path_peds_scan_batch_log() # log file name for scan
         
         err = gu.subproc_in_log(command.split(), logscan) # , shell=True)
-        if err != '' :
+
+        err = str(err) # convert byte to str for py3
+        if err != '':
             if 'ERR' in err :
                 logger.error('\nERROR message from scan:\n%s' % (err), __name__)
                 self.stop_auto_processing(is_stop_on_button_click=False)
