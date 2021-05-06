@@ -1,36 +1,37 @@
-#!@PYTHON@
+#!/usr/bin/env python
 
-"""Command line for dark run calibration 
+"""Dark run processing CLI 
 
 This software was developed for the LCLS project.
 If you use all or part of it, please give an appropriate acknowledgement.
 
 @author Mikhail S. Dubrovin
 """
-from __future__ import print_function
 
-import sys
-import os
-from time import time, strftime, localtime
-from CalibManager.GlobalUtils import ready_to_start
-from CalibManager.CommandLineCalib import *
-from optparse import OptionParser
+from CalibManager.GlobalUtils import * # os, ready_to_start, time, get_current_local_time_stamp
+from CalibManager.CommandLineCalib import CommandLineCalib, sys
 
-#----
+SCRNAME = sys.argv[0].rsplit('/',1)[-1]
 
-def input_options_parser() :
-    com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'
-    com_x  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc' 
-    help_print_bits = '0-print nothing, +1-debug, +2-info, +4-warning, +8-error, +16-critical; default=036, minimal recommended=020'
-    help_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all.'   
 
-    parser = OptionParser(description='%prog - command line calibration utility', usage='  %prog [options] args'+com_ex )
+def input_options_parser():
+
+    from optparse import OptionParser
+
+    com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'\
+           + '\n         %prog -e mfxp16318 -d RAYONIX -c ./calib -r9 -P -D --zeropeds'
+
+    h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc' 
+    h_print_bits = '0-print nothing, +1-debug, +2-info, +4-warning, +8-error, +16-critical; default=036, minimal recommended=020'
+    h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all.'   
+
+    parser = OptionParser(description='%prog - dark run processing CLI', usage='  %prog [options] args'+com_ex )
     parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345')
     parser.add_option('-r', '--run',         dest='runnum',       default=None,  action='store', type='int',    help='run number')
     parser.add_option('-n', '--num_events',  dest='num_events',   default=None,  action='store', type='int',    help='number of events to process')
     parser.add_option('-s', '--skip_events', dest='skip_events',  default=None,  action='store', type='int',    help='number of events to skip before processing')
     parser.add_option('-m', '--scan_events', dest='scan_events',  default=None,  action='store', type='int',    help='number of events to scan data and search for selected detector(s)')
-    parser.add_option('-f', '--event_code',  dest='event_code',   default=None,  action='store', type='string', help=help_event_code)
+    parser.add_option('-f', '--event_code',  dest='event_code',   default=None,  action='store', type='string', help=h_event_code)
     parser.add_option('-B', '--thr_int_min', dest='thr_int_min',  default=None,  action='store', type='float',  help='minimal threshold on intensity for pixel_status (intens<thr - dead pixel)')
     parser.add_option('-T', '--thr_int_max', dest='thr_int_max',  default=None,  action='store', type='float',  help='maximal threshold on intensity for pixel_status (intens>thr - satturated pixel)')
     parser.add_option('-b', '--thr_rms_min', dest='thr_rms_min',  default=None,  action='store', type='float',  help='minimal threshold on rms for pixel_status (rms<thr - cold pixel)')
@@ -39,9 +40,9 @@ def input_options_parser() :
     parser.add_option('-q', '--queue',       dest='queue',        default=None,  action='store', type='string', help='queue name, ex: psnehq, psfehq, psanacsq. If specified - run in batch')
     parser.add_option('-w', '--workdir',     dest='workdir',      default=None,  action='store', type='string', help='work directory, ex: ./work')
     parser.add_option('-c', '--calibdir',    dest='calibdir',     default=None,  action='store', type='string', help='non-standard path to calib directory, ex: ./calib')
-    parser.add_option('-x', '--xtcdir',      dest='xtcdir',       default=None,  action='store', type='string', help=com_x)
+    parser.add_option('-x', '--xtcdir',      dest='xtcdir',       default=None,  action='store', type='string', help=h_xtcdir)
     parser.add_option('-d', '--detector',    dest='detector',     default=None,  action='store', type='string', help='detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD')
-    parser.add_option('-p', '--print_bits',  dest='print_bits',   default=0o36,   action='store', type='int',    help=help_print_bits)
+    parser.add_option('-p', '--print_bits',  dest='print_bits',   default=0o36,   action='store', type='int',   help=h_print_bits)
     parser.add_option('-P', '--process',     dest='process',      default=False, action='store_true',           help='process xtc files and produce calib files under the "work" directory')
     parser.add_option('-D', '--deploy',      dest='deploy',       default=False, action='store_true',           help='deploy calibrated files under the "calib" directory')
     parser.add_option('-L', '--loadcfg',     dest='loadcfg',      default=False, action='store_true',           help='load and use configuration parameters from file after "calibman"')
@@ -49,31 +50,26 @@ def input_options_parser() :
     parser.add_option('-U', '--intnhi',      dest='intnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on INTENSITY')
     parser.add_option('-z', '--rmsnlo',      dest='rmsnlo',       default=None,  action='store', type='float',  help='number of sigma from mean for low  limit on RMS')
     parser.add_option('-u', '--rmsnhi',      dest='rmsnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on RMS')
+    parser.add_option('--zeropeds',          dest='zeropeds',     default=False,  action='store_true',          help='deploy zero-pedestals (e.g. for hardware calibrated Rayonix)')
 
-    (opts, args) = parser.parse_args()
-    return (opts, args)
+    return parser
  
-#----
 
-if __name__ == "__main__" :
-
-    appname = os.path.basename(sys.argv[0])
-
-    if not ready_to_start(check_bits=0o1, fatal_bits=0o1) :  #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
-        sys.exit('Not ready to start aplication %s yet...' % appname)
-
-    (opts, args) = input_options_parser()
-    list_args = args
-    dict_opts = vars(opts)
+if __name__ == "__main__":
 
     t0_sec  = time()
-    ts1  = strftime('%Y-%m-%d %H:%M:%S', localtime())
-    print('%s Begin %s - the command line detector calibration utility using dark runs' % (ts1, appname))
 
-    CommandLineCalib(list_args, dict_opts)  #(*args, **opts)
+    if not ready_to_start(check_bits=0o1, fatal_bits=0o1):  #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
+        sys.exit('Not ready to start aplication %s yet...' % SCRNAME)
 
-    ts2  = strftime('%Y-%m-%d %H:%M:%S', localtime())
-    msg = '%s End of %s, consumed time = %.3f(sec)' % (ts2, appname, time()-t0_sec)
-    sys.exit(msg)
+    sys.stdout.write('%s begin %s - dark run processing CLI\n'%(get_current_local_time_stamp(), SCRNAME))
 
-#----
+    parser = input_options_parser()
+    kwa, args = parser.parse_args()
+    kwargs = vars(kwa)
+
+    CommandLineCalib(**kwargs)
+
+    sys.exit('%s end of %s, consumed time = %.3f(sec)'%(get_current_local_time_stamp(), SCRNAME, time()-t0_sec))
+
+# EOF

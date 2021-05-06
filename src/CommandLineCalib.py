@@ -1,4 +1,5 @@
-#--------------------------------------------------------------------------
+
+
 """CommandLineCalib is intended for command line calibration of dark runs
 
 This software was developed for the SIT project.  If you use all or
@@ -6,83 +7,119 @@ part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
-from __future__ import print_function
+#from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
-#--------------------------------
 
 import sys
 import os
-from time import sleep
-
+from . import GlobalUtils as gu
 from CalibManager.Logger import logger
-
 from .FileNameManager import fnm
 from .ConfigParametersForApp import cp
-
-from .BatchJobPedestals import *
+from . import FileDeployer as fdmets
 from .BatchLogScanParser import blsp # Just in order to instatiate it
 
-from . import FileDeployer as fdmets
 
-#------------------------------
-class CommandLineCalib(object) :
-    """Command line calibration of dark runs
+def str_replace_fields(s, insets={}):
+    """1. splits string fields separated by spaces.
+       2. each field can be replaced by insets from dictionary.
+       3. return (str) of joined fields separated by spaces.
+    """
+    return ' '.join([insets.get(f,f) for f in s.split(' ')])
 
-    @see FileNameManager, ConfigFileGenerator, ConfigParametersForApp, BatchJobPedestals, BatchLogScanParser, FileDeployer, Logger
+
+def load_text_with_insets(fname, insets={}):
+    """
+    """
+    logger.debug('load_text_file: %s\n  insets: %s' % (fname, str(insets)), 'load_text_with_insets')
+    txt = ''
+    fin = open(fname, 'r')
+    for s in fin:
+        txt += str_replace_fields(s, insets)
+    fin.close()
+    return txt
+
+
+def str_filename_with_source(fname, src):
+    """
+    combines fname like ./work/clb-mfxp16318-r0009-peds-ave.txt and source like MfxEndstation.0:Rayonix.0
+    and returns ./work/clb-mfxp16318-r0009-peds-ave-MfxEndstation.0:Rayonix.0.txt
+    """
+    flds = fname.rsplit('.',1)
+    if len(flds)!=2:
+       logger.info('no extension found in file name: %s' % str(fname), 'str_filename_with_source')
+       return None
+    return '%s-%s.%s' % (flds[0], src, flds[1])
+
+
+def str_geo_segment_rayonix_v2(shape=(3840,3840), nbins_max=3840, pixsize_um=44.5):
+    """In highest resolution mode Rayonix has 3840x3840 pixels of 44.5 um size.
+       MTRX:3840:3840:44.5:44.5
+       MTRX:1920:1920:89:89
+       MTRX:1280:1280:133.5:133.5
+       MTRX:960:960:178:178
+       MTRX:384:384:445:445
+    """
+    nrows, ncols = shape
+    npix_in_row = nbins_max/nrows
+    npix_in_col = nbins_max/ncols
+    fmt = 'MTRX:V2:%d:%d'
+    fmt += ':%.0f' if npix_in_row%2==0 else ':%.1f'
+    fmt += ':%.0f' if npix_in_col%2==0 else ':%.1f'
+    return fmt % (nrows, ncols, pixsize_um*npix_in_row, pixsize_um*npix_in_col)
+
+
+class CommandLineCalib(object):
+    """module for dark run processing CLI
     """
     sep = '\n' + 60*'-' + '\n'
 
-    def __init__(self, args, opts) :
+    def __init__(self, **kwargs):
 
         self.name = 'CommandLineCalib'
-
-        #print '__name__', __name__ # CalibManager.CommandLineCalib
         cp.commandlinecalib = self
 
-        self.args = args
-        self.opts = opts
         self.count_msg = 0
 
-        if not self.set_pars() : return
+        if not self.set_pars(**kwargs): return
 
         self.print_command_line()
         self.log_rec_on_start()
         self.print_local_pars()
         self.print_list_of_detectors()
         self.print_list_of_xtc_files()
-        try :
-            self.print_list_of_sources_from_regdb()
-        except :
-            pass
+        try: self.print_list_of_sources_from_regdb()
+        except: pass
 
         gu.create_directory(cp.dir_work.value())
 
-        if self.queue is None :
+        if self.queue is None:
             self.proc_dark_run_interactively()
-        else :
-            if not self.get_print_lsf_status() : return
+        else:
+            if not self.get_print_lsf_status(): return
             self.proc_dark_run_in_batch()
             self.print_list_of_types_and_sources_from_xtc()
 
+        rayonix_is_in_list = self.pattern_in_sources(ptrn='rayonix')
+        if rayonix_is_in_list:
+            self.add_files_for_rayonix()
         self.print_list_of_files_dark_in_work_dir()
-
         self.deploy_calib_files()
 
         self.save_log_file()
         #self.add_record_in_db()
 
-#------------------------------
 
-    def set_pars(self) :
+    def set_pars(self, **kwa):
 
-        self.print_bits = self.opts['print_bits']
+        self.print_bits = kwa['print_bits']
         logger.setPrintBits(self.print_bits)
 
-        docfg = self.loadcfg = self.opts['loadcfg']
+        docfg = self.loadcfg = kwa['loadcfg']
 
-        if self.opts['runnum'] is None :
+        if kwa['runnum'] is None:
             appname = os.path.basename(sys.argv[0])
             msg = self.sep + 'This command line calibration interface should be launched with parameters.'\
                   +'\nTo see the list of parameters use command: %s -h' % appname\
@@ -91,60 +128,61 @@ class CommandLineCalib(object) :
                   + self.sep
             self.log(msg,4)
             return False
-        self.runnum = self.opts['runnum']
+        self.runnum = kwa['runnum']
         self.str_run_number = '%04d' % self.runnum
 
-        if self.opts['runrange'] is None :
+        if kwa['runrange'] is None:
             self.str_run_range = '%s-end' % self.runnum
-        else :
-            self.str_run_range = self.opts['runrange']
+        else:
+            self.str_run_range = kwa['runrange']
 
         self.exp_name = cp.exp_name.value_def()
-        self.exp_name = cp.exp_name.value() if docfg and self.opts['exp'] is None else self.opts['exp']
-        if self.exp_name is None or self.exp_name == cp.exp_name.value_def() :
+        self.exp_name = cp.exp_name.value() if docfg and kwa['exp'] is None else kwa['exp']
+        if self.exp_name is None or self.exp_name == cp.exp_name.value_def():
             self.log('\nWARNING: EXPERIMENT NAME IS NOT DEFINED...'\
                      + '\nAdd optional parameter -e <exp-name>',4)
             return False
 
-        if self.opts['detector'] is None :
+        if kwa['detector'] is None:
             self.det_name = cp.det_name.value() if docfg else cp.det_name.value_def()
-        else :
-            self.det_name = self.opts['detector'].replace(","," ")
+        else:
+            self.det_name = kwa['detector'].replace(","," ")
 
         list_of_dets_sel = self.det_name.split()
         list_of_dets_sel_lower = [det.lower() for det in list_of_dets_sel]
 
         #msg = self.sep + 'List of detectors:'
-        for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list) :
+        for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list):
             par.setValue(det in list_of_dets_sel_lower)
             #msg += '\n%s %s' % (det.ljust(10), par.value())
         #self.log(msg,1)
 
-        if self.det_name == cp.det_name.value_def() :
+        if self.det_name == cp.det_name.value_def():
             self.log('\nWARNING: DETECTOR NAMES ARE NOT DEFINED...'\
                      + '\nAdd optional parameter -d <det-names>, ex.: -d CSPAD,CSPAD2x2 etc',4)
             return False
 
-        self.event_code  = cp.bat_dark_sele.value()  if self.opts['event_code']  is None else self.opts['event_code']
-        self.scan_events = cp.bat_dark_scan.value()  if self.opts['scan_events'] is None else self.opts['scan_events']
-        self.skip_events = cp.bat_dark_start.value() if self.opts['skip_events'] is None else self.opts['skip_events']
-        self.num_events  = cp.bat_dark_end.value() - cp.bat_dark_start.value() if self.opts['num_events'] is None else self.opts['num_events']
-        self.thr_int_min = cp.mask_min_thr.value() if self.opts['thr_int_min'] is None else self.opts['thr_int_min']
-        self.thr_int_max = cp.mask_max_thr.value() if self.opts['thr_int_max'] is None else self.opts['thr_int_max']
-        self.thr_rms_min = cp.mask_rms_thr_min.value() if self.opts['thr_rms_min'] is None else self.opts['thr_rms_min']
-        self.thr_rms_max = cp.mask_rms_thr_max.value() if self.opts['thr_rms_max'] is None else self.opts['thr_rms_max']
-        self.intnlo      = cp.mask_intnlo.value() if self.opts['intnlo'] is None else self.opts['intnlo']
-        self.intnhi      = cp.mask_intnhi.value() if self.opts['intnhi'] is None else self.opts['intnhi']
-        self.rmsnlo      = cp.mask_rmsnlo.value() if self.opts['rmsnlo'] is None else self.opts['rmsnlo']
-        self.rmsnhi      = cp.mask_rmsnhi.value() if self.opts['rmsnhi'] is None else self.opts['rmsnhi']
+        self.event_code  = cp.bat_dark_sele.value()  if kwa['event_code']  is None else kwa['event_code']
+        self.scan_events = cp.bat_dark_scan.value()  if kwa['scan_events'] is None else kwa['scan_events']
+        self.skip_events = cp.bat_dark_start.value() if kwa['skip_events'] is None else kwa['skip_events']
+        self.num_events  = cp.bat_dark_end.value() - cp.bat_dark_start.value() if kwa['num_events'] is None else kwa['num_events']
+        self.thr_int_min = cp.mask_min_thr.value() if kwa['thr_int_min'] is None else kwa['thr_int_min']
+        self.thr_int_max = cp.mask_max_thr.value() if kwa['thr_int_max'] is None else kwa['thr_int_max']
+        self.thr_rms_min = cp.mask_rms_thr_min.value() if kwa['thr_rms_min'] is None else kwa['thr_rms_min']
+        self.thr_rms_max = cp.mask_rms_thr_max.value() if kwa['thr_rms_max'] is None else kwa['thr_rms_max']
+        self.intnlo      = cp.mask_intnlo.value() if kwa['intnlo'] is None else kwa['intnlo']
+        self.intnhi      = cp.mask_intnhi.value() if kwa['intnhi'] is None else kwa['intnhi']
+        self.rmsnlo      = cp.mask_rmsnlo.value() if kwa['rmsnlo'] is None else kwa['rmsnlo']
+        self.rmsnhi      = cp.mask_rmsnhi.value() if kwa['rmsnhi'] is None else kwa['rmsnhi']
 
-        self.workdir     = cp.dir_work.value()  if self.opts['workdir'] is None else self.opts['workdir']
-        #self.queue       = cp.bat_queue.value() if self.opts['queue'] is None else self.opts['queue']
-        self.queue       = self.opts['queue']
-        #self.logfile     = cp.log_file.value()  if self.opts['logfile']  is None else self.opts['logfile']
+        self.workdir     = cp.dir_work.value()  if kwa['workdir'] is None else kwa['workdir']
+        #self.queue       = cp.bat_queue.value() if kwa['queue'] is None else kwa['queue']
+        self.queue       = kwa['queue']
+        #self.logfile     = cp.log_file.value()  if kwa['logfile']  is None else kwa['logfile']
 
-        self.process     = self.opts['process']
-        self.deploy      = self.opts['deploy']
+        self.process     = kwa['process']
+        self.deploy      = kwa['deploy']
+        self.zeropeds    = kwa['zeropeds']
         self.instr_name  = self.exp_name[:3]
 
         self.timeout_sec = cp.job_timeout_sec.value()
@@ -153,11 +191,11 @@ class CommandLineCalib(object) :
         cp.exp_name      .setValue(self.exp_name)
         cp.instr_name    .setValue(self.instr_name)
 
-        self.calibdir     = cp.calib_dir.value() if docfg and self.opts['calibdir'] is None else self.opts['calibdir']
-        if self.calibdir == cp.calib_dir.value_def() or self.calibdir is None :
+        self.calibdir     = cp.calib_dir.value() if docfg and kwa['calibdir'] is None else kwa['calibdir']
+        if self.calibdir == cp.calib_dir.value_def() or self.calibdir is None:
             self.calibdir = fnm.path_to_calib_dir_default()
 
-        self.xtcdir       = cp.xtc_dir_non_std.value_def() if self.opts['xtcdir'] is None else self.opts['xtcdir']
+        self.xtcdir       = cp.xtc_dir_non_std.value_def() if kwa['xtcdir'] is None else kwa['xtcdir']
 
         cp.xtc_dir_non_std .setValue(self.xtcdir)
         cp.calib_dir       .setValue(self.calibdir)
@@ -181,9 +219,8 @@ class CommandLineCalib(object) :
 
         return True
 
-#------------------------------
 
-    def print_local_pars(self) :
+    def print_local_pars(self):
         msg = self.sep \
         + 'print_local_pars(): Combination of command line parameters and' \
         + '\nconfiguration parameters from file %s (if available after "calibman")' % cp.getParsFileName() \
@@ -210,40 +247,32 @@ class CommandLineCalib(object) :
         + '\n     rmsnhi        : %f' % self.rmsnhi\
         + '\n     process       : %s' % self.process\
         + '\n     deploy        : %s' % self.deploy\
+        + '\n     zeropeds      : %s' % self.zeropeds\
         + '\n     loadcfg       : %s' % self.loadcfg\
         + '\n     print_bits    : %s' % self.print_bits
-        #+ '\nself.logfile       : ' % self.logfile
+        #+ '\nself.logfile      : ' % self.logfile
 
         self.log(msg,1)
 
-#------------------------------
 
-    def print_list_of_detectors(self) :
+    def print_list_of_detectors(self):
         msg = self.sep + 'List of detectors:'
-        for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list) :
+        for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list):
             msg += '\n%s %s' % (det.ljust(10), par.value())
         self.log(msg,1)
 
-#------------------------------
 
-    def print_command_line(self) :
-        msg = 'Command line for book-keeping:\n%s' % (' '.join(sys.argv))
+    def print_command_line(self):
+        msg = 'Command line: %s' % (' '.join(sys.argv))
         self.log(msg,1)
 
-#------------------------------
 
-    def print_command_line_pars(self, args, opts) :
+    def proc_dark_run_interactively(self):
+        from .BatchJobPedestals import BatchJobPedestals
 
-        msg = '\nprint_command_line_pars(...):\n  args: %s\n  opts: %s' % (args,opts)
-        self.log(msg,1)
-
-#------------------------------
-
-    def proc_dark_run_interactively(self) :
-
-        if self.process :
+        if self.process:
             self.log(self.sep + 'Begin dark run data processing interactively',1)
-        else :
+        else:
             self.log(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
                   + '\nAdd "-P" option in the command line to process files\n',4)
             return
@@ -253,7 +282,7 @@ class CommandLineCalib(object) :
 
         self.print_list_of_types_and_sources_from_xtc()
 
-        if not self.bjpeds.command_for_peds_aver() :
+        if not self.bjpeds.command_for_peds_aver():
             msg = self.sep + 'Subprocess for averaging is completed with warning/error message(s);'\
                   +'\nsee details in the logfile(s).'
             self.log(msg,4)
@@ -262,13 +291,14 @@ class CommandLineCalib(object) :
         self.print_dark_ave_batch_log()
         return
 
-#------------------------------
 
-    def proc_dark_run_in_batch(self) :
+    def proc_dark_run_in_batch(self):
+        from .BatchJobPedestals import BatchJobPedestals
+        from time import sleep
 
-        if self.process :
+        if self.process:
             self.log(self.sep + 'Begin dark run data processing in batch queue %s' % self.queue,1)
-        else :
+        else:
             self.log(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
                   + '\nAdd "-P" option in the command line to process files\n',4)
             return
@@ -279,7 +309,7 @@ class CommandLineCalib(object) :
         sum_dt=0
         dt = 10 # sec
         nloops = self.timeout_sec / dt
-        for i in range(nloops) :
+        for i in range(nloops):
             sleep(dt)
             sum_dt += dt
             status = self.bjpeds.status_for_peds_files_essential()
@@ -287,36 +317,34 @@ class CommandLineCalib(object) :
 
             self.log('%3d sec: Files %s available. %s' % (sum_dt, {False:'ARE NOT', True:'ARE'}[status], msg_bj_stat), 1)
 
-            if status :
+            if status:
                 self.print_dark_ave_batch_log()
                 return
 
-        print('WARNING: Too many check cycles. Probably LSF is dead...')
+        sys.stdout.write('WARNING: Too many check cycles. Probably LSF is dead...\n')
 
-        #if self.bjpeds.autoRunStage :
+        #if self.bjpeds.autoRunStage:
         #self.bjpeds.stop_auto_processing()
 
-#------------------------------
 
-    def deploy_calib_files(self) :
+    def deploy_calib_files(self):
         #list_of_deploy_commands, list_of_sources = fdmets.get_list_of_deploy_commands_and_sources_dark(self.str_run_number, self.str_run_range)
         #msg = self.sep + 'Tentative deployment commands:\n' + '\n'.join(list_of_deploy_commands)
         #self.log(msg,1)
 
-        if self.deploy :
+        if self.deploy:
             self.log(self.sep + 'Begin deployment of calibration files',1)
             s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False)
-            if s :
+            if s:
                 self.log('\nProblem with deployment of calibration files...',2)
-            else :
+            else:
                 self.log('\nDeployment of calibration files is completed',1)
-        else :
+        else:
             self.log(self.sep + '\nWARNING: FILE DEPLOYMENT OPTION IS TURNED OFF...'\
                      +'\nAdd "-D" option in the command line to deploy files\n',4)
 
-#------------------------------
 
-    def save_log_file(self, verb=True) :
+    def save_log_file(self, verb=True):
         # save log in local file
         logfname = fnm.log_file()
         msg = 'See details in log-file: %s' % logfname
@@ -326,45 +354,88 @@ class CommandLineCalib(object) :
 
         # save log in /reg/g/psdm/logs/calibman/<year>/<month>/<log-file-name>.txt
         path = fnm.log_file_cpo()
-        if gu.create_path(path) :
+        if gu.create_path(path):
             logger.saveLogInFile(path)
-            if verb : print('Log file: %s' % path)
-        else : logger.warning('onSave: path for log file %s was not created.' % path, self.name)
+            if verb: sys.stdout.write('Log file: %s\n' % path)
+        else: logger.warning('onSave: path for log file %s was not created.' % path, self.name)
 
 
-    def log_rec_on_start(self) :
+    def log_rec_on_start(self):
         #import CalibManager.GlobalUtils as gu
         msg = 'user: %s@%s  cwd: %s\n    command: %s'%\
               (gu.get_login(), gu.get_hostname(), gu.get_cwd(), ' '.join(sys.argv))
         logger.info(msg, self.name)
 
 
-#    def add_record_in_db(self) :
-#        from NotificationDBForCL import *
-#        try :
-#            ndb = NotificationDBForCL()
-#            ndb.insert_record(mode='enabled')
-#            ndb.close()
-#            #ndb.add_record()
-#        except :
-#            pass
+    def pattern_in_sources(self, ptrn='rayonix'):
+        lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
+        lst_bool = [(ptrn.lower() in s.lower()) for s in lst_of_srcs]
+        logger.debug('all sources: %s conditions: %s' % (str(lst_of_srcs),str(lst_bool)),'pattern_in_sources')
+        return any(lst_bool)
 
 
-    def print_list_of_files_dark_in_work_dir(self) :
+    def add_files_for_rayonix(self):
+        """ Using shape of array for evaluated pedestals, add in the work directory additional files for Rayonix 
+            with zero peds and geometry
+        """
+        from PSCalib.NDArrIO import load_txt, save_txt #, list_of_comments
+        from . import AppDataPath as apputils
+        fname_geo  = str(apputils.AppDataPath('CalibManager/scripts/geometry-rayonix.template').path())
+        logger.info('%s\nfname_geo: %s' % (100*'_', fname_geo))
+
+        lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
+        logger.debug('all sources: %s' % str(lst_of_srcs))
+
+        for s in lst_of_srcs:
+            if not('rayonix' in s.lower()):
+                logger.info('skip - rayonix is not found in: %s' % s)
+                continue
+
+            lst_peds_ave = gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(), [s,])
+            if not isinstance(lst_peds_ave, list):
+                logger.warning('lst_peds_ave is not a list: %s' % str(lst_peds_ave))
+                continue
+
+            if len(lst_peds_ave)<1:
+                logger.warning('lst_peds_ave is empty', 'add_files_for_rayonix')
+                continue
+
+            # load array with pedestals
+            fname_peds_ave = lst_peds_ave[0]
+            ave = load_txt(str(fname_peds_ave))
+            logger.info('pedestals.shape:%s dtype:%s' % (ave.shape, ave.dtype))
+
+            if self.zeropeds:
+                # make/save zero-pedestals
+                fname_peds_zero = str_filename_with_source(fnm.path_peds_zero(), s)
+                logger.info('fname_peds_zeros:%s' % fname_peds_zero)
+                save_txt(fname_peds_zero, gu.np.zeros_like(ave), cmts=(), fmt='%.0f')
+                os.chmod(fname_peds_zero, 0o664)
+
+            # make/save default geometry
+            geo_segment = str_geo_segment_rayonix_v2(shape=ave.shape)
+            str_geo = load_text_with_insets(fname_geo, insets={'SEGMENT_V2':geo_segment})
+            logger.debug('str_geo:\n%s' % str_geo)
+            fname_geometry  = str_filename_with_source(fnm.path_geometry(), s)
+            logger.info('fname_geometry  :%s' % fname_geometry)
+            gu.save_textfile(str_geo, fname_geometry, mode='w', accmode=0o664)
+
+
+    def print_list_of_files_dark_in_work_dir(self):
         lst = self.get_list_of_files_dark_in_work_dir()
         msg = self.sep + 'List of files in work directory for command "ls %s*"' % fnm.path_prefix_dark()
-        if lst == [] : msg += ' is empty'
-        else         : msg += ':\n' + '\n'.join(lst)
+        if lst == []: msg += ' is empty'
+        else        : msg += ':\n' + '\n'.join(lst)
         self.log(msg,1)
 
 
-    def get_list_of_files_dark_in_work_dir(self) :
+    def get_list_of_files_dark_in_work_dir(self):
         path_prexix = fnm.path_prefix_dark()
         dir, prefix = os.path.split(path_prexix)
         return gu.get_list_of_files_in_dir_for_part_fname(dir, pattern=prefix)
 
 
-    def get_list_of_files_dark_expected(self) :
+    def get_list_of_files_dark_expected(self):
         lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors()
         return fnm.get_list_of_files_peds() \
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_of_srcs) \
@@ -373,21 +444,21 @@ class CommandLineCalib(object) :
              + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(),   lst_of_srcs)
 
 
-    def print_list_of_types_and_sources_from_xtc(self) :
+    def print_list_of_types_and_sources_from_xtc(self):
         txt = self.sep + 'Data Types and Sources from xtc scan of the\n' \
             + cp.blsp.txt_list_of_types_and_sources()
         self.log(txt,1)
 
 
-    def print_list_of_sources_from_regdb(self) :
+    def print_list_of_sources_from_regdb(self):
         txt = self.sep + 'Sources from DB:' \
             + cp.blsp.txt_of_sources_in_run()
         self.log(txt,1)
 
 
-    def print_dark_ave_batch_log(self) :
+    def print_dark_ave_batch_log(self):
         path = fnm.path_peds_aver_batch_log()
-        if not os.path.exists(path) :
+        if not os.path.exists(path):
             msg = 'File: %s does not exist' % path
             self.log(msg,2)
             return
@@ -398,7 +469,7 @@ class CommandLineCalib(object) :
         self.log(txt,1)
 
 
-    def get_print_lsf_status(self) :
+    def get_print_lsf_status(self):
         queue = cp.bat_queue.value()
         farm = cp.dict_of_queue_farm[queue]
         msg, status = gu.msg_and_status_of_lsf(farm, print_bits=0)
@@ -412,28 +483,27 @@ class CommandLineCalib(object) :
         return status
 
 
-    def print_list_of_xtc_files(self) :
+    def print_list_of_xtc_files(self):
         pattern = '-r%s' % self.str_run_number
         lst = fnm.get_list_of_xtc_files()
         lst_for_run = [path for path in lst if pattern in os.path.basename(path)]
-        txt = self.sep + 'List of xtc files for exp=%s:run=%s :\n' % (self.exp_name, self.str_run_number)
+        txt = self.sep + 'List of xtc files for exp=%s:run=%s:\n' % (self.exp_name, self.str_run_number)
         txt += '\n'.join(lst_for_run)
         self.log(txt,1)
 
-#------------------------------
 
-    def log(self, msg, level=1) :
+    def log(self, msg, level=1):
         """Internal logger - re-direct all messages to the project logger, critical messages"""
         #logger.levels = ['debug','info','warning','error','critical']
         self.count_msg += 1
         #print 'Received msg: %d' % self.count_msg
-        #if self.print_bits & 1 or level==4 : print msg
+        #if self.print_bits & 1 or level==4: print msg
 
-        if   level==1 : logger.info    (msg, __name__)
-        elif level==4 : logger.critical(msg, __name__)
-        elif level==0 : logger.debug   (msg, __name__)
-        elif level==2 : logger.warning (msg, __name__)
-        elif level==3 : logger.error   (msg, __name__)
-        else          : logger.info    (msg, __name__)
+        if   level==1: logger.info    (msg, __name__)
+        elif level==4: logger.critical(msg, __name__)
+        elif level==0: logger.debug   (msg, __name__)
+        elif level==2: logger.warning (msg, __name__)
+        elif level==3: logger.error   (msg, __name__)
+        else         : logger.info    (msg, __name__)
 
-#------------------------------
+# EOF

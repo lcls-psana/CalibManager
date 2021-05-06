@@ -1,109 +1,71 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#  Module BatchLogScanParser...
-#
-#------------------------------------------------------------------------
 
 """Extracts required information from batch log files
 
-This software was developed for the LCLS project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
-
-@version $Id$
+This software was developed for the LCLS project.
+If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
 from __future__ import absolute_import
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
-
 import os
-from time import sleep
 
 from .ConfigParametersForApp import cp
-from CalibManager.Logger                 import logger
+from CalibManager.Logger     import logger
 from .FileNameManager        import fnm
-from . import GlobalUtils          as     gu
-from . import RegDBUtils           as     ru
+from . import GlobalUtils    as     gu
+from . import RegDBUtils     as     ru
 
-#-----------------------------
 
-class BatchLogScanParser(object) :
+class BatchLogScanParser(object):
     """Extracts EventKeys from batch log scan files
     """
 
-    dict_exists = {True  : 'is available', 
-                   False : 'is NOT available'}
+    dict_exists = {True : 'is available',
+                   False: 'is NOT available'}
 
-    def __init__(self) :
+    def __init__(self):
         self.det_name               = cp.det_name
         self.dict_of_det_data_types = cp.dict_of_det_data_types
         self.list_of_dets_selected  = cp.list_of_dets_selected # reference to method
         self.list_of_sources        = []
         self.list_of_types          = []
-
-        #self.pattern                = 'N/A'
         self.det_names_parsed       = None 
         self.path                   = None 
 
-#-----------------------------
 
-    #def parse_batch_log_peds_scan(self, pattern='EventKey(type=Psana::') :
-    def parse_batch_log_peds_scan(self, pattern='EventKey(type=psana.') :
+    def parse_batch_log_peds_scan(self, pattern='EventKey(type=psana.'):
         """Psrses log file for dark run scan and makes lists:
            self.list_of_types and self.list_of_sources for all psana data types in file.
         """
 
-        if  self.path == fnm.path_peds_scan_batch_log() : return
-        #and self.det_names_parsed == self.det_name.value(): return
-        #self.det_names_parsed = self.det_name.value()
-
-
-        #if self.det_name.value == self.det_name.value_def() : return
+        if  self.path == fnm.path_peds_scan_batch_log(): return
 
         self.list_of_detinfo_sources = []
         self.list_of_sources         = []
         self.list_of_types           = []
 
-        if not self.make_set_of_lines_from_file_for_pattern(pattern) : return
+        if not self.make_set_of_lines_from_file_for_pattern(pattern): return
         self.make_list_of_types_and_sources(pattern)
 
-        #msg = 'List of found in data types and sources:'
-        #for type, src in zip(self.list_of_types, self.list_of_sources) :
-        #    msg += '\n    %30s : %s' % (type, src)
-        #    logger.info(msg, __name__)
-        #    print msg
-    
-        #for det_name in self.list_of_dets_selected() :
-        #    self.pattern = self.dict_of_det_data_types[det_name]
-        #    print 'Parse file: %s for detector: %s and pattern: %s' % (self.path, det_name, self.pattern)
-        #    cp.print_dict_of_det_data_types()
-        #    self.parse_list_of_lines()
-
-#-----------------------------
  
-    def make_set_of_lines_from_file_for_pattern(self, pattern) : # pattern='EventKey(type=psana.'
+    def make_set_of_lines_from_file_for_pattern(self, pattern): # pattern='EventKey(type=psana.'
         """Makse self.list_of_found_lines - a set of lines from file specified containing pattern
         """
 
         self.path = fnm.path_peds_scan_batch_log()
 
-        if not os.path.lexists(self.path) :
+        if not os.path.lexists(self.path):
             logger.info('\nThe requested file: ' + self.path + '\nIS NOT AVAILABLE!', __name__)
             return False
 
         self.list_of_found_lines  = []
 
         fin = open(self.path, 'r')
-        for line in fin :
-            if pattern in line :
+        for line in fin:
+            if pattern in line:
                 line_st = line.rstrip('\n').strip(' ')               
-                if line_st in self.list_of_found_lines : continue # if the line is already in the list
+                if line_st in self.list_of_found_lines: continue # if the line is already in the list
                 self.list_of_found_lines.append(line_st)
                 #print 'found line:', line_st
 
@@ -111,15 +73,10 @@ class BatchLogScanParser(object) :
 
         return True
 
-#-----------------------------
-#old:
-#  EventKey(type=Psana::CsPad2x2::ElementV1, src=DetInfo(CxiDg2.0:Cspad2x2.0), alias="Dg2CsPad2x2")
-#new:
-#EventKey(type=psana.CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2')
 
-    def make_list_of_types_and_sources(self, pattern) : # pattern='EventKey(type=psana.'
+    def make_list_of_types_and_sources(self, pattern): # pattern='EventKey(type=psana.'
 
-        for line in self.list_of_found_lines : 
+        for line in self.list_of_found_lines:
 
             #print line                                #EventKey(type=psana.CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2')
             pos1 = line.find(pattern) + len(pattern) 
@@ -129,12 +86,12 @@ class BatchLogScanParser(object) :
             #print fields
 
             type = fields[0]                          # CsPad2x2.ElementV1
-            if type.find('ConfigV') != -1 : continue  # remove ConfigV from lists
+            if type.find('ConfigV') != -1: continue  # remove ConfigV from lists
             #print 'type: ', type
             tparts = type.split('.')
             type_old = '%s::%s' % (tparts[0],tparts[1]) if len(tparts) == 2 else type # CsPad2x2.ElementV1 -> CsPad2x2::ElementV1
 
-            if len(fields)<2 : continue
+            if len(fields)<2: continue
             patt = 'src='
             pos1 = fields[1].find(patt) + len(patt)
             detinfo_src = fields[1][pos1:].strip('"\'') # DetInfo(CxiDg2.0:Cspad2x2.0)
@@ -149,78 +106,69 @@ class BatchLogScanParser(object) :
             self.list_of_types.append(type_old)
             self.list_of_sources.append(src)
 
-        #for src in self.list_of_sources : print 'YYY: %s' % src
 
-#-----------------------------
-
-    def print_list_of_types_and_sources(self) :
+    def print_list_of_types_and_sources(self):
         txt = self.txt_list_of_types_and_sources()
         logger.info(txt, __name__)         
         #print txt
 
-#-----------------------------
 
-    def txt_list_of_types_and_sources(self) :        
-        #if self.path is None or not os.path.exists(self.path) :
-        #    msg = 'log file: %s IS NOT AVAILABLE' % (self.path)
-        #    return msg
+    def txt_list_of_types_and_sources(self):
 
         self.parse_batch_log_peds_scan()
         msg   = 'log file: %s \nExpecting data for detector(s): %s' % (self.path, self.det_name.value())
         state = 'Sources found in scan:' 
-        if self.list_of_sources == [] :
+        if self.list_of_sources == []:
             msg += '\nLog file %s' % self.dict_exists[self.scan_log_exists()] # is available or not
             msg += '\nLIST OF SOURCES IS EMPTY !!!'
 
             return msg
 
-        for type, src in zip(self.list_of_types, self.list_of_sources) :
-            line  = '\n    %30s : %s' % (type, src)
+        for type, src in zip(self.list_of_types, self.list_of_sources):
+            line  = '\n    %30s: %s' % (type, src)
             msg   += line
             state += line
         return msg
 
 
-    def txt_of_sources_in_run(self) :
+    def txt_of_sources_in_run(self):
         return ru.txt_of_sources_in_run(cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value()))
 
-#-----------------------------
-#-----------------------------
 
-    def scan_log_exists(self) :
+    def scan_log_exists(self):
         return os.path.exists(fnm.path_peds_scan_batch_log())
 
 
-    def get_list_of_sources (self) :
-        if self.scan_log_exists() :
+    def get_list_of_sources (self):
+        if self.scan_log_exists():
             self.parse_batch_log_peds_scan()        
             return self.list_of_sources
         # Use RegDB
         return ru.list_of_sources_in_run(cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value()))
 
 
-    def get_list_of_types (self) :
+    def get_list_of_types (self):
         self.parse_batch_log_peds_scan()
         return self.list_of_types
 
 
-    def get_list_of_type_sources(self) :
+    def get_list_of_type_sources(self):
         self.parse_batch_log_peds_scan()
         return list(zip(self.list_of_types, self.list_of_sources))
 
 
-    def list_of_types_and_sources_for_detector(self, det_name) :
+    def list_of_types_and_sources_for_detector(self, det_name):
 
-        if not self.scan_log_exists() : # Use RegDB
+        if not self.scan_log_exists(): # Use RegDB
             ins, exp, run_number = cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value())
             lst_srcs = ru.list_of_sources_in_run_for_selected_detector(ins, exp, run_number, det_name)
             dtype = cp.dict_of_det_data_types[det_name]
             ctype = cp.dict_of_det_calib_types[det_name]
             lst_dtypes = [dtype for src in lst_srcs]
             lst_ctypes = [ctype for src in lst_srcs]
-            #print 'lst_ctypes ::: ', lst_ctypes
-            #print 'lst_dtypes ::: ', lst_dtypes
-            #print 'lst_srcs   ::: ', lst_srcs
+            #print 'lst_ctypes::: ', lst_ctypes
+            #print 'lst_dtypes::: ', lst_dtypes
+            #print 'lst_srcs  ::: ', lst_srcs
             return lst_dtypes, lst_srcs, lst_ctypes
 
         pattern_det = det_name.lower() + '.'
@@ -230,10 +178,10 @@ class BatchLogScanParser(object) :
         list_of_ctypes_for_det=[]
         list_of_dtypes_for_det=[]
         list_of_srcs_for_det=[]
-        for type,src in self.get_list_of_type_sources() :
+        for type,src in self.get_list_of_type_sources():
             #print 'XXX:   type, src: %24s  %s' % (type,src)
-            if type.find(pattern_type)       == -1 : continue
-            if src.lower().find(pattern_det) == -1 : continue
+            if type.find(pattern_type)       == -1: continue
+            if src.lower().find(pattern_det) == -1: continue
             list_of_ctypes_for_det.append(cp.dict_of_det_calib_types[det_name])
             list_of_dtypes_for_det.append(type)
             list_of_srcs_for_det.append(src)
@@ -243,7 +191,7 @@ class BatchLogScanParser(object) :
 
 
 
-    def list_of_types_and_sources_for_selected_detectors (self) :
+    def list_of_types_and_sources_for_selected_detectors (self):
         """Returns the list of data types, sources, and calib types in run for selected detector.
         For example, for CSPAD returns
         ['CsPad::DataV2',    'CsPad::DataV2'],
@@ -254,7 +202,7 @@ class BatchLogScanParser(object) :
         lst_types  = []
         lst_srcs   = []
 
-        for det_name in cp.list_of_dets_selected() :
+        for det_name in cp.list_of_dets_selected():
             lst_t, lst_s, lst_c = self.list_of_types_and_sources_for_detector(det_name)
 
             #print 'lst_t: ', lst_t
@@ -269,28 +217,20 @@ class BatchLogScanParser(object) :
 
 
 
-    def list_of_sources_for_selected_detectors(self) :
+    def list_of_sources_for_selected_detectors(self):
         """Returns the list of sources in run for selected detectors.
         """
         lst_types, lst_srcs, lst_ctypes = self.list_of_types_and_sources_for_selected_detectors()
         return lst_srcs
 
 
-#-----------------------------
-#-----------------------------
+cp.blsp = blsp = BatchLogScanParser()
 
-blsp = BatchLogScanParser()
-cp.blsp = blsp
 
-#-----------------------------
-#-----------------------------
-#
-#  In case someone decides to run this module
-#
-if __name__ == "__main__" :
+if __name__ == "__main__":
     import sys
     #cp.blsp.parse_batch_log_peds_scan()
     cp.blsp.print_list_of_types_and_sources()
     sys.exit('End of test for BatchLogScanParser')
 
-#-----------------------------  
+# EOF

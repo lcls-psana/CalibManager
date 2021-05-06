@@ -8,6 +8,19 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-05-06 Mikhail Dubrovin
+Tag: V02-00-03
+- for app calibrun add code to generatete zero-pedestals and geometry for rayonix, clean-up code
+ - new file:   ../data/scripts/geometry-rayonix.template
+ - modified:
+   ../app/calibrun - simplify app, add parameter --zeropeds
+   AppDataPath.py - add path to data to run apps from release directory
+   GlobalUtils.py - add accmode to save_textfile(text, path, mode='w', accmode=0o774), clean-up code
+   BatchLogScanParser.py - clean-up code
+   CommandLineCalib.py - add methods to generatete zero-pedestals and geometry for rayonix, clean-up code
+   FileDeployer.py - add methods to generatete zero-pedestals and geometry for rayonix
+   FileNameManager.py - add methods path_peds_zero and path_geometry
+
 2020-04-28 Mikhail Dubrovin
 Tag: V02-00-02
 - fix FileManagerSingle - issue reported by Chuck

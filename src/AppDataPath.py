@@ -14,10 +14,6 @@ one of the $SIT_DATA locations.
 @author Andy Salnikov
 """
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
-
 import os
 
 #-----------------------------
@@ -31,7 +27,7 @@ class AppDataPath(object) :
         """Constructor takes relative file path."""
         self.m_path = ""
         
-        dataPath = '../../data:' + os.getenv("SIT_DATA")
+        dataPath = './data:../../data:' + os.getenv("SIT_DATA")
         if not dataPath: return
             
         for dir in dataPath.split(':'):

@@ -247,6 +247,14 @@ class FileNameManager:
         return self.path_prefix_dark() + 'peds-cmo.txt'
 
 
+    def path_peds_zero(self):
+        return self.path_prefix_dark() + 'peds-zero.txt'
+
+
+    def path_geometry(self):
+        return self.path_prefix_dark() + 'geometry.txt'
+
+
     def path_peds_ave_plot(self):
         return self.path_prefix_dark() + 'peds-ave-plot.png'
 

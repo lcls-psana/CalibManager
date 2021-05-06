@@ -1,26 +1,14 @@
-from __future__ import absolute_import
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#   FileDeployer ...
-#------------------------------------------------------------------------
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
-#import sys
+
+from __future__ import absolute_import
+
 import os
 import stat
-#import socket
-
 from .ConfigParametersForApp import cp
-from   .Logger               import logger
-from . import GlobalUtils          as     gu
+from .Logger                 import logger
+from . import GlobalUtils    as     gu
 from .FileNameManager        import fnm
 
-#------------------------------
 
 def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     """Get list of deploy commands for all detectors of the same type"""
@@ -28,15 +16,14 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     cp.str_run_number.setValue(str_run_number)
     #cp.blsp.print_list_of_types_and_sources()
     list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
-    # list_of_dtypes  : ['CsPad::DataV1',    'CsPad::DataV1']
-    # list_of_sources : ['CxiDs1.0:Cspad.0', 'CxiDsd.0:Cspad.0']
-    # list_of_ctypes  : ['CsPad::CalibV1',   'CsPad::CalibV1']
-
-    #print 'list_of_dtypes  :', list_of_dtypes
-    #print 'list_of_sources:',  list_of_sources
-    #print 'list_of_ctypes :',  list_of_ctypes
+    #list_of_dtypes  # ['CsPad::DataV1',    'CsPad::DataV1']
+    #list_of_sources # ['CxiDs1.0:Cspad.0', 'CxiDsd.0:Cspad.0']
+    #list_of_ctypes  # ['CsPad::CalibV1',   'CsPad::CalibV1']
+    logger.info('get_list_of_deploy_commands...\nlist_of_dtypes :%s\nlist_of_sources:%s\nlist_of_ctypes :%s'%\
+                (str(list_of_dtypes), str(list_of_sources), str(list_of_ctypes)))
 
     list_of_deploy_commands  = get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_ave(), 'pedestals', str_run_range)
+    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_zero(), 'pedestals', str_run_range)
     list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_rms(), 'pixel_rms', str_run_range)
 
     if cp.dark_deploy_hotpix.value() :
@@ -45,9 +32,10 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     if cp.dark_deploy_cmod.value() :
       list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_cmod(), 'common_mode', str_run_range)
 
+    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_geometry(), 'geometry', str_run_range)
+
     return list_of_deploy_commands, list_of_sources
     
-#------------------------------
 
 def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode='dark'):
     """Get list of deploy commands for all detectors of the same type"""
@@ -57,6 +45,7 @@ def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_ran
     list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
 
     list_of_deploy_commands  = get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_ave(), 'pedestals', str_run_range, mode)
+    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_zero(), 'pedestals', str_run_range, mode)
     list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_rms(), 'pixel_rms', str_run_range, mode)
 
     if cp.dark_deploy_hotpix.value() :
@@ -65,25 +54,22 @@ def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_ran
     if cp.dark_deploy_cmod.value() :
       list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_cmod(), 'common_mode', str_run_range, mode)
 
+    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_geometry(), 'geometry', str_run_range, mode)
+
     return list_of_deploy_commands, list_of_sources
     
-#-----------------------------
 
 def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode='dark'):
     if mode=='calibman-dark' or \
        mode=='calibrun-dark' : return get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range)
     else                     : return [], []
 
-#-----------------------------
 
 def get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode='dark'):
     if mode=='calibman-dark' or \
        mode=='calibrun-dark' : return get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode)
     else                     : return [], []
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
 
 def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_confirm=True):
     """Deploys the calibration file(s)"""
@@ -113,7 +99,6 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
     #---->>> DCS hdf5 file deployment
     return deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx)
 
-#-----------------------------
 
 def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
     """Deploys the calibration file(s) in the Detector Calibration Store
@@ -139,7 +124,6 @@ def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
 
     return 0
 
-#-----------------------------
 
 def procDeployCommandDCS(cmd, mode) :
     #os.system(cmd_cat)
@@ -148,7 +132,6 @@ def procDeployCommandDCS(cmd, mode) :
     msg = '%s\n%s' % (cmd, resp) if resp else cmd
     logger.info(msg, 'procDeployCommandDCS')
 
-#-----------------------------
 
 def is_allowed_command_dcs(cmd, list_src_cbx):
     """Check the deployment command is for selected src"""
@@ -166,10 +149,6 @@ def is_allowed_command_dcs(cmd, list_src_cbx):
 
     return False
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
 
 def is_allowed_command(cmd, list_src_cbx):
     """Check the deployment command is for selected src"""
@@ -213,10 +192,6 @@ def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, lis
 
     return list_of_deploy_commands
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
 
 def get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, base_path, calibtype='pedestals', str_run_range='0-end', mode='dark'):
     """Get list of deploy commands for lists of type and sources for calibtype"""
@@ -247,7 +222,6 @@ def get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, base_path, ca
 
     return list_of_deploy_commands
 
-#-----------------------------
 
 class FileDeployer(object) :
     """Collection of methods for file deployment in calibration directory tree"""
@@ -338,18 +312,6 @@ class FileDeployer(object) :
                host,
                tstamp.ljust(29))
 
-        #print 'user           = ', user
-        #print 'login          = ', login
-        #print 'host           = ', host
-        #print 'fname_inp      = ', fname_inp
-        #print 'fname_out      = ', fname_out
-        #print 'dir_out        = ', dir_out
-        #print 'tstamp         = ', tstamp
-        #print 'exp_name       = ', exp_name
-        #print 'str_run_number = ', str_run_number
-        #print 'path_history   = ', path_history
-        #print 'rec            = ', rec
-
         msg = 'Add record: \n%s to history file: %s' % (rec,path_history)
         logger.info(msg, __name__)
 
@@ -391,11 +353,10 @@ class FileDeployer(object) :
 
         #self.changeFilePermissions(path_history)
 
-#-----------------------------
 
 fd = FileDeployer()
 
-#-----------------------------
+# EOF
 
 
         
