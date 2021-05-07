@@ -119,16 +119,9 @@ class CommandLineCalib(object):
 
         docfg = self.loadcfg = kwa['loadcfg']
 
-        if kwa['runnum'] is None:
-            appname = os.path.basename(sys.argv[0])
-            msg = self.sep + 'This command line calibration interface should be launched with parameters.'\
-                  +'\nTo see the list of parameters use command: %s -h' % appname\
-                  +'\nIf the "%s" is launched after "calibman" most of parameters may be already set.' % appname\
-                  +'\nBut, at least run number must be specified as an optional parameter, try command:\n    %s -r <number> -L'%(appname)\
-                  + self.sep
-            self.log(msg,4)
-            return False
-        self.runnum = kwa['runnum']
+        self.runnum = kwa.get('runnum', None)
+        if self.runnum is None: sys.exit('MISSING PARAMETER "--runnum" or "-r" NEEDS TO BE SPECIFIED')
+
         self.str_run_number = '%04d' % self.runnum
 
         if kwa['runrange'] is None:
@@ -182,6 +175,7 @@ class CommandLineCalib(object):
 
         self.process     = kwa['process']
         self.deploy      = kwa['deploy']
+        self.deploygeo   = kwa['deploygeo']
         self.zeropeds    = kwa['zeropeds']
         self.instr_name  = self.exp_name[:3]
 
@@ -247,6 +241,7 @@ class CommandLineCalib(object):
         + '\n     rmsnhi        : %f' % self.rmsnhi\
         + '\n     process       : %s' % self.process\
         + '\n     deploy        : %s' % self.deploy\
+        + '\n     deploygeo     : %s' % self.deploygeo\
         + '\n     zeropeds      : %s' % self.zeropeds\
         + '\n     loadcfg       : %s' % self.loadcfg\
         + '\n     print_bits    : %s' % self.print_bits
@@ -334,7 +329,8 @@ class CommandLineCalib(object):
 
         if self.deploy:
             self.log(self.sep + 'Begin deployment of calibration files',1)
-            s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False)
+            s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False,\
+                                          zeropeds=self.zeropeds, deploygeo=self.deploygeo)
             if s:
                 self.log('\nProblem with deployment of calibration files...',2)
             else:
@@ -413,12 +409,13 @@ class CommandLineCalib(object):
                 os.chmod(fname_peds_zero, 0o664)
 
             # make/save default geometry
-            geo_segment = str_geo_segment_rayonix_v2(shape=ave.shape)
-            str_geo = load_text_with_insets(fname_geo, insets={'SEGMENT_V2':geo_segment})
-            logger.debug('str_geo:\n%s' % str_geo)
-            fname_geometry  = str_filename_with_source(fnm.path_geometry(), s)
-            logger.info('fname_geometry  :%s' % fname_geometry)
-            gu.save_textfile(str_geo, fname_geometry, mode='w', accmode=0o664)
+            if self.deploygeo:
+                geo_segment = str_geo_segment_rayonix_v2(shape=ave.shape)
+                str_geo = load_text_with_insets(fname_geo, insets={'SEGMENT_V2':geo_segment})
+                logger.debug('str_geo:\n%s' % str_geo)
+                fname_geometry  = str_filename_with_source(fnm.path_geometry(), s)
+                logger.info('fname_geometry  :%s' % fname_geometry)
+                gu.save_textfile(str_geo, fname_geometry, mode='w', accmode=0o664)
 
 
     def print_list_of_files_dark_in_work_dir(self):

@@ -10,7 +10,7 @@ from . import GlobalUtils    as     gu
 from .FileNameManager        import fnm
 
 
-def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
+def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, zeropeds=False, deploygeo=False):
     """Get list of deploy commands for all detectors of the same type"""
 
     cp.str_run_number.setValue(str_run_number)
@@ -22,8 +22,8 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     logger.info('get_list_of_deploy_commands...\nlist_of_dtypes :%s\nlist_of_sources:%s\nlist_of_ctypes :%s'%\
                 (str(list_of_dtypes), str(list_of_sources), str(list_of_ctypes)))
 
-    list_of_deploy_commands  = get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_ave(), 'pedestals', str_run_range)
-    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_zero(), 'pedestals', str_run_range)
+    list_of_deploy_commands = get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_zero(), 'pedestals', str_run_range)\
+             if zeropeds else get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_ave(), 'pedestals', str_run_range)
     list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_rms(), 'pixel_rms', str_run_range)
 
     if cp.dark_deploy_hotpix.value() :
@@ -32,7 +32,8 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range):
     if cp.dark_deploy_cmod.value() :
       list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_peds_cmod(), 'common_mode', str_run_range)
 
-    list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_geometry(), 'geometry', str_run_range)
+    if deploygeo:
+      list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_dtypes, list_of_sources, fnm.path_geometry(), 'geometry', str_run_range)
 
     return list_of_deploy_commands, list_of_sources
     
@@ -59,9 +60,9 @@ def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_ran
     return list_of_deploy_commands, list_of_sources
     
 
-def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode='dark'):
+def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode='dark', zeropeds=False, deploygeo=False):
     if mode=='calibman-dark' or \
-       mode=='calibrun-dark' : return get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range)
+       mode=='calibrun-dark' : return get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, zeropeds, deploygeo)
     else                     : return [], []
 
 
@@ -71,10 +72,10 @@ def get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, m
     else                     : return [], []
 
 
-def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_confirm=True):
+def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_confirm=True, zeropeds=False, deploygeo=False):
     """Deploys the calibration file(s)"""
 
-    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode)
+    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode, zeropeds, deploygeo)
     msg = 'Deploy calibration file(s):'
 
     if list_of_deploy_commands == [] :

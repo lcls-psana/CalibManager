@@ -8,9 +8,7 @@ If you use all or part of it, please give an appropriate acknowledgement.
 @author Mikhail S. Dubrovin
 """
 
-from CalibManager.GlobalUtils import * # os, ready_to_start, time, get_current_local_time_stamp
-from CalibManager.CommandLineCalib import CommandLineCalib, sys
-
+import sys
 SCRNAME = sys.argv[0].rsplit('/',1)[-1]
 
 
@@ -51,11 +49,17 @@ def input_options_parser():
     parser.add_option('-z', '--rmsnlo',      dest='rmsnlo',       default=None,  action='store', type='float',  help='number of sigma from mean for low  limit on RMS')
     parser.add_option('-u', '--rmsnhi',      dest='rmsnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on RMS')
     parser.add_option('--zeropeds',          dest='zeropeds',     default=False,  action='store_true',          help='deploy zero-pedestals (e.g. for hardware calibrated Rayonix)')
+    parser.add_option('--deploygeo',         dest='deploygeo',    default=False,  action='store_true',          help='deploy default geometry for Rayonix shaped/binned as data')
 
     return parser
  
 
 if __name__ == "__main__":
+
+    if len(sys.argv) < 2: sys.exit('MISSING PARAMETERS\ntry: %s -h' % SCRNAME)
+
+    from CalibManager.GlobalUtils import * # os, ready_to_start, time, get_current_local_time_stamp
+    from CalibManager.CommandLineCalib import CommandLineCalib#, sys
 
     t0_sec  = time()
 
