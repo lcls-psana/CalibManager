@@ -8,6 +8,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-05-07 Mikhail Dubrovin
+Tag: V02-00-05
+- add parameter --deploygeo
+	modified:   app/calibrun
+	modified:   src/CommandLineCalib.py
+	modified:   src/FileDeployer.py
+
 2020-05-06 Mikhail Dubrovin
 Tag: V02-00-04
 - BatchJobPedestals.py - convert byte to str for py3
