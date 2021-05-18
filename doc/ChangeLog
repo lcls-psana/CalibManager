@@ -8,6 +8,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2020-05-18 Mikhail Dubrovin
+Tag: V02-00-06
+- src/GlobalUtils.py subproc_in_log - improve protection
+  - hangs on proc.wait() for long error message
+    - re-direct errors from stderr=subprocess.PIPE to log
+    - replace unlimited p.wait() with p.poll() in constrained loop
+
 2020-05-07 Mikhail Dubrovin
 Tag: V02-00-05
 - add parameter --deploygeo

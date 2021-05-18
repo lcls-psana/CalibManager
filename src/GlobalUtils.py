@@ -21,6 +21,7 @@ standard_library.install_aliases()
 
 
 import os
+import sys
 import pwd
 import socket
 import getpass
@@ -177,11 +178,23 @@ def call(command_seq, shell=False):
     subprocess.call(command_seq, shell=shell) # , stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 
 
-def subproc_in_log(command_seq, logname, env=None, shell=False): # for example, command_seq=['bsub', '-q', cp.batch_queue, '-o', 'log-ls.txt', 'ls -l']
+def subproc_in_log(command_seq, logname, env=None, shell=False, tmax_sec=500): # for example, command_seq=['bsub', '-q', cp.batch_queue, '-o', 'log-ls.txt', 'ls -l']
     log = open(logname, 'w')
-    p = subprocess.Popen(command_seq, stdout=log, stderr=subprocess.PIPE, env=env, shell=shell) #, stdin=subprocess.STDIN
-    p.wait()
-    err = p.stderr.read() # reads entire file
+    #p = subprocess.Popen(command_seq, stdout=log, stderr=subprocess.PIPE, env=env, shell=shell) #, stdin=subprocess.STDIN
+    #p.wait()
+    p = subprocess.Popen(command_seq, stdout=log, stderr=log, env=env, shell=shell) #, stdin=subprocess.STDIN
+    t0_sec = time()
+    sys.stdout.write('subprocess is started')
+    sys.stdout.flush()
+    while p.poll() is None:
+      sleep(5)
+      dt = time()-t0_sec
+      sys.stdout.write('\rsubprocess is working for %.0f sec' % dt)
+      sys.stdout.flush()
+      if p and dt>tmax_sec:
+        logger.info('subprocess is working too long - terminate waiting loop' % dt)
+        break
+    err = p.stderr.read() if p and p.stderr is not None else 'UNDEFINED STATUS OF ERROR'
     return err
 
 
