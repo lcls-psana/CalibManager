@@ -314,13 +314,14 @@ def load_textfile(path):
     return text
 
 
-def save_textfile(text, path, mode='w', accmode=0o774):
+def save_textfile(text, path, mode='w', accmode=0o664):
     """Saves text in file specified by path. mode: 'w'-write, 'a'-append
     """
+    fexists = os.path.exists(path)
     f=open(path,mode)
     f.write(text)
     f.close()
-    os.chmod(path, accmode)
+    if os.path.exists(path) and (not fexists): os.chmod(path, accmode)
 
 
 def xtc_fname_parser_helper(part, prefix):
