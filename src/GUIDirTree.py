@@ -18,7 +18,7 @@ import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .ConfigParametersForApp import cp
+from CalibManager.ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 
 #------------------------------
@@ -91,7 +91,7 @@ class GUIDirTree(QtWidgets.QWidget):
 
         if cp.dirtreemodel is None :
             cp.dirtreemodel = self.model = QtGui.QStandardItemModel()
-            self.model.setHorizontalHeaderLabels('x')
+            #self.model.setHorizontalHeaderLabels('x')
             self.update_dir_tree(self.dir_top)
         else :
             self.model = cp.dirtreemodel 
