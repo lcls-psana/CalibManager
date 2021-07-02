@@ -333,7 +333,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000',\
                                'OrcaFl40', 'Epix100a', 'Epix10ka', 'Epix10ka2M', 'Fccd960',\
                                'Rayonix', 'Andor', 'DualAndor', 'Jungfrau', 'Zyla',\
-                               'Uxi', 'Pixis', 'StreakC7700', 'Archon', 'Acqiris']
+                               'Uxi', 'Pixis', 'StreakC7700', 'Archon', 'Acqiris', 'iStar']
 
         self.list_of_dets_lower = [det.lower() for det in self.list_of_dets]
 
@@ -360,7 +360,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Pixis::FrameV',
                                     'Camera::FrameV',
                                     'Camera::FrameV',
-                                    'Acqiris::DataDesc']
+                                    'Acqiris::DataDesc',
+                                    'Zyla::FrameV']
         self.dict_of_det_data_types = dict( zip(self.list_of_dets, self.list_of_data_types) )
         #self.print_dict_of_det_data_types()
         
@@ -387,13 +388,15 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Pixis::CalibV1',
                                     'Camera::CalibV1',
                                     'Camera::CalibV1',
-                                    'Acqiris::CalibV1']
+                                    'Acqiris::CalibV1',
+                                    'iStar::CalibV1']
         self.dict_of_det_calib_types = dict( zip(self.list_of_dets, self.list_of_calib_types) )
         #self.print_dict_of_det_calib_types()
 
 #------------------------------
 
         det_cbx_states = [ (False, False ,'bool'), \
+                           (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -620,6 +623,17 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'hex_table'
             ]
 
+        self.const_types_istar = [
+            'pedestals'
+           ,'pixel_status'
+           ,'pixel_gain'
+           ,'pixel_rms'
+           ,'pixel_mask'
+           ,'pixel_bkgd'
+           ,'common_mode'
+           ,'geometry'
+            ]
+
         self.dict_of_det_const_types = dict( zip(self.list_of_dets, [ self.const_types_cspad 
                                                                      ,self.const_types_cspad2x2
                                                                      ,self.const_types_princeton
@@ -644,6 +658,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_streak
                                                                      ,self.const_types_archon
                                                                      ,self.const_types_acqiris
+                                                                     ,self.const_types_istar
                                                                       ]) )
      
         self.srcs_cspad = [ 
@@ -868,6 +883,12 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XppLas.0:Acqiris.0'
             ]
 
+        self.srcs_istar = [ 
+            'XcsEndstation.0:iStar.0'
+           ,'XppEndstation.0:iStar.0'
+           ,'DetLab.0:iStar.0'
+           ]
+
         self.dict_of_det_sources = dict( zip(self.list_of_dets, [ self.srcs_cspad 
                                                                  ,self.srcs_cspad2x2
                                                                  ,self.srcs_princeton
@@ -892,6 +913,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                  ,self.srcs_streak
                                                                  ,self.srcs_archon
                                                                  ,self.srcs_acqiris
+                                                                 ,self.srcs_istar
                                                                   ]) )
 
 
@@ -919,6 +941,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['STREAK']
                                                                        ,['ARCHON']
                                                                        ,['ACQIRISV1']
+                                                                       ,['ISTAR']
                                                                         ]) )
 
  
