@@ -17,10 +17,10 @@ import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .ConfigParametersForApp import cp
+from CalibManager.ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
-from .FileNameManager        import fnm
-from . import GlobalUtils          as     gu
+from CalibManager.FileNameManager        import fnm
+import CalibManager.GlobalUtils as gu
 
 #------------------------------
 
