@@ -1,44 +1,23 @@
 #!@PYTHON@
-#--------------------------------------------------------------------------
 
 """This script starts stand alone version of the PlotImgSpe.
 
 This software was developed for the LCLS project.  If you use all or
 part of it, please give an appropriate acknowledgement.
 
-@see RelatedModule
-
-@version $Id$
-
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
 
-#------------------------------
-#  Module's version from CVS --
-#------------------------------
-__version__ = "$Revision$"
-# $Source$
-
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
 import os
-#import time
-
+os.environ['LIBGL_ALWAYS_INDIRECT'] = '1' # get rid of libGL error: unable to load driver: swrast_dri.so
 import matplotlib
-matplotlib.use('Qt4Agg') # forse Agg rendering to a Qt4 canvas (backend)
-
-#-----------------------------
-# Imports for other modules --
-#-----------------------------
+matplotlib.use('QtAgg') # forse Agg rendering to a Qt canvas (backend)
 
 from CalibManager.PlotImgSpe import PlotImgSpe
 from optparse import OptionParser
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-#------------------------------
 
 def input_options_parser() :
 
@@ -66,10 +45,7 @@ def input_options_parser() :
     (opts, args) = parser.parse_args()
     return (opts, args)
 
-#---------------------------------
-#
-# run application when launched as a main module
-#
+## run application when launched as a main module
 
 if __name__ == "__main__" :
 
@@ -102,4 +78,4 @@ if __name__ == "__main__" :
     app.exec_()
     sys.exit('End of %s' % sys.argv[0])
 
-#---------------------------------
+# EOF
