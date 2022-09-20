@@ -14,14 +14,9 @@ from CalibManager.OpticAlignmentUtils import OpticalMetrologyEpix10ka2M
 
 import os
 import sys
-import logging
+from Detector.UtilsLogging import logging, DICT_NAME_TO_LEVEL, STR_LEVEL_NAMES
 logger = logging.getLogger(__name__)
 
-DICT_NAME_TO_LEVEL = {k:v for k,v in logging._levelNames.iteritems() if isinstance(k, str)}
-LEVEL_NAMES = ', '.join(DICT_NAME_TO_LEVEL.keys())
-#LEVEL_NAMES = ', '.join(list(logging._levelToName.values())) # PYTHON 3
-
-#--------------------
 
 def usage():
     return '\nCommand to run:'+\
@@ -33,14 +28,13 @@ def usage():
            '\n  Alternative:'+\
            '\n      %prog optical-metrology.txt'
 
-#--------------------
 
 def option_parser():
 
     from optparse import OptionParser
 
     d_ifn = './optical_metrology.txt'
-    d_ofn = './geometry-epix10ka2m.txt' 
+    d_ofn = './geometry-epix10ka2m.txt'
     d_log = 'DEBUG'
     d_xc  = 78000
     d_yc  = -4150
@@ -53,10 +47,10 @@ def option_parser():
     d_vers= 1
     d_usez= True
     d_docorr= True
-  
+
     h_ifn = 'input file name, default = %s' % d_ifn
-    h_ofn = 'output file(s) name, default = %s' % d_ofn 
-    h_log = 'logging level from list (%s), default = %s' % (LEVEL_NAMES, d_log)
+    h_ofn = 'output file(s) name, default = %s' % d_ofn
+    h_log = 'logging level from list (%s), default = %s' % (STR_LEVEL_NAMES, d_log)
     h_xc  = 'x coordinate [um] of camera center offset in optical frame (if nquads<4), default = %d' % d_xc
     h_yc  = 'y coordinate [um] of camera center offset in optical frame (if nquads<4), default = %d' % d_yc
     h_xcip= 'x coordinate [um] of camera center relative IP, default = %d' % d_xcip
@@ -68,7 +62,7 @@ def option_parser():
     h_vers= 'processor version = 0-quads, 1-monolitic, default = %s' % d_vers
     h_usez= 'use z from optical metrology, otherwise zeros, default = %s' % d_usez
     h_docorr= 'apply detector center mean offset and tilt correction to points, default = %s' % d_docorr
-  
+
     parser = OptionParser(description='Optical metrology processing for Epix10ka2M', usage=usage())
     parser.add_option('-i', '--ifn', default=d_ifn, action='store', type='string', help=h_ifn)
     parser.add_option('-o', '--ofn', default=d_ofn, action='store', type='string', help=h_ofn)
@@ -87,7 +81,6 @@ def option_parser():
 
     return parser
 
-#--------------------
 
 def proc_optical_metrology_epix10ka2m():
     parser = option_parser()
@@ -101,10 +94,9 @@ def proc_optical_metrology_epix10ka2m():
 
     OpticalMetrologyEpix10ka2M(parser)
 
-#--------------------
 
 if __name__ == '__main__':
     proc_optical_metrology_epix10ka2m()
     sys.exit()
 
-#--------------------
+# EOF
