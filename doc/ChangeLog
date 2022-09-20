@@ -8,6 +8,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2022-09-20 Mikhail Dubrovin
+Tag: V02-00-12
+- fix plims fot QtAgg backend and get rid of libGL error
+
 2022-09-19 Mikhail Dubrovin
 Tag: V02-00-11
 - app/optical_metrology_epix10ka2m - fix issue for py3 as default
