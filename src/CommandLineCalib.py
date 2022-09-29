@@ -11,11 +11,13 @@ part of it, please give an appropriate acknowledgment.
 from __future__ import division
 from __future__ import absolute_import
 
+import logging
+logger = logging.getLogger(__name__)
+#from CalibManager.Logger import logger
 
 import sys
 import os
 from . import GlobalUtils as gu
-from CalibManager.Logger import logger
 from .FileNameManager import fnm
 from .ConfigParametersForApp import cp
 from . import FileDeployer as fdmets
@@ -33,7 +35,7 @@ def str_replace_fields(s, insets={}):
 def load_text_with_insets(fname, insets={}):
     """
     """
-    logger.debug('load_text_file: %s\n  insets: %s' % (fname, str(insets)), 'load_text_with_insets')
+    logger.debug('load_text_with_insets - load_text_file: %s\n  insets: %s' % (fname, str(insets)))
     txt = ''
     fin = open(fname, 'r')
     for s in fin:
@@ -49,7 +51,7 @@ def str_filename_with_source(fname, src):
     """
     flds = fname.rsplit('.',1)
     if len(flds)!=2:
-       logger.info('no extension found in file name: %s' % str(fname), 'str_filename_with_source')
+       logger.info('str_filename_with_source - no extension found in file name: %s' % str(fname))
        return None
     return '%s-%s.%s' % (flds[0], src, flds[1])
 
@@ -81,6 +83,8 @@ class CommandLineCalib(object):
         self.name = 'CommandLineCalib'
         cp.commandlinecalib = self
 
+        logging.basicConfig(format='[%(levelname).1s] L%(lineno)04d: %(message)s', level=logging.INFO)
+
         self.count_msg = 0
 
         if not self.set_pars(**kwargs): return
@@ -97,10 +101,11 @@ class CommandLineCalib(object):
 
         if self.queue is None:
             self.proc_dark_run_interactively()
-        else:
-            if not self.get_print_lsf_status(): return
-            self.proc_dark_run_in_batch()
-            self.print_list_of_types_and_sources_from_xtc()
+#        else:
+#            if not self.get_print_lsf_status(): return
+#            logger.info('process dark in batch queue: %s' % self.queue)
+#            self.proc_dark_run_in_batch()
+#            self.print_list_of_types_and_sources_from_xtc()
 
         rayonix_is_in_list = self.pattern_in_sources(ptrn='rayonix')
         if rayonix_is_in_list:
@@ -114,8 +119,8 @@ class CommandLineCalib(object):
 
     def set_pars(self, **kwa):
 
-        self.print_bits = kwa['print_bits']
-        logger.setPrintBits(self.print_bits)
+        #self.print_bits = kwa['print_bits']
+        #logger.setPrintBits(self.print_bits)
 
         docfg = self.loadcfg = kwa['loadcfg']
 
@@ -132,8 +137,8 @@ class CommandLineCalib(object):
         self.exp_name = cp.exp_name.value_def()
         self.exp_name = cp.exp_name.value() if docfg and kwa['exp'] is None else kwa['exp']
         if self.exp_name is None or self.exp_name == cp.exp_name.value_def():
-            self.log('\nWARNING: EXPERIMENT NAME IS NOT DEFINED...'\
-                     + '\nAdd optional parameter -e <exp-name>',4)
+            logger.critical('\nWARNING: EXPERIMENT NAME IS NOT DEFINED...'\
+                     + '\nAdd optional parameter -e <exp-name>')
             return False
 
         if kwa['detector'] is None:
@@ -148,11 +153,11 @@ class CommandLineCalib(object):
         for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list):
             par.setValue(det in list_of_dets_sel_lower)
             #msg += '\n%s %s' % (det.ljust(10), par.value())
-        #self.log(msg,1)
+        #logger.info(msg)
 
         if self.det_name == cp.det_name.value_def():
-            self.log('\nWARNING: DETECTOR NAMES ARE NOT DEFINED...'\
-                     + '\nAdd optional parameter -d <det-names>, ex.: -d CSPAD,CSPAD2x2 etc',4)
+            logger.critical('\nWARNING: DETECTOR NAMES ARE NOT DEFINED...'\
+                     + '\nAdd optional parameter -d <det-names>, ex.: -d CSPAD,CSPAD2x2 etc')
             return False
 
         self.event_code  = cp.bat_dark_sele.value()  if kwa['event_code']  is None else kwa['event_code']
@@ -244,32 +249,32 @@ class CommandLineCalib(object):
         + '\n     deploygeo     : %s' % self.deploygeo\
         + '\n     zeropeds      : %s' % self.zeropeds\
         + '\n     loadcfg       : %s' % self.loadcfg\
-        + '\n     print_bits    : %s' % self.print_bits
+#        + '\n     print_bits    : %s' % self.print_bits
         #+ '\nself.logfile      : ' % self.logfile
 
-        self.log(msg,1)
+        logger.info(msg)
 
 
     def print_list_of_detectors(self):
         msg = self.sep + 'List of detectors:'
         for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list):
             msg += '\n%s %s' % (det.ljust(10), par.value())
-        self.log(msg,1)
+        logger.info(msg)
 
 
     def print_command_line(self):
         msg = 'Command line: %s' % (' '.join(sys.argv))
-        self.log(msg,1)
+        logger.info(msg)
 
 
     def proc_dark_run_interactively(self):
         from .BatchJobPedestals import BatchJobPedestals
 
         if self.process:
-            self.log(self.sep + 'Begin dark run data processing interactively',1)
+            logger.info(self.sep + 'Begin dark run data processing interactively')
         else:
-            self.log(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
-                  + '\nAdd "-P" option in the command line to process files\n',4)
+            logger.critical(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
+                            + '\nAdd "-P" option in the command line to process files\n')
             return
 
         self.bjpeds = BatchJobPedestals(self.runnum)
@@ -280,46 +285,46 @@ class CommandLineCalib(object):
         if not self.bjpeds.command_for_peds_aver():
             msg = self.sep + 'Subprocess for averaging is completed with warning/error message(s);'\
                   +'\nsee details in the logfile(s).'
-            self.log(msg,4)
+            logger.critical(msg)
             #return
 
         self.print_dark_ave_batch_log()
         return
 
 
-    def proc_dark_run_in_batch(self):
-        from .BatchJobPedestals import BatchJobPedestals
-        from time import sleep
-
-        if self.process:
-            self.log(self.sep + 'Begin dark run data processing in batch queue %s' % self.queue,1)
-        else:
-            self.log(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
-                  + '\nAdd "-P" option in the command line to process files\n',4)
-            return
-
-        self.bjpeds = BatchJobPedestals(self.runnum)
-        self.bjpeds.start_auto_processing()
-
-        sum_dt=0
-        dt = 10 # sec
-        nloops = self.timeout_sec / dt
-        for i in range(nloops):
-            sleep(dt)
-            sum_dt += dt
-            status = self.bjpeds.status_for_peds_files_essential()
-            str_bj_stat, msg_bj_stat = self.bjpeds.status_batch_job_for_peds_aver()
-
-            self.log('%3d sec: Files %s available. %s' % (sum_dt, {False:'ARE NOT', True:'ARE'}[status], msg_bj_stat), 1)
-
-            if status:
-                self.print_dark_ave_batch_log()
-                return
-
-        sys.stdout.write('WARNING: Too many check cycles. Probably LSF is dead...\n')
-
-        #if self.bjpeds.autoRunStage:
-        #self.bjpeds.stop_auto_processing()
+#    def proc_dark_run_in_batch(self):
+#        from .BatchJobPedestals import BatchJobPedestals
+#        from time import sleep
+#
+#        if self.process:
+#            self.log(self.sep + 'Begin dark run data processing in batch queue %s' % self.queue,1)
+#        else:
+#            self.log(self.sep + '\nWARNING: FILE PROCESSING OPTION IS TURNED OFF...'\
+#                  + '\nAdd "-P" option in the command line to process files\n',4)
+#            return
+#
+#        self.bjpeds = BatchJobPedestals(self.runnum)
+#        self.bjpeds.start_auto_processing()
+#
+#        sum_dt=0
+#        dt = 10 # sec
+#        nloops = self.timeout_sec / dt
+#        for i in range(nloops):
+#            sleep(dt)
+#            sum_dt += dt
+#            status = self.bjpeds.status_for_peds_files_essential()
+#            str_bj_stat, msg_bj_stat = self.bjpeds.status_batch_job_for_peds_aver()
+#
+#            self.log('%3d sec: Files %s available. %s' % (sum_dt, {False:'ARE NOT', True:'ARE'}[status], msg_bj_stat), 1)
+#
+#            if status:
+#                self.print_dark_ave_batch_log()
+#                return
+#
+#        sys.stdout.write('WARNING: Too many check cycles. Probably LSF is dead...\n')
+#
+#        #if self.bjpeds.autoRunStage:
+#        #self.bjpeds.stop_auto_processing()
 
 
     def deploy_calib_files(self):
@@ -328,50 +333,53 @@ class CommandLineCalib(object):
         #self.log(msg,1)
 
         if self.deploy:
-            self.log(self.sep + 'Begin deployment of calibration files',1)
+            logger.info(self.sep + 'Begin deployment of calibration files')
             s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False,\
                                           zeropeds=self.zeropeds, deploygeo=self.deploygeo)
             if s:
-                self.log('\nProblem with deployment of calibration files...',2)
+                logger.warning('\nProblem with deployment of calibration files...')
             else:
-                self.log('\nDeployment of calibration files is completed',1)
+                logger.info('\nDeployment of calibration files is completed',1)
         else:
-            self.log(self.sep + '\nWARNING: FILE DEPLOYMENT OPTION IS TURNED OFF...'\
-                     +'\nAdd "-D" option in the command line to deploy files\n',4)
+            logger.critical(self.sep + '\nWARNING: FILE DEPLOYMENT OPTION IS TURNED OFF...'\
+                     +'\nAdd "-D" option in the command line to deploy files\n')
 
 
     def save_log_file(self, verb=True):
         # save log in local file
         logfname = fnm.log_file()
         msg = 'See details in log-file: %s' % logfname
-        #self.log(msg,4) # set it 4-critical - always print
-        logger.critical(msg) # critical - always print
-        logger.saveLogInFile(logfname)
+        #self.log(msg,4) # set it 4-warning - always print
+        logger.critical(msg) # warning - always print
+
+
+
+        ###### logger.saveLogInFile(logfname)
 
         # save log in /reg/g/psdm/logs/calibman/<year>/<month>/<log-file-name>.txt
         path = fnm.log_file_cpo()
         if gu.create_path(path):
-            logger.saveLogInFile(path)
+            ###### logger.saveLogInFile(path)
             if verb: sys.stdout.write('Log file: %s\n' % path)
-        else: logger.warning('onSave: path for log file %s was not created.' % path, self.name)
+        else: logger.warning('onSave: path for log file %s was not created.' % path)
 
 
     def log_rec_on_start(self):
         #import CalibManager.GlobalUtils as gu
         msg = 'user: %s@%s  cwd: %s\n    command: %s'%\
               (gu.get_login(), gu.get_hostname(), gu.get_cwd(), ' '.join(sys.argv))
-        logger.info(msg, self.name)
+        logger.info(msg)
 
 
     def pattern_in_sources(self, ptrn='rayonix'):
         lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
         lst_bool = [(ptrn.lower() in s.lower()) for s in lst_of_srcs]
-        logger.debug('all sources: %s conditions: %s' % (str(lst_of_srcs),str(lst_bool)),'pattern_in_sources')
+        logger.debug('pattern_in_sources - all sources: %s conditions: %s' % (str(lst_of_srcs),str(lst_bool)))
         return any(lst_bool)
 
 
     def add_files_for_rayonix(self):
-        """ Using shape of array for evaluated pedestals, add in the work directory additional files for Rayonix 
+        """ Using shape of array for evaluated pedestals, add in the work directory additional files for Rayonix
             with zero peds and geometry
         """
         from PSCalib.NDArrIO import load_txt, save_txt #, list_of_comments
@@ -393,7 +401,7 @@ class CommandLineCalib(object):
                 continue
 
             if len(lst_peds_ave)<1:
-                logger.warning('lst_peds_ave is empty', 'add_files_for_rayonix')
+                logger.warning('add_files_for_rayonix - lst_peds_ave is empty')
                 continue
 
             # load array with pedestals
@@ -423,7 +431,7 @@ class CommandLineCalib(object):
         msg = self.sep + 'List of files in work directory for command "ls %s*"' % fnm.path_prefix_dark()
         if lst == []: msg += ' is empty'
         else        : msg += ':\n' + '\n'.join(lst)
-        self.log(msg,1)
+        logger.info(msg)
 
 
     def get_list_of_files_dark_in_work_dir(self):
@@ -444,40 +452,40 @@ class CommandLineCalib(object):
     def print_list_of_types_and_sources_from_xtc(self):
         txt = self.sep + 'Data Types and Sources from xtc scan of the\n' \
             + cp.blsp.txt_list_of_types_and_sources()
-        self.log(txt,1)
+        logger.info(txt)
 
 
     def print_list_of_sources_from_regdb(self):
         txt = self.sep + 'Sources from DB:' \
             + cp.blsp.txt_of_sources_in_run()
-        self.log(txt,1)
+        logger.info(txt)
 
 
     def print_dark_ave_batch_log(self):
         path = fnm.path_peds_aver_batch_log()
         if not os.path.exists(path):
             msg = 'File: %s does not exist' % path
-            self.log(msg,2)
+            logger.warning(msg)
             return
 
         txt = self.sep + 'psana log file %s:\n\n' % path \
             + gu.load_textfile(path) \
             + 'End of psana log file %s' % path
-        self.log(txt,1)
+        logger.info(txt)
 
 
-    def get_print_lsf_status(self):
-        queue = cp.bat_queue.value()
-        farm = cp.dict_of_queue_farm[queue]
-        msg, status = gu.msg_and_status_of_lsf(farm, print_bits=0)
-        msgi = self.sep + 'LSF status for queue %s on farm %s: \n%s\nLSF status for %s is %s'\
-               % (queue, farm, msg, queue, {False:'bad',True:'good'}[status])
-        self.log(msgi,1)
-
-        msg, status = gu.msg_and_status_of_queue(queue)
-        self.log('\nBatch queue status, %s'%msg, 1)
-
-        return status
+#    def get_print_lsf_status(self):
+#        queue = cp.bat_queue.value()
+#        farm = cp.dict_of_queue_farm[queue]
+#        msg, status = gu.msg_and_status_of_lsf(farm, print_bits=0)
+#        msgi = self.sep + 'LSF status for queue %s on farm %s: \n%s\nLSF status for %s is %s'\
+#               % (queue, farm, msg, queue, {False:'bad',True:'good'}[status])
+#        self.log(msgi,1)
+#
+#        msg, status = gu.msg_and_status_of_queue(queue)
+#        self.log('\nBatch queue status, %s'%msg, 1)
+#
+#        return status
 
 
     def print_list_of_xtc_files(self):
@@ -486,21 +494,21 @@ class CommandLineCalib(object):
         lst_for_run = [path for path in lst if pattern in os.path.basename(path)]
         txt = self.sep + 'List of xtc files for exp=%s:run=%s:\n' % (self.exp_name, self.str_run_number)
         txt += '\n'.join(lst_for_run)
-        self.log(txt,1)
+        logger.info(txt)
 
 
-    def log(self, msg, level=1):
-        """Internal logger - re-direct all messages to the project logger, critical messages"""
-        #logger.levels = ['debug','info','warning','error','critical']
-        self.count_msg += 1
-        #print 'Received msg: %d' % self.count_msg
-        #if self.print_bits & 1 or level==4: print msg
-
-        if   level==1: logger.info    (msg, __name__)
-        elif level==4: logger.critical(msg, __name__)
-        elif level==0: logger.debug   (msg, __name__)
-        elif level==2: logger.warning (msg, __name__)
-        elif level==3: logger.error   (msg, __name__)
-        else         : logger.info    (msg, __name__)
+#    def log(self, msg, level=1):
+#        """Internal logger - re-direct all messages to the project logger, critical messages"""
+#        #logger.levels = ['debug','info','warning','error','critical']
+#        self.count_msg += 1
+#        #print 'Received msg: %d' % self.count_msg
+#        #if self.print_bits & 1 or level==4: print msg
+#
+#        if   level==1: logger.info    (msg, __name__)
+#        elif level==4: logger.critical(msg, __name__)
+#        elif level==0: logger.debug   (msg, __name__)
+#        elif level==2: logger.warning (msg, __name__)
+#        elif level==3: logger.error   (msg, __name__)
+#        else         : logger.info    (msg, __name__)
 
 # EOF
