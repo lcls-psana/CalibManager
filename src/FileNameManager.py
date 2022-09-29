@@ -1,7 +1,7 @@
-#----
+
 """Dynamically generates the file names from the confoguration parameters
 
-This software was developed for the LCLS project.  If you use all or 
+This software was developed for the LCLS project.  If you use all or
 part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
@@ -9,13 +9,15 @@ part of it, please give an appropriate acknowledgment.
 from __future__ import print_function
 from __future__ import absolute_import
 
+#import logging
+#logger = logging.getLogger(__name__)
+
 import os
 
 from   .ConfigParametersForApp import cp
 from   .Logger                 import logger
-from . import GlobalUtils            as     gu
+from . import GlobalUtils      as     gu
 
-#----
 
 class FileNameManager:
     """Dynamically generates the file names from the confoguration parameters.
@@ -69,7 +71,7 @@ class FileNameManager:
     def str_exp_run_dark(self):
         return self.str_exp_run_for_xtc_path(self.path_dark_xtc())
 
-  
+
     def path_to_calib_dir_custom(self):
         """Returns path to the user selected (non-default) calib dir, for example /reg/neh/home1/<user-name>/<further-path>/calib"""
         return cp.calib_dir.value()
@@ -173,7 +175,7 @@ class FileNameManager:
 
     def path_metrology_text(self):
         if cp.fname_metrology_text.value() == cp.fname_metrology_text.value_def():
-            return self.path_metrology_text_def()        
+            return self.path_metrology_text_def()
         else:
             return cp.fname_metrology_text.value()
 
@@ -192,7 +194,7 @@ class FileNameManager:
 
 
     def path_prefix(self):
-        return cp.dir_work.value() + '/' + cp.fname_prefix.value() 
+        return cp.dir_work.value() + '/' + cp.fname_prefix.value()
 
 
     def path_prefix_dark(self):
@@ -207,7 +209,7 @@ class FileNameManager:
         # Returns name like /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
         fname = logger.getLogFileName()     # 2016-07-19-11:53:02-log.txt
         year, month = fname.split('-')[:2]  # 2016, 07
-        name, ext = os.path.splitext(fname) # 2016-07-19-11:53:02-log, .txt   
+        name, ext = os.path.splitext(fname) # 2016-07-19-11:53:02-log, .txt
         return '%s/%s/%s/%s-%s-%s%s' % (cp.dir_log_cpo.value(), year, month, name, gu.get_login(), gu.get_pid(), ext)
 
 
@@ -264,7 +266,7 @@ class FileNameManager:
 
 
     def path_hotpix_mask_plot(self):
-        return self.path_hotpix_mask_prefix() + '-plot.png' 
+        return self.path_hotpix_mask_prefix() + '-plot.png'
 
 
     def get_list_of_files_peds_scan(self):
@@ -305,18 +307,16 @@ class FileNameManager:
         else:
             return 'exp=%s:run=%d:stream=0-79%s' % (cp.exp_name.value(), int(cp.str_run_number.value()), mode)
 
-#------------------------------
 
 fnm = FileNameManager ()
 
-#------------------------------
 
 if __name__ == "__main__":
     import sys
     ntest = 1
     if len(sys.argv)>1: ntest = sys.argv[1]
 
-#    print '\nfnm.get_list_of_files_cora_proc_check():' 
+#    print '\nfnm.get_list_of_files_cora_proc_check():'
 #    list =   fnm.get_list_of_files_cora_proc_check()
 #    for fname in list: print fname
 
@@ -327,4 +327,4 @@ if __name__ == "__main__":
 
     sys.exit( 'End of test for FileNameManager' )
 
-#------------------------------
+# EOF

@@ -1,18 +1,15 @@
 
-#--------------------------------
 """ConfigParameters
    Created: 2017-02-18
    Author : Mikhail Dubrovin
 """
-from __future__ import print_function
-#--------------------------------
+#from __future__ import print_function
 
 import os, six
 from CalibManager.Logger import logger
 
-#------------------------------
 
-class Parameter(object) :
+class Parameter(object):
     """Single parameters.
     """
     dicBool = {'false':False, 'true':True}
@@ -24,7 +21,7 @@ class Parameter(object) :
     _index     = None
 
 
-    def __init__(self, name='EMPTY', val=None, val_def=None, type='str', index=None) :
+    def __init__(self, name='EMPTY', val=None, val_def=None, type='str', index=None):
         """Constructor.
         - name    parameter name
         - val     parameter value
@@ -32,10 +29,10 @@ class Parameter(object) :
         - type    parameter type, implemented types: 'str', 'int', 'long', 'float', 'bool'
         - index   parameter index the list
         """
-        self.setParameter(name, val, val_def, type, index) 
+        self.setParameter(name, val, val_def, type, index)
 
 
-    def setParameter(self, name='EMPTY', val=None, val_def=None, type='str', index=None) :
+    def setParameter(self, name='EMPTY', val=None, val_def=None, type='str', index=None):
         self._value_def = val_def
         self._name      = name
         self._type      = type
@@ -43,119 +40,117 @@ class Parameter(object) :
         self.setValue(val)
 
 
-    def setValue(self, val=None) :
-        if val is None :
+    def setValue(self, val=None):
+        if val is None:
             self._value = self._value_def
-        else :
-            if   self._type == 'str' :
+        else:
+            if   self._type == 'str':
                 self._value = str(val)
-        
-            elif self._type == 'int' :
+
+            elif self._type == 'int':
                 self._value = int(val)
-        
-            elif self._type == 'long' :
+
+            elif self._type == 'long':
                 if six.PY3:
                     self._value = int(val)
                 else:
                     self._value = long(val)
-        
-            elif self._type == 'float' :
+
+            elif self._type == 'float':
                 self._value = float(val)
-        
-            elif self._type == 'bool' :
+
+            elif self._type == 'bool':
                 self._value = bool(val)
-            else : 
+            else:
                 self._value = val
 
 
-    def setDefaultValue(self) :
+    def setDefaultValue(self):
         self._value = self._value_def
 
 
-    def setDefault(self) :
+    def setDefault(self):
         self._value = self._value_def
 
 
-    def setValueFromString(self, str_val) :
+    def setValueFromString(self, str_val):
         """Set parameter value fron string based on its declared type: 'str', 'int', 'long', 'float', 'bool' """
 
-        if str_val.lower() == 'none' :
+        if str_val.lower() == 'none':
             self._value = self._value_def
 
-        elif self._type == 'str' :
+        elif self._type == 'str':
             self._value = str(str_val)
 
-        elif self._type == 'int' :
+        elif self._type == 'int':
             self._value = int(str_val)
 
-        elif self._type == 'long' :
+        elif self._type == 'long':
             if six.PY3:
                 self._value = int(str_val)
             else:
                 self._value = long(str_val)
 
-        elif self._type == 'float' :
+        elif self._type == 'float':
             self._value = float(str_val)
 
-        elif self._type == 'bool' :
+        elif self._type == 'bool':
             self._value = self.dicBool[str_val.lower()]
 
-        else :
+        else:
             msg = 'Parameter.setValueForType: Requested parameter type %s is not supported\n' % type
             msg+= 'WARNING! The parameter value is left unchanged...\n'
             logger.warning(msg)
-            #print(msg)
 
 
-    def setType(self, type='str') :
+    def setType(self, type='str'):
         self._type = type
 
 
-    def setName(self, name='EMPTY') :
+    def setName(self, name='EMPTY'):
         self._name = name
 
 
-    def value(self) :
+    def value(self):
         return self._value
 
 
-    def value_def(self) :
+    def value_def(self):
         return self._value_def
 
 
-    def is_default(self) :
+    def is_default(self):
         return self._value == self._value_def
 
 
-    def name(self) :
+    def name(self):
         return self._name
 
 
-    def type(self) :
+    def type(self):
         return self._type
 
 
-    def index(self) :
+    def index(self):
         return self._index
 
 
-    def strParInfo(self) :
+    def strParInfo(self):
         s = 'Par: %s %s %s %s' % (self.name().ljust(32), str(self.value()).ljust(32), self.type().ljust(8), str(self.index()).ljust(8))
         return s
 
 
-    def printParameter(self) :
+    def printParameter(self):
         s = self.strParInfo()
         logger.info(s)
-        #print s
 
 
-    def __cmp__(self, other) :
+    def __cmp__(self, other):
         """used in list.sort()"""
         #print 'In __cmp__ comparing', self._name, other._name
-        if self._name  < other._name : return -1
-        if self._name  > other._name : return  1
-        if self._name == other._name : return  0
+        if self._name  < other._name: return -1
+        if self._name  > other._name: return  1
+        if self._name == other._name: return  0
 
     def __eq__(self, other):
         return self.__cmp__(other) == 0
@@ -175,17 +170,15 @@ class Parameter(object) :
     def __ge__(self, other):
         return self.__cmp__(other) >= 0
 
-#------------------------------
-#------------------------------
 
-class ConfigParameters(object) :
+class ConfigParameters(object):
     """Is intended as a storage for configuration parameters.
     """
 
-    dict_pars  = {} # Dictionary for all configuration parameters, containing pairs {<parameter-name>:<parameter-object>, ... } 
+    dict_pars  = {} # Dictionary for all configuration parameters, containing pairs {<parameter-name>:<parameter-object>, ... }
     dict_lists = {} # Dictionary for declared lists of configuration parameters:    {<list-name>:<list-of-parameters>, ...}
 
-    def __init__(self, fname=None) :
+    def __init__(self, fname=None):
         """Constructor.
            - fname - the file name with configuration parameters,
            if not specified then it will be set to the default value at declaration.
@@ -194,19 +187,19 @@ class ConfigParameters(object) :
         self.fname_cp = 'confpars.txt'
 
 
-    def declareParameter(self, name='EMPTY', val=None, val_def=None, type='str', index=None) :
+    def declareParameter(self, name='EMPTY', val=None, val_def=None, type='str', index=None):
         par = Parameter(name, val, val_def, type, index)
         #self.dict_pars[name] = par
         self.dict_pars.update({name:par})
         return par
 
 
-    def declareListOfPars(self, list_name='EMPTY_LIST', list_val_def_type=None) :
+    def declareListOfPars(self, list_name='EMPTY_LIST', list_val_def_type=None):
         list_of_pars = []
 
-        if list_val_def_type is None : return None
+        if list_val_def_type is None: return None
 
-        for index,rec in enumerate(list_val_def_type) :
+        for index,rec in enumerate(list_val_def_type):
             #name = list_name + ':' + str(index)
             name = '%s:%03d'%(list_name, index)
             val, val_def, type = rec
@@ -220,24 +213,24 @@ class ConfigParameters(object) :
         return list_of_pars
 
 
-    def getListOfPars(self, name) :
+    def getListOfPars(self, name):
         return self.dict_lists[name]
 
 
-    def printListOfPars(self, name) :
+    def printListOfPars(self, name):
         list_of_pars = self.getListOfPars(name)
 
-        print('Parameters for list:', name)
-        for par in list_of_pars :
+        logger.info('Parameters for list:', name)
+        for par in list_of_pars:
             par.printParameter()
 
 
-    def printParameters(self) :
+    def printParameters(self):
         msg = self.getTextParameters()
         logger.info(msg, self.name)
 
 
-    def getTextParameters(self) :
+    def getTextParameters(self):
         txt = 'printParameters - Number of declared parameters in the dict: %d\n' % len(self.dict_pars)
         lpars = list(self.dict_pars.values())
         lpars.sort() # sort "in situ" - it does not return anything so can't use it any other way....
@@ -245,90 +238,84 @@ class ConfigParameters(object) :
         return txt + '  ' + '\n  '.join(list_of_recs)
 
 
-    def setDefaultValues(self) :
-        for par in self.dict_pars.values() :
+    def setDefaultValues(self):
+        for par in self.dict_pars.values():
             par.setDefaultValue()
 
 
-    def setParsFileName(self, fname=None) :
-        if fname is None :
+    def setParsFileName(self, fname=None):
+        if fname is None:
             self.fname = self.fname_cp
-        else :
+        else:
             self.fname = fname
 
 
-    def getParsFileName(self) :
+    def getParsFileName(self):
         return self.fname
 
 
-    def saveParametersInFile(self, fname=None) :
-        self.setParsFileName(fname)        
+    def saveParametersInFile(self, fname=None):
+        self.setParsFileName(fname)
         logger.info('Save configuration parameters in file: %s' % self.fname, self.name)
         f=open(self.fname,'w')
 
         lpars = list(self.dict_pars.values())
         lpars.sort() # sort "in situ" - it does not return anything so can't use it any other way....
-        for par in lpars :
+        for par in lpars:
             v = par.value()
             s = '%s %s\n' % (par.name().ljust(32), str(v))
             f.write(s)
-        f.close() 
+        f.close()
 
 
-    def saveParametersInFileV0(self, fname=None) :
-        self.setParsFileName(fname)        
+    def saveParametersInFileV0(self, fname=None):
+        self.setParsFileName(fname)
         logger.info('Save configuration parameters in file: %s' % self.fname, self.name)
         f=open(self.fname,'w')
-        for par in self.dict_pars.values() :
+        for par in self.dict_pars.values():
             v = par.value()
             s = '%s %s\n' % (par.name().ljust(32), str(v))
             f.write(s)
-        f.close() 
+        f.close()
 
 
-    def setParameterValueByName(self, name, str_val) :
+    def setParameterValueByName(self, name, str_val):
 
-        if not (name in list(self.dict_pars.keys())) :
+        if not (name in list(self.dict_pars.keys())):
             msg  = 'The parameter name %s is unknown in the dictionary.\n' % name
-            msg += 'WARNING! Parameter needs to be declared first. Skip this parameter initialization.\n' 
+            msg += 'WARNING! Parameter needs to be declared first. Skip this parameter initialization.\n'
             logger.warning(msg)
-            #print msg
             return
 
         self.dict_pars[name].setValueFromString(str_val)
 
 
-    def readParametersFromFile(self, fname=None) :
-        self.setParsFileName(fname)        
+    def readParametersFromFile(self, fname=None):
+        self.setParsFileName(fname)
         msg = 'Read configuration parameters from file: ' + self.fname
         logger.info(msg, self.name)
-        #print msg
 
-        if not os.path.exists(self.fname) :
+        if not os.path.exists(self.fname):
             msg = 'The file %s is not found, use default parameters.' % self.fname
             logger.warning(msg, self.name)
-            #print msg
             return
- 
+
         f=open(self.fname,'r')
-        for line in f :
-            if len(line) == 1 : continue # line is empty
+        for line in f:
+            if len(line) == 1: continue # line is empty
             fields = line.rstrip('\n').split(' ',1)
             self.setParameterValueByName(name=fields[0], str_val=fields[1].strip(' '))
-        f.close() 
+        f.close()
 
-#------------------------------
-#------------------------------
 
-def usage() :
+def usage():
     msg  = 'Use command: %s [<configuration-file-name>]\n'\
            'with a single or without arguments.' % sys.argv[0]
     msg = '\n%s\n%s\n%s' % (51*'-', msg, 51*'-')
     logger.warning(msg, self.name)
-    #print msg
 
 
-def getConfigFileFromInput() :
+def getConfigFileFromInput():
     """DO NOT PARSE INPUT PARAMETERS IN THIS APPLICATION
     This is interfere with other applications which really need to use input pars,
     for example maskeditor...
@@ -336,27 +323,23 @@ def getConfigFileFromInput() :
     return None
 
     msg = 'Input pars sys.argv: '
-    for par in sys.argv :  msg += par
+    for par in sys.argv:  msg += par
     logger.debug(msg, self.name)
-    #print msg
 
-    if len(sys.argv) > 2 : 
+    if len(sys.argv) > 2:
         usage()
         sys.exit('Too many arguments ...\nEXIT application ...\n')
 
-    elif len(sys.argv) == 1 : 
+    elif len(sys.argv) == 1:
         return None
 
-    else :
-        path = sys.argv[1]        
-        if os.path.exists(path) :
+    else:
+        path = sys.argv[1]
+        if os.path.exists(path):
             return path
-        else :
+        else:
             usage()
             msg  = 'Requested configuration file "%s" does not exist.\nEXIT application ...\n' % path
             sys.exit (msg)
 
-#------------------------------
-# confpars = ConfigParameters () # is moved
-#------------------------------
-
+# EOF

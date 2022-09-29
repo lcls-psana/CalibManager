@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-"""Dark run processing CLI 
+"""Dark run processing CLI
 
 This software was developed for the LCLS project.
 If you use all or part of it, please give an appropriate acknowledgement.
 
 @author Mikhail S. Dubrovin
 """
-
 import sys
 SCRNAME = sys.argv[0].rsplit('/',1)[-1]
 
@@ -19,9 +18,9 @@ def input_options_parser():
     com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'\
            + '\n         %prog -e mfxp16318 -d RAYONIX -c ./calib -r9 -P -D --zeropeds'
 
-    h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc' 
+    h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc'
     h_print_bits = '0-print nothing, +1-debug, +2-info, +4-warning, +8-error, +16-critical; default=036, minimal recommended=020'
-    h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all.'   
+    h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all.'
 
     parser = OptionParser(description='%prog - dark run processing CLI', usage='  %prog [options] args'+com_ex )
     parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345')
@@ -52,7 +51,7 @@ def input_options_parser():
     parser.add_option('--deploygeo',         dest='deploygeo',    default=False,  action='store_true',          help='deploy default geometry for Rayonix shaped/binned as data')
 
     return parser
- 
+
 
 if __name__ == "__main__":
 

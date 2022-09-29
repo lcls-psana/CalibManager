@@ -1,9 +1,8 @@
-#--------------------------------------------------------------------------
+
 # File and Version Information:
 #  $Id$
 #
 # Description:
-#------------------------------------------------------------------------
 
 """Logger - logbook or message storage
 
@@ -42,23 +41,15 @@ Usage ::
     * :py:class:`CalibManager.GUILogger.py`
     * :py:class:`CalibManager.ConfigParameters`
 
-This software was developed for the SIT project.  
+This software was developed for the SIT project.
 If you use all or part of it, please give an appropriate acknowledgment.
-
-@version $Id$
 
 @author Mikhail S. Dubrovin
 """
 from __future__ import print_function
 
-#------------------------------
-__version__ = "$Revision$"
-#------------------------------
-
 import os
 from time import localtime, strftime
-
-#------------------------------
 
 class Logger(object) :
     """Logbook for messages.
@@ -77,7 +68,7 @@ class Logger(object) :
         self.print_bits = print_bits
         self.setLevel(level)
         self.selectionIsOn = True # It is used to get total log content
-        
+
         self.log = []
         self._startLog(fname)
 
@@ -89,7 +80,7 @@ class Logger(object) :
 
 
     def setPrintBits(self, print_bits):
-        """Sets terminal printout bits: 1,2,4,8,16 for 'debug','info','warning','error','critical' 
+        """Sets terminal printout bits: 1,2,4,8,16 for 'debug','info','warning','error','critical'
         """
         self.print_bits = print_bits
 
@@ -128,11 +119,11 @@ class Logger(object) :
         """Store input message the 2D tuple of records, send request to append GUI.
         """
         tstamp    = self.timeStamp()
-        level     = self.levels[index] 
+        level     = self.levels[index]
         rec       = [tstamp, level, index, name, msg]
         self.log.append(rec)
 
-        if self._recordIsSelected(rec) :         
+        if self._recordIsSelected(rec) :
             str_msg = self._stringForRecord(rec)
             self._appendGUILog(str_msg)
             #print str_msg
@@ -185,7 +176,7 @@ class Logger(object) :
             self.fname_total = '%s-log-total.txt' % self.str_start_time
         else :
             self.fname       = fname
-            self.fname_total = self.fname + '-total' 
+            self.fname_total = self.fname + '-total'
 
         self.info ('Start session log file: ' + self.fname,       self.name)
         self.debug('Total log file name: '    + self.fname_total, self.name)
@@ -195,7 +186,7 @@ class Logger(object) :
         """Return the text content of the selected log records"""
         self.log_txt = ''
         for rec in self.log :
-            if self._recordIsSelected(rec) :         
+            if self._recordIsSelected(rec) :
                 self.log_txt += self._stringForRecord(rec) + '\n'
         return  self.log_txt
 
@@ -229,18 +220,15 @@ class Logger(object) :
         f.close()
         os.chmod(fname, mode)
 
-#-----------------------------
-
 logger = Logger(fname=None)
 
-#-----------------------------
 
 def test_Logger() :
 
     #logger.setLevel('debug')
     logger.setLevel('warning')
     logger.setPrintBits(0o177777) # print messages
-    
+
     logger.debug   ('This is a test message 1', __name__)
     logger.info    ('This is a test message 2', __name__)
     logger.warning ('This is a test message 3', __name__)
@@ -254,11 +242,10 @@ def test_Logger() :
     print('getLogContent():\n',      logger.getLogContent())
     print('getLogContentTotal():\n', logger.getLogContentTotal())
 
-#-----------------------------
 
 if __name__ == "__main__" :
     import sys
     test_Logger()
     sys.exit('End of test')
 
-#-----------------------------
+# EOF
