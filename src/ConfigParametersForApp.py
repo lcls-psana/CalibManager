@@ -1,16 +1,13 @@
-#----------------------------
+
 """:py:class:`ConfigParametersForApp` - class supporting configuration parameters for specific application.
 
-This software was developed for the SIT project.  
+This software was developed for the SIT project.
 If you use all or part of it, please give an appropriate acknowledgment.
-
-Author: Mikhail Dubrovin
 """
-from __future__ import print_function
+#from __future__ import print_function
 from __future__ import absolute_import
-#----------------------------
+
 __author__ = "Mikhail S. Dubrovin"
-#----------------------------
 
 from CalibManager.Logger import logger
 from .ConfigParameters import *
@@ -18,25 +15,18 @@ from PyQt5 import QtCore, QtGui
 from . import AppDataPath as apputils # for icons
 
 import PSCalib.GlobalUtils as gu
+from CalibManager.dir_root import DIR_PSDM_DATA, DIR_REPO
 
-#----------------------------
-
-class ConfigParametersForApp(ConfigParameters) :
+class ConfigParametersForApp(ConfigParameters):
     """Is intended as a storage for configuration parameters for CorAna project.
     """
     name = 'ConfigParametersForApp'
 
     list_pars = []
 
-    #char_expand    = ' *' # down-head triangle
-    #char_shrink    = ' ^' # down-head triangle
     char_expand    = u' \u25BC' # down-head triangle
     char_shrink    = u' \u25B2' # solid up-head triangle
-    #char_shrink    = u'\u25B6' # solid right-head triangle
-    #char_shrink    = u'\u25B7' # open right-head triangle 
 
-    #list_of_queues = ['psnehhiprioq', 'psfehhiprioq', 'psnehprioq', 'psfehprioq', 'psanaq',    'psnehq',    'psfehq']
-    #list_of_farms  = ['psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psanafarm', 'psnehfarm', 'psfehfarm']
     list_of_queues = ['psanaq',    'psnehhiprioq', 'psfehhiprioq', 'psnehprioq', 'psfehprioq', 'psnehq',    'psfehq']
     list_of_farms  = ['psanafarm', 'psnehfarm',    'psfehfarm',    'psnehfarm',  'psfehfarm',  'psnehfarm', 'psfehfarm']
     dict_of_queue_farm = dict(zip(list_of_queues, list_of_farms))
@@ -47,30 +37,29 @@ class ConfigParametersForApp(ConfigParameters) :
 
     list_geo_log_levels=['DEBUG', 'INFO', 'WARNING', 'CRITICAL', 'ERROR', 'NONE']
 
-    list_of_depl_cmod = [gu.PNCCD] # see also self.dark_deploy_cmod 
-    
+    list_of_depl_cmod = [gu.PNCCD] # see also self.dark_deploy_cmod
+
     par01 = 'MPA1SdCp7h18m'
     par02 = __author__.split()[2].lower()
 
     dict_bjpeds = {} # dictionary of run_num:BatchJobPedestals objects
-    dict_guidarklistitem = {} # dictionary of run_num:GUIDarkListItem objects 
+    dict_guidarklistitem = {} # dictionary of run_num:GUIDarkListItem objects
 
-    def __init__(self, fname=None) :
+    def __init__(self, fname=None):
         """Constructor.
         @param fname  the file name with configuration parameters, if not specified then it will be set to the default value at declaration.
         """
         ConfigParameters.__init__(self)
         self.fname_cp = 'confpars-calibman.txt' # Re-define default config file name
-        
+
         self.declareAllParameters()
         self.readParametersFromFile (fname)
         self.initRunTimeParameters()
         self.defineStyles()
 
-  
-    def initRunTimeParameters(self) :
+
+    def initRunTimeParameters(self):
         self.iconsAreLoaded    = False
-        #self.char_expand = u' \u25BE' # down-head triangle
         self.guilogger         = None
         self.guimain           = None
         self.guidark           = None
@@ -79,17 +68,17 @@ class ConfigParametersForApp(ConfigParameters) :
         self.guitabs           = None
         self.guistatus         = None
         self.guiinsexpdirdet   = None
-        self.guifilebrowser    = None 
-        self.blsp              = None 
-        self.guidarkcontrolbar = None 
+        self.guifilebrowser    = None
+        self.blsp              = None
+        self.guidarkcontrolbar = None
         self.guigeometry       = None
         self.guimetrology      = None
         self.dark_list         = None
-        self.guifilemanager    = None 
+        self.guifilemanager    = None
         self.guifilemanagersingle = None
-        self.guifilemanagersinglecontrol = None 
+        self.guifilemanagersinglecontrol = None
         self.guifilemanagergroup  = None
-        self.guifilemanagergroupcontrol = None 
+        self.guifilemanagergroupcontrol = None
         self.guiexpcalibdir    = None
         self.guidirtree        = None
         self.dirtreemodel      = None
@@ -97,16 +86,12 @@ class ConfigParametersForApp(ConfigParameters) :
         self.commandlinecalib  = None
         self.plotimgspe        = None
 
-        #self.thread_check_new_xtc_files = None
+        if self.bat_queue.value() == 'psanacsq': self.bat_queue.setValue('psanaq')
 
-        #if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psnehhiprioq')
-        if self.bat_queue.value() == 'psanacsq' : self.bat_queue.setValue('psanaq')
 
-#------------------------------
+    def setIcons(self):
 
-    def setIcons(self) :
-
-        if self.iconsAreLoaded : return
+        if self.iconsAreLoaded: return
 
         self.iconsAreLoaded = True
 
@@ -166,17 +151,16 @@ class ConfigParametersForApp(ConfigParameters) :
         self.icon_help          = self.icon_unknown
         self.icon_reset         = self.icon_reload
 
-#-----------------------------
-        
-    def declareAllParameters(self) :
-        # Possible typs for declaration : 'str', 'int', 'long', 'float', 'bool' 
+
+    def declareAllParameters(self):
+        # Possible typs for declaration: 'str', 'int', 'long', 'float', 'bool'
 
         # GUILogger.py
         self.log_level        = self.declareParameter( name='LOG_LEVEL_OF_MSGS',    val_def='info',         type='str' )
         self.log_file         = self.declareParameter( name='LOG_FILE_FOR_LEVEL',   val_def='./log_for_level.txt',       type='str' )
-        #self.log_file_total  = self.declareParameter( name='LOG_FILE_TOTAL',       val_def='./log_total.txt',           type='str' )
         self.save_log_at_exit = self.declareParameter( name='SAVE_LOG_AT_EXIT',     val_def=True,           type='bool')
-        self.dir_log_cpo      = self.declareParameter( name='DIR_FOR_LOG_FILE_CPO', val_def='/reg/g/psdm/logs/calibman', type='str' )
+        #self.dir_log_cpo      = self.declareParameter( name='DIR_FOR_LOG_FILE_CPO', val_def='/reg/g/psdm/logs/calibman', type='str' )
+        self.dir_log_cpo      = self.declareParameter( name='DIR_FOR_LOG_FILE_CPO', val_def=DIR_REPO+'logs/calibman', type='str' )
 
         # GUIMain.py (10, 25, 800, 700)
         self.main_win_width  = self.declareParameter( name='MAIN_WIN_WIDTH',  val_def=800, type='int' )
@@ -185,7 +169,7 @@ class ConfigParametersForApp(ConfigParameters) :
         self.main_win_pos_y  = self.declareParameter( name='MAIN_WIN_POS_Y',  val_def=5,   type='int' )
 
         # GUIInsExpDirDet.py
-        self.instr_dir          = self.declareParameter( name='INSTRUMENT_DIR',    val_def='/reg/d/psdm',  type='str' ) 
+        self.instr_dir          = self.declareParameter( name='INSTRUMENT_DIR',    val_def=DIR_PSDM_DATA,  type='str' )
         self.instr_name         = self.declareParameter( name='INSTRUMENT_NAME',   val_def='Select',       type='str' ) # 'CXI'
         self.exp_name           = self.declareParameter( name='EXPERIMENT_NAME',   val_def='Select',       type='str' ) # 'cxitut13'
         self.det_but_title      = self.declareParameter( name='DETECTOR_BUT_TITLE',val_def='Select',       type='str' ) # 'Select' or 'Selected:N'
@@ -249,32 +233,6 @@ class ConfigParametersForApp(ConfigParameters) :
         self.plot_intens_min = self.declareParameter( name='PLOT_INTENSITY_MIN',    val_def='', type='str' )
         self.plot_intens_max = self.declareParameter( name='PLOT_INTENSITY_MAX',    val_def='', type='str' )
 
-        # GUIGrabSubmitELog.py
-        #self.cbx_more_options    = self.declareParameter( name='CBX_SHOW_MORE_OPTIONS',   val_def=False,             type='bool' )
-        #self.img_infname         = self.declareParameter( name='IMG_INPUT_FNAME',  val_def='./img-1.ppm',            type='str' )
-        #self.img_oufname         = self.declareParameter( name='IMG_OUTPUT_FNAME', val_def='./img-1.ppm',            type='str' )
-
-        #self.elog_post_des       = self.declareParameter( name='ELOG_POST_DESCRIPTION',   val_def='Image',           type='str' )
-        #self.elog_post_tag       = self.declareParameter( name='ELOG_POST_TAG',           val_def='SCREENSHOT',      type='str' )
-        #self.elog_post_ins       = self.declareParameter( name='ELOG_POST_INSTRUMENT',    val_def='AMO',             type='str' )
-        #self.elog_post_exp       = self.declareParameter( name='ELOG_POST_EXPERIMENT',    val_def='amodaq09',        type='str' )
-        #self.elog_post_in2       = self.declareParameter( name='ELOG_POST_INSTRUMENT_2',  val_def='NEH',             type='str' )
-        #self.elog_post_ex2       = self.declareParameter( name='ELOG_POST_EXPERIMENT_2',  val_def='CXI Instrument',  type='str' )
-        #self.elog_post_run       = self.declareParameter( name='ELOG_POST_RUN',           val_def='',                type='str' )
-        #self.elog_post_res       = self.declareParameter( name='ELOG_POST_RESPONCE',      val_def='',                type='str' )
-        #self.elog_post_msg       = self.declareParameter( name='ELOG_POST_MESSAGE',       val_def='',                type='str' )
-        #self.elog_post_usr       = self.declareParameter( name='ELOG_POST_USER_NAME',     val_def='Unknown',         type='str' )
-        #self.elog_post_sta       = self.declareParameter( name='ELOG_POST_STATION',       val_def='',                type='str' )
-        #self.elog_post_url       = self.declareParameter( name='ELOG_POST_URL',           val_def='',                type='str' )
-        #self.elog_post_cmd       = self.declareParameter( name='ELOG_POST_CHILD_COMMAND', val_def='',                type='str' )
-
-        # GUIDark.py
-        #self.use_dark_xtc_all  = self.declareParameter( name='USE_DARK_XTC_ALL_CHUNKS', val_def=True,  type='bool' )
-
-        #self.in_dir_dark       = self.declareParameter( name='IN_DIRECTORY_DARK', val_def='/reg/d/ana12/xcs/xcsi0112/xtc',type='str' )
-        #self.in_file_dark      = self.declareParameter( name='IN_FILE_NAME_DARK', val_def='e167-r0020-s00-c00.xtc',type='str' )
-
-        #self.bat_dark_total    = self.declareParameter( name='BATCH_DARK_TOTAL',     val_def=-1,       type='int' )
         self.bat_dark_start    = self.declareParameter( name='BATCH_DARK_START',      val_def=1,        type='int' )
         self.bat_dark_end      = self.declareParameter( name='BATCH_DARK_END',        val_def=1000,     type='int' )
         self.bat_dark_scan     = self.declareParameter( name='BATCH_DARK_SCAN',       val_def=10,       type='int' )
@@ -327,7 +285,6 @@ class ConfigParametersForApp(ConfigParameters) :
         self.med_picker     = self.declareParameter( name='MED_PICKER',          val_def= 5,                type='int' )
         self.med_img_fname  = self.declareParameter( name='MED_IMAGE_FNAME',     val_def='./work/plot.png', type='str' )
 
-#------------------------------
 
         self.list_of_dets   = ['CSPAD', 'CSPAD2x2', 'Princeton', 'pnCCD', 'Tm6740',\
                                'Opal1000', 'Opal2000', 'Opal4000', 'Opal8000',\
@@ -364,7 +321,7 @@ class ConfigParametersForApp(ConfigParameters) :
                                     'Zyla::FrameV']
         self.dict_of_det_data_types = dict( zip(self.list_of_dets, self.list_of_data_types) )
         #self.print_dict_of_det_data_types()
-        
+
         self.list_of_calib_types = ['CsPad::CalibV1',
                                     'CsPad2x2::CalibV1',
                                     'Princeton::CalibV1',
@@ -393,8 +350,6 @@ class ConfigParametersForApp(ConfigParameters) :
         self.dict_of_det_calib_types = dict( zip(self.list_of_dets, self.list_of_calib_types) )
         #self.print_dict_of_det_calib_types()
 
-#------------------------------
-
         det_cbx_states = [ (False, False ,'bool'), \
                            (False, False ,'bool'), \
                            (False, False ,'bool'), \
@@ -422,8 +377,6 @@ class ConfigParametersForApp(ConfigParameters) :
                            (False, False ,'bool') ]
         self.det_cbx_states_list = self.declareListOfPars( 'DETECTOR_CBX_STATE', det_cbx_states )
 
-#------------------------------
-
         self.const_types_cspad = [
             'center'
            ,'center_global'
@@ -446,11 +399,11 @@ class ConfigParametersForApp(ConfigParameters) :
            #,'beam_vector'
            #,'beam_intersect'
             ]
-        
+
         self.const_types_cspad2x2 = [
             'geometry'
            ,'center'
-           ,'tilt'     
+           ,'tilt'
            ,'pedestals'
            ,'pixel_status'
            ,'common_mode'
@@ -634,7 +587,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'geometry'
             ]
 
-        self.dict_of_det_const_types = dict( zip(self.list_of_dets, [ self.const_types_cspad 
+        self.dict_of_det_const_types = dict( zip(self.list_of_dets, [ self.const_types_cspad
                                                                      ,self.const_types_cspad2x2
                                                                      ,self.const_types_princeton
                                                                      ,self.const_types_pnccd
@@ -660,8 +613,8 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                      ,self.const_types_acqiris
                                                                      ,self.const_types_istar
                                                                       ]) )
-     
-        self.srcs_cspad = [ 
+
+        self.srcs_cspad = [
             'CxiDs1.0:Cspad.0'
            ,'CxiDs2.0:Cspad.0'
            ,'CxiDsd.0:Cspad.0'
@@ -669,8 +622,8 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XcsEndstation.0:Cspad.0'
            ,'XppGon.0:Cspad.0'
             ]
-        
-        self.srcs_cspad2x2 = [ 
+
+        self.srcs_cspad2x2 = [
             'CxiDg2.0:Cspad2x2.0'
            ,'CxiDg2.0:Cspad2x2.1'
            ,'CxiSc1.0:Cspad2x2.0'
@@ -698,8 +651,8 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XppGon.0:Cspad2x2.2'
            ,'XppGon.0:Cspad2x2.3'
             ]
-        
-        self.srcs_princeton = [ 
+
+        self.srcs_princeton = [
             'CxiEndstation.0:Princeton.0'
            ,'MecTargetChamber.0:Princeton.0'
            ,'MecTargetChamber.0:Princeton.1'
@@ -711,14 +664,14 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XcsBeamline.0:Princeton.0'
             ]
 
-        self.srcs_pnccd = [ 
+        self.srcs_pnccd = [
             'Camp.0:pnCCD.0'
            ,'Camp.0:pnCCD.1'
            ,'SxrEndstation.0:pnCCD.0'
            ,'XcsEndstation.0:pnCCD.0'
             ]
 
-        self.srcs_tm6740 = [ 
+        self.srcs_tm6740 = [
             'CxiDg1.0:Tm6740.0'
            ,'CxiDg2.0:Tm6740.0'
            ,'CxiDg4.0:Tm6740.0'
@@ -736,7 +689,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XppSb4Pim.1:Tm6740.1'
             ]
 
-        self.srcs_opal1000 = [ 
+        self.srcs_opal1000 = [
             'AmoBPS.0:Opal1000.0'
            ,'AmoBPS.0:Opal1000.1'
            ,'AmoEndstation.0:Opal1000.0'
@@ -763,7 +716,7 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XppEndstation.0:Opal1000.2'
             ]
 
-        self.srcs_opal2000 = [ 
+        self.srcs_opal2000 = [
             'CxiEndstation.0:Opal2000.1'
            ,'CxiEndstation.0:Opal2000.2'
            ,'CxiEndstation.0:Opal2000.3'
@@ -772,42 +725,42 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'MecTargetChamber.0:Opal2000.2'
             ]
 
-        self.srcs_opal4000 = [ 
+        self.srcs_opal4000 = [
             'CxiEndstation.0:Opal4000.1'
            ,'CxiEndstation.0:Opal4000.3'
            ,'MecTargetChamber.0:Opal4000.0'
            ,'MecTargetChamber.0:Opal4000.1'
             ]
 
-        self.srcs_opal8000 = [ 
+        self.srcs_opal8000 = [
             'MecTargetChamber.0:Opal8000.0'
            ,'MecTargetChamber.0:Opal8000.1'
             ]
 
-        self.srcs_orcafl40 = [ 
+        self.srcs_orcafl40 = [
             'XcsEndstation.0:OrcaFl40.0'
            ,'XppEndstation.0:OrcaFl40.0'
             ]
 
-        self.srcs_epix = [ 
+        self.srcs_epix = [
             'NoDetector.0:Epix.0'
            ,'XcsEndstation.0:Epix.0'
            ,'XcsEndstation.0:Epix.1'
             ]
 
-        self.srcs_epix10k = [ 
+        self.srcs_epix10k = [
             'NoDetector.0:Epix10k.0'
             ]
 
-        self.srcs_epix10ka = [ 
+        self.srcs_epix10ka = [
             'MfxEndstation.0:Epix10ka.0'
             ]
 
-        self.srcs_epix10ka2m = [ 
+        self.srcs_epix10ka2m = [
             'NoDetector.0:Epix10ka2M.0'
             ]
 
-        self.srcs_epix100a = [ 
+        self.srcs_epix100a = [
             'MecTargetChamber.0:Epix100a.0'
            ,'MfxEndstation.0:Epix100a.0'
            ,'NoDetector.0:Epix100a.0'
@@ -819,18 +772,18 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XcsEndstation.0:Epix100a.4'
             ]
 
-        self.srcs_fccd960 = [ 
+        self.srcs_fccd960 = [
             'XcsEndstation.0:Fccd960.0'
            ]
 
-        self.srcs_rayonix = [ 
+        self.srcs_rayonix = [
             'CxiEndstation.0:Rayonix.0'
            ,'MfxEndstation.0:Rayonix.0'
            ,'XppEndstation.0:Rayonix.0'
            ,'XppSb1Pim.0:Rayonix.0'
            ]
 
-        self.srcs_andor = [ 
+        self.srcs_andor = [
             'AmoEndstation.0:Andor.0'
            ,'MecTargetChamber.0:Andor.1'
            ,'MecTargetChamber.0:Andor.2'
@@ -839,35 +792,35 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'SxrEndstation.0:Andor.2'
            ]
 
-        self.srcs_andor3d = [ 
+        self.srcs_andor3d = [
             'SxrEndstation.0:DualAndor.0'
            ]
 
-        self.srcs_jungfrau = [ 
+        self.srcs_jungfrau = [
             'CxiEndstation.0:Jungfrau.0'
            ]
 
-        self.srcs_zyla = [ 
+        self.srcs_zyla = [
             'XppEndstation.0:Zyla.0'
            ]
 
-        self.srcs_uxi = [ 
+        self.srcs_uxi = [
             'DetLab.0:Uxi.0'
            ]
 
-        self.srcs_pixis = [ 
+        self.srcs_pixis = [
             'MecTargetChamber.0:Pixis.1'
            ]
 
-        self.srcs_streak = [ 
+        self.srcs_streak = [
             'DetLab.0:StreakC7700.0'
            ]
 
-        self.srcs_archon = [ 
+        self.srcs_archon = [
             'SxrEndstation.0:Archon.0'
            ]
 
-        self.srcs_acqiris = [ 
+        self.srcs_acqiris = [
             'AmoETOF.0:Acqiris.0'
            ,'AmoITOF.0:Acqiris.0'
            ,'Camp.0:Acqiris.0'
@@ -883,13 +836,13 @@ class ConfigParametersForApp(ConfigParameters) :
            ,'XppLas.0:Acqiris.0'
             ]
 
-        self.srcs_istar = [ 
+        self.srcs_istar = [
             'XcsEndstation.0:iStar.0'
            ,'XppEndstation.0:iStar.0'
            ,'DetLab.0:iStar.0'
            ]
 
-        self.dict_of_det_sources = dict( zip(self.list_of_dets, [ self.srcs_cspad 
+        self.dict_of_det_sources = dict( zip(self.list_of_dets, [ self.srcs_cspad
                                                                  ,self.srcs_cspad2x2
                                                                  ,self.srcs_princeton
                                                                  ,self.srcs_pnccd
@@ -944,31 +897,27 @@ class ConfigParametersForApp(ConfigParameters) :
                                                                        ,['ISTAR']
                                                                         ]) )
 
- 
-#------------------------------
 
         self.list_of_det_pars = zip(self.list_of_dets, self.list_of_data_types, self.det_cbx_states_list)
 
-#------------------------------
 
-    def list_of_dets_selected(self) :
+    def list_of_dets_selected(self):
         return [det for det,state in zip(self.list_of_dets,self.det_cbx_states_list) if state.value()]
 
-#------------------------------
-
-    def print_dict_of_det_data_types(self) :
-        print('List of detector names and associated types:')
+    def print_dict_of_det_data_types(self):
+        s = 'List of detector names and associated types:'
         for det, type in self.dict_of_det_data_types.items():
-            print('%10s : %s' % (det, type))
+            s += '\n%10s: %s' % (det, type)
+        logger.info(s)
 
-    def print_dict_of_det_calib_types(self) :
-        print('List of detector names and associated calibration types:')
+    def print_dict_of_det_calib_types(self):
+        s = 'List of detector names and associated calibration types:'
         for det, type in self.dict_of_det_calib_types.items():
-            print('%10s : %s' % (det, type))
+            s += '\n%10s: %s' % (det, type)
+        logger.info(s)
 
-#------------------------------
 
-    def defineStyles(self) :
+    def defineStyles(self):
         self.styleYellowish = "background-color: rgb(255, 255, 220); color: rgb(0, 0, 0);" # Yellowish
         self.stylePink      = "background-color: rgb(255, 200, 220); color: rgb(0, 0, 0);" # Pinkish
         self.styleYellowBkg = "background-color: rgb(240, 240, 100); color: rgb(0, 0, 0);" # YellowBkg
@@ -1023,34 +972,31 @@ class ConfigParametersForApp(ConfigParameters) :
 
         self.styleTitleInFrame = self.styleWhite # self.styleDefault # self.styleWhite # self.styleGray
 
-    def printParsDirectly(self) :
-        logger.info('Direct use of parameter:' + self.fname_ped.name() + ' ' + self.fname_ped.value(), self.name )     
-        logger.info('Direct use of parameter:' + self.fname_dat.name() + ' ' + self.fname_dat.value(), self.name )    
+    def printParsDirectly(self):
+        logger.info('Direct use of parameter:' + self.fname_ped.name() + ' ' + self.fname_ped.value(), self.name )
+        logger.info('Direct use of parameter:' + self.fname_dat.name() + ' ' + self.fname_dat.value(), self.name )
 
-    def close(self) :
+    def close(self):
 
-        if self.save_cp_at_exit.value() :
+        if self.save_cp_at_exit.value():
             fname = self.fname_cp
             logger.info('save configuration parameters in file: %s' % fname, __name__)
             self.saveParametersInFile( fname )
 
-#------------------------------
 
 confpars = ConfigParametersForApp()
 cp = confpars
 
-#------------------------------
 
-def test_ConfigParametersForApp() :
+def test_ConfigParametersForApp():
     confpars.printParameters()
     #confpars.printParsDirectly()
     confpars.saveParametersInFile()
 
-#------------------------------
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     import sys
     test_ConfigParametersForApp()
     sys.exit (0)
 
-#------------------------------
+# EOF
