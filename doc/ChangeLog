@@ -8,6 +8,17 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2022-09-29 Mikhail Dubrovin
+??? Tag: V02-00-13
+common modifications: code cleaning - remove spaces
+  app/calibrun - code cleaning
+  src/CommandLineCalib.py - switch to standard logging, remove batch processing
+  src/ConfigParameters.py - code cleaning
+  src/ConfigParametersForApp.py - code cleaning, import/use parameters from CalibManager.dir_root
+  src/FileNameManager.py - code cleaning
+  src/Logger.py - code cleaning
+  src/dir_root.py - new import stuff from Detector.dir_root and append it
+
 2022-09-20 Mikhail Dubrovin
 Tag: V02-00-12
 - fix plims fot QtAgg backend and get rid of libGL error
