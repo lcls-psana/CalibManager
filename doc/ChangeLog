@@ -8,8 +8,18 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+2022-10-07 Mikhail Dubrovin
+Tag: V02-00-13
+  app/calibfile - code cleaning
+  app/calibrun - multiple update - use DIR_REPO from Detector.dir_root, init logger
+  src/BatchLogScanParser.py - use standard logging
+  src/CommandLineCalib.py - code refactoring - get rid of batch mode dependence
+  src/ConfigParametersForApp.py - add parameter logname
+  src/FileDeployer.py - code cleaning, use standard logging, add dir/filemode parameters
+  src/FileNameManager.py - add methods for new logging
+  src/GlobalUtils.py - code cleaning, update method create_directory
+
 2022-09-29 Mikhail Dubrovin
-??? Tag: V02-00-13
 common modifications: code cleaning - remove spaces
   app/calibrun - code cleaning
   src/CommandLineCalib.py - switch to standard logging, remove batch processing
