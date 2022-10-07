@@ -9,40 +9,31 @@ If you use all or part of it, please give an appropriate acknowledgment.
 from __future__ import print_function
 #from __future__ import absolute_import
 
-
 from future import standard_library
-#try:
-#    QString = unicode
-#except NameError:
-#    # Python 3
-#    QString = str
 
 standard_library.install_aliases()
-
 
 import os
 import sys
 import pwd
 import socket
 import getpass
-#import time
+
 from time import localtime, gmtime, strftime, time, sleep
 try:
   from time import clock # removed in python 3.8
 except ImportError:
   from time import perf_counter as clock
-#from datetime import datetime
+
 import tempfile
 
 import numpy as np
 from subprocess import getoutput
 
-#import commands # use 'subprocess' instead of 'commands'
 import subprocess # for subprocess.Popen
 
 from CalibManager.Logger import logger
 from PyQt5 import QtCore, QtGui, QtWidgets
-#from LogBook import message_poster
 from .GUIPopupCheckList import *
 from .GUIPopupRadioList import *
 
@@ -82,15 +73,20 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
     return list_out
 
 
-def create_directory(dir, mode=0o777):
-    #print 'create_directory: %s' % dir
-    if os.path.exists(dir):
-        logger.debug('Directory exists: ' + dir, __name__)
+def create_directory(d, mode=0o777, umask=0o0):
+    """Creates directory and sets its mode
+    """
+    os.umask(umask)
+    if os.path.exists(d):
+        logger.debug('Directory exists: %s' % d)
     else:
-        os.makedirs(dir)
-        os.chmod(dir, mode)
-        #os.system(cmd)
-        logger.debug('Directory created: ' + dir, __name__)
+        try: os.makedirs(d, mode) #, exist_ok=True)
+        except Exception as err:
+           logger.debug('exception in os.makedirs("%s") err: %s' % (d,err))
+           return
+        #os.makedirs(d, mode, exist_ok=True)
+        os.chmod(d, mode)
+        logger.debug('Directory created: %s, mode(oct)=%s' % (d, oct(mode)))
 
 
 def create_path(path, depth=5, mode=0o777):
@@ -178,11 +174,14 @@ def call(command_seq, shell=False):
     subprocess.call(command_seq, shell=shell) # , stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 
 
-def subproc_in_log(command_seq, logname, env=None, shell=False, tmax_sec=500): # for example, command_seq=['bsub', '-q', cp.batch_queue, '-o', 'log-ls.txt', 'ls -l']
+def subproc_in_log(command_seq, logname, env=None, shell=False, tmax_sec=500):
+    """execute command_seq in subprocess, output results in log file,
+       returns error message or completein message.
+       ex: command_seq=['bsub', '-q', cp.batch_queue, '-o', 'log-ls.txt', 'ls -l']
+    """
     log = open(logname, 'w')
-    #p = subprocess.Popen(command_seq, stdout=log, stderr=subprocess.PIPE, env=env, shell=shell) #, stdin=subprocess.STDIN
+    p = subprocess.Popen(command_seq, stdout=log, stderr=log, env=env, shell=shell) #, stdin=subprocess.STDIN, stderr=subprocess.PIPE
     #p.wait()
-    p = subprocess.Popen(command_seq, stdout=log, stderr=log, env=env, shell=shell) #, stdin=subprocess.STDIN
     t0_sec = time()
     sys.stdout.write('subprocess is started')
     sys.stdout.flush()
@@ -194,7 +193,7 @@ def subproc_in_log(command_seq, logname, env=None, shell=False, tmax_sec=500): #
       if p and dt>tmax_sec:
         logger.info('subprocess is working too long - terminate waiting loop' % dt)
         break
-    err = p.stderr.read() if p and p.stderr is not None else 'UNDEFINED STATUS OF ERROR'
+    err = p.stderr.read() if p and p.stderr is not None else 'subprocess is completed'
     return err
 
 
@@ -871,9 +870,6 @@ def arr_rot_n90(arr, rot_ang_n90=0):
 
 def has_kerberos_ticket():
     """Checks to see if the user has a valid Kerberos ticket"""
-    #stream = os.popen('klist -s')
-    #output = getoutput('klist -4')
-    #resp = subprocess.call(["klist", "-s"])
     return True if subprocess.call(["klist", "-s"]) == 0 else False
 
 
@@ -905,10 +901,6 @@ def parse_token(token):
         pos_end = line.find(']', pos_beg)
         #print line
         timestamp = line[pos_beg+9:pos_end]
-
-        #date_object = datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
-        #date_object = datetime.strptime(timestamp, '%b %d %H:%M')
-        #print 'date_object', str(date_object)
 
     return timestamp
 
@@ -1032,9 +1024,6 @@ def get_pkg_tag(pkg_name='CalibManager'):
         last_line = lines[-1]
         fields = last_line.split()
         version = fields[-1].rstrip('/')
-        #print cmd, '\n', output
-        #print 'Last line: ', last_line
-        #print 'Version: ', version
         return version
     except:
         return 'V-is-N/A'
@@ -1052,19 +1041,11 @@ def is_good_lustre_version():
 
         fields = line_one.split()
         version = fields[1]
-
-        #print cmd, '\n', output
-        #print 'Necessary line_one: ', line_one
-        #print 'Lustre Version: ', version
-
         return False if version == '354504' else True
-
     except:
         return True
 
-#
-#  In case someone decides to run this module
-#
+
 if __name__ == "__main__":
     import sys
 
@@ -1078,53 +1059,6 @@ if __name__ == "__main__":
 
     pwd = get_pwd()
     print('pwd =', pwd)
-    #print_all_files_in_dir(pwd)
-
-    #command = 'ls -l'
-    #job_id_str, out, err = batch_job_submit(command, 'psnehq', 'log-ls.txt')
-    #print 'err =', err
-    #print 'out =', out
-    #print 'job_id_str =', job_id_str
-
-    #sleep(5) # sleep time in sec
-    #print batch_job_status(job_id_str, 'psnehq')
-    #print batch_job_status_and_nodename(job_id_str, 'psnehq')
-
-    #out,err = subproc(['df','-k','.'])
-    #print 'out=', out
-    #print 'err=', err
-
-    #path = '/reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc'
-    #print_parsed_path(path)
-    #print 'parse_xtc_path(): ', parse_xtc_path()
-    #print 'parse_xtc_path(path): ', parse_xtc_path(path)
-
-    #send_msg_with_att_to_elog(fname_att='../../work/cora-xcsi0112-r0015-data-time-plot.png')
-
-    #print 'xtc_fname_for_all_chunks(...): ', xtc_fname_for_all_chunks('e308-r0178-s02-c00.xtc')
-    #print 'xtc_fname_for_all_chunks(...): ', xtc_fname_for_all_chunks('/reg/d/psdm/XPP/xpptut13/xtc/e308-r0178-s02-c00.xtc')
-
-    #print 'Test 1:\n' + get_text_content_of_calib_dir_for_detector(path='/reg/d/psdm/XPP/xpptut13/calibXXX', subdir='CsPad::CalibV1', det='CSPAD')
-    #print 'Test 2:\n' + get_text_content_of_calib_dir_for_detector(path='/reg/d/psdm/XPP/xpptut13/calib/', subdir='CsPad2x2::CalibV1', det='CSPAD2x2')
-#    print 'Test 3:\n' + get_text_content_of_calib_dir_for_detector(path='/reg/d/psdm/XPP/xpptut13/calib', subdir='CsPad::CalibV1', det='CSPAD', calib_type='tilt')
-
-    #list_of_files = ['220-230.data', '220-end.data', '221-240.data', '528-end.data', '222-end.data', '659-800.data', '373-end.data', '79-end.data', '45-end.data']
-    #list_of_calib_files_with_run_range(list_of_files)
-
-    #status, msg = check_token(do_print=True)
-
-    #print 'Package version: ', get_pkg_version('CalibManager')
-
-    #print 'has_kerberos_ticket(): ', has_kerberos_ticket()
-
-    #status = is_good_lustre_version()
-    #print 'Lustre version status: %s' % status
-
-    #farm='psfehfarm' # psnehfarm, 'psanafarm'
-    #output, status = msg_and_status_of_lsf(farm)
-    #queue='psfehq' # psnehq, psfehq, psnehprioq, psfehprioq, psanaq
-    #print 'LSF status: \n%s \nqueue:%s, status:%s' % (output, queue, status)
-
     print('CalibManager package revision: "%s"' % get_pkg_version())
 
     from .FileNameManager import fnm
