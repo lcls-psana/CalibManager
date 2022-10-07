@@ -8,6 +8,15 @@ If you use all or part of it, please give an appropriate acknowledgement.
 @author Mikhail S. Dubrovin
 """
 import sys
+from Detector.UtilsLogging import STR_LEVEL_NAMES, init_logger, logging
+logger = logging.getLogger(__name__)
+
+from Detector.dir_root import os, DIR_ROOT, DIR_LOG_AT_START
+
+DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/calibrun')
+#DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/')
+#DIR_LOG_AT_START = os.path.join(DIR_ROOT, 'logs/atstart/')
+
 SCRNAME = sys.argv[0].rsplit('/',1)[-1]
 
 
@@ -16,30 +25,41 @@ def input_options_parser():
     from optparse import OptionParser
 
     com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'\
-           + '\n         %prog -e mfxp16318 -d RAYONIX -c ./calib -r9 -P -D --zeropeds'
+           + '\n         %prog -e mfxp16318 -d RAYONIX -c ./calib -r9 -P -D --zeropeds'\
+           + '\n         %prog -e xpptut15 -d RAYONIX -c calib -w work -r240 -P -D'
 
-    h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc'
-    h_print_bits = '0-print nothing, +1-debug, +2-info, +4-warning, +8-error, +16-critical; default=036, minimal recommended=020'
-    h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all.'
+    d_exp      = None
+    d_loglev   = 'INFO'
+    d_dirmode  = 0o2777
+    d_filemode = 0o666
+    d_workdir  = DIR_REPO
+    d_calibdir = None
+    d_xtcdir   = None
+    d_event_code = None
+
+    h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc, default = %s' % d_xtcdir
+    h_print_bits = 'DEPRECATED'
+    h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all., default = %s' % d_event_code
+    h_loglev  = 'logging mode, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
 
     parser = OptionParser(description='%prog - dark run processing CLI', usage='  %prog [options] args'+com_ex )
-    parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345')
+    parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345, default = %s' % d_exp)
     parser.add_option('-r', '--run',         dest='runnum',       default=None,  action='store', type='int',    help='run number')
     parser.add_option('-n', '--num_events',  dest='num_events',   default=None,  action='store', type='int',    help='number of events to process')
     parser.add_option('-s', '--skip_events', dest='skip_events',  default=None,  action='store', type='int',    help='number of events to skip before processing')
     parser.add_option('-m', '--scan_events', dest='scan_events',  default=None,  action='store', type='int',    help='number of events to scan data and search for selected detector(s)')
-    parser.add_option('-f', '--event_code',  dest='event_code',   default=None,  action='store', type='string', help=h_event_code)
+    parser.add_option('-f', '--event_code',  dest='event_code',   default=d_event_code,  action='store', type='string', help=h_event_code)
     parser.add_option('-B', '--thr_int_min', dest='thr_int_min',  default=None,  action='store', type='float',  help='minimal threshold on intensity for pixel_status (intens<thr - dead pixel)')
     parser.add_option('-T', '--thr_int_max', dest='thr_int_max',  default=None,  action='store', type='float',  help='maximal threshold on intensity for pixel_status (intens>thr - satturated pixel)')
     parser.add_option('-b', '--thr_rms_min', dest='thr_rms_min',  default=None,  action='store', type='float',  help='minimal threshold on rms for pixel_status (rms<thr - cold pixel)')
     parser.add_option('-t', '--thr_rms',     dest='thr_rms_max',  default=None,  action='store', type='float',  help='maximal threshold on rms for pixel_status (rms>thr - hot pixel)')
     parser.add_option('-v', '--runrange',    dest='runrange',     default=None,  action='store', type='string', help='validity run range, ex.: 123-567 or 123-end')
-    parser.add_option('-q', '--queue',       dest='queue',        default=None,  action='store', type='string', help='queue name, ex: psnehq, psfehq, psanacsq. If specified - run in batch')
-    parser.add_option('-w', '--workdir',     dest='workdir',      default=None,  action='store', type='string', help='work directory, ex: ./work')
-    parser.add_option('-c', '--calibdir',    dest='calibdir',     default=None,  action='store', type='string', help='non-standard path to calib directory, ex: ./calib')
+    parser.add_option('-q', '--queue',       dest='queue',        default=None,  action='store', type='string', help='DEPRECATED queue name, ex: psnehq, psfehq, psanacsq. If specified - run in batch')
+    parser.add_option('-w', '--workdir',     dest='workdir',      default=d_workdir,  action='store', type='string', help='repository/work directory, default = %s' % d_workdir)
+    parser.add_option('-c', '--calibdir',    dest='calibdir',     default=None,  action='store', type='string', help='non-standard path to calib directory, ex: ./calib, default = %s' % d_calibdir)
     parser.add_option('-x', '--xtcdir',      dest='xtcdir',       default=None,  action='store', type='string', help=h_xtcdir)
     parser.add_option('-d', '--detector',    dest='detector',     default=None,  action='store', type='string', help='detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD')
-    parser.add_option('-p', '--print_bits',  dest='print_bits',   default=0o36,   action='store', type='int',   help=h_print_bits)
+    parser.add_option('-p', '--print_bits',  dest='print_bits',   default=0o36,  action='store', type='int',    help=h_print_bits)
     parser.add_option('-P', '--process',     dest='process',      default=False, action='store_true',           help='process xtc files and produce calib files under the "work" directory')
     parser.add_option('-D', '--deploy',      dest='deploy',       default=False, action='store_true',           help='deploy calibrated files under the "calib" directory')
     parser.add_option('-L', '--loadcfg',     dest='loadcfg',      default=False, action='store_true',           help='load and use configuration parameters from file after "calibman"')
@@ -47,8 +67,12 @@ def input_options_parser():
     parser.add_option('-U', '--intnhi',      dest='intnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on INTENSITY')
     parser.add_option('-z', '--rmsnlo',      dest='rmsnlo',       default=None,  action='store', type='float',  help='number of sigma from mean for low  limit on RMS')
     parser.add_option('-u', '--rmsnhi',      dest='rmsnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on RMS')
-    parser.add_option('--zeropeds',          dest='zeropeds',     default=False,  action='store_true',          help='deploy zero-pedestals (e.g. for hardware calibrated Rayonix)')
-    parser.add_option('--deploygeo',         dest='deploygeo',    default=False,  action='store_true',          help='deploy default geometry for Rayonix shaped/binned as data')
+    parser.add_option('--zeropeds',          dest='zeropeds',     default=False, action='store_true',           help='deploy zero-pedestals (e.g. for hardware calibrated Rayonix)')
+    parser.add_option('--deploygeo',         dest='deploygeo',    default=False, action='store_true',           help='deploy default geometry for Rayonix shaped/binned as data')
+
+    parser.add_option('--dirmode',       default=d_dirmode,   action='store', type=int, help='mode for all mkdir, default = %s' % oct(d_dirmode))
+    parser.add_option('--filemode',      default=d_filemode,  action='store', type=int, help='mode for all saved files, default = %s' % oct(d_filemode))
+    parser.add_option('-l', '--loglev',  default=d_loglev,    action='store', type=str, help=h_loglev)
 
     return parser
 
@@ -57,22 +81,33 @@ if __name__ == "__main__":
 
     if len(sys.argv) < 2: sys.exit('MISSING PARAMETERS\ntry: %s -h' % SCRNAME)
 
-    from CalibManager.GlobalUtils import * # os, ready_to_start, time, get_current_local_time_stamp
+    import CalibManager.GlobalUtils as gu  # os, ready_to_start, time, get_current_local_time_stamp
     from CalibManager.CommandLineCalib import CommandLineCalib#, sys
 
-    t0_sec  = time()
+    t0_sec  = gu.time()
 
-    if not ready_to_start(check_bits=0o1, fatal_bits=0o1):  #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
+    if not gu.ready_to_start(check_bits=0o1, fatal_bits=0o1):  #1,2,4 = old LUSTRE, Kerberos ticket,  AFS token
         sys.exit('Not ready to start aplication %s yet...' % SCRNAME)
 
-    sys.stdout.write('%s begin %s - dark run processing CLI\n'%(get_current_local_time_stamp(), SCRNAME))
+    sys.stdout.write('%s begin %s - dark run processing CLI\n'%(gu.get_current_local_time_stamp(), SCRNAME))
 
     parser = input_options_parser()
-    kwa, args = parser.parse_args()
-    kwargs = vars(kwa)
+    kwa, args = parser.parse_args()  # namespace, list
+    kwargs = vars(kwa)  # dict
+
+    import Detector.RepoManager as rm
+
+    dirrepo = kwa.workdir
+    repoman = rm.RepoManager(dirrepo, dirmode=kwa.dirmode, filemode=kwa.filemode, dir_log_at_start=DIR_LOG_AT_START)
+    logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login()))
+    init_logger(loglevel=kwa.loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s')
+    logger.info('log file: %s' % logname)
+    repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
+    kwargs['repoman'] = repoman
+    kwargs['logname'] = logname
 
     CommandLineCalib(**kwargs)
 
-    sys.exit('%s end of %s, consumed time = %.3f(sec)'%(get_current_local_time_stamp(), SCRNAME, time()-t0_sec))
+    sys.exit('%s end of %s, consumed time = %.3f(sec)'%(gu.get_current_local_time_stamp(), SCRNAME, gu.time()-t0_sec))
 
 # EOF
