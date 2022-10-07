@@ -159,8 +159,8 @@ class ConfigParametersForApp(ConfigParameters):
         self.log_level        = self.declareParameter( name='LOG_LEVEL_OF_MSGS',    val_def='info',         type='str' )
         self.log_file         = self.declareParameter( name='LOG_FILE_FOR_LEVEL',   val_def='./log_for_level.txt',       type='str' )
         self.save_log_at_exit = self.declareParameter( name='SAVE_LOG_AT_EXIT',     val_def=True,           type='bool')
-        #self.dir_log_cpo      = self.declareParameter( name='DIR_FOR_LOG_FILE_CPO', val_def='/reg/g/psdm/logs/calibman', type='str' )
         self.dir_log_cpo      = self.declareParameter( name='DIR_FOR_LOG_FILE_CPO', val_def=DIR_REPO+'logs/calibman', type='str' )
+        self.logname          = self.declareParameter( name='LOGNAME',              val_def='./work/logs/2022/log.txt',  type='str' )
 
         # GUIMain.py (10, 25, 800, 700)
         self.main_win_width  = self.declareParameter( name='MAIN_WIN_WIDTH',  val_def=800, type='int' )
@@ -977,7 +977,6 @@ class ConfigParametersForApp(ConfigParameters):
         logger.info('Direct use of parameter:' + self.fname_dat.name() + ' ' + self.fname_dat.value(), self.name )
 
     def close(self):
-
         if self.save_cp_at_exit.value():
             fname = self.fname_cp
             logger.info('save configuration parameters in file: %s' % fname, __name__)
