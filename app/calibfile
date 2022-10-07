@@ -1,37 +1,36 @@
 #!@PYTHON@
 #####!/usr/bin/env python
-#------------------------------
+
 from __future__ import print_function
 
 import os
 import sys
 import PSCalib.GlobalUtils as gu
 
-#------------------------------
+#from Detector.dir_root import os, DIR_ROOT, DIR_LOG_AT_START
+##DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/calibrun')
 
 LOG_FILE = '/reg/g/psdm/logs/calibman/#YYYY-MM/calibfile.txt'
 
-#------------------------------
 
-def print_pars(args, opts, defs) :
+def print_pars(args, opts, defs):
     """Prints command and input parameters"""
     print('Command:', ' '.join(sys.argv)+\
           '\nlaunches %s' % sys.argv[0].split('/')[-1] +\
           '\nwith argument %s and optional parameters:\n' % str(args)+\
           '<key>      <value>          <default>')
-    for k,v in opts.items() :
+    for k,v in opts.items():
         print('%s %s %s' % (k.ljust(10), str(v).ljust(16), str(defs[k]).ljust(16)))
 
-#------------------------------
 
-def calibfile() :
+def calibfile():
     """CLI to deploy, access, remove files from calib directory
     """
     parser = input_option_parser()
 
     (popts, pargs) = parser.parse_args()
 
-    fname   = popts.fname   # 'myfname.txt'
+    fname    = popts.fname  # 'myfname.txt'
     source   = popts.source # 'CxiDs2.0:Cspad.0'
     exp      = popts.exp    # 'cxif5315'
     runrng   = popts.runrng # '0-end'
@@ -40,13 +39,13 @@ def calibfile() :
     lfname   = popts.lfname # LOG_FILE # None
     verbos   = popts.verbos # True
 
-    if verbos :
+    if verbos:
         args = pargs
         opts = vars(popts)
         defs = vars(parser.get_default_values())
         print_pars(args, opts, defs)
 
-    if len(pargs) != 1 :
+    if len(pargs) != 1:
         parser.print_help()
         sys.exit('WARNING: command argument is missing. Check input parameters')
 
@@ -58,7 +57,7 @@ def calibfile() :
     cfname   = '%s.data' % (runrng)
     path     = '%s/%s/%s' % (ctypedir, ctype, cfname)
 
-    if verbos :
+    if verbos:
         print('dettype  =  %s' % dettype)
         print('calibgrp =  %s' % calibgrp)
         print('clbdir   =  %s' % clbdir)
@@ -68,41 +67,39 @@ def calibfile() :
 
     mode = pargs[0]
 
-    if mode == 'deploy' :
+    if mode == 'deploy':
         gu.deploy_file(fname, ctypedir, ctype, cfname, lfname, verbos)
 
-    elif mode == 'path' :
+    elif mode == 'path':
         print('Path: %s' % path)
 
-    elif mode == 'get' :
+    elif mode == 'get':
         print('Mode "%s"' % mode)
-        if os.path.exists(path) :
+        if os.path.exists(path):
             cmd = 'cp %s %s' % (path, fname)
-            if verbos : print('cmd: %s' % cmd)
+            if verbos: print('cmd: %s' % cmd)
             os.system(cmd)
             print('Saved file %s' % fname)
-        else :
+        else:
             print('Path "%s" DOES NOT EXIST' % path)
 
-    else :
+    else:
         print('Mode "%s" is UNKNOWN' % mode)
 
     #tstamp = gu.str_tstamp('%Y-%m-%dT%H:%M:%S', time())
     #logpref = rpu.log_batch_prefix(exp, run, procname)
     #logfname = '%s-%s.txt' % (logpref, tstamp)
 
-#------------------------------
 
-def usage() :
+def usage():
     return "\n%prog <mode> -f <fname> -e <experiment> -r <run-number> -s <full-source> -B <run-number-begin> ]"\
            "\n    where <mode> stands for deploy/path/get"\
            "\n  Ex.: %prog path   -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
            "\n       %prog get    -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
            "\n       %prog deploy -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"
 
-#------------------------------
 
-def input_option_parser() :
+def input_option_parser():
 
     from optparse import OptionParser
 
@@ -136,10 +133,9 @@ def input_option_parser() :
 
     return parser
 
-#------------------------------
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     calibfile()
     sys.exit(0)
 
-#------------------------------
+# EOF
