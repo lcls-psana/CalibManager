@@ -10,14 +10,17 @@ from __future__ import absolute_import
 
 import os
 
+import logging
+logger = logging.getLogger(__name__)
+#from CalibManager.Logger     import logger
+
 from .ConfigParametersForApp import cp
-from CalibManager.Logger     import logger
 from .FileNameManager        import fnm
 from . import GlobalUtils    as     gu
 from . import RegDBUtils     as     ru
 
 
-class BatchLogScanParser(object):
+class BatchLogScanParser():
     """Extracts EventKeys from batch log scan files
     """
 
@@ -30,8 +33,8 @@ class BatchLogScanParser(object):
         self.list_of_dets_selected  = cp.list_of_dets_selected # reference to method
         self.list_of_sources        = []
         self.list_of_types          = []
-        self.det_names_parsed       = None 
-        self.path                   = None 
+        self.det_names_parsed       = None
+        self.path                   = None
 
 
     def parse_batch_log_peds_scan(self, pattern='EventKey(type=psana.'):
@@ -39,7 +42,7 @@ class BatchLogScanParser(object):
            self.list_of_types and self.list_of_sources for all psana data types in file.
         """
 
-        if  self.path == fnm.path_peds_scan_batch_log(): return
+        if self.path == fnm.path_peds_scan_batch_log(): return
 
         self.list_of_detinfo_sources = []
         self.list_of_sources         = []
@@ -48,7 +51,7 @@ class BatchLogScanParser(object):
         if not self.make_set_of_lines_from_file_for_pattern(pattern): return
         self.make_list_of_types_and_sources(pattern)
 
- 
+
     def make_set_of_lines_from_file_for_pattern(self, pattern): # pattern='EventKey(type=psana.'
         """Makse self.list_of_found_lines - a set of lines from file specified containing pattern
         """
@@ -56,7 +59,7 @@ class BatchLogScanParser(object):
         self.path = fnm.path_peds_scan_batch_log()
 
         if not os.path.lexists(self.path):
-            logger.info('\nThe requested file: ' + self.path + '\nIS NOT AVAILABLE!', __name__)
+            logger.info('\nThe requested file: ' + self.path + '\nIS NOT AVAILABLE!')
             return False
 
         self.list_of_found_lines  = []
@@ -64,12 +67,12 @@ class BatchLogScanParser(object):
         fin = open(self.path, 'r')
         for line in fin:
             if pattern in line:
-                line_st = line.rstrip('\n').strip(' ')               
+                line_st = line.rstrip('\n').strip(' ')
                 if line_st in self.list_of_found_lines: continue # if the line is already in the list
                 self.list_of_found_lines.append(line_st)
                 #print 'found line:', line_st
 
-        fin.close() 
+        fin.close()
 
         return True
 
@@ -79,7 +82,7 @@ class BatchLogScanParser(object):
         for line in self.list_of_found_lines:
 
             #print line                                #EventKey(type=psana.CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2')
-            pos1 = line.find(pattern) + len(pattern) 
+            pos1 = line.find(pattern) + len(pattern)
             pos2 = line.rfind(')')                    #                    CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2'
             line1 = line[pos1:pos2]                   #                    CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2'
             fields = line1.split(',')
@@ -96,7 +99,7 @@ class BatchLogScanParser(object):
             pos1 = fields[1].find(patt) + len(patt)
             detinfo_src = fields[1][pos1:].strip('"\'') # DetInfo(CxiDg2.0:Cspad2x2.0)
             #print 'detinfo_src: ', detinfo_src
-            
+
             pos1 = detinfo_src.find('(') + 1
             pos2 = detinfo_src.rfind(')')
             src  = detinfo_src[pos1:pos2] # if pos2 != -1 elsw detinfo_src[pos1:]  # CxiDg2.0:Cspad2x2.0
@@ -109,15 +112,14 @@ class BatchLogScanParser(object):
 
     def print_list_of_types_and_sources(self):
         txt = self.txt_list_of_types_and_sources()
-        logger.info(txt, __name__)         
-        #print txt
+        logger.info(txt)
 
 
     def txt_list_of_types_and_sources(self):
 
         self.parse_batch_log_peds_scan()
         msg   = 'log file: %s \nExpecting data for detector(s): %s' % (self.path, self.det_name.value())
-        state = 'Sources found in scan:' 
+        state = 'Sources found in scan:'
         if self.list_of_sources == []:
             msg += '\nLog file %s' % self.dict_exists[self.scan_log_exists()] # is available or not
             msg += '\nLIST OF SOURCES IS EMPTY !!!'
@@ -141,7 +143,7 @@ class BatchLogScanParser(object):
 
     def get_list_of_sources (self):
         if self.scan_log_exists():
-            self.parse_batch_log_peds_scan()        
+            self.parse_batch_log_peds_scan()
             return self.list_of_sources
         # Use RegDB
         return ru.list_of_sources_in_run(cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value()))
@@ -186,7 +188,7 @@ class BatchLogScanParser(object):
             list_of_dtypes_for_det.append(type)
             list_of_srcs_for_det.append(src)
         #print 'list of types and sources for detector %s:\n  %s\n  %s' \
-        #      % (det_name, str(list_of_types_for_det), str(list_of_srcs_for_det))  
+        #      % (det_name, str(list_of_types_for_det), str(list_of_srcs_for_det))
         return list_of_dtypes_for_det, list_of_srcs_for_det, list_of_ctypes_for_det
 
 
