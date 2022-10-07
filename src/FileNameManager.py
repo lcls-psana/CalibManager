@@ -29,9 +29,7 @@ class FileNameManager:
         """
 
     def path_dir_work(self):
-        path = cp.dir_work.value()
-        #print 'path_dir_work:', path
-        return path
+        return cp.dir_work.value()
 
 
     def str_exp_run_for_xtc_path(self, path):
@@ -193,8 +191,13 @@ class FileNameManager:
         return self.path_prefix() + 'metro-align.txt'
 
 
+    def dir_results(self, dname='/results'):
+        return cp.dir_work.value() + dname
+
+
     def path_prefix(self):
-        return cp.dir_work.value() + '/' + cp.fname_prefix.value()
+        return self.dir_results() + '/' + cp.fname_prefix.value()
+        #return cp.dir_work.value() + '/' + cp.fname_prefix.value()
 
 
     def path_prefix_dark(self):
@@ -202,6 +205,8 @@ class FileNameManager:
 
 
     def log_file(self):
+        return cp.dir_work.value()
+
         return cp.dir_work.value() + '/' + logger.getLogFileName()
 
 
@@ -213,12 +218,27 @@ class FileNameManager:
         return '%s/%s/%s/%s-%s-%s%s' % (cp.dir_log_cpo.value(), year, month, name, gu.get_login(), gu.get_pid(), ext)
 
 
+    def logname_base(self):
+        return cp.logname.value().rsplit('.',1)[0]
+
+
+    def path_peds_scan_log(self):
+        return self.logname_base() + '-peds-scan.txt'
+        #return self.path_prefix_dark() + 'peds-scan-batch-log.txt'
+
+
+    def path_peds_aver_log(self):
+        return self.logname_base() + '-peds-aver.txt'
+        #return self.path_prefix_dark() + 'peds-aver-batch-log.txt'
+
+
     def path_peds_scan_psana_cfg(self):
         return self.path_prefix_dark() + 'peds-scan.cfg'
 
 
     def path_peds_scan_batch_log(self):
-        return self.path_prefix_dark() + 'peds-scan-batch-log.txt'
+        return self.path_peds_scan_log()
+        #return self.path_prefix_dark() + 'peds-scan-batch-log.txt'
 
 
     def path_peds_aver_psana_cfg(self):
@@ -226,7 +246,8 @@ class FileNameManager:
 
 
     def path_peds_aver_batch_log(self):
-        return self.path_prefix_dark() + 'peds-aver-batch-log.txt'
+        return self.path_peds_aver_log()
+        #return self.path_prefix_dark() + 'peds-aver-batch-log.txt'
 
 
     def path_peds_template(self):
