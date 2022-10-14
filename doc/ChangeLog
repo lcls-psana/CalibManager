@@ -7,6 +7,10 @@ Package author: Mikhail Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+2022-10-14 Mikhail Dubrovin
+Tag: V02-00-14
+  app/calibfile - use standard logging
+  app/calibrun - change d_dirmode=0o2774, d_filemode=0o664
 
 2022-10-07 Mikhail Dubrovin
 Tag: V02-00-13
