@@ -1,33 +1,38 @@
 #!@PYTHON@
 #####!/usr/bin/env python
 
-from __future__ import print_function
+#from __future__ import print_function
+
+#import logging
+from Detector.UtilsLogging import STR_LEVEL_NAMES, init_logger, logging
+logger = logging.getLogger(__name__)
 
 import os
 import sys
 import PSCalib.GlobalUtils as gu
 
-#from Detector.dir_root import os, DIR_ROOT, DIR_LOG_AT_START
-##DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/calibrun')
+from Detector.dir_root import os, DIR_ROOT, DIR_LOG_AT_START, DIR_ROOT_DATA
 
-LOG_FILE = '/reg/g/psdm/logs/calibman/#YYYY-MM/calibfile.txt'
+DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/calibfile')
+SCRNAME = sys.argv[0].rsplit('/',1)[-1]
 
 
 def print_pars(args, opts, defs):
     """Prints command and input parameters"""
-    print('Command:', ' '.join(sys.argv)+\
-          '\nlaunches %s' % sys.argv[0].split('/')[-1] +\
+    s = 'Command:', ' '.join(sys.argv)+\
+          '\nlaunches %s' % SCRNAME +\
           '\nwith argument %s and optional parameters:\n' % str(args)+\
-          '<key>      <value>          <default>')
+          '<key>      <value>          <default>'
     for k,v in opts.items():
-        print('%s %s %s' % (k.ljust(10), str(v).ljust(16), str(defs[k]).ljust(16)))
+        s += '\n%s %s %s' % (k.ljust(10), str(v).ljust(16), str(defs[k]).ljust(16))
+    logger.info(s)
+
 
 
 def calibfile():
     """CLI to deploy, access, remove files from calib directory
     """
     parser = input_option_parser()
-
     (popts, pargs) = parser.parse_args()
 
     fname    = popts.fname  # 'myfname.txt'
@@ -36,8 +41,21 @@ def calibfile():
     runrng   = popts.runrng # '0-end'
     ctype    = popts.ctype  # 'pedestals'
     clbdir   = popts.clbdir # './calib' # None
-    lfname   = popts.lfname # LOG_FILE # None
     verbos   = popts.verbos # True
+    loglev   = popts.loglev # 'INFO'
+    dirmode  = 0o2774
+    filemode = 0o664
+    verbos   = loglev != 'INFO'
+
+    import Detector.RepoManager as rm
+
+    repoman = rm.RepoManager(DIR_REPO, dirmode=dirmode, filemode=filemode, dir_log_at_start=DIR_LOG_AT_START)
+    logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login())) if popts.lfname is None else\
+              popts.lfname
+    init_logger(loglevel=loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s')
+    logger.info('log file: %s' % logname)
+    repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
+
 
     if verbos:
         args = pargs
@@ -52,39 +70,40 @@ def calibfile():
 
     dettype  = gu.det_type_from_source(source) # enumerated detector's type, e.g. ':Cspad.'
     calibgrp = gu.dic_det_type_to_calib_group[dettype] # 'Camera::CalibV1'
-    clbdir   = clbdir if clbdir is not None else '/reg/d/psdm/%s/%s/calib' % (exp[:3], exp)
+    clbdir   = clbdir if clbdir is not None else os.path.join(DIR_ROOT_DATA, '%s/%s/calib' % (exp[:3], exp))
     ctypedir = '%s/%s/%s' % (clbdir, calibgrp, source)
     cfname   = '%s.data' % (runrng)
     path     = '%s/%s/%s' % (ctypedir, ctype, cfname)
 
-    if verbos:
-        print('dettype  =  %s' % dettype)
-        print('calibgrp =  %s' % calibgrp)
-        print('clbdir   =  %s' % clbdir)
-        print('ctypedir =  %s' % ctypedir)
-        print('cfname   =  %s' % cfname)
-        print('path     =  %s' % path)
+    logging.debug('deployment parameters:'
+        + '\n  dettype  = %s' % dettype
+        + '\n  calibgrp = %s' % calibgrp
+        + '\n  clbdir   = %s' % clbdir
+        + '\n  ctypedir = %s' % ctypedir
+        + '\n  cfname   = %s' % cfname
+        + '\n  path     = %s' % path
+	)
 
     mode = pargs[0]
 
     if mode == 'deploy':
-        gu.deploy_file(fname, ctypedir, ctype, cfname, lfname, verbos)
+        gu.deploy_file(fname, ctypedir, ctype, cfname, lfname=None, verbos=verbos, filemode=filemode, dirmode=dirmode)
 
     elif mode == 'path':
-        print('Path: %s' % path)
+        logging.info('Path: %s' % path)
 
     elif mode == 'get':
-        print('Mode "%s"' % mode)
+        logging.info('Mode "%s"' % mode)
         if os.path.exists(path):
             cmd = 'cp %s %s' % (path, fname)
-            if verbos: print('cmd: %s' % cmd)
+            logging.debug('cmd: %s' % cmd)
             os.system(cmd)
-            print('Saved file %s' % fname)
+            logging.info('Saved file %s' % fname)
         else:
-            print('Path "%s" DOES NOT EXIST' % path)
+            logging.warning('Path "%s" DOES NOT EXIST' % path)
 
     else:
-        print('Mode "%s" is UNKNOWN' % mode)
+        logging.warning('Mode "%s" is UNKNOWN' % mode)
 
     #tstamp = gu.str_tstamp('%Y-%m-%dT%H:%M:%S', time())
     #logpref = rpu.log_batch_prefix(exp, run, procname)
@@ -96,7 +115,10 @@ def usage():
            "\n    where <mode> stands for deploy/path/get"\
            "\n  Ex.: %prog path   -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
            "\n       %prog get    -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
-           "\n       %prog deploy -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"
+           "\n       %prog deploy -f myfile.txt -e xpptut15 -r 54-59 -t pedestals -s XppGon.0:Cspad.0"\
+           "\n  Ex.: %prog path   -e xpptut15 -r 240-end -t pedestals -s XppEndstation.0:Rayonix.0"\
+           "\n       %prog get    -f myfile.txt -e xpptut15 -r 240-end -t pedestals -s XppEndstation.0:Rayonix.0"\
+           "\n       %prog deploy -f myfile.txt -e xpptut15 -r 239-end -t pedestals -s XppEndstation.0:Rayonix.0"\
 
 
 def input_option_parser():
@@ -109,7 +131,8 @@ def input_option_parser():
     d_runrng = '0-end'
     d_ctype  = 'pedestals'
     d_clbdir = None # './calib' # None
-    d_lfname = LOG_FILE # None
+    d_lfname = None
+    d_loglev = 'INFO'
     d_verbos = False
 
     h_fname  = 'input file name, default = %s' % d_fname
@@ -119,7 +142,8 @@ def input_option_parser():
     h_ctype  = 'calibration constants type, default = %s' % d_ctype
     h_clbdir = 'non-default (local) calibration directory, default = %s' % d_clbdir
     h_lfname = 'log file name, default = %s' % d_lfname
-    h_verbos = 'verbosity , default = %s' % d_verbos
+    h_loglev = 'logging level, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
+    h_verbos = 'DEPRECATED - USE loglev: verbosity , default = %s' % d_verbos
 
     parser = OptionParser(description='CLI to deploy, access, remove files from calib directory', usage=usage())
     parser.add_option('-f', '--fname',  default=d_fname,  action='store', type='string', help=h_fname)
@@ -129,6 +153,7 @@ def input_option_parser():
     parser.add_option('-t', '--ctype',  default=d_ctype , action='store', type='string', help=h_ctype )
     parser.add_option('-c', '--clbdir', default=d_clbdir, action='store', type='string', help=h_clbdir)
     parser.add_option('-l', '--lfname', default=d_lfname, action='store', type='string', help=h_lfname)
+    parser.add_option('-L', '--loglev', default=d_loglev, action='store', type='string', help=h_loglev)
     parser.add_option('-v', '--verbos', default=d_verbos, action='store_true',           help=h_verbos)
 
     return parser
