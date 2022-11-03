@@ -7,7 +7,6 @@
     from CalibManager.OpticAlignmentUtils import *
 """
 from __future__ import division
-#--------------------
 
 import os
 import sys
@@ -15,7 +14,6 @@ import math
 from math import atan2, degrees, sqrt, fabs, pi, radians, cos, sin
 import numpy as np
 
-#--------------------
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,13 +23,12 @@ TOZ = 100 # tolerance in z for warning
 
 FMT = '%12s %2i %12s %2i  %8d %8d %8d  %6d %6d %6d  %9.5f %9.5f %9.5f'
 
-#--------------------
 
 def rotation_cs(X, Y, C, S):
     """For numpy arrays X and Y returns the numpy arrays of Xrot and Yrot
     """
-    Xrot = X*C - Y*S 
-    Yrot = Y*C + X*S 
+    Xrot = X*C - Y*S
+    Yrot = Y*C + X*S
     return Xrot, Yrot
 
 def rotation(X, Y, angle_deg):
@@ -47,33 +44,25 @@ def rotate_vector_xy(v, angle_deg):
     xrot, yrot = rotation(v[0], v[1], angle_deg)
     return np.array((xrot, yrot, v[2]))
 
-#--------------------
 
-def create_directory(dname, mode=0o777):
+def create_directory(dname, mode=0o2775):
     if not dname or dname is None: return
     if os.path.exists(dname):
         pass
-        #logger.info('Directory exists: ', dname, __name__) 
     else:
-        os.makedirs(dname, mode)#, exist_ok=True)
-        #os.chmod(dname, mode)
-        ###os.system(cmd)
-        #print('XXX: Directory created: ', dname)
-        #logger.info('Directory created: ', dname, __name__) 
+        os.makedirs(dname, mode)
 
-#--------------------
 
-def save_textfile(text, path, accmode=0o777):
-    """Saves text in file specified by path. mode: 'w'-write, 'a'-append 
+def save_textfile(text, path, accmode=0o664):
+    """Saves text in file specified by path. mode: 'w'-write, 'a'-append
     """
     f=open(path,'w')
     f.write(text)
-    f.close() 
+    f.close()
     os.chmod(path, accmode)
 
-#--------------------
 
-def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_correction=True): 
+def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_correction=True):
     """Reads the metrology.txt file with original optical measurements
        and returns array of records [(n, x, y, z, quad),]
     """
@@ -82,7 +71,7 @@ def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_cor
 
     arr_opt = []
 
-    if not os.path.lexists(fname): 
+    if not os.path.lexists(fname):
         raise IOError('File "%s" is not available' % fname)
 
     logger.info('open file %s' % fname)
@@ -94,7 +83,7 @@ def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_cor
 
         line = linef.strip('\n').strip()
 
-        if not line: 
+        if not line:
             logger.debug('EMPTY LINE IS IGNORED')
             continue   # discard empty strings
 
@@ -117,14 +106,14 @@ def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_cor
         if not field0.lstrip("-+").isdigit(): # is 1-st field digital?
             logger.debug('RECORD IS IGNORED due to unexpected format of the line: %s' % line)
             continue
-        
+
         if len(list_of_fields) != 4: # Ignore lines with non-expected number of fields
             logger.warning('len(list_of_fields) =', len(list_of_fields))
             logger.warning('RECORD IS IGNORED due to unexpected format of the line: %s' % line)
-            continue              
+            continue
 
         n, x, y, z = [int(v) for v in list_of_fields]
-        
+
         logger.debug('ACCEPT RECORD: %3d %7d %7d %7d ' % (n, x, y, z))
 
         #arr_opt.append((quad, n, x, y, z))
@@ -140,7 +129,6 @@ def read_optical_metrology_file(fname='metrology.txt', apply_offset_and_tilt_cor
 
     return arr # _opt
 
-#--------------------
 
 def correct_detector_center_offset(arr):
     """Subtract x,y,z mean offset from point coordinates
@@ -155,7 +143,6 @@ def correct_detector_center_offset(arr):
 
     arr[:,1:4] -= det_center
 
-#--------------------
 
 def correct_detector_tilt(arr):
     """Correct for common detector tilt around x,y axes which may happen in optical metrology
@@ -185,9 +172,6 @@ def correct_detector_tilt(arr):
 
     arr[:,3] -= (tilt_x*x + tilt_y*y).astype(np.int32) # point z-coordinate correction
 
-    #exit('TEST EXIT')
-
-#--------------------
 
 def correct_twisters(arr_of_twisters, usez):
     """Apply x,y,z mean offset to all panel twisters
@@ -208,7 +192,6 @@ def correct_twisters(arr_of_twisters, usez):
         arr_of_twisters[:,7] = 0 # tilt Y
         arr_of_twisters[:,8] = 0 # tilt X
 
-#--------------------
 
 def make_table_of_segments(arr,qoff=0):
     """Reshape optical metrology table to arr_segs;
@@ -223,7 +206,7 @@ def make_table_of_segments(arr,qoff=0):
     npoints = arr.shape[0]
     nsegs = npoints//4 # int(npoints/4)
 
-    logger.debug('number of optical metrology points: %d number of segments: %d' % (npoints, nsegs)) 
+    logger.debug('number of optical metrology points: %d number of segments: %d' % (npoints, nsegs))
     arr_segs = np.empty(shape=(nsegs, 4, 5), dtype=np.int64)
 
     npoints = nsegs*4
@@ -243,37 +226,34 @@ def make_table_of_segments(arr,qoff=0):
 
     return arr_segs
 
-#------------------------------
 
 def is_correct_numeration(mylst):
     for i, v in enumerate(mylst):
-        if i==0: 
+        if i==0:
             if (v-1)%4 != 0: return False
             continue
         if v != (mylst[i-1]+1): return False
     return True
 
-#--------------------
 
 def check_points_numeration(arr_segs):
     logger.debug('%s\nIn %s' % (60*'-', sys._getframe().f_code.co_name))
 
     msg = ''
 
-    if is_correct_numeration(arr_segs[:,:,0].flatten()): msg += '\nOK - points in table are sequential' 
+    if is_correct_numeration(arr_segs[:,:,0].flatten()): msg += '\nOK - points in table are sequential'
     else: msg += '\nWARNING - numeration of points in table is NOT sequential or started from non-x4 number'
-    
+
     nsegs = arr_segs.shape[0]
     for nseg in range(nsegs):
         pnums = arr_segs[nseg,:,0]
         msg += '\nMeasured segment %2d  point numbers: (%3d %3d %3d %3d)'%\
                (nseg, pnums[0], pnums[1], pnums[2], pnums[3])
-        if is_correct_numeration(pnums): msg += ' OK - points in segment are sequential' 
+        if is_correct_numeration(pnums): msg += ' OK - points in segment are sequential'
         else: msg += '\nWARNING - numeration of points in segment is NOT sequential or started from non-x4 number'
 
     logger.debug(msg)
 
-#--------------------
 
 def segment_center_coordinates(arr1seg):
     """Returns segment center coordinates x, y, z in micrometer
@@ -283,7 +263,6 @@ def segment_center_coordinates(arr1seg):
     #n, x_um, y_um, z_um = 0.25 * arr1seg.sum(axis=0)
     return 0.25 * arr1seg.sum(axis=0)[1:4]
 
-#--------------------
 
 def evaluate_short_long_average(S1, S2, L1, L2, dS1, dS2, dL1, dL2, dZS1, dZS2, dZL1, dZL2):
     dZSA = 0.5 * (dZS1 + dZS2)
@@ -294,11 +273,10 @@ def evaluate_short_long_average(S1, S2, L1, L2, dS1, dS2, dL1, dL2, dZS1, dZS2, 
     dLA  = 0.5 * (dL1  + dL2)
     return LA, SA, dSA, dLA, dZLA, dZSA
 
-#--------------------
 
 def get_segment_vectors(arr1seg, iorgn=0):
     """Returns segment vectors relative to its (x,y) origin point.
-       (x,y) origin is a one of [0,3] corner, not necessarily pixel(0,0). 
+       (x,y) origin is a one of [0,3] corner, not necessarily pixel(0,0).
        For quality check origin corner does not matter.
        For real geometry it is important to get correct tilt angles.
 
@@ -314,36 +292,34 @@ def get_segment_vectors(arr1seg, iorgn=0):
         if i == iorgn: continue
         v = arr1seg[i,1:4] - arr1seg[iorgn,1:4]
         vlen = sqrt(np.sum(np.square(v)))
-        #print 'v.shape: %s, v: %s, vlen:%f ' % (v.shape, v, vlen)            
+        #print 'v.shape: %s, v: %s, vlen:%f ' % (v.shape, v, vlen)
         dic_v[vlen] = v
 
     list_v_keys = sorted(dic_v.keys())
     #print '   sorted(list_v_keys) = ', list_v_keys
     vS1, vL1, vD1 = [dic_v[k] for k in list_v_keys]
-    vS2 = vD1 - vL1 
-    vL2 = vD1 - vS1 
-    vD2 = vL1 - vS1 
+    vS2 = vD1 - vL1
+    vL2 = vD1 - vS1
+    vD2 = vL1 - vS1
     #print 'XXX: vS1, vS2, vL1, vL2, vD1, vD2 = ', vS1, vS2, vL1, vL2, vD1, vD2
 
     return vS1, vS2, vL1, vL2, vD1, vD2
 
-#--------------------
 
 def cyclic_index(i, csize=4):
     """Returns cyclic index in the range [0,3].
     """
     return i % csize
 
-#--------------------
 
 def segment_side_vectors_in_metrology_frame(arr1seg, iorgn):
     """Returns segment side vectors in optical metrology frame
        naming vectors vx, vy, vd relative to the segment origin point,
        assuming that (x,y) origin is in one of the [0,3] corners numerated clockwise in RHS.
 
-       Input : 
+       Input :
              - arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
-             - iorgn - (int) segment origin point index [0,3] 
+             - iorgn - (int) segment origin point index [0,3]
        Output:
              - vx1, vx2, vy1, vy2, vd1, vd2
     """
@@ -353,13 +329,12 @@ def segment_side_vectors_in_metrology_frame(arr1seg, iorgn):
 
     vx1, vy1, vd1 = [(arr1seg[i,1:4] - arr1seg[iorgn,1:4]) for i in (ix, iy, im)]
 
-    vx2 = vd1 - vy1 
-    vy2 = vd1 - vx1 
-    vd2 = vx1 - vy1 
+    vx2 = vd1 - vy1
+    vy2 = vd1 - vx1
+    vd2 = vx1 - vy1
 
     return vx1, vx2, vy1, vy2, vd1, vd2
 
-#--------------------
 
 def n90_orientation(x, y, gate_deg=45):
     """Returns (int) n90 dominant orientation of the (x,y) point in the range [0,3]
@@ -372,14 +347,13 @@ def n90_orientation(x, y, gate_deg=45):
           3
     return n90
 
-#--------------------
 
 def evaluate_length_width_angle(arr1seg, iorgn):
     """
-       Input: 
+       Input:
              - arr1seg - array of segment data arr1seg.shape=(4points, 4(n, x, y, z))
-             - iorgn - (int) segment origin point index [0,3] 
-       Output: 
+             - iorgn - (int) segment origin point index [0,3]
+       Output:
              - x_um, y_um, z_um - segment center coordinates
     """
     #if self.vrb & DEBUG: print 'In %s' % (sys._getframe().f_code.co_name)
@@ -416,8 +390,8 @@ def evaluate_length_width_angle(arr1seg, iorgn):
 
     XSize = fabs(LA if horiz else SA)
     YSize = fabs(SA if horiz else LA)
-    dZX   = dZLA    if horiz else dZSA 
-    dZY   = dZSA    if horiz else dZLA 
+    dZX   = dZLA    if horiz else dZSA
+    dZY   = dZSA    if horiz else dZLA
 
     D1   = sqrt(np.sum(np.square(vD1)))
     D2   = sqrt(np.sum(np.square(vD2)))
@@ -438,13 +412,13 @@ def evaluate_length_width_angle(arr1seg, iorgn):
 
     ix, iy = 0, 1
     tiltXY = atan2(vLA[iy], vLA[ix])
-    tiltXZ = atan2(dZX, XSize) 
-    tiltYZ = atan2(dZY, YSize) 
+    tiltXZ = atan2(dZX, XSize)
+    tiltYZ = atan2(dZY, YSize)
 
     #vLlen = sqrt(np.sum(np.square(vLA)))
     #vSlen = sqrt(np.sum(np.square(vSA)))
-    #tiltXZ = atan2(vLA[iz], vLlen) 
-    #tiltYZ = atan2(vSA[iz], vSlen)  
+    #tiltXZ = atan2(vLA[iz], vLlen)
+    #tiltYZ = atan2(vSA[iz], vSlen)
 
     if abs(tiltXY)>0.1 and tiltXY<0: tiltXY += 2*pi # move angle in range [0,2pi]
 
@@ -458,7 +432,6 @@ def evaluate_length_width_angle(arr1seg, iorgn):
     return S1, S2, dS1, dS2, ddS, L1, L2, dL1, dL2, ddL, D1, D2, dD, tiltXYDegree, tiltXZDegree, tiltYZDegree,\
            dZS1, dZS2, dZL1, dZL2, ddZS, ddZL, LA, SA, dSA, dLA, dZLA, dZSA, XSize, YSize, dZX, dZY
 
-#--------------------
 
 def txt_qc_table_xy(arr_segs, arr_iorgn):
     """Returns (str)  text of the quality check table
@@ -467,7 +440,7 @@ def txt_qc_table_xy(arr_segs, arr_iorgn):
     """
     logger.debug('%s\nIn %s' % (60*'-', sys._getframe().f_code.co_name))
 
-    sepline = '%s\n' % (124*'-') 
+    sepline = '%s\n' % (124*'-')
     txt = sepline
     txt += 'segm:        S1      S2     dS1     dS2        L1      L2     dL1     dL2    angle(deg)   D1      D2      dD   d(dS)   d(dL)\n'
     txt += sepline
@@ -492,7 +465,6 @@ def txt_qc_table_xy(arr_segs, arr_iorgn):
     txt += sepline + wrg
     return txt
 
-#--------------------
 
 def evaluate_deviation_from_flatness(arr1seg, iorgn):
         """Evaluates deviation from segment flatness in micron self.arr_dev_um.
@@ -505,7 +477,7 @@ def evaluate_deviation_from_flatness(arr1seg, iorgn):
         #vx, vy, vd = vL1, vS1, vD1
         vx1, vx2, vy1, vy2, vd1, vd2 = segment_side_vectors_in_metrology_frame(arr1seg, iorgn)
         vx, vy, vd = vx1, vy1, vd1
-        #print vx, vy, vd, 
+        #print vx, vy, vd,
 
         vort = np.array(np.cross(vx, vy), dtype=np.double) # vort = [vx x vy]        - vector product
         norm = sqrt(np.sum(vort*vort))                     # norm = |vort|             - length of the vector vort
@@ -520,7 +492,6 @@ def evaluate_deviation_from_flatness(arr1seg, iorgn):
 
         return dev
 
-#--------------------
 
 def txt_qc_table_z(arr_segs, arr_iorgn):
     """Returns (str) text of the quality check table
@@ -529,7 +500,7 @@ def txt_qc_table_z(arr_segs, arr_iorgn):
     """
     logger.debug('%s\nIn %s' % (60*'-', sys._getframe().f_code.co_name))
 
-    sepline = '%s\n' % (137*'-') 
+    sepline = '%s\n' % (137*'-')
     txt = sepline
     txt += 'segm:        SA      LA   XSize   YSize    dZS1  dZS2  dZL1  dZL2    dZSA  dZLA  ddZS  ddZL     dZX   dZY   angXZ(deg) angYZ(deg) dz3(um)\n'
     txt += sepline
@@ -553,9 +524,8 @@ def txt_qc_table_z(arr_segs, arr_iorgn):
                    arr_dev_um)
         if fabs(arr_dev_um) > TOZ: wrg += '  WARNING segm %2d:  |%.1f| > %.1f\n' % (nseg, arr_dev_um, TOZ)
     txt += sepline + wrg
-    return txt #+'\n' 
+    return txt #+'\n'
 
-#--------------------
 
 def print_quality_check_tables(arr_segs, arr_iorgn):
 
@@ -564,11 +534,10 @@ def print_quality_check_tables(arr_segs, arr_iorgn):
 
     logger.info('Z quality check for optical metrology measurements \n%s'%\
                 txt_qc_table_z(arr_segs, arr_iorgn))
- 
-#--------------------
+
 
 def segment_metrology_constants(arr1seg, iorgn):
-    """Returns tuple of segment raw metrology constants 
+    """Returns tuple of segment raw metrology constants
        as they are defined in metrology file, before transforming to qudrants, detector, etc.
     """
     #print 'segment metrology data:\n%s' % str(arr1seg[:,1:4])
@@ -601,7 +570,6 @@ def segment_metrology_constants(arr1seg, iorgn):
 
     return mean_xyz + (rot_xy_deg, rot_xz_deg, rot_yz_deg, tilt_xy_deg, tilt_xz_deg, tilt_yz_deg)
 
-#--------------------
 
 def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_deg, segnums_in_daq,\
                           def_constants, center_offset_optmet, center_ip_twister, usez):
@@ -660,7 +628,7 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
                 arr_quads[q,s,2] = 0 #Z
                 arr_quads[q,s,7] = 0 # tilt Y
                 arr_quads[q,s,8] = 0 # tilt X
-                
+
         #print 'offset quad center:\n', arr_quads[q,:,:2]
 
         quad_deg = quad_orientation_deg[q]
@@ -714,7 +682,6 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
     logger.info('constants form list_geo_recs:\n%s' % str_geo_constants(list_geo_recs))
     return list_geo_recs
 
-#--------------------
 
 def geometry_constants_v1(arr_segs, arr_iorgn, def_constants, segnums_in_daq, center_ip_twister, usez):
                        #, nsegs_in_quad, quad_orientation_deg, center_offset):
@@ -773,19 +740,16 @@ def last_record_v1(name_subd, ind_subd, ip_twister):
     return ('IP', 0, name_subd, ind_subd) + ip_twister + (0, 0, 0)
     #return ('IP', 0, name_subd, ind_subd, 0, 0,  1000000, 0, 0, 0, 0, 0, 0)
 
-#--------------------
 
 def str_geo_constants(lst):
     """Returns str from tuple/liat of geometry constants.
     """
     return '\n'.join([FMT % tuple(rec) for rec in lst])
 
-#--------------------
 
 def str_comment(comments):
     return '\n# '+'\n# '.join(['COMMENT:%02d %s'%(i,s) for i,s in enumerate(comments)])
 
-#--------------------
 
 def str_geo_constants_hat():
     #from CalibManager.GlobalUtils import get_login, get_current_local_time_stamp
@@ -812,7 +776,6 @@ def str_geo_constants_hat():
         '\n# HDR PARENT IND     OBJECT IND    X0[um]   Y0[um]   Z0[um]   ROT-Z  ROT-Y  ROT-X     TILT-Z    TILT-Y    TILT-X'\
         '\n'
 
-#--------------------
 
 def default_constants_epix10ka2m_v0():
     # HDR PARENT IND     OBJECT IND    X0[um]   Y0[um]   Z0[um]   ROT-Z ROT-Y ROT-X     TILT-Z   TILT-Y   TILT-X
@@ -849,7 +812,6 @@ def default_constants_epix10ka2m_v0():
         (IP    , 0,    CAMERA, 0,         0,        0,   100000,      90,     0,     0,    0,  0,  0)\
     )
 
-#--------------------
 
 def default_constants_epix10ka2m_v1():
     # HDR PARENT IND  OBJECT IND    X0[um]   Y0[um]   Z0[um]     ROT-Z   ROT-Y   ROT-X TILT-Z TILT-YTILT-X
@@ -876,7 +838,6 @@ def default_constants_epix10ka2m_v1():
       (    IP,  0,  CAMERA,  0,         0,        0,   100000,      90,      0,      0,   0,   0,   0)\
     )
 
-#--------------------
 
 class OpticalMetrologyEpix10ka2M():
     """Optical metrology measurements processing for Epix10ka2M"""
@@ -932,7 +893,7 @@ class OpticalMetrologyEpix10ka2M():
             ( 90,180,270,  0),\
             (180,270,  0, 90),\
             (270,  0, 90,180))[(self.rot+self.qoff)%4] #[self.rot%4]
- 
+
         # metrology point index in range [0,3] for "origin" - 0 pixel in DAQ
         SEG_XY_ORIGIN_EPIX10KA2M =\
            ((1,1,1,1, 2,2,2,2, 3,3,3,3, 0,0,0,0),\
@@ -942,19 +903,19 @@ class OpticalMetrologyEpix10ka2M():
 
         DEF_CONSTANTS = default_constants_epix10ka2m_v0()
         CENTER_OFFSET_OPTMET = (self.xc, self.yc)
-        
+
         arr_points = read_optical_metrology_file(fname=self.ifname, apply_offset_and_tilt_correction=self.docorr)
         logger.debug('Array of points:\n%s' % str(arr_points))
 
         arr_segs = make_table_of_segments(arr_points) #, self.qoff)
         logger.debug('Array of segments:\n%s' % str(arr_segs))
-        
+
         check_points_numeration(arr_segs)
-        
+
         print_quality_check_tables(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M)
-        
+
         logger.info('default constants:\n%s' % str_geo_constants(DEF_CONSTANTS))
-        
+
         lst = geometry_constants_v0(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M, NSEGS_IN_QUAD_EPIX10KA2M,\
                                  QUAD_ORIENTATION_DEG, METROLOGY_SEGNUMS_IN_DAQ, DEF_CONSTANTS,\
                                  CENTER_OFFSET_OPTMET, CENTER_IP_TWISTER, self.usez)
@@ -969,11 +930,10 @@ class OpticalMetrologyEpix10ka2M():
         logger.info('geometry constants:\n%s' % geo_cons)
 
         dname = os.path.dirname(self.ofname)
-        create_directory(dname, mode=0o777)
+        create_directory(dname, mode=0o2775)
         save_textfile(geo_cons, self.ofname, accmode=0o664)
         logger.info('geometry constants saved in file %s' % self.ofname)
 
-    #--------------------
 
     def proc_optical_metrology_data_v1(self):
         """v0 process metrology withoiut quads
@@ -1027,19 +987,19 @@ class OpticalMetrologyEpix10ka2M():
         DEF_CONSTANTS = default_constants_epix10ka2m_v1()
         #CENTER_OFFSET_OPTMET = (self.xc, self.yc)
         CENTER_IP_TWISTER = (self.xcip, self.ycip, self.zcip, self.azip, 0, 0)
-        
+
         arr_points = read_optical_metrology_file(fname=self.ifname, apply_offset_and_tilt_correction=self.docorr)
         logger.debug('Array of points:\n%s' % str(arr_points))
 
         arr_segs = make_table_of_segments(arr_points, self.qoff)
         logger.debug('Array of segments:\n%s' % str(arr_segs))
-        
+
         check_points_numeration(arr_segs)
-        
+
         print_quality_check_tables(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M)
-        
+
         logger.info('default constants:\n%s' % str_geo_constants(DEF_CONSTANTS))
-        
+
         lst = geometry_constants_v1(arr_segs, SEG_XY_ORIGIN_EPIX10KA2M, DEF_CONSTANTS,\
                       METROLOGY_SEGNUMS_IN_DAQ, CENTER_IP_TWISTER, self.usez)
 
@@ -1058,14 +1018,13 @@ class OpticalMetrologyEpix10ka2M():
         logger.info('geometry constants:\n%s' % geo_cons)
 
         dname = os.path.dirname(self.ofname)
-        create_directory(dname, mode=0o777)
+        create_directory(dname, mode=0o2775)
         save_textfile(geo_cons, self.ofname, accmode=0o664)
         logger.info('geometry constants saved in file %s' % self.ofname)
 
-#--------------------
 
 if __name__ == "__main__":
     sys.exit('Try command> optical_metrology_epix10ka2m')
 
-#--------------------
+# EOF
 

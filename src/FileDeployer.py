@@ -76,7 +76,7 @@ def get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, m
 
 
 def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_confirm=True, zeropeds=False, deploygeo=False,\
-                       dirmode=0o2777, filemode=0o664):
+                       dirmode=0o2775, filemode=0o664, group='ps-users'):
     """Deploys the calibration file(s)"""
 
     list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode, zeropeds, deploygeo)
@@ -99,7 +99,7 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
 
     for cmd in list_of_deploy_commands:
         #print 'cmd: ', cmd
-        if is_allowed_command(cmd, list_src_cbx): fd.procDeployCommand(cmd, mode, dirmode=dirmode, filemode=filemode)
+        if is_allowed_command(cmd, list_src_cbx): fd.procDeployCommand(cmd, mode, dirmode=dirmode, filemode=filemode, group=group)
 
     #---->>> DCS hdf5 file deployment
     return deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx)
@@ -235,7 +235,7 @@ class FileDeployer(object):
         pass
 
 
-    def procDeployCommand(self, cmd, comment='dark', dirmode=0o2777, filemode=0o664):
+    def procDeployCommand(self, cmd, comment='dark', dirmode=0o2775, filemode=0o664, group='ps-users'):
         """Accepts command like 'cp path_inp path_out' and replace it by command 'cat path_inp > path_out'"""
 
         cmd_seq = cmd.split()
@@ -264,7 +264,7 @@ class FileDeployer(object):
             dir_exists = os.path.exists(dir)
             #print dir, dir_exists
             if not dir_exists:
-                gu.create_directory(dir, mode=dirmode)
+                gu.create_directory(dir, mode=dirmode, group=group)
 
         #out, err = gu.subproc(cmd_cat.split())
         #if err != '' : msg += '\nERROR: ' + err
@@ -277,9 +277,12 @@ class FileDeployer(object):
         if resp: msg += '\n  resp:%s' % resp
         logger.info(msg)
 
+        if os.path.exists(path_out):
+            gu.cgu.change_file_ownership(path_out, user=None, group=group)
+
         if action == 'mv' and resp == '': os.system('rm %s'%(path_inp))
         #self.changeFilePermissions(path_out)
-        self.addHistoryRecord(cmd, comment, filemode=filemode)
+        self.addHistoryRecord(cmd, comment, filemode=filemode, group=group)
 
 
     def changeFilePermissions(self, path, mode=0o664):
@@ -289,7 +292,7 @@ class FileDeployer(object):
         os.system(cmd)
 
 
-    def addHistoryRecord(self, cmd, comment='dark', filemode=0o664):
+    def addHistoryRecord(self, cmd, comment='dark', filemode=0o664, group='ps-users'):
         #print 'cmd  = ', cmd
         fname_history  = cp.fname_history.value()
         if fname_history == '': return
@@ -321,7 +324,7 @@ class FileDeployer(object):
         logger.debug('record for HISTORY: \n%s to history file' % rec)
         logger.info('append HISTORY file: %s' % path_history)
 
-        gu.save_textfile(rec, path_history, mode='a', accmode=filemode)
+        gu.save_textfile(rec, path_history, mode='a', accmode=filemode, group=group)
 
         #self.changeFilePermissions(path_history)
 

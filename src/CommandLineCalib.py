@@ -399,6 +399,7 @@ class CommandLineCalib():
         self.filemode    = kwa['filemode']
         self.loglev      = kwa['loglev']  # str
         self.logname     = kwa['logname']  # str
+        self.group       = kwa.get('group', 'ps-users')
 
         self.timeout_sec = cp.job_timeout_sec.value()
 
@@ -478,8 +479,10 @@ class CommandLineCalib():
 
         if self.deploy:
             logger.info(self.sep + 'Begin deployment of calibration files')
+
             s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False,\
-                                          zeropeds=self.zeropeds, deploygeo=self.deploygeo, dirmode=self.dirmode, filemode=self.filemode)
+                                          zeropeds=self.zeropeds, deploygeo=self.deploygeo,\
+                                          dirmode=self.dirmode, filemode=self.filemode, group=self.group)
             if s:
                 logger.warning('Problem with deployment of calibration files...')
             else:
@@ -526,6 +529,7 @@ class CommandLineCalib():
                 logger.info('fname_peds_zeros:%s' % fname_peds_zero)
                 save_txt(fname_peds_zero, gu.np.zeros_like(ave), cmts=(), fmt='%.0f')
                 os.chmod(fname_peds_zero, self.filemode)
+                gu.cgu.change_file_ownership(fname_peds_zero, user=None, group=self.group)
 
             # make/save default geometry
             if self.deploygeo:
@@ -534,6 +538,6 @@ class CommandLineCalib():
                 logger.debug('str_geo:\n%s' % str_geo)
                 fname_geometry  = str_filename_with_source(fnm.path_geometry(), s)
                 logger.info('fname_geometry  :%s' % fname_geometry)
-                gu.save_textfile(str_geo, fname_geometry, mode='w', accmode=self.filemode)
+                gu.save_textfile(str_geo, fname_geometry, mode='w', accmode=self.filemode, group=self.group)
 
 # EOF

@@ -30,17 +30,19 @@ def input_options_parser():
 
     d_exp      = None
     d_loglev   = 'INFO'
-    d_dirmode  = 0o2774
+    d_dirmode  = 0o2775
     d_filemode = 0o664
     d_workdir  = DIR_REPO
     d_calibdir = None
     d_xtcdir   = None
     d_event_code = None
+    d_group    = 'ps-users'
 
     h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc, default = %s' % d_xtcdir
     h_print_bits = 'DEPRECATED'
     h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all., default = %s' % d_event_code
     h_loglev  = 'logging mode, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
+    h_group = 'group ownership for all files, default = %s' % d_group
 
     parser = OptionParser(description='%prog - dark run processing CLI', usage='  %prog [options] args'+com_ex )
     parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345, default = %s' % d_exp)
@@ -70,9 +72,10 @@ def input_options_parser():
     parser.add_option('--zeropeds',          dest='zeropeds',     default=False, action='store_true',           help='deploy zero-pedestals (e.g. for hardware calibrated Rayonix)')
     parser.add_option('--deploygeo',         dest='deploygeo',    default=False, action='store_true',           help='deploy default geometry for Rayonix shaped/binned as data')
 
-    parser.add_option('--dirmode',       default=d_dirmode,   action='store', type=int, help='mode for all mkdir, default = %s' % oct(d_dirmode))
-    parser.add_option('--filemode',      default=d_filemode,  action='store', type=int, help='mode for all saved files, default = %s' % oct(d_filemode))
-    parser.add_option('-l', '--loglev',  default=d_loglev,    action='store', type=str, help=h_loglev)
+    parser.add_option('--dirmode',       default=d_dirmode,   action='store', type='int', help='mode for all mkdir, default = %s' % oct(d_dirmode))
+    parser.add_option('--filemode',      default=d_filemode,  action='store', type='int', help='mode for all saved files, default = %s' % oct(d_filemode))
+    parser.add_option('--group',         default=d_group,     action='store', type='string', help=h_group)
+    parser.add_option('-l', '--loglev',  default=d_loglev,    action='store', type='string', help=h_loglev)
 
     return parser
 
@@ -98,15 +101,19 @@ if __name__ == "__main__":
     import Detector.RepoManager as rm
 
     dirrepo = kwa.workdir
-    repoman = rm.RepoManager(dirrepo, dirmode=kwa.dirmode, filemode=kwa.filemode, dir_log_at_start=DIR_LOG_AT_START)
+    repoman = rm.RepoManager(dirrepo, dirmode=kwa.dirmode, filemode=kwa.filemode, dir_log_at_start=DIR_LOG_AT_START, group=kwa.group)
     logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login()))
-    init_logger(loglevel=kwa.loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s')
+    init_logger(loglevel=kwa.loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s', group=kwa.group)
     logger.info('log file: %s' % logname)
     repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
     kwargs['repoman'] = repoman
     kwargs['logname'] = logname
 
     CommandLineCalib(**kwargs)
+
+    os.chmod(logname, kwa.filemode)
+    import PSCalib.GlobalUtils as cgu
+    cgu.change_file_ownership(logname, user=None, group=kwa.group)
 
     sys.exit('%s end of %s, consumed time = %.3f(sec)'%(gu.get_current_local_time_stamp(), SCRNAME, gu.time()-t0_sec))
 

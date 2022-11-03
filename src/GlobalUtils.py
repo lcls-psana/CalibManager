@@ -73,7 +73,7 @@ def list_of_str_from_list_of_int(list_in, fmt='%04d'):
     return list_out
 
 
-def create_directory(d, mode=0o777, umask=0o0):
+def create_directory(d, mode=0o2775, umask=0o0, group='ps-users'):
     """Creates directory and sets its mode
     """
     os.umask(umask)
@@ -86,10 +86,11 @@ def create_directory(d, mode=0o777, umask=0o0):
            return
         #os.makedirs(d, mode, exist_ok=True)
         os.chmod(d, mode)
+        cgu.change_file_ownership(d, user=None, group=group)
         logger.debug('Directory created: %s, mode(oct)=%s' % (d, oct(mode)))
 
 
-def create_path(path, depth=5, mode=0o777):
+def create_path(path, depth=5, mode=0o2775):
     # Creates missing path for /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt
     # if path to file exists return True, othervise False
     subdirs = path.strip('/').split('/')
@@ -313,14 +314,16 @@ def load_textfile(path):
     return text
 
 
-def save_textfile(text, path, mode='w', accmode=0o664):
+def save_textfile(text, path, mode='w', accmode=0o664, group='ps-users'):
     """Saves text in file specified by path. mode: 'w'-write, 'a'-append
     """
     fexists = os.path.exists(path)
     f=open(path,mode)
     f.write(text)
     f.close()
-    if os.path.exists(path) and (not fexists): os.chmod(path, accmode)
+    if os.path.exists(path) and (not fexists):
+        os.chmod(path, accmode)
+        cgu.change_file_ownership(path, user=None, group=group)
 
 
 def xtc_fname_parser_helper(part, prefix):
