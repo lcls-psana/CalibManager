@@ -7,6 +7,22 @@ Package author: Mikhail Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+Tag: V02-00-??
+
+
+2022-11-03 Mikhail Dubrovin
+- COMMON ISSUES:
+	- add/use parameter group='ps-users' for dir/file ownership
+	- change dirmode=2775, filemode=664
+	- add adddict={'logfile':logname} to repoman.save_record_at_start
+  app/calibfile
+  app/calibrun
+  src/CommandLineCalib.py
+  src/FileDeployer.py
+  src/GlobalUtils.py
+  src/NotificationLog.py
+  src/OpticAlignmentUtils.py
+
 2022-10-14 Mikhail Dubrovin
 Tag: V02-00-14
   app/calibfile - use standard logging
