@@ -24,7 +24,6 @@ def print_pars(args, opts, defs):
     logger.info(s)
 
 
-
 def calibfile():
     """CLI to deploy, access, remove files from calib directory
     """
@@ -37,7 +36,6 @@ def calibfile():
     runrng   = popts.runrng # '0-end'
     ctype    = popts.ctype  # 'pedestals'
     clbdir   = popts.clbdir # './calib' # None
-    verbos   = popts.verbos # True
     loglev   = popts.loglev # 'INFO'
     dirmode  = 0o2775
     filemode = 0o664
@@ -53,7 +51,6 @@ def calibfile():
     logger.info('log file: %s' % logname)
     repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
 
-
     if verbos:
         args = pargs
         opts = vars(popts)
@@ -63,7 +60,6 @@ def calibfile():
     if len(pargs) != 1:
         parser.print_help()
         sys.exit('WARNING: command argument is missing. Check input parameters')
-
 
     dettype  = gu.det_type_from_source(source) # enumerated detector's type, e.g. ':Cspad.'
     calibgrp = gu.dic_det_type_to_calib_group[dettype] # 'Camera::CalibV1'
@@ -130,7 +126,6 @@ def input_option_parser():
     d_clbdir = None # './calib' # None
     d_lfname = None
     d_loglev = 'INFO'
-    d_verbos = False
     d_group  = 'ps-users'
 
     h_fname  = 'input file name, default = %s' % d_fname
@@ -141,7 +136,6 @@ def input_option_parser():
     h_clbdir = 'non-default (local) calibration directory, default = %s' % d_clbdir
     h_lfname = 'log file name, default = %s' % d_lfname
     h_loglev = 'logging level, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
-    h_verbos = 'DEPRECATED - USE loglev: verbosity , default = %s' % d_verbos
     h_group = 'group ownership for all files, default = %s' % d_group
 
     parser = OptionParser(description='CLI to deploy, access, remove files from calib directory', usage=usage())
@@ -153,7 +147,6 @@ def input_option_parser():
     parser.add_option('-c', '--clbdir', default=d_clbdir, action='store', type='string', help=h_clbdir)
     parser.add_option('-l', '--lfname', default=d_lfname, action='store', type='string', help=h_lfname)
     parser.add_option('-L', '--loglev', default=d_loglev, action='store', type='string', help=h_loglev)
-    parser.add_option('-v', '--verbos', default=d_verbos, action='store_true',           help=h_verbos)
     parser.add_option('--group',        default=d_group,  action='store', type='string', help=h_group)
     return parser
 
