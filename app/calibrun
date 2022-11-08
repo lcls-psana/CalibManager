@@ -34,12 +34,11 @@ def input_options_parser():
     d_filemode = 0o664
     d_workdir  = DIR_REPO
     d_calibdir = None
-    d_xtcdir   = None
+    d_dsnamex  = None
     d_event_code = None
     d_group    = 'ps-users'
 
-    h_xtcdir  = 'non-standard path to xtc directory(<INS>/<EXP>/xtc are required), ex: .mydir/xpp/xppi0613/xtc, or /reg/d/ffb/cxi/cxi12345/xtc, default = %s' % d_xtcdir
-    h_print_bits = 'DEPRECATED'
+    h_dsnamex = 'dataset string or xtc file name or extension after exp=<exp>:run=<run> beginning with colon ":", default = %s' % d_dsnamex
     h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all., default = %s' % d_event_code
     h_loglev  = 'logging mode, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
     h_group = 'group ownership for all files, default = %s' % d_group
@@ -59,9 +58,8 @@ def input_options_parser():
     parser.add_option('-q', '--queue',       dest='queue',        default=None,  action='store', type='string', help='DEPRECATED queue name, ex: psnehq, psfehq, psanacsq. If specified - run in batch')
     parser.add_option('-w', '--workdir',     dest='workdir',      default=d_workdir,  action='store', type='string', help='repository/work directory, default = %s' % d_workdir)
     parser.add_option('-c', '--calibdir',    dest='calibdir',     default=None,  action='store', type='string', help='non-standard path to calib directory, ex: ./calib, default = %s' % d_calibdir)
-    parser.add_option('-x', '--xtcdir',      dest='xtcdir',       default=None,  action='store', type='string', help=h_xtcdir)
+    parser.add_option('-x', '--dsnamex',     dest='dsnamex',      default=None,  action='store', type='string', help=h_dsnamex)
     parser.add_option('-d', '--detector',    dest='detector',     default=None,  action='store', type='string', help='detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD')
-    parser.add_option('-p', '--print_bits',  dest='print_bits',   default=0o36,  action='store', type='int',    help=h_print_bits)
     parser.add_option('-P', '--process',     dest='process',      default=False, action='store_true',           help='process xtc files and produce calib files under the "work" directory')
     parser.add_option('-D', '--deploy',      dest='deploy',       default=False, action='store_true',           help='deploy calibrated files under the "calib" directory')
     parser.add_option('-L', '--loadcfg',     dest='loadcfg',      default=False, action='store_true',           help='load and use configuration parameters from file after "calibman"')
