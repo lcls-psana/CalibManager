@@ -10,12 +10,9 @@ If you use all or part of it, please give an appropriate acknowledgement.
 import sys
 from Detector.UtilsLogging import STR_LEVEL_NAMES, init_logger, logging
 logger = logging.getLogger(__name__)
-
 from Detector.dir_root import os, DIR_ROOT, DIR_LOG_AT_START
 
 DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/calibrun')
-#DIR_REPO = os.path.join(DIR_ROOT, 'detector/calib/constants/')
-#DIR_LOG_AT_START = os.path.join(DIR_ROOT, 'logs/atstart/')
 
 SCRNAME = sys.argv[0].rsplit('/',1)[-1]
 
@@ -29,51 +26,89 @@ def input_options_parser():
            + '\n         %prog -e xpptut15 -d RAYONIX -c calib -w work -r240 -P -D'
 
     d_exp      = None
-    d_loglev   = 'INFO'
-    d_dirmode  = 0o2775
-    d_filemode = 0o664
+    d_run      = None
+    d_dsnamex  = None
+    d_detector = None
+    d_event_code = None
     d_workdir  = DIR_REPO
     d_calibdir = None
-    d_dsnamex  = None
-    d_event_code = None
+    d_runrange = None
+    d_num_events  = 1000
+    d_skip_events = 0
+    d_scan_events = 10
+    d_thr_int_min = 0.1
+    d_thr_int_max = 16000
+    d_thr_rms_min = 0.1
+    d_thr_rms_max = 10000
+    d_intnlo = 5
+    d_intnhi = 5
+    d_rmsnlo = 5
+    d_rmsnhi = 5
+    d_zeropeds = False
+    d_deploygeo = False
+    d_process = False
+    d_deploy = False
+    d_dirmode  = 0o2775
+    d_filemode = 0o664
     d_group    = 'ps-users'
+    d_loglev   = 'INFO'
 
+    h_exp = 'experiment name, ex.: cxi12345, default = %s' % d_exp
+    h_run = 'dark run(s) for processing, default = %s' % d_run
     h_dsnamex = 'dataset string or xtc file name or extension after exp=<exp>:run=<run> beginning with colon ":", default = %s' % d_dsnamex
+    h_detector = 'detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD, default = %s' % d_detector
     h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all., default = %s' % d_event_code
-    h_loglev  = 'logging mode, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
+    h_workdir = 'repository/work directory, default = %s' % d_workdir
+    h_calibdir = 'non-standard path to calib directory, ex: ./calib, default = %s' % d_calibdir
+    h_runrange = 'validity run range for deployment, ex.: 123-567 or 123-end, default = %s' % d_runrange
+    h_process = 'process xtc files and produce calib files under the "work" directory, default = %s' % d_process
+    h_deploy = 'deploy calibrated files under the "calib" directory, default = %s' % d_deploy
+    h_num_events  = 'number of events to process, default = %s' % d_num_events
+    h_skip_events = 'number of events to skip before processing, default = %s' % d_skip_events
+    h_scan_events = 'number of events to scan data and search for selected detector(s), default = %s' % d_scan_events
+    h_thr_int_min = 'minimal threshold on intensity for pixel_status (intens<thr - dead pixel), default = %s'       % d_thr_int_min
+    h_thr_int_max = 'maximal threshold on intensity for pixel_status (intens>thr - satturated pixel), default = %s' % d_thr_int_max
+    h_thr_rms_min = 'minimal threshold on rms for pixel_status (rms<thr - cold pixel), default = %s'                % d_thr_rms_min
+    h_thr_rms_max = 'maximal threshold on rms for pixel_status (rms>thr - hot pixel), default = %s'                 % d_thr_rms_max
+    h_intnlo = 'number of sigma from mean for low  limit on INTENSITY, default = %s' % d_intnlo
+    h_intnhi = 'number of sigma from mean for high limit on INTENSITY, default = %s' % d_intnhi
+    h_rmsnlo = 'number of sigma from mean for low  limit on RMS, default = %s'       % d_rmsnlo
+    h_rmsnhi = 'number of sigma from mean for high limit on RMS, default = %s'       % d_rmsnhi
+    h_zeropeds = 'deploy zero-pedestals (e.g. for hardware calibrated Rayonix), default = %s' % d_zeropeds
+    h_deploygeo = 'deploy default geometry for Rayonix shaped/binned as data, default = %s' % d_deploygeo
+    h_dirmode = 'mode for all mkdir, default = %s' % oct(d_dirmode)
+    h_filemode = 'mode for all saved files, default = %s' % oct(d_filemode)
     h_group = 'group ownership for all files, default = %s' % d_group
+    h_loglev  = 'logging mode, one of %s, default = %s' % (STR_LEVEL_NAMES, d_loglev)
 
     parser = OptionParser(description='%prog - dark run processing CLI', usage='  %prog [options] args'+com_ex )
-    parser.add_option('-e', '--exp',         dest='exp',          default=None,  action='store', type='string', help='experiment name, ex.: cxi12345, default = %s' % d_exp)
-    parser.add_option('-r', '--run',         dest='runnum',       default=None,  action='store', type='int',    help='run number')
-    parser.add_option('-n', '--num_events',  dest='num_events',   default=None,  action='store', type='int',    help='number of events to process')
-    parser.add_option('-s', '--skip_events', dest='skip_events',  default=None,  action='store', type='int',    help='number of events to skip before processing')
-    parser.add_option('-m', '--scan_events', dest='scan_events',  default=None,  action='store', type='int',    help='number of events to scan data and search for selected detector(s)')
-    parser.add_option('-f', '--event_code',  dest='event_code',   default=d_event_code,  action='store', type='string', help=h_event_code)
-    parser.add_option('-B', '--thr_int_min', dest='thr_int_min',  default=None,  action='store', type='float',  help='minimal threshold on intensity for pixel_status (intens<thr - dead pixel)')
-    parser.add_option('-T', '--thr_int_max', dest='thr_int_max',  default=None,  action='store', type='float',  help='maximal threshold on intensity for pixel_status (intens>thr - satturated pixel)')
-    parser.add_option('-b', '--thr_rms_min', dest='thr_rms_min',  default=None,  action='store', type='float',  help='minimal threshold on rms for pixel_status (rms<thr - cold pixel)')
-    parser.add_option('-t', '--thr_rms',     dest='thr_rms_max',  default=None,  action='store', type='float',  help='maximal threshold on rms for pixel_status (rms>thr - hot pixel)')
-    parser.add_option('-v', '--runrange',    dest='runrange',     default=None,  action='store', type='string', help='validity run range, ex.: 123-567 or 123-end')
-    parser.add_option('-q', '--queue',       dest='queue',        default=None,  action='store', type='string', help='DEPRECATED queue name, ex: psnehq, psfehq, psanacsq. If specified - run in batch')
-    parser.add_option('-w', '--workdir',     dest='workdir',      default=d_workdir,  action='store', type='string', help='repository/work directory, default = %s' % d_workdir)
-    parser.add_option('-c', '--calibdir',    dest='calibdir',     default=None,  action='store', type='string', help='non-standard path to calib directory, ex: ./calib, default = %s' % d_calibdir)
-    parser.add_option('-x', '--dsnamex',     dest='dsnamex',      default=None,  action='store', type='string', help=h_dsnamex)
-    parser.add_option('-d', '--detector',    dest='detector',     default=None,  action='store', type='string', help='detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD')
-    parser.add_option('-P', '--process',     dest='process',      default=False, action='store_true',           help='process xtc files and produce calib files under the "work" directory')
-    parser.add_option('-D', '--deploy',      dest='deploy',       default=False, action='store_true',           help='deploy calibrated files under the "calib" directory')
-    parser.add_option('-L', '--loadcfg',     dest='loadcfg',      default=False, action='store_true',           help='load and use configuration parameters from file after "calibman"')
-    parser.add_option('-Z', '--intnlo',      dest='intnlo',       default=None,  action='store', type='float',  help='number of sigma from mean for low  limit on INTENSITY')
-    parser.add_option('-U', '--intnhi',      dest='intnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on INTENSITY')
-    parser.add_option('-z', '--rmsnlo',      dest='rmsnlo',       default=None,  action='store', type='float',  help='number of sigma from mean for low  limit on RMS')
-    parser.add_option('-u', '--rmsnhi',      dest='rmsnhi',       default=None,  action='store', type='float',  help='number of sigma from mean for high limit on RMS')
-    parser.add_option('--zeropeds',          dest='zeropeds',     default=False, action='store_true',           help='deploy zero-pedestals (e.g. for hardware calibrated Rayonix)')
-    parser.add_option('--deploygeo',         dest='deploygeo',    default=False, action='store_true',           help='deploy default geometry for Rayonix shaped/binned as data')
-
-    parser.add_option('--dirmode',       default=d_dirmode,   action='store', type='int', help='mode for all mkdir, default = %s' % oct(d_dirmode))
-    parser.add_option('--filemode',      default=d_filemode,  action='store', type='int', help='mode for all saved files, default = %s' % oct(d_filemode))
-    parser.add_option('--group',         default=d_group,     action='store', type='string', help=h_group)
-    parser.add_option('-l', '--loglev',  default=d_loglev,    action='store', type='string', help=h_loglev)
+    parser.add_option('-e', '--exp',         default=d_exp,         action='store', type='string', help=h_exp)
+    parser.add_option('-r', '--run',         default=d_run,         action='store', type='string', help=h_run)
+    parser.add_option('-x', '--dsnamex',     default=d_dsnamex,     action='store', type='string', help=h_dsnamex)
+    parser.add_option('-d', '--detector',    default=d_detector,    action='store', type='string', help=h_detector)
+    parser.add_option('-f', '--event_code',  default=d_event_code,  action='store', type='string', help=h_event_code)
+    parser.add_option('-w', '--workdir',     default=d_workdir,     action='store', type='string', help=h_workdir)
+    parser.add_option('-c', '--calibdir',    default=d_calibdir,    action='store', type='string', help=h_calibdir)
+    parser.add_option('-v', '--runrange',    default=d_runrange,    action='store', type='string', help=h_runrange)
+    parser.add_option('-P', '--process',     default=d_process,     action='store_true',           help=h_process)
+    parser.add_option('-D', '--deploy',      default=d_deploy,      action='store_true',           help=h_deploy)
+    parser.add_option('-n', '--num_events',  default=d_num_events,  action='store', type='int',    help=h_num_events)
+    parser.add_option('-s', '--skip_events', default=d_skip_events, action='store', type='int',    help=h_skip_events)
+    parser.add_option('-m', '--scan_events', default=d_scan_events, action='store', type='int',    help=h_scan_events)
+    parser.add_option('-B', '--thr_int_min', default=d_thr_int_min, action='store', type='float',  help=h_thr_int_min)
+    parser.add_option('-T', '--thr_int_max', default=d_thr_int_max, action='store', type='float',  help=h_thr_int_max)
+    parser.add_option('-b', '--thr_rms_min', default=d_thr_rms_min, action='store', type='float',  help=h_thr_rms_min)
+    parser.add_option('-t', '--thr_rms_max', default=d_thr_rms_max, action='store', type='float',  help=h_thr_rms_max)
+    parser.add_option('-Z', '--intnlo',      default=d_intnlo,      action='store', type='float',  help=h_intnlo)
+    parser.add_option('-U', '--intnhi',      default=d_intnhi,      action='store', type='float',  help=h_intnhi)
+    parser.add_option('-z', '--rmsnlo',      default=d_rmsnlo,      action='store', type='float',  help=h_rmsnlo)
+    parser.add_option('-u', '--rmsnhi',      default=d_rmsnhi,      action='store', type='float',  help=h_rmsnhi)
+    parser.add_option('--zeropeds',          default=d_zeropeds,    action='store_true',           help=h_zeropeds)
+    parser.add_option('--deploygeo',         default=d_deploygeo,   action='store_true',           help=h_deploygeo)
+    parser.add_option('--dirmode',           default=d_dirmode,     action='store', type='int',    help=h_dirmode)
+    parser.add_option('--filemode',          default=d_filemode,    action='store', type='int',    help=h_filemode)
+    parser.add_option('--group',             default=d_group,       action='store', type='string', help=h_group)
+    parser.add_option('-l', '--loglev',      default=d_loglev,      action='store', type='string', help=h_loglev)
 
     return parser
 
