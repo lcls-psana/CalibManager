@@ -276,6 +276,7 @@ class ConfigParametersForApp(ConfigParameters):
         #self.path_fm_selected   = self.declareParameter( name='PATH_FM_SELECTED',  val_def='./work/*.txt',       type='str' )
 
         # CommandLineCalib.py
+        self.dsname             = self.declareParameter( name='DSNAME',            val_def='',       type='str' ) # 'exp=...:run=...:smd:dir=...'
         self.xtc_dir_non_std    = self.declareParameter( name='XTC_DIR_NON_STD',   val_def='',       type='str' ) # './my/xtc'
         self.job_timeout_sec    = self.declareParameter( name='JOB_TIMEOUT_SEC',   val_def=2000,     type='int' )
 
