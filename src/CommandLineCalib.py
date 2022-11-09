@@ -7,8 +7,8 @@ If you use all or part of it, please give an appropriate acknowledgment.
 @author Mikhail Dubrovin
 """
 #from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
+#from __future__ import division
+#from __future__ import absolute_import
 
 import logging
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ import CalibManager.FileDeployer as fdmets
 from CalibManager.FileNameManager import fnm
 from CalibManager.ConfigParametersForApp import cp
 from CalibManager.BatchLogScanParser import blsp # Just in order to instatiate it
-
+import Detector.UtilsCalib as uc
 
 def str_replace_fields(s, insets={}):
     """1. splits string fields separated by spaces.
@@ -138,13 +138,11 @@ def str_command_for_peds_scan():
     """Returns str command for scan, for example:
        event_keys -d exp=mecj5515:run=102:stream=0-79:smd -n 1000 -s 0 -m 1 -p EventKey
     """
-    dsname = fnm.path_to_data_files()       # exp=mecj5515:run=102:stream=0-79:smd
+    dsname = cp.dsname.value()  # fnm.path_to_data_files() # exp=mecj5515:run=102:stream=0-79:smd
     evskip = cp.bat_dark_start.value() - 1
     events = cp.bat_dark_scan.value()
     logscn = fnm.path_peds_scan_log() # log file name for scan
-
     command = 'event_keys -d %s -n %s -s %s -m 1 -p EventKey' % (dsname, str(events), str(evskip))
-
     msg = 'Scan xtc file(s) using command:\n%s' % command \
         + '\nand save results in the log-file: %s' % logscn
     logger.info(msg)
@@ -156,7 +154,6 @@ def command_for_peds_scan():
     command = str_command_for_peds_scan()
     logname = fnm.path_peds_scan_log() # log file name for scan
     err = gu.subproc_in_log(command.split(), logname) # , shell=True)
-
     err = str(err) # convert byte to str for py3
     if err != '':
         if 'ERR' in err:
@@ -167,7 +164,6 @@ def command_for_peds_scan():
             return False
         else:
             logger.debug('Message from scan: %s' % (err))
-
     logger.info('Scan for run %s is completed' % str_run_number)
     return True
 
@@ -191,8 +187,7 @@ def str_command_for_peds_aver():
        det_ndarr_raw_proc -d exp=mecj5515:run=102:stream=0-79:smd -s MecTargetChamber.0:Cspad.0\
                           -n 6 -m 0 -f ./work/clb-#exp-#run-peds-#type-#src.txt
     """
-
-    dsname = fnm.path_to_data_files()       # 'exp=mecj5515:run=102:stream=0-79:smd'
+    dsname = cp.dsname.value()    # fnm.path_to_data_files()       # 'exp=mecj5515:run=102:stream=0-79:smd'
     evskip = cp.bat_dark_start.value() - 1
     events = cp.bat_dark_end.value()
     fntmpl = fnm.path_peds_template()       # './work/clb-#exp-#run-peds-#type-#src.txt'
@@ -261,12 +256,9 @@ def str_command_for_peds_aver():
 
 
 def command_for_peds_aver():
-
     command = str_command_for_peds_aver()
     if command is None: return False
-
     logname = fnm.path_peds_aver_log() # log file name for averaging
-
     err = gu.subproc_in_log(command.split(), logname) # , shell=True)
     if err != '':
         logger.warning('Warning/error message from subprocess:\n%s' % (err))
@@ -277,16 +269,12 @@ def command_for_peds_aver():
 
 
 def proc_dark_run_interactively(sep='--'):
-
     command_for_peds_scan()
-
     logger.info(sep + 'Data Types and Sources from xtc scan of the\n' + cp.blsp.txt_list_of_types_and_sources())
-
     if not command_for_peds_aver():
         msg = sep + 'Subprocess for averaging is completed with warning/error message(s);'\
               +'\nsee details in the logfile(s).'
         logger.critical(msg)
-
     print_dark_ave_log(sep)
 
 
@@ -297,10 +285,14 @@ def remove_subprocess_logs():
     logger.info('See log file: %s' % cp.logname.value())
 
 
+def exit_for_missing_parameter(s= '--run or -r'):
+    sys.exit('MISSING PARAMETER %s NEEDS TO BE SPECIFIED' % s)
+
+
 class CommandLineCalib():
     """module for dark run processing CLI
     """
-    sep = '\n' + 60*'-' + '\n'
+    sep = '\n' + 30*'-' + '\n'
 
     def __init__(self, **kwargs):
 
@@ -329,37 +321,20 @@ class CommandLineCalib():
 
     def set_pars(self, **kwa):
 
-        #self.print_bits = kwa['print_bits']
-        #logger.setPrintBits(self.print_bits)
-
         cp.commandlinecalib = self
         self.count_msg = 0
 
-        docfg = self.loadcfg = kwa['loadcfg']
-
-        self.runnum = kwa.get('runnum', None)
-        if self.runnum is None: sys.exit('MISSING PARAMETER "--runnum" or "-r" NEEDS TO BE SPECIFIED')
-
+        if kwa['run'] is None: exit_for_missing_parameter('--run  or -r')
+        self.run = kwa['run']
+        self.runnum = int(self.run.split(',')[0].split('-')[0])  # grabs the 1-st run number from string like '2,4-7'
         self.str_run_number = '%04d' % self.runnum
+        self.str_run_range = '%s-end' % self.runnum if kwa['runrange'] is None else kwa['runrange']
 
-        if kwa['runrange'] is None:
-            self.str_run_range = '%s-end' % self.runnum
-        else:
-            self.str_run_range = kwa['runrange']
+        if kwa['exp'] is None: exit_for_missing_parameter('--exp  or -e')
+        self.exp_name = kwa['exp']
 
-        self.exp_name = cp.exp_name.value_def()
-        self.exp_name = cp.exp_name.value() if docfg and kwa['exp'] is None else kwa['exp']
-        if self.exp_name is None or self.exp_name == cp.exp_name.value_def():
-            logger.critical('EXPERIMENT NAME IS NOT DEFINED...'\
-                     + '\nAdd optional parameter -e <exp-name>')
-            return False
-
-        self.dsname = 'exp=%s:run=%s:\n' % (self.exp_name, self.str_run_number)
-
-        if kwa['detector'] is None:
-            self.det_name = cp.det_name.value() if docfg else cp.det_name.value_def()
-        else:
-            self.det_name = kwa['detector'].replace(","," ")
+        if kwa['detector'] is None: exit_for_missing_parameter('--detector  or -d')
+        self.det_name = kwa['detector'].replace(","," ")
 
         list_of_dets_sel = self.det_name.split()
         list_of_dets_sel_lower = [det.lower() for det in list_of_dets_sel]
@@ -370,53 +345,46 @@ class CommandLineCalib():
             #msg += '\n%s %s' % (det.ljust(10), par.value())
         #logger.info(msg)
 
-        if self.det_name == cp.det_name.value_def():
-            logger.critical('DETECTOR NAMES ARE NOT DEFINED...'\
-                     + '\nAdd optional parameter -d <det-names>, ex.: -d CSPAD,CSPAD2x2 etc')
-            return False
-
-        self.event_code  = cp.bat_dark_sele.value()  if kwa['event_code']  is None else kwa['event_code']
-        self.scan_events = cp.bat_dark_scan.value()  if kwa['scan_events'] is None else kwa['scan_events']
-        self.skip_events = cp.bat_dark_start.value() if kwa['skip_events'] is None else kwa['skip_events']
-        self.num_events  = cp.bat_dark_end.value() - cp.bat_dark_start.value() if kwa['num_events'] is None else kwa['num_events']
-        self.thr_int_min = cp.mask_min_thr.value() if kwa['thr_int_min'] is None else kwa['thr_int_min']
-        self.thr_int_max = cp.mask_max_thr.value() if kwa['thr_int_max'] is None else kwa['thr_int_max']
-        self.thr_rms_min = cp.mask_rms_thr_min.value() if kwa['thr_rms_min'] is None else kwa['thr_rms_min']
-        self.thr_rms_max = cp.mask_rms_thr_max.value() if kwa['thr_rms_max'] is None else kwa['thr_rms_max']
-        self.intnlo      = cp.mask_intnlo.value() if kwa['intnlo'] is None else kwa['intnlo']
-        self.intnhi      = cp.mask_intnhi.value() if kwa['intnhi'] is None else kwa['intnhi']
-        self.rmsnlo      = cp.mask_rmsnlo.value() if kwa['rmsnlo'] is None else kwa['rmsnlo']
-        self.rmsnhi      = cp.mask_rmsnhi.value() if kwa['rmsnhi'] is None else kwa['rmsnhi']
-
-        self.workdir     = cp.dir_work.value()  if kwa['workdir'] is None else kwa['workdir']
-        self.queue       = kwa['queue']
+        self.event_code  = kwa['event_code']
+        self.scan_events = kwa['scan_events']
+        self.skip_events = kwa['skip_events']
+        self.num_events  = kwa['num_events']
+        self.thr_int_min = kwa['thr_int_min']
+        self.thr_int_max = kwa['thr_int_max']
+        self.thr_rms_min = kwa['thr_rms_min']
+        self.thr_rms_max = kwa['thr_rms_max']
+        self.intnlo      = kwa['intnlo']
+        self.intnhi      = kwa['intnhi']
+        self.rmsnlo      = kwa['rmsnlo']
+        self.rmsnhi      = kwa['rmsnhi']
+        self.workdir     = kwa['workdir']
         self.process     = kwa['process']
         self.deploy      = kwa['deploy']
         self.deploygeo   = kwa['deploygeo']
         self.zeropeds    = kwa['zeropeds']
-        self.instr_name  = self.exp_name[:3]
         self.dirmode     = kwa['dirmode']
         self.filemode    = kwa['filemode']
-        self.loglev      = kwa['loglev']  # str
+        self.loglev      = kwa['loglev']   # str
         self.logname     = kwa['logname']  # str
-        self.group       = kwa.get('group', 'ps-users')
+        self.group       = kwa['group']    # ps-users
+        self.dsnamex     = kwa['dsnamex']  # :std:dir=...
 
-        self.timeout_sec = cp.job_timeout_sec.value()
+        self.dsname      = uc.str_dsname(self.exp_name, self.run, kwa['dsnamex'])
+        self.instr_name  = self.exp_name[:3]
 
         cp.str_run_number.setValue(self.str_run_number)
         cp.exp_name      .setValue(self.exp_name)
         cp.instr_name    .setValue(self.instr_name)
 
-        self.calibdir     = cp.calib_dir.value() if docfg and kwa['calibdir'] is None else kwa['calibdir']
-        if self.calibdir == cp.calib_dir.value_def() or self.calibdir is None:
+        self.calibdir    = kwa['calibdir']
+        if kwa['calibdir'] is None:
             self.calibdir = fnm.path_to_calib_dir_default()
 
-        self.xtcdir       = cp.xtc_dir_non_std.value_def() if kwa['xtcdir'] is None else kwa['xtcdir']
-
-        cp.xtc_dir_non_std .setValue(self.xtcdir)
+        cp.det_name        .setValue(self.det_name)
+        cp.dsname          .setValue(self.dsname)
+        cp.xtc_dir_non_std .setValue(self.dsnamex)
         cp.calib_dir       .setValue(self.calibdir)
         cp.dir_work        .setValue(self.workdir)
-        cp.bat_queue       .setValue(self.queue)
         cp.bat_dark_sele   .setValue(self.event_code)
         cp.bat_dark_scan   .setValue(self.scan_events)
         cp.bat_dark_start  .setValue(self.skip_events)
@@ -425,7 +393,6 @@ class CommandLineCalib():
         cp.mask_max_thr    .setValue(self.thr_int_max)
         cp.mask_rms_thr_min.setValue(self.thr_rms_min)
         cp.mask_rms_thr_max.setValue(self.thr_rms_max)
-        cp.det_name        .setValue(self.det_name)
         cp.mask_intnlo     .setValue(self.intnlo)
         cp.mask_intnhi     .setValue(self.intnhi)
         cp.mask_rmsnlo     .setValue(self.rmsnlo)
@@ -445,13 +412,12 @@ class CommandLineCalib():
         + '\n     instr_name    : %s' % self.instr_name\
         + '\n     workdir       : %s' % self.workdir\
         + '\n     calibdir      : %s' % self.calibdir\
-        + '\n     xtcdir        : %s' % self.xtcdir\
+        + '\n     dsnamex       : %s' % self.dsnamex\
+        + '\n     dsname        : %s' % self.dsname\
         + '\n     det_name      : %s' % self.det_name\
-        + '\n     queue         : %s' % self.queue\
         + '\n     num_events    : %d' % self.num_events\
         + '\n     skip_events   : %d' % self.skip_events\
         + '\n     scan_events   : %d' % self.scan_events\
-        + '\n     timeout_sec   : %d' % self.timeout_sec\
         + '\n     thr_int_min   : %f' % self.thr_int_min\
         + '\n     thr_int_max   : %f' % self.thr_int_max\
         + '\n     thr_rms_min   : %f' % self.thr_rms_min\
@@ -464,7 +430,6 @@ class CommandLineCalib():
         + '\n     deploy        : %s' % self.deploy\
         + '\n     deploygeo     : %s' % self.deploygeo\
         + '\n     zeropeds      : %s' % self.zeropeds\
-        + '\n     loadcfg       : %s' % self.loadcfg\
         + '\n     dirmode       : %s' % oct(self.dirmode)\
         + '\n     filemode      : %s' % oct(self.filemode)\
         + '\n     loglev        : %s' % self.loglev\
