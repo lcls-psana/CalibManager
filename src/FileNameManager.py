@@ -52,7 +52,9 @@ class FileNameManager:
         else                          : return self.path_dark_xtc()
 
     def str_exp_run_dark(self):
-        return self.str_exp_run_for_xtc_path(self.path_dark_xtc())
+        """ returns str like 'xpptut15-r0240-'"""
+        #return self.str_exp_run_for_xtc_path(self.path_dark_xtc())
+        return '%s-r%s-' % (cp.exp_name.value(), cp.str_run_number.value())
 
     def path_to_calib_dir_custom(self):
         """Returns path to the user selected (non-default) calib dir, for example /reg/neh/home1/<user-name>/<further-path>/calib"""
