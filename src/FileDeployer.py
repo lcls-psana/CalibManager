@@ -6,7 +6,6 @@ import os
 import stat
 import logging
 logger = logging.getLogger(__name__)
-#from .Logger                 import logger
 
 from CalibManager.ConfigParametersForApp import cp
 from CalibManager.FileNameManager import fnm
@@ -17,7 +16,6 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, 
     """Get list of deploy commands for all detectors of the same type"""
 
     cp.str_run_number.setValue(str_run_number)
-    #cp.blsp.print_list_of_types_and_sources()
     list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
     #list_of_dtypes  # ['CsPad::DataV1',    'CsPad::DataV1']
     #list_of_sources # ['CxiDs1.0:Cspad.0', 'CxiDsd.0:Cspad.0']
@@ -182,10 +180,6 @@ def get_list_of_deploy_commands_for_calibtype(list_of_ctypes, list_of_types, lis
     for file, ctype, type, source in zip(list_of_files, list_of_ctypes, list_of_types, list_of_sources):
         # Ex.: ctype='Epix100a::CalibV1',  type='Epix::ElementV2',  source='NoDetector.0:Epix100a.0'
 
-        #pos1 = source.find(':')
-        #pos2 = source.find('.',pos1)
-        #typ  = source[pos1+1:pos2] + '::CalibV1' # Ex.: typ='Epix100a::CalibV1'
-
         if calibtype == 'common_mode' and gu.cgu.det_type_from_source(source) not in cp.list_of_depl_cmod: continue
 
         fname = '%s.data' % str_run_range
@@ -209,9 +203,6 @@ def get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, base_path, ca
         # Ex. source: 'NoDetector.0:Epix100a.0'
         # Ex. file : './work/clb-mfxn8316-r0014-peds-sta-MfxEndstation.0:Epix100a.0.txt'
         if calibtype == 'common_mode' and gu.cgu.det_type_from_source(source) not in cp.list_of_depl_cmod: continue
-
-        #fname = '%s.data' % str_run_range
-        #calib_path = os.path.join(cp.calib_dir.value(), ctype, source, calibtype, fname)
 
         # ex.: dcs add -e mfxn8316 -r 11 -d Epix100a -t pixel_status -v 4 -f my-nda.txt -m "my comment" -c ./calib
         cmd = 'dcs add -e %s' % cp.exp_name.value()\
@@ -250,25 +241,15 @@ class FileDeployer(object):
         dir_dtype, src        = dir_src   .rsplit('/',1)
         dir_calib, dtype      = dir_dtype .rsplit('/',1)
 
-        #print 'path_out : ', path_out
-        #print 'fname    : ', fname
-        #print 'dir_ctype: ', dir_ctype
-        #print 'dir_src  : ', dir_src
-        #print 'dir_dtype: ', dir_dtype
-        #print 'dir_calib: ', dir_calib
-
         # Create output directory tree if it does not exist
         list_of_dirs = [dir_calib, dir_dtype, dir_src, dir_ctype]
 
         for dir in list_of_dirs:
             dir_exists = os.path.exists(dir)
-            #print dir, dir_exists
             if not dir_exists:
                 gu.create_directory(dir, mode=dirmode, group=group)
 
-        #out, err = gu.subproc(cmd_cat.split())
-        #if err != '' : msg += '\nERROR: ' + err
-        #if out != '' : msg += '\nRESPONCE: ' + out
+        fexists = os.path.exists(path_out)
 
         #os.system(cmd_cat)
         stream = os.popen(cmd_cat)
@@ -277,7 +258,8 @@ class FileDeployer(object):
         if resp: msg += '\n  resp:%s' % resp
         logger.info(msg)
 
-        if os.path.exists(path_out):
+        if (not fexists) and os.path.exists(path_out):
+            os.chmod(path_out, filemode)
             gu.cgu.change_file_ownership(path_out, user=None, group=group)
 
         if action == 'mv' and resp == '': os.system('rm %s'%(path_inp))
