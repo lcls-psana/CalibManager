@@ -7,8 +7,12 @@ Package author: Mikhail Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
-Tag: V02-00-??
+Tag: V02-00-16
+2022-11-10 Mikhail Dubrovin
+  src/FileDeployer.py - add os.chmod, remove comments
+  src/FileNameManager.py - change str_exp_run_dark
 
+Tag: V02-00-15
 2022-11-09 Mikhail Dubrovin
   app/calibrun
 	- add parameter -x, --dsnamex
