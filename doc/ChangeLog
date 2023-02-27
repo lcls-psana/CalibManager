@@ -7,6 +7,22 @@ Package author: Mikhail Dubrovin
 Please describe any modifications that you made to the package in the reverse time order.
 
 #-----------------------------
+
+Tag: V02-00-17
+2023-02-27 Mikhail Dubrovin
+- add starting points for old scripts to app/
+	optical_metrology_cspad2x2
+	optical_metrology_cspad_v1_cxi
+	optical_metrology_cspad_v2_xpp
+- code cleaning (remove comments and spaces)
+- improve option_parser
+  optical_metrology_check
+  ../src/GlobalUtils.py - fix docstring type
+  ../src/OpticAlignmentCspad2x2V1.py
+  ../src/OpticAlignmentCspadMethods.py
+  ../src/OpticAlignmentCspadV1.py
+  ../src/OpticAlignmentCspadV2.py
+
 Tag: V02-00-16
 2022-11-10 Mikhail Dubrovin
   src/FileDeployer.py - add os.chmod, remove comments
