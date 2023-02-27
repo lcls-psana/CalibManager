@@ -541,7 +541,7 @@ def get_pwd():
 
 
 def get_cwd():
-    """get corrent work directory"""
+    """get current work directory"""
     return os.getcwd()
 
 
