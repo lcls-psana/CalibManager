@@ -1,16 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#   GUICalibDirTree...
-#------------------------------------------------------------------------
 
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
 
 import os
 
@@ -20,7 +10,6 @@ from .ConfigParametersForApp import cp
 from CalibManager.Logger                 import logger
 from .FileNameManager        import fnm
 
-#------------------------------
 
 try:
     QString = unicode
@@ -45,6 +34,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
        ,'beam_intersect'
        ,'pedestals'
        ,'pixel_status'
+       ,'pixel_status_extra'
        ,'common_mode'
        ,'filter'
        ,'pixel_gain'
@@ -52,15 +42,16 @@ class GUICalibDirTree(QtWidgets.QWidget):
 
     calib_types_cspad2x2 = [
         'center'
-       ,'tilt'     
+       ,'tilt'
        ,'pedestals'
        ,'pixel_status'
+       ,'pixel_status_extra'
        ,'common_mode'
        ,'filter'
        ,'pixel_gain'
         ]
-    
-    calib_dets_cspad = [ 
+
+    calib_dets_cspad = [
         'XppGon.0:Cspad.0'
        ,'XcsEndstation.0:Cspad.0'
        ,'CxiDs1.0:Cspad.0'
@@ -68,7 +59,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
        ,'CxiDsd.0:Cspad.0'
         ]
 
-    calib_dets_cspad2x2 = [ 
+    calib_dets_cspad2x2 = [
         'XppGon.0:Cspad2x2.0'
        ,'XppGon.0:Cspad2x2.1'
        ,'MecTargetChamber.0:Cspad2x2.1'
@@ -86,7 +77,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
         ]
 
 
-    def __init__(self, parent=None) :
+    def __init__(self, parent=None):
         #super(GUIQTreeView, self).__init__(parent)
         QtWidgets.QWidget.__init__(self, parent)
 
@@ -94,7 +85,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
         self.setWindowTitle('Item selection tree')
 
         cp.setIcons()
- 
+
         self.fill_calib_dir_tree()
 
         #self.view = QtGui.QListView()
@@ -104,11 +95,11 @@ class GUICalibDirTree(QtWidgets.QWidget):
         #self.view.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         #self.view.expandAll()
         self.view.setAnimated(True)
- 
+
         vbox = QtWidgets.QVBoxLayout()
         vbox.addWidget(self.view)
 
-        if parent is None :
+        if parent is None:
             self.setLayout(vbox)
 
         self.view.selectionModel().currentChanged[QModelIndex, QModelIndex].connect(self.itemSelected)
@@ -121,65 +112,65 @@ class GUICalibDirTree(QtWidgets.QWidget):
         self.setStyle()
 
 
-    def fill_calib_dir_tree(self) :
+    def fill_calib_dir_tree(self):
 
         self.model = QtGui.QStandardItemModel()
         self.model.setHorizontalHeaderLabels('x')
         #self.model.setHorizontalHeaderItem(1,QtGui.QStandardItem('Project Title'))
         #self.model.setVerticalHeaderLabels('abc')
 
-        for v in self.calib_vers :
+        for v in self.calib_vers:
             det, vers = v.split('::',1)
             #print 'det, vers =', det, vers
 
-            parentItem = self.model.invisibleRootItem() 
+            parentItem = self.model.invisibleRootItem()
             itemv = QtGui.QStandardItem(QString(v))
             itemv.setIcon(cp.icon_folder_closed)
-            #itemv.setCheckable(True) 
+            #itemv.setCheckable(True)
             parentItem.appendRow(itemv)
-  
-            if det == 'CsPad' :
+
+            if det == 'CsPad':
                 self.calib_type_list = self.calib_types_cspad
                 self.calib_det_list  = self.calib_dets_cspad
-            elif det == 'CsPad2x2' :
+            elif det == 'CsPad2x2':
                 self.calib_type_list = self.calib_types_cspad2x2
                 self.calib_det_list  = self.calib_dets_cspad2x2
-            else :
-                print('UNKNOWN DETECTOR') 
+            else:
+                print('UNKNOWN DETECTOR')
 
-            for d in self.calib_det_list :
+            for d in self.calib_det_list:
                 itemd = QtGui.QStandardItem(QString(d))
                 itemd.setIcon(cp.icon_folder_closed)
-                #itemd.setCheckable(True) 
+                #itemd.setCheckable(True)
                 itemv.appendRow(itemd)
- 
-                for t in self.calib_type_list :
+
+                for t in self.calib_type_list:
                     itemt = QtGui.QStandardItem(QString(t))
                     itemt.setIcon(cp.icon_folder_closed)
-                    itemt.setCheckable(True) 
+                    itemt.setCheckable(True)
                     itemd.appendRow(itemt)
 
 
-    def getFullNameFromItem(self, item): 
-        #item = self.model.itemFromIndex(ind)        
-        ind   = self.model.indexFromItem(item)        
+    def getFullNameFromItem(self, item):
+        #item = self.model.itemFromIndex(ind)
+        ind   = self.model.indexFromItem(item)
         return self.getFullNameFromIndex(ind)
 
 
-    def getFullNameFromIndex(self, ind): 
+    def getFullNameFromIndex(self, ind):
         item = self.model.itemFromIndex(ind)
-        if item is None : return 'None'
+        if item is None: return 'None'
         self._full_name = item.text()
         self._getFullName(ind)
         return str(self._full_name)
 
 
-    def _getFullName(self, ind): 
+    def _getFullName(self, ind):
         ind_par  = self.model.parent(ind)
-        if(ind_par.column() == -1) :
+        if(ind_par.column() == -1):
             item = self.model.itemFromIndex(ind)
             self.full_name = '/' + self._full_name
-            #print 'Item full name :' + self._full_name
+            #print 'Item full name:' + self._full_name
             return self._full_name
         else:
             item_par = self.model.itemFromIndex(ind_par)
@@ -187,11 +178,11 @@ class GUICalibDirTree(QtWidgets.QWidget):
             self._getFullName(ind_par)
 
 
-    def getTextListOfChildren(self, index): 
+    def getTextListOfChildren(self, index):
         item = self.model.itemFromIndex(index)
         number_of_children = item.rowCount()
         txt_list_of_children = []
-        for row in range(number_of_children) :
+        for row in range(number_of_children):
             child_item = item.child(row)
             txt_list_of_children.append(str(child_item.text()))
         return txt_list_of_children
@@ -201,21 +192,21 @@ class GUICalibDirTree(QtWidgets.QWidget):
         state = ['UNCHECKED', 'TRISTATE', 'CHECKED'][item.checkState()]
         msg = 'Item with full name %s, is at state %s' % ( self.getFullNameFromItem(item),  state)
         #print msg
-        logger.info(msg, __name__)       
+        logger.info(msg, __name__)
 
-        
-    def itemExpanded(self, ind): 
+
+    def itemExpanded(self, ind):
         item = self.model.itemFromIndex(ind)
         item.setIcon(cp.icon_folder_open)
-        msg = 'Item expanded: %s' % item.text()  
-        logger.info(msg, __name__)       
+        msg = 'Item expanded: %s' % item.text()
+        logger.info(msg, __name__)
 
 
     def itemCollapsed(self, ind):
         item = self.model.itemFromIndex(ind)
         item.setIcon(cp.icon_folder_closed)
-        msg = 'Item collapsed: %s' % item.text()  
-        logger.info(msg, __name__)       
+        msg = 'Item collapsed: %s' % item.text()
+        logger.info(msg, __name__)
 
 
     def itemSelected(self, selected, deselected):
@@ -223,19 +214,19 @@ class GUICalibDirTree(QtWidgets.QWidget):
         msg1 = 'Item selected: %s' % self.getFullNameFromIndex(selected)
 
         txt_list_of_children = self.getTextListOfChildren(selected)
-        
+
         self.onSelectedItem(selected_txt, txt_list_of_children)
-        logger.info(msg1, __name__)       
+        logger.info(msg1, __name__)
 
         #deselected_txt = self.getFullNameFromIndex(deselected)
         #msg2 = 'Item deselected: %s' % self.getFullNameFromIndex(deselected)
-        #logger.info(msg2, __name__)       
+        #logger.info(msg2, __name__)
         #self.onDeselectedItem(deselected_txt)
 
 
-    def onSelectedItem(self, path_from_calib, list_expected) :
+    def onSelectedItem(self, path_from_calib, list_expected):
         cp.guitabs.setTabByName('Status')
-        dir = os.path.join(fnm.path_to_calib_dir(), path_from_calib)        
+        dir = os.path.join(fnm.path_to_calib_dir(), path_from_calib)
         cp.guistatus.statusOfDir(dir, list_expected)
 
 
@@ -248,24 +239,23 @@ class GUICalibDirTree(QtWidgets.QWidget):
 
 
     #def resizeEvent(self, e):
-        #logger.debug('resizeEvent', self.name) 
+        #logger.debug('resizeEvent', self.name)
         #pass
 
 
     #def moveEvent(self, e):
-        #logger.debug('moveEvent', self.name) 
+        #logger.debug('moveEvent', self.name)
         #self.position = self.mapToGlobal(self.pos())
         #self.position = self.pos()
-        #logger.debug('moveEvent - pos:' + str(self.position), __name__)       
+        #logger.debug('moveEvent - pos:' + str(self.position), __name__)
         #pass
- 
-#-----------------------------
 
-if __name__ == "__main__" :
+
+if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     widget = GUICalibDirTree()
     widget.show()
     app.exec_()
 
-#-----------------------------
+# EOF
