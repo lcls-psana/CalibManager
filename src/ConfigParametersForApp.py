@@ -390,6 +390,7 @@ class ConfigParametersForApp(ConfigParameters):
            ,'tilt'
            ,'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'common_mode'
            ,'filter'
            ,'pixel_gain'
@@ -407,6 +408,7 @@ class ConfigParametersForApp(ConfigParameters):
            ,'tilt'
            ,'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'common_mode'
            ,'filter'
            ,'pixel_gain'
@@ -418,6 +420,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_princeton = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -429,6 +432,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_pnccd = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -440,6 +444,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_camera = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -451,6 +456,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_orcafl40 = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -462,6 +468,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_epix = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_offset'
            ,'pixel_rms'
@@ -474,6 +481,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_fccd960 = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -485,6 +493,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_andor = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -496,6 +505,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_andor3d = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -507,6 +517,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_jungfrau = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_offset'
            ,'pixel_rms'
@@ -519,6 +530,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_zyla = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -530,6 +542,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_uxi = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -541,6 +554,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_pixis = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -552,6 +566,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_streak = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -563,6 +578,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_archon = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
@@ -580,6 +596,7 @@ class ConfigParametersForApp(ConfigParameters):
         self.const_types_istar = [
             'pedestals'
            ,'pixel_status'
+           ,'pixel_status_extra'
            ,'pixel_gain'
            ,'pixel_rms'
            ,'pixel_mask'
