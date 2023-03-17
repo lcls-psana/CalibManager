@@ -1,6 +1,6 @@
-from __future__ import print_function
-from __future__ import absolute_import
 
+#from __future__ import print_function
+#from __future__ import absolute_import
 
 import os
 
@@ -34,7 +34,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
        ,'beam_intersect'
        ,'pedestals'
        ,'pixel_status'
-       ,'pixel_status_extra'
+       ,'status_extra'
        ,'common_mode'
        ,'filter'
        ,'pixel_gain'
@@ -45,7 +45,7 @@ class GUICalibDirTree(QtWidgets.QWidget):
        ,'tilt'
        ,'pedestals'
        ,'pixel_status'
-       ,'pixel_status_extra'
+       ,'status_extra'
        ,'common_mode'
        ,'filter'
        ,'pixel_gain'
