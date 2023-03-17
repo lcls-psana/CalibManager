@@ -8,6 +8,12 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-19
+2023-03-17 Mikhail Dubrovin
+- rename pixel_status_extra > status_extra
+  - src/ConfigParametersForApp.py
+  - src/GUICalibDirTree.py
+
 Tag: V02-00-18
 2023-03-14 Mikhail Dubrovin
    src/ConfigParametersForApp.py
