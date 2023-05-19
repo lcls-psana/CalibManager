@@ -1,43 +1,29 @@
-#--------------------------------------------------------------------------
-# File and Version Information:
-#  $Id$
-#
-# Description:
-#  Module PlotImgSpeButtons...
-#
-#------------------------------------------------------------------------
 
-"""Buttons for interactive plot of the image and spectrum for 2-d array
+"""Module PlotImgSpeButtons - buttons for interactive plot of the image and spectrum for 2-d array
 
-This software was developed for the SIT project.  If you use all or 
-part of it, please give an appropriate acknowledgment.
+This software was developed for the SIT project.
+If you use all or part of it, please give an appropriate acknowledgment.
 
-@version $Id$ 
-@author Mikhail S. Dubrovin
+@author Mikhail Dubrovin
 """
-from __future__ import absolute_import
-#--------------------------------
-__version__ = "$Revision$"
-#--------------------------------
+
 import sys
 import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from CalibManager.Frame     import Frame
-from CalibManager.Logger                 import logger
+from CalibManager.Frame      import Frame
+from CalibManager.Logger     import logger
 from .GUIHelp                import *
-from . import GlobalUtils          as     gu
+from . import GlobalUtils as gu
 from .GUIRangeIntensity      import *
 from .FileNameManager        import fnm
 from .ConfigParametersForApp import cp
 from CorAna.ArrFileExchange import *
 
-#---------------------
-
-#class PlotImgSpeButtons(QtGui.QMainWindow) :
-#class PlotImgSpeButtons(QtGui.QWidget) :
-class PlotImgSpeButtons(Frame) :
+#class PlotImgSpeButtons(QtGui.QMainWindow):
+#class PlotImgSpeButtons(QtGui.QWidget):
+class PlotImgSpeButtons(Frame):
     """Buttons for interactive plot of the image and spectrum for 2-d array."""
 
     def __init__(self, parent=None, widgimage=None, ifname='', ofname='./fig.png',\
@@ -57,19 +43,19 @@ class PlotImgSpeButtons(Frame) :
         self.verb        = verb
 
         self.widgimage = widgimage
-        if widgimage is None :
+        if widgimage is None:
             self.fig = self # need it to pass pars
             self.fig.myNBins    = 40
-            self.fig.myGridIsOn = False    
-            self.fig.myLogXIsOn = False    
-            self.fig.myLogYIsOn = False    
+            self.fig.myGridIsOn = False
+            self.fig.myLogXIsOn = False
+            self.fig.myLogYIsOn = False
             self.fig.myZmin     = None
             self.fig.myZmax     = None
-        else :
+        else:
             self.fig = widgimage.fig
 
-        if help_msg is None : self.help_msg = self.help_message()
-        else                : self.help_msg = help_msg
+        if help_msg is None: self.help_msg = self.help_message()
+        else               : self.help_msg = help_msg
 
         tit_more_less  = '&Less' if expand else '&More'
         self.but_more  = QtWidgets.QPushButton(tit_more_less)
@@ -92,20 +78,15 @@ class PlotImgSpeButtons(Frame) :
 
         width = 60
         self.edi_nbins.setFixedWidth(width)
-        #self.but_reset.setFixedWidth(width)
-        #self.but_help .setFixedWidth(width)
-        #self.but_save .setFixedWidth(width)
-        #self.but_elog .setFixedWidth(width)
-        #self.but_quit .setFixedWidth(width)
         self.edi_nbins.setValidator(QtGui.QIntValidator(1,1000,self))
- 
-        self.but_help .setStyleSheet (cp.styleButtonGood) 
-        self.but_more .setStyleSheet (cp.styleButton) 
-        self.but_reset.setStyleSheet (cp.styleButton) 
-        self.but_load .setStyleSheet (cp.styleButton) 
-        self.but_diff .setStyleSheet (cp.styleButton) 
-        self.but_save .setStyleSheet (cp.styleButton) 
-        self.but_quit .setStyleSheet (cp.styleButtonBad) 
+
+        self.but_help .setStyleSheet (cp.styleButtonGood)
+        self.but_more .setStyleSheet (cp.styleButton)
+        self.but_reset.setStyleSheet (cp.styleButton)
+        self.but_load .setStyleSheet (cp.styleButton)
+        self.but_diff .setStyleSheet (cp.styleButton)
+        self.but_save .setStyleSheet (cp.styleButton)
+        self.but_quit .setStyleSheet (cp.styleButtonBad)
 
         self.but_more.clicked.connect(self.on_but_more)
         self.but_help.clicked.connect(self.on_but_help)
@@ -120,20 +101,18 @@ class PlotImgSpeButtons(Frame) :
         self.cbox_logy.stateChanged[int].connect(self.on_cbox_logy)
         self.edi_nbins.editingFinished .connect(self.on_edit_nbins)
 
-        #self.setGridLayout()        
-        self.setPanelLayout()        
+        self.setPanelLayout()
         self.showToolTips()
-        #self.setFixedHeight(50)
 
         pbits = 377 if self.verb else 0
         self.afe_rd = ArrFileExchange(prefix=self.ifname, rblen=3, print_bits=pbits)
 
 
-    def setIcons(self) :
+    def setIcons(self):
         cp.setIcons()
         self.but_elog .setIcon(cp.icon_mail_forward)
-        self.but_load .setIcon(cp.icon_browser) # icon_contents)
-        self.but_diff .setIcon(cp.icon_minus) # icon_contents)
+        self.but_load .setIcon(cp.icon_browser)
+        self.but_diff .setIcon(cp.icon_minus)
         self.but_save .setIcon(cp.icon_save)
         self.but_quit .setIcon(cp.icon_exit)
         self.but_help .setIcon(cp.icon_help)
@@ -195,37 +174,32 @@ class PlotImgSpeButtons(Frame) :
         self.setPannel()
 
 
-    def setZMin(self, zmin=None) :
-        if self.guirange is None : return
+    def setZMin(self, zmin=None):
+        if self.guirange is None: return
         self.guirange.setParamFrom(zmin)
 
 
-    def setZMax(self, zmin=None) :
-        if self.guirange is None : return
+    def setZMax(self, zmin=None):
+        if self.guirange is None: return
         self.guirange.setParamTo(zmax)
 
 
-    def setZRange(self, str_from=None, str_to=None) :
-        if self.guirange is None : return
+    def setZRange(self, str_from=None, str_to=None):
+        if self.guirange is None: return
         self.guirange.setParams(str_from, str_to)
 
 
     def setPannel(self):
         self.but_quit.setVisible(False)
         self.but_elog.setVisible(False)
-        #self.but_help.setVisible(False)
         self.but_load.setVisible(self.is_expanded)
         self.but_diff.setVisible(self.is_expanded)
         self.but_save.setVisible(self.is_expanded)
         self.guirange.setVisible(self.is_expanded)
-        
-        #self.setMinimumHeight(height)
-        #height = 78 if self.is_expanded else 40
-        #self.setFixedHeight(height)
 
 
     def setGridLayout(self):
-        self.grid = QtWidgets.QGridLayout() 
+        self.grid = QtWidgets.QGridLayout()
         self.grid.addWidget(self.but_help,  0, 0)
         self.grid.addWidget(self.tit_nbins, 0, 1)
         self.grid.addWidget(self.edi_nbins, 0, 2)
@@ -243,32 +217,32 @@ class PlotImgSpeButtons(Frame) :
 
 
     def showToolTips(self):
-        self.but_reset.setToolTip('Reset original view') 
-        self.but_quit .setToolTip('Quit this GUI') 
-        self.but_load .setToolTip('Load image from file') 
-        self.but_load .setToolTip('Load subtracting image from file') 
-        self.but_save .setToolTip('Save the figure in file') 
-        self.but_elog .setToolTip('Send figure to ELog') 
-        self.but_help .setToolTip('Click on this button\nand get help') 
-        self.cbox_grid.setToolTip('On/Off grid') 
-        self.cbox_logx.setToolTip('Log/Linear X scale') 
-        self.cbox_logy.setToolTip('Log/Linear Y scale') 
+        self.but_reset.setToolTip('Reset original view')
+        self.but_quit .setToolTip('Quit this GUI')
+        self.but_load .setToolTip('Load image from file')
+        self.but_load .setToolTip('Load subtracting image from file')
+        self.but_save .setToolTip('Save the figure in file')
+        self.but_elog .setToolTip('Send figure to ELog')
+        self.but_help .setToolTip('Click on this button\nand get help')
+        self.cbox_grid.setToolTip('On/Off grid')
+        self.cbox_logx.setToolTip('Log/Linear X scale')
+        self.cbox_logy.setToolTip('Log/Linear Y scale')
         self.edi_nbins.setToolTip('Edit the number of bins\nfor spectrum [1-1000]')
 
 
     #def resizeEvent(self, e):
-        #print 'resizeEvent' 
+        #print 'resizeEvent'
         #print 'PlotImgSpeButtons resizeEvent: %s' % str(self.size())
 
 
     def closeEvent(self, event): # is called for self.close() or when click on "x"
         #print 'Close application'
-        try    : self.guihelp.close()
-        except : pass
+        try   : self.guihelp.close()
+        except: pass
 
-        try    : self.parent.close()
-        except : pass
-           
+        try   : self.parent.close()
+        except: pass
+
 
     def on_but_quit(self):
         logger.debug('on_but_quit', __name__ )
@@ -276,15 +250,15 @@ class PlotImgSpeButtons(Frame) :
 
 
     def stringOrNone(self,value):
-        if value is None : return 'None'
-        else             : return str(value)
+        if value is None: return 'None'
+        else            : return str(value)
 
 
     def intOrNone(self,value):
-        if value is None : return None
-        else             : return int(value)
+        if value is None: return None
+        else            : return int(value)
 
-    def set_buttons(self) :
+    def set_buttons(self):
         self.cbox_grid.setChecked(self.fig.myGridIsOn)
         self.cbox_logx.setChecked(self.fig.myLogXIsOn)
         self.cbox_logy.setChecked(self.fig.myLogYIsOn)
@@ -296,13 +270,13 @@ class PlotImgSpeButtons(Frame) :
         logger.info('Set for spectrum the number of bins ='+str(self.fig.myNBins), __name__ )
         self.widgimage.processDraw()
 
- 
+
     def on_but_more(self):
         logger.debug('on_but_more', __name__ )
-        if self.is_expanded :
+        if self.is_expanded:
             self.but_more.setText('&More')
             self.is_expanded = False
-        else :
+        else:
             self.but_more.setText('&Less')
             self.is_expanded = True
         self.setPannel()
@@ -318,23 +292,23 @@ class PlotImgSpeButtons(Frame) :
     def on_but_load(self):
         logger.debug('on_but_load', __name__ )
 
-        if self.fexmod :
-            if self.afe_rd.is_new_arr_available() :
+        if self.fexmod:
+            if self.afe_rd.is_new_arr_available():
                 logger.info('WAIT for image loading', __name__ )
-                arr = self.afe_rd.get_arr_latest()             
+                arr = self.afe_rd.get_arr_latest()
                 self.widgimage.set_image_array_new(arr,
                                                rot_ang_n90 = self.widgimage.rot_ang_n90,
                                                y_is_flip   = self.widgimage.y_is_flip)
                                                #title='Image from %s...' % self.ifname,
                 logger.info('Image is loaded', __name__ )
                 return
-            else :
+            else:
                 logger.info('New image is N/A !', __name__ )
                 return
-        
+
         file_filter = 'Files (*.txt *.data *.npy)\nAll files (*)'
         path = gu.get_open_fname_through_dialog_box(self, self.ifname, 'Select file with image', filter=file_filter)
-        if path is None or path == '' :
+        if path is None or path == '':
             logger.info('Loading is cancelled...', __name__ )
             return
 
@@ -342,7 +316,7 @@ class PlotImgSpeButtons(Frame) :
 
 
         arr = gu.get_image_array_from_file(path) # dtype=np.float32)
-        if arr is None : return
+        if arr is None: return
 
         #arr = gu.get_array_from_file(path) # dtype=np.float32)
         #print 'arr:\n', arr
@@ -364,23 +338,23 @@ class PlotImgSpeButtons(Frame) :
         logger.debug('selected option: %s' % selected, __name__ )
 
         path0 = self.ifname
-        if selected is None              : return
-        elif selected == list_of_opts[0] : path0 = fnm.path_dir_work()
-        elif selected == list_of_opts[1] : path0 = fnm.path_to_calib_dir()
-        elif selected == list_of_opts[2] : path0 = self.ifname
-        elif selected == list_of_opts[3] : return
-        else                             : return
+        if selected is None             : return
+        elif selected == list_of_opts[0]: path0 = fnm.path_dir_work()
+        elif selected == list_of_opts[1]: path0 = fnm.path_to_calib_dir()
+        elif selected == list_of_opts[2]: path0 = self.ifname
+        elif selected == list_of_opts[3]: return
+        else                            : return
 
         file_filter = 'Files (*.txt *.data *.npy)\nAll files (*)'
         path = gu.get_open_fname_through_dialog_box(self, path0, 'Select file to subtract', filter=file_filter)
-        if path is None or path == '' :
+        if path is None or path == '':
             logger.info('Loading is cancelled...', __name__ )
             return
 
         arr_sub = gu.get_image_array_from_file(path) # dtype=np.float32)
-        if arr_sub is None : return
+        if arr_sub is None: return
 
-        if arr_sub.size != self.widgimage.arr.size :
+        if arr_sub.size != self.widgimage.arr.size:
             msg = 'Subtracted array size: %d is different from current image size: %d. Diff plotting is cancelled.' % \
                   (arr_sub.size, self.widgimage.arr.size)
             logger.warning(msg, __name__ )
@@ -399,7 +373,7 @@ class PlotImgSpeButtons(Frame) :
                                                        directory = path,
                                                        filter = '*.png *.eps *pdf *.ps'
                                                        ) )[0]
-        if path == '' :
+        if path == '':
             logger.debug('Saving is cancelled.', __name__ )
             return
         logger.info('Save plot in file: ' + path, __name__ )
@@ -414,21 +388,21 @@ class PlotImgSpeButtons(Frame) :
         logger.info('2. Submit message with plot to ELog', __name__ )
         wdialog = GUIELogPostingDialog (self, fname=path)
         resp=wdialog.exec_()
-         
+
 
     def on_cbox_logx(self):
         logger.info('Set log10 for X scale', __name__ )
         self.fig.myLogXIsOn = self.cbox_logx.isChecked()
-        self.fig.myZmin    = None
-        self.fig.myZmax    = None        
+        self.fig.myZmin = None
+        self.fig.myZmax = None
         self.widgimage.processDraw()
 
 
     def on_cbox_logy(self):
         logger.info('Set log10 for Y scale', __name__ )
         self.fig.myLogYIsOn = self.cbox_logy.isChecked()
-        self.fig.myZmin    = None
-        self.fig.myZmax    = None        
+        self.fig.myZmin = None
+        self.fig.myZmax = None
         self.widgimage.processDraw()
 
 
@@ -440,13 +414,13 @@ class PlotImgSpeButtons(Frame) :
 
     def on_but_help(self):
         logger.debug('on_but_help - is not implemented yet...', __name__ )
-        try :
+        try:
             self.guihelp.close()
             del self.guihelp
-        except :
+        except:
             self.guihelp = GUIHelp(None, self.help_msg)
-            self.guihelp.setMinimumSize(620, 200) 
-            self.guihelp.move(self.parentWidget().pos().__add__(QtCore.QPoint(250,60))) 
+            self.guihelp.setMinimumSize(620, 200)
+            self.guihelp.move(self.parentWidget().pos().__add__(QtCore.QPoint(250,60)))
             self.guihelp.show()
 
 
@@ -454,7 +428,7 @@ class PlotImgSpeButtons(Frame) :
         msg  = 'Mouse control functions:'
         msg += '\nZoom-in image: left mouse click, move, and release in another image position.'
         msg += '\nMiddle mouse button click on image - restores full size image'
-        msg += '\nLeft/right mouse click on histogram or color bar - sets min/max amplitude.' 
+        msg += '\nLeft/right mouse click on histogram or color bar - sets min/max amplitude.'
         msg += '\nMiddle mouse click on histogram or color bar - resets amplitude limits to default.'
         msg += '\n"Reset" button - resets all parameters to default values.'
         return msg
@@ -470,22 +444,20 @@ class PlotImgSpeButtons(Frame) :
         msg.setDefaultButton(msg.Close)
         clicked = msg.exec_()
 
-        #if   clicked == QtGui.QMessageBox.Save :
+        #if   clicked == QtGui.QMessageBox.Save:
         #    logger.debug('Saving is requested', __name__)
-        #elif clicked == QtGui.QMessageBox.Discard :
+        #elif clicked == QtGui.QMessageBox.Discard:
         #    logger.debug('Discard is requested', __name__)
-        #else :
+        #else:
         #    logger.debug('Cancel is requested', __name__)
         #return clicked
 
-        
-#-----------------------------
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     w = PlotImgSpeButtons(None, expand=True)
     w.move(QtCore.QPoint(50,50))
     w.show()
     app.exec_()
 
-#-----------------------------
+# EOF
