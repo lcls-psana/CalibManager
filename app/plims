@@ -2,26 +2,18 @@
 
 """This script starts stand alone version of the PlotImgSpe.
 
-This software was developed for the LCLS project.  If you use all or
-part of it, please give an appropriate acknowledgement.
+This software was developed for the LCLS project.
+If you use all or part of it, please give an appropriate acknowledgement.
 
-@author Mikhail S. Dubrovin
+@author Mikhail Dubrovin
 """
-from __future__ import print_function
 
-import sys
 import os
 os.environ['LIBGL_ALWAYS_INDIRECT'] = '1' # get rid of libGL error: unable to load driver: swrast_dri.so
-import matplotlib
-matplotlib.use('QtAgg') # forse Agg rendering to a Qt canvas (backend)
 
-from CalibManager.PlotImgSpe import PlotImgSpe
-from optparse import OptionParser
-from PyQt5 import QtCore, QtGui, QtWidgets
 
-def input_options_parser() :
+def option_parser():
 
-    #ifname_def = ''
     ifname_def = './roi-img'
     ofname_def = './fig.png'
     title_def  = 'Image viewer'
@@ -31,51 +23,24 @@ def input_options_parser() :
     fexmod_def = False
     verb_def   = False
 
-    parser = OptionParser(description='Optional input parameters.', usage ='usage: %prog [options] args')
-    parser.add_option('-i', '--ifname',  dest='ifname', default=ifname_def, action='store', type='string', help='input image file name, default = %s' % ifname_def)
-    parser.add_option('-o', '--ofname',  dest='ofname', default=ofname_def, action='store', type='string', help='output png file name for current canvas, default = %s' % ofname_def)
-    parser.add_option('-t', '--title',   dest='title',  default=title_def,  action='store', type='string', help='initial title of the garphical window, default = %s' % title_def)
-    parser.add_option('-r', '--rot90',   dest='rot90',  default=rot90_def,  action='store', type='int',    help='index for rotation angle by i*90 degree, default = %d' % rot90_def)
-    parser.add_option('-m', '--mirror',  dest='mirror', default=mirror_def, action='store_true',           help='mirror reflection of the image around y axis, default = %s' % str(mirror_def))
-    parser.add_option('-e', '--expand',  dest='expand', default=expand_def, action='store_true',           help='expand button panel, default = %s' % str(expand_def))
-    parser.add_option('-v', '--verb',    dest='verb',   default=verb_def,   action='store_true',           help='verbosity, default = %s' % str(verb_def))
-    parser.add_option('-f', '--fexmod',  dest='fexmod', default=fexmod_def, action='store_true',           help='file exchange mode on/off (True/False), default = %s' % fexmod_def)
+    from optparse import OptionParser
+
+    parser = OptionParser(description='Plot image with minimal interactive control', usage ='usage: %prog [options] args')
+    parser.add_option('-i', '--ifname',  default=ifname_def, action='store', type='string', help='input image file name, default = %s' % ifname_def)
+    parser.add_option('-o', '--ofname',  default=ofname_def, action='store', type='string', help='output png file name for current canvas, default = %s' % ofname_def)
+    parser.add_option('-t', '--title',   default=title_def,  action='store', type='string', help='initial title of the garphical window, default = %s' % title_def)
+    parser.add_option('-r', '--rot90',   default=rot90_def,  action='store', type='int',    help='index for rotation angle by i*90 degree, default = %d' % rot90_def)
+    parser.add_option('-m', '--mirror',  default=mirror_def, action='store_true',           help='mirror reflection of the image around y axis, default = %s' % str(mirror_def))
+    parser.add_option('-e', '--expand',  default=expand_def, action='store_true',           help='expand button panel, default = %s' % str(expand_def))
+    parser.add_option('-v', '--verb',    default=verb_def,   action='store_true',           help='verbosity, default = %s' % str(verb_def))
+    parser.add_option('-f', '--fexmod',  default=fexmod_def, action='store_true',           help='file exchange mode on/off (True/False), default = %s' % fexmod_def)
+
+    return parser
 
 
-    (opts, args) = parser.parse_args()
-    return (opts, args)
-
-## run application when launched as a main module
-
-if __name__ == "__main__" :
-
-    (opts, args) = input_options_parser()
-    #print 'opts:\n', opts
-    #print 'args:\n', args
-
-    pars = {'parent'          : None,
-            'arr'             : None,
-            'ifname'          : opts.ifname,
-            'ofname'          : opts.ofname,
-            'title'           : opts.title,
-            'orient'          : opts.rot90,
-            'y_is_flip'       : opts.mirror,
-            'is_expanded'     : opts.expand,
-            'verb'            : opts.verb,
-            'fexmod'          : opts.fexmod}
-
-    if args != [] :
-        if args[0] is not '' : pars['ifname'] = args[0]
-
-    print('Start PlotImgSpe with input parameters:')
-    for k,v in pars.items():
-        print('%16s : %s' % (k,v))
-
-    app = QtWidgets.QApplication(sys.argv)
-    w = PlotImgSpe(**pars)
-    w.move(QtCore.QPoint(300,10))
-    w.show()
-    app.exec_()
-    sys.exit('End of %s' % sys.argv[0])
+if __name__ == "__main__":
+    parser = option_parser()
+    from CalibManager.PlotImgSpe import do_work
+    do_work(parser)
 
 # EOF
