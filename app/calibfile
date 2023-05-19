@@ -44,7 +44,7 @@ def calibfile():
 
     import Detector.RepoManager as rm
 
-    repoman = rm.RepoManager(DIR_REPO, dirmode=dirmode, filemode=filemode, dir_log_at_start=DIR_LOG_AT_START, group=group)
+    repoman = rm.RepoManager(dirrepo=DIR_REPO, dirmode=dirmode, filemode=filemode, dir_log_at_start=DIR_LOG_AT_START, group=group)
     logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login())) if popts.lfname is None else\
               popts.lfname
     init_logger(loglevel=loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s', group=group)

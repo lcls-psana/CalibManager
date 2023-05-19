@@ -134,7 +134,7 @@ if __name__ == "__main__":
     import Detector.RepoManager as rm
 
     dirrepo = kwa.workdir
-    repoman = rm.RepoManager(dirrepo, dirmode=kwa.dirmode, filemode=kwa.filemode, dir_log_at_start=DIR_LOG_AT_START, group=kwa.group)
+    repoman = rm.RepoManager(dirrepo=dirrepo, dirmode=kwa.dirmode, filemode=kwa.filemode, dir_log_at_start=DIR_LOG_AT_START, group=kwa.group)
     logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login()))
     init_logger(loglevel=kwa.loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s', group=kwa.group)
     logger.info('log file: %s' % logname)
