@@ -8,6 +8,18 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-20
+2023-05-19 Mikhail Dubrovin
+- modified:
+  app/calibfile,
+  app/calibrun - rm.RepoManager(dirrepo=dirrepo...
+  app/plims- bring script to generic scheme
+  src/GUIFileManagerSingleControl.py - code cleaning
+  src/GlobalUtils.py - use standard logging
+  src/PlotImgSpe.py - fix self test, code cleaning
+  src/PlotImgSpeButtons.py - code cleaning
+  src/PlotImgSpeWidget.py - code cleaning
+
 Tag: V02-00-19
 2023-03-17 Mikhail Dubrovin
 - rename pixel_status_extra > status_extra
