@@ -6,12 +6,10 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
-from __future__ import print_function
+#from __future__ import print_function
 #from __future__ import absolute_import
-
-from future import standard_library
-
-standard_library.install_aliases()
+#from future import standard_library
+#standard_library.install_aliases()
 
 import os
 import sys
@@ -32,7 +30,10 @@ from subprocess import getoutput
 
 import subprocess # for subprocess.Popen
 
-from CalibManager.Logger import logger
+import logging
+logger = logging.getLogger(__name__)
+#from CalibManager.Logger import logger
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from .GUIPopupCheckList import *
 from .GUIPopupRadioList import *
@@ -215,7 +216,7 @@ def batch_job_submit(command, queue='psnehq', log_file='batch-log.txt'):
     if line_fields[0] != 'Job':
         msg = 'EXIT: Unexpected response at batch submission:\nout: %s \nerr: %s'%(out, err)
         print(msg)
-        logger.warning(msg, __name__)
+        logger.warning(msg)
         #sys.exit(msg)
         job_id_str = 'JOB_ID_IS_UNKNOWN'
     else:
@@ -228,9 +229,9 @@ def batch_job_submit(command, queue='psnehq', log_file='batch-log.txt'):
         else:
             msg = '\n' + 80*'!' + '\n' + err + 80*'!' + '\n'
 
-        logger.warning(msg, __name__)
+        logger.warning(msg)
 
-    logger.info(out, __name__)
+    logger.info(out)
 
     return job_id_str, out, err
 
@@ -247,7 +248,7 @@ def bsub_is_available():
         msg = 'Check if bsub is available on this node:\n' + err + \
               '\nbsub IS NOT available in current configuration of your node... (try command: which bsub)\n'
         print(msg)
-        logger.warning(msg, __name__)
+        logger.warning(msg)
         return False
     else:
         return True
@@ -266,7 +267,7 @@ def batch_job_status(job_id_str, queue='psnehq'):
     p = subprocess.Popen(['bjobs', '-q', queue, job_id_str], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait() # short time waiting untill submission is done,
     err = p.stderr.read() # reads entire file
-    if err != '': logger.warning('batch_job_status:\n' + err, __name__)
+    if err != '': logger.warning('batch_job_status:\n' + err)
     status = None
     lines  = p.stdout.readlines() # returns the list of lines in file
     #for line in lines: print 'batch_job_status: ' + line
@@ -281,7 +282,7 @@ def batch_job_status_and_nodename(job_id_str, queue='psnehq'):
     p = subprocess.Popen(['bjobs', '-q', queue, job_id_str], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait() # short time waiting untill submission is done,
     err = p.stderr.read() # reads entire file
-    if err != '': logger.warning('batch_job_status_and_nodename:\n' + err, __name__)
+    if err != '': logger.warning('batch_job_status_and_nodename:\n' + err)
     status = None
     lines  = p.stdout.readlines() # returns the list of lines in file
     if len(lines)<2: return None, None
@@ -297,7 +298,7 @@ def batch_job_status_and_nodename(job_id_str, queue='psnehq'):
 def remove_file(path):
     #print 'remove file: ' + pathOut[11]: ''
 
-    logger.debug('remove: ' + path, __name__)
+    logger.debug('remove: ' + path)
     p = subprocess.Popen(['rm', path], stdout=subprocess.PIPE)
     p.wait() # short time waiting untill submission is done,
 
@@ -365,7 +366,7 @@ def parse_xtc_file_name(fname):
 #        or          /reg/d/psdm/XCS/xcsi0112/xtc/e167-r0015-s00-c00.xtc
 def parse_xtc_path(path='.'):
 
-    logger.debug( 'parse_xtc_path(...): ' + str(path), __name__)
+    logger.debug('parse_xtc_path(...): ' + str(path))
 
     instrument = 'INS'
     experiment = 'expt'
@@ -390,14 +391,14 @@ def parse_xtc_path(path='.'):
     if n_fields < 4:
         msg1 = 'Unexpected xtc dirname: %s: Number of fields in dirname = %d' % (dirname, n_fields)
         msg2 = 'Use default instrument, experiment, run_str, run_num: %s %s %s %d' % (instrument, experiment, run_str, run_num)
-        logger.warning( msg1+msg2, __name__)
+        logger.warning( msg1+msg2)
         return instrument, experiment, run_str, run_num
 
     xtc_subdir = fields[-1]                         # i.e. xtc
     experiment = fields[-2]                         # i.e. xcsi0112
     instrument = fields[-3].upper()                 # i.e. XCS
     msg = 'Set instrument, experiment, run_str, run_num: %s %s %s %d' % (instrument, experiment, run_str, run_num)
-    logger.debug( msg, __name__)
+    logger.debug(msg)
 
     return instrument, experiment, run_str, run_num
 
@@ -458,7 +459,7 @@ def list_of_calib_files_with_run_range(list_of_files):
 
 def get_text_content_of_calib_dir_for_detector(path, det='cspad', subdir='CsPad::CalibV1', level=0, calib_type=None):
 
-    #logger.debug( 'get_txt_content_of_calib_dir_for_detector(...): ' + path, __name__)
+    #logger.debug( 'get_txt_content_of_calib_dir_for_detector(...): ' + path)
     det_lower = det.lower()
     txt = '    '
     if level == 0: txt = 85*'-' + '\nContent of: %s for detector: %s' % (path, det)
@@ -681,13 +682,13 @@ def changeCheckBoxListInPopupMenu(list, win_title='Set check boxes'):
     response = popupMenu.exec_()
 
     if   response == QtWidgets.QDialog.Accepted:
-        logger.debug('New checkbox list is accepted', __name__)
+        logger.debug('New checkbox list is accepted')
         return 1
     elif response == QtWidgets.QDialog.Rejected:
-        logger.debug('Will use old checkbox list', __name__)
+        logger.debug('Will use old checkbox list')
         return 0
     else:
-        logger.error('Unknown response...', __name__)
+        logger.error('Unknown response...')
         return 2
 
 
@@ -702,22 +703,21 @@ def selectRadioButtonInPopupMenu(dict_of_pars, win_title='Select option', do_con
 
 def get_array_from_file(fname, dtype=np.float32):
     if fname is None or fname=='':
-        logger.warning('File name is not specified...', __name__)
+        logger.warning('File name is not specified...')
         return None
 
     elif os.path.lexists(fname):
 
         fname_ext = os.path.splitext(fname)[1]
-        #print 'fname_ext', fname_ext
-
-        logger.info('Get array from file: ' + fname, __name__)
+        #print('fname_ext', fname_ext)
+        print('Get array from file: %s' % fname)
 
         if fname_ext == '.npy':
             return np.load(fname) # load as binary
         else:
             return np.loadtxt(fname, dtype=dtype)
     else:
-        logger.warning(fname + ' is not available', __name__)
+        logger.warning(fname + ' is not available')
         return None
 
 
@@ -725,6 +725,7 @@ def get_image_array_from_file(fname, dtype=np.float32):
 
     arr = get_array_from_file(fname, dtype)
     if arr is None:
+        logger.warning('None is loaded from file %s' % fname)
         return None
 
     img_arr = None
@@ -743,18 +744,19 @@ def get_image_array_from_file(fname, dtype=np.float32):
     else:
         msg = 'Array loaded from file: %s\n has shape: %s, size: %s, ndim: %s' % \
               (fname, str(arr.shape), str(arr.size), str(arr.ndim))
-        msg += '\nIs not recognized as image'
-        logger.warning(msg, __name__)
-        return None
+        msg += '\n > reshape_to_2d'
+        logger.warning(msg)
+        from pyimgalgos.GlobalUtils import reshape_to_2d
+        img_arr = reshape_to_2d(arr)
 
     return img_arr
 
 
 def get_text_list_from_file(fname):
     if not os.path.lexists(fname):
-        logger.warning(fname + ' is not available', __name__)
+        logger.warning(fname + ' is not available')
         return None
-    logger.info('Read and return as a 2-d tuple text array from file: ' + fname, __name__)
+    logger.info('Read and return as a 2-d tuple text array from file: ' + fname)
 
     list_recs = []
     f=open(fname,'r')
@@ -814,7 +816,7 @@ def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
         logger.info('Input directiry name or file name is empty... keep file path unchanged...')
         #print 'Input directiry name or file name is empty... keep file path unchanged...'
         return None
-    logger.info('Input file: ' + path, 'get_open_fname_through_dialog_box')
+    logger.info('Input file: ' + path + 'get_open_fname_through_dialog_box')
     #print 'Input file: ' + path
     return path
 
@@ -859,7 +861,7 @@ def help_dialog_box(parent=None, text='Help message goes here', title='Help'):
         messbox.setModal (False)
         #clicked = messbox.exec_() # For MODAL dialog
         clicked = messbox.show()  # For NON-MODAL dialog
-        logger.info('Help window is open' + text, 'help_dialog_box')
+        logger.info('Help window is open' + text + 'help_dialog_box')
         return messbox
 
 
