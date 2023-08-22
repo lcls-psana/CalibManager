@@ -220,7 +220,7 @@ def str_command_for_peds_aver():
             + ' -T %.3f' % rms_hi\
             + ' -F 0.1'\
             + ' -p 0'\
-            + ' -S 0377'\
+            + ' -S 255'\
             + ' -v 511'\
             + ' -L %.3f' % rmsnlo\
             + ' -H %.3f' % rmsnhi\

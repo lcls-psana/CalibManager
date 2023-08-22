@@ -8,6 +8,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-21
+2023-08-22 Mikhail Dubrovin
+- modified: src/CommandLineCalib.py -S 0377 > 255
+
 Tag: V02-00-20
 2023-05-19 Mikhail Dubrovin
 - modified:
