@@ -8,6 +8,13 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+??? Tag: V02-00-22
+2023-10-18 Mikhail Dubrovin
+  app/calibrun - add --nrecs1
+  src/ConfigParametersForApp.py - rename cp.xtc_dir_non_std > cp.dsnamex
+  src/FileNameManager.py - rename cp.xtc_dir_non_std > cp.dsnamex
+  src/CommandLineCalib.py - rename cp.xtc_dir_non_std > cp.dsnamex; use cp.nrecs1; scan_event_keys in stead of command_for_peds_scan
+
 Tag: V02-00-21
 2023-08-22 Mikhail Dubrovin
 - modified: src/CommandLineCalib.py -S 0377 > 255
