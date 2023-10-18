@@ -89,8 +89,8 @@ class FileNameManager:
 
     def path_to_xtc_dir(self):
         """Returns somthing like /reg/d/psdm/CXI/cxitut13/xtc/ or None"""
-        if cp.xtc_dir_non_std.value() != cp.xtc_dir_non_std.value_def():
-            return cp.xtc_dir_non_std.value()
+        if cp.dsnamex.value() != cp.dsnamex.value_def():
+            return cp.dsnamex.value()
         if cp.instr_dir.value()  is None: return None
         if cp.instr_name.value() is None: return None
         if cp.exp_name.value()   is None: return None
@@ -229,7 +229,7 @@ class FileNameManager:
     def path_to_data_files(self):
         """Returns something like 'exp=xcs72913:run=49:xtc' + ':dir=./myxtc/xpp/xppi0613/xtc/:live'"""
         mode = ':smd' if cp.smd_is_on.value() else ':xtc'
-        if cp.xtc_dir_non_std.value() != cp.xtc_dir_non_std.value_def():
+        if cp.dsnamex.value() != cp.dsnamex.value_def():
             xtcdir = fnm.path_to_xtc_dir() # './myxtc/xpp/xppi0613/xtc/'
             live = ':live' if 'ffb' in xtcdir else ''
             return 'exp=%s:run=%d:stream=0-79%s:dir=%s%s' % (cp.exp_name.value(), int(cp.str_run_number.value()), mode, xtcdir, live)
