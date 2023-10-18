@@ -34,6 +34,7 @@ def input_options_parser():
     d_calibdir = None
     d_runrange = None
     d_num_events  = 1000
+    d_nrecs1   = 50
     d_skip_events = 0
     d_scan_events = 10
     d_thr_int_min = 0.1
@@ -56,14 +57,15 @@ def input_options_parser():
     h_exp = 'experiment name, ex.: cxi12345, default = %s' % d_exp
     h_run = 'dark run(s) for processing, default = %s' % d_run
     h_dsnamex = 'dataset string or xtc file name or extension after exp=<exp>:run=<run> beginning with colon ":", default = %s' % d_dsnamex
-    h_detector = 'detector names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD, default = %s' % d_detector
-    h_event_code =  'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all., default = %s' % d_event_code
+    h_detector = 'detector type-names separated by comma, ex:CSPAD,CSPAD2x2,PNCCD, default = %s' % d_detector
+    h_event_code = 'comma separated string of event codes for dark event selection as OR. Any negative code inverts decision for all., default = %s' % d_event_code
     h_workdir = 'repository/work directory, default = %s' % d_workdir
     h_calibdir = 'non-standard path to calib directory, ex: ./calib, default = %s' % d_calibdir
     h_runrange = 'validity run range for deployment, ex.: 123-567 or 123-end, default = %s' % d_runrange
     h_process = 'process xtc files and produce calib files under the "work" directory, default = %s' % d_process
     h_deploy = 'deploy calibrated files under the "calib" directory, default = %s' % d_deploy
     h_num_events  = 'number of events to process, default = %s' % d_num_events
+    h_nrecs1 = 'number of events for tyhe 1st stage, default = %s' % d_nrecs1
     h_skip_events = 'number of events to skip before processing, default = %s' % d_skip_events
     h_scan_events = 'number of events to scan data and search for selected detector(s), default = %s' % d_scan_events
     h_thr_int_min = 'minimal threshold on intensity for pixel_status (intens<thr - dead pixel), default = %s'       % d_thr_int_min
@@ -108,12 +110,15 @@ def input_options_parser():
     parser.add_option('--dirmode',           default=d_dirmode,     action='store', type='int',    help=h_dirmode)
     parser.add_option('--filemode',          default=d_filemode,    action='store', type='int',    help=h_filemode)
     parser.add_option('--group',             default=d_group,       action='store', type='string', help=h_group)
+    parser.add_option('--nrecs1',            default=d_nrecs1,      action='store', type='int',    help=h_nrecs1)
     parser.add_option('-l', '--loglev',      default=d_loglev,      action='store', type='string', help=h_loglev)
 
     return parser
 
 
 if __name__ == "__main__":
+
+    #print('XXX sys.argv:', sys.argv)
 
     if len(sys.argv) < 2: sys.exit('MISSING PARAMETERS\ntry: %s -h' % SCRNAME)
 
@@ -138,7 +143,7 @@ if __name__ == "__main__":
     logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login()))
     init_logger(loglevel=kwa.loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s', group=kwa.group)
     logger.info('log file: %s' % logname)
-    repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
+    #repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
     kwargs['repoman'] = repoman
     kwargs['logname'] = logname
 
