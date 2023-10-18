@@ -6,10 +6,6 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail Dubrovin
 """
-#from __future__ import print_function
-#from __future__ import division
-#from __future__ import absolute_import
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -21,6 +17,11 @@ from CalibManager.FileNameManager import fnm
 from CalibManager.ConfigParametersForApp import cp
 from CalibManager.BatchLogScanParser import blsp # Just in order to instatiate it
 import Detector.UtilsCalib as uc
+
+
+def dsnamex_is_xtc_file(dsnamex):
+    return dsnamex is not None and dsnamex[0] != ':'
+
 
 def str_replace_fields(s, insets={}):
     """1. splits string fields separated by spaces.
@@ -84,12 +85,15 @@ def print_list_of_detectors(sep='--'):
         msg += '\n%s %s' % (det.ljust(10), par.value())
     logger.info(msg)
 
-
 def print_list_of_xtc_files(title='List of xtc files'):
-    pattern = '-r%s' % cp.str_run_number.value()
-    lst = fnm.get_list_of_xtc_files()
-    lst_for_run = [path for path in lst if pattern in os.path.basename(path)]
-    logger.info(title + '\n'.join(lst_for_run))
+    dsnamex = cp.dsnamex.value()
+    if dsnamex_is_xtc_file(dsnamex):
+        logger.info('%s    ... xtc file is specified in --dsnamex' % (title))
+    else:
+        pattern = '-r%s' % cp.str_run_number.value()
+        lst = fnm.get_list_of_xtc_files()
+        lst_for_run = [path for path in lst if pattern in os.path.basename(path)]
+        logger.info(title + '\n'.join(lst_for_run))
 
 
 def print_list_of_sources_from_regdb(sep='--'):
@@ -103,15 +107,6 @@ def get_list_of_files_dark_in_work_dir():
     path_prexix = fnm.path_prefix_dark()
     dir, prefix = os.path.split(path_prexix)
     return gu.get_list_of_files_in_dir_for_part_fname(dir, pattern=prefix)
-
-
-#def get_list_of_files_dark_expected():
-#    lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors()
-#    return fnm.get_list_of_files_peds() \
-#         + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_of_srcs) \
-#         + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_of_srcs) \
-#         + gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_of_srcs) \
-#         + gu.get_list_of_files_for_list_of_insets(fnm.path_peds_cmod(),   lst_of_srcs)
 
 
 def print_list_of_files_dark_in_work_dir(sep='--'):
@@ -134,38 +129,70 @@ def print_dark_ave_log(sep='--'):
     logger.info(txt)
 
 
-def str_command_for_peds_scan():
-    """Returns str command for scan, for example:
-       event_keys -d exp=mecj5515:run=102:stream=0-79:smd -n 1000 -s 0 -m 1 -p EventKey
-    """
-    dsname = cp.dsname.value()  # fnm.path_to_data_files() # exp=mecj5515:run=102:stream=0-79:smd
-    evskip = cp.bat_dark_start.value() - 1
-    events = cp.bat_dark_scan.value()
+#def str_command_for_peds_scan():
+#    """Returns str command for scan, for example:
+#       event_keys -d exp=mecj5515:run=102:stream=0-79:smd -n 10 -s 0 -m 1 -p EventKey # for regular dataset directory
+#       or
+#       event_keys -d /sdf/group/lcls/ds/ana/detector/data_test/xtc/xppn4116-e851-r0137-s00-c00.xtc -n 10 -s -1 -m 1 -p EventKey # for separate xtc file
+#    """
+#    dsnamex = cp.dsnamex.value()
+#    dsname = dsnamex if dsnamex_is_xtc_file(dsnamex) else cp.dsname.value()  # fnm.path_to_data_files() # exp=mecj5515:run=102:stream=0-79:smd
+#    evskip = cp.bat_dark_start.value() - 1
+#    events = cp.bat_dark_scan.value() # 10
+#    logscn = fnm.path_peds_scan_log() # log file name for scan
+#    command = 'event_keys -d %s -n %s -s %s -m 1 -p EventKey' % (dsname, str(events), str(evskip))
+#    msg = 'Scan xtc file(s) using command:\n%s' % command \
+#        + '\nand save results in the log-file: %s' % logscn
+#    logger.info(msg)
+#    return command
+#
+#
+#def command_for_peds_scan():
+#    str_run_number = cp.str_run_number.value()
+#    command = str_command_for_peds_scan()
+#    logname = fnm.path_peds_scan_log() # log file name for scan
+#    err = gu.subproc_in_log(command.split(), logname) # , shell=True)
+#    err = str(err) # convert byte to str for py3
+#    if err != '':
+#        if 'ERR' in err:
+#            logger.error('\nERROR message from scan:\n%s' % (err))
+#            #self.stop_auto_processing(is_stop_on_button_click=False)
+#            logger.warning('Autoprocessing for run %s is stopped due to error at execution of the scan command'\
+#                           % str_run_number)
+#            return False
+#        else:
+#            logger.debug('Message from scan: %s' % (err))
+#    logger.info('Scan for run %s is completed' % str_run_number)
+#    return True
+
+
+def scan_event_keys():
+    import psana
+    pattern = 'EventKey'
+    dsnamex = cp.dsnamex.value()
+    dsname = dsnamex if dsnamex_is_xtc_file(dsnamex) else cp.dsname.value()  # fnm.path_to_data_files() # exp=mecj5515:run=102:stream=0-79:smd
     logscn = fnm.path_peds_scan_log() # log file name for scan
-    command = 'event_keys -d %s -n %s -s %s -m 1 -p EventKey' % (dsname, str(events), str(evskip))
-    msg = 'Scan xtc file(s) using command:\n%s' % command \
-        + '\nand save results in the log-file: %s' % logscn
-    logger.info(msg)
-    return command
-
-
-def command_for_peds_scan():
-    str_run_number = cp.str_run_number.value()
-    command = str_command_for_peds_scan()
-    logname = fnm.path_peds_scan_log() # log file name for scan
-    err = gu.subproc_in_log(command.split(), logname) # , shell=True)
-    err = str(err) # convert byte to str for py3
-    if err != '':
-        if 'ERR' in err:
-            logger.error('\nERROR message from scan:\n%s' % (err))
-            #self.stop_auto_processing(is_stop_on_button_click=False)
-            logger.warning('Autoprocessing for run %s is stopped due to error at execution of the scan command'\
-                           % str_run_number)
-            return False
-        else:
-            logger.debug('Message from scan: %s' % (err))
-    logger.info('Scan for run %s is completed' % str_run_number)
-    return True
+    SKIP   = cp.bat_dark_start.value() - 1
+    EVENTS = cp.bat_dark_scan.value() + SKIP
+    ds  = psana.DataSource(dsname)
+    sset = set()
+    for i, evt in enumerate(ds.events()):
+        if i<SKIP: continue
+        if not i<EVENTS: break
+        print('scan event %2d' % i)#, end='\r')
+        for k in evt.keys():
+            s = str(k)  # EventKey(type=psana.Epix.ElementV3, src='DetInfo(XppGon.0:Epix100a.1)', alias='epix')
+            if pattern in str(s):
+                sset.add(s)
+    s = 'scan_event_keys'\
+      + '\ndsname       : %s' % dsname\
+      + '\nfirst event  : %s' % SKIP\
+      + '\nlast event   : %s' % EVENTS\
+      + '\npattern      : %s' % pattern\
+      + '\n'.join(sset)
+    logger.debug(s)
+    gu.save_textfile(s, logscn, mode='w') #, accmode=0o664, group='ps-users')
+    logger.debug('saved evt.keys() in temporary file: %s' % logscn)
 
 
 def str_of_sources():
@@ -173,11 +200,9 @@ def str_of_sources():
        'CxiDg2.0:Cspad2x2.0,CxiEndstation.0:Opal4000.1'
     """
     list_of_all_srcs = []
+    #print('XXX str_of_sources():cp.list_of_dets_selected():', cp.list_of_dets_selected())
     for det_name in cp.list_of_dets_selected():
         lst_types, lst_srcs, lst_ctypes = cp.blsp.list_of_types_and_sources_for_detector(det_name)
-        #list_path_peds_ave    = gu.get_list_of_files_for_list_of_insets(fnm.path_peds_ave(),    lst_srcs)
-        #list_path_peds_rms    = gu.get_list_of_files_for_list_of_insets(fnm.path_peds_rms(),    lst_srcs)
-        #list_path_hotpix_mask = gu.get_list_of_files_for_list_of_insets(fnm.path_hotpix_mask(), lst_srcs)
         list_of_all_srcs += lst_srcs
     return ','.join(list_of_all_srcs)
 
@@ -202,6 +227,9 @@ def str_command_for_peds_aver():
     intnlo = cp.mask_intnlo.value()
     intnhi = cp.mask_intnhi.value()
     evcode = cp.bat_dark_sele.value()
+    nrecs  = cp.nrecs
+    nrecs1 = cp.nrecs1
+    exp_name = cp.exp_name.value() #  needed in case of stand-alone xtc file...
 
     if srcs == '':
         str_sel_dets = ' '.join(cp.list_of_dets_selected())
@@ -225,28 +253,13 @@ def str_command_for_peds_aver():
             + ' -L %.3f' % rmsnlo\
             + ' -H %.3f' % rmsnhi\
             + ' -D %.3f' % intnlo\
-            + ' -U %.3f' % intnhi
+            + ' -U %.3f' % intnhi\
+            + ' --nrecs  %d' % nrecs\
+            + ' --nrecs1 %d' % nrecs1\
+            + ' --expname %s' % exp_name
+
 
     if evcode != 'None': command += ' -c %s'   % evcode
-
-#  -d DSNAME, --dsname=DSNAME  dataset name, default = None
-#  -s SOURCE, --source=SOURCE  input ndarray file name, default = None
-#  -f OFNAME, --ofname=OFNAME  output file name template, default = nda-#exp-#run-#src-#evts-#type-#date-#time-#fid-#sec-#nsec.txt
-#  -n EVENTS, --events=EVENTS  number of events to collect, default = 10000000
-#  -m EVSKIP, --evskip=EVSKIP  number of events to skip, default = 0
-#  -b INTLOW, --intlow=INTLOW  intensity low limit, default = None
-#  -t INTHIG, --inthig=INTHIG  intensity high limit, default = None
-#  -B RMSLOW, --rmslow=RMSLOW  rms low limit, default = None
-#  -T RMSHIG, --rmshig=RMSHIG  rms high limit, default = None
-#  -F FRACLM, --fraclm=FRACLM  allowed fraction limit, default = 0.1
-#  -p PLOTIM, --plotim=PLOTIM  control bit-word to plot images, default = 0
-#  -v VERBOS, --verbos=VERBOS  control bit-word for verbosity, default = 7
-#  -S SAVEBW, --savebw=SAVEBW  control bit-word to save arrays, default = 255
-#  -D INTNLO, --intnlo=INTNLO  number of sigma from mean for low  limit on INTENSITY, default = 6.0
-#  -U INTNHI, --intnhi=INTNHI  number of sigma from mean for high limit on INTENSITY, default = 6.0
-#  -L RMSNLO, --nsiglo=RMSNLO  number of sigma from mean for low limit on RMS, default = 6.0
-#  -H RMSNHI, --nsighi=RMSNHI  number of sigma from mean for high limit on RMS, default = 6.0
-#  -c EVCODE, --evcode=EVCODE  comma separated event codes for selection as OR ..., default = None
 
     msg = 'Avereging xtc file(s) using command:\n%s' % command \
         + '\nand save results in the log-file: %s' % logave
@@ -269,7 +282,10 @@ def command_for_peds_aver():
 
 
 def proc_dark_run_interactively(sep='--'):
-    command_for_peds_scan()
+    #command_for_peds_scan()
+    scan_event_keys()
+    #sys.exit('TEST EXIT')
+
     logger.info(sep + 'Data Types and Sources from xtc scan of the\n' + cp.blsp.txt_list_of_types_and_sources())
     if not command_for_peds_aver():
         msg = sep + 'Subprocess for averaging is completed with warning/error message(s);'\
@@ -339,11 +355,19 @@ class CommandLineCalib():
         list_of_dets_sel = self.det_name.split()
         list_of_dets_sel_lower = [det.lower() for det in list_of_dets_sel]
 
+        #print('XXX list_of_dets_sel_lower', list_of_dets_sel_lower)
         #msg = self.sep + 'List of detectors:'
+        #print('XXX cp.list_of_dets_lower', cp.list_of_dets_lower)
+
         for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list):
             par.setValue(det in list_of_dets_sel_lower)
             #msg += '\n%s %s' % (det.ljust(10), par.value())
         #logger.info(msg)
+
+        if all(not p.value() for p in cp.det_cbx_states_list):
+            msg = sys.exit('EXIT - specified detector type-name(s) (-d or --detector): %s not found in the list of allowed names: %s' % (self.det_name, str(cp.list_of_dets_lower)))
+            logger.error(msg)
+            #sys.exit(msg)
 
         self.event_code  = kwa['event_code']
         self.scan_events = kwa['scan_events']
@@ -368,9 +392,11 @@ class CommandLineCalib():
         self.logname     = kwa['logname']  # str
         self.group       = kwa['group']    # ps-users
         self.dsnamex     = kwa['dsnamex']  # :std:dir=...
-
-        self.dsname      = uc.str_dsname(self.exp_name, self.run, kwa['dsnamex'])
+        self.dsname      = uc.str_dsname(self.exp_name, self.run, self.dsnamex)
         self.instr_name  = self.exp_name[:3]
+
+        cp.nrecs         = kwa['num_events']
+        cp.nrecs1        = kwa['nrecs1']
 
         cp.str_run_number.setValue(self.str_run_number)
         cp.exp_name      .setValue(self.exp_name)
@@ -382,7 +408,7 @@ class CommandLineCalib():
 
         cp.det_name        .setValue(self.det_name)
         cp.dsname          .setValue(self.dsname)
-        cp.xtc_dir_non_std .setValue(self.dsnamex)
+        cp.dsnamex         .setValue(self.dsnamex)
         cp.calib_dir       .setValue(self.calibdir)
         cp.dir_work        .setValue(self.workdir)
         cp.bat_dark_sele   .setValue(self.event_code)
