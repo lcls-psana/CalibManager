@@ -8,7 +8,15 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
-??? Tag: V02-00-22
+Tag: V02-00-22
+2023-10-20 Mikhail Dubrovin
+  BatchLogScanParser.py - remove unused self.det_name + cosmetic
+  CommandLineCalib.py - get rid of cp.plsp methods by implementing them in this module + cosmetic
+  ConfigParametersForApp.py - cosmetic
+  FileDeployer.py - in many methods add parameter mets_from=cp.blsp to switch using method from blsp or CommandLineCalib
+  FileNameManager.py - isolate log_file_cpo outside class and use local import from CalibManager.Logger
+  Logger.py - cosmetic
+
 2023-10-18 Mikhail Dubrovin
   app/calibrun - add --nrecs1
   src/ConfigParametersForApp.py - rename cp.xtc_dir_non_std > cp.dsnamex
