@@ -1,7 +1,5 @@
 
 
-from __future__ import absolute_import
-
 import os
 import stat
 import logging
@@ -12,11 +10,12 @@ from CalibManager.FileNameManager import fnm
 import CalibManager.GlobalUtils as gu
 
 
-def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, zeropeds=False, deploygeo=False):
+def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, zeropeds=False, deploygeo=False, mets_from=cp.blsp):
     """Get list of deploy commands for all detectors of the same type"""
 
     cp.str_run_number.setValue(str_run_number)
-    list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
+    #list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
+    list_of_dtypes, list_of_sources, list_of_ctypes = mets_from.list_of_types_and_sources_for_selected_detectors()
     #list_of_dtypes  # ['CsPad::DataV1',    'CsPad::DataV1']
     #list_of_sources # ['CxiDs1.0:Cspad.0', 'CxiDsd.0:Cspad.0']
     #list_of_ctypes  # ['CsPad::CalibV1',   'CsPad::CalibV1']
@@ -39,12 +38,13 @@ def get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, 
     return list_of_deploy_commands, list_of_sources
 
 
-def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode='dark'):
+def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode='dark', mets_from=cp.blsp):
     """Get list of deploy commands for all detectors of the same type"""
 
     cp.str_run_number.setValue(str_run_number)
     #cp.blsp.print_list_of_types_and_sources()
-    list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
+    #list_of_dtypes, list_of_sources, list_of_ctypes = cp.blsp.list_of_types_and_sources_for_selected_detectors()
+    list_of_dtypes, list_of_sources, list_of_ctypes = mets_from.list_of_types_and_sources_for_selected_detectors()
 
     list_of_deploy_commands  = get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_ave(), 'pedestals', str_run_range, mode)
     list_of_deploy_commands += get_list_of_deploy_commands_for_calibtype_dcs(list_of_sources, fnm.path_peds_zero(), 'pedestals', str_run_range, mode)
@@ -61,23 +61,23 @@ def get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_ran
     return list_of_deploy_commands, list_of_sources
 
 
-def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode='dark', zeropeds=False, deploygeo=False):
+def get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode='dark', zeropeds=False, deploygeo=False, mets_from=cp.blsp):
     if mode=='calibman-dark' or \
-       mode=='calibrun-dark': return get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, zeropeds, deploygeo)
+       mode=='calibrun-dark': return get_list_of_deploy_commands_and_sources_dark(str_run_number, str_run_range, zeropeds, deploygeo, mets_from)
     else                    : return [], []
 
 
-def get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode='dark'):
+def get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode='dark', mets_from=cp.blsp):
     if mode=='calibman-dark' or \
-       mode=='calibrun-dark': return get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode)
+       mode=='calibrun-dark': return get_list_of_deploy_commands_and_sources_dark_dcs(str_run_number, str_run_range, mode, mets_from)
     else                    : return [], []
 
 
 def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_confirm=True, zeropeds=False, deploygeo=False,\
-                       dirmode=0o2775, filemode=0o664, group='ps-users'):
+                       dirmode=0o2775, filemode=0o664, group='ps-users', mets_from=cp.blsp):
     """Deploys the calibration file(s)"""
 
-    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode, zeropeds, deploygeo)
+    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources(str_run_number, str_run_range, mode, zeropeds, deploygeo, mets_from)
     msg = 'Deploy calibration file(s):'
 
     if list_of_deploy_commands == []:
@@ -100,15 +100,15 @@ def deploy_calib_files(str_run_number, str_run_range, mode='calibrun-dark', ask_
         if is_allowed_command(cmd, list_src_cbx): fd.procDeployCommand(cmd, mode, dirmode=dirmode, filemode=filemode, group=group)
 
     #---->>> DCS hdf5 file deployment
-    return deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx)
+    return deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx, mets_from)
 
 
-def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx):
+def deploy_calib_files_dcs(str_run_number, str_run_range, mode, list_src_cbx, mets_from=cp.blsp):
     """Deploys the calibration file(s) in the Detector Calibration Store
        e.g.: dcs add -e mfxn8316 -r 11 -d Epix100a -t pixel_status -v 4 -f my-nda.txt -m "my comment" -c ./calib
     """
 
-    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode)
+    list_of_deploy_commands, list_of_sources = get_list_of_deploy_commands_and_sources_dcs(str_run_number, str_run_range, mode, mets_from)
 
     if list_of_deploy_commands == []:
         msg += 'List of DCS deploy commands IS EMPTY !!!'
