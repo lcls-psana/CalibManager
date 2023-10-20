@@ -6,8 +6,6 @@ If you use all or part of it, please give an appropriate acknowledgment.
 
 @author Mikhail S. Dubrovin
 """
-from __future__ import absolute_import
-
 import os
 
 import logging
@@ -28,7 +26,6 @@ class BatchLogScanParser():
                    False: 'is NOT available'}
 
     def __init__(self):
-        self.det_name               = cp.det_name
         self.dict_of_det_data_types = cp.dict_of_det_data_types
         self.list_of_dets_selected  = cp.list_of_dets_selected # reference to method
         self.list_of_sources        = []
@@ -44,7 +41,7 @@ class BatchLogScanParser():
 
         if self.path == fnm.path_peds_scan_batch_log(): return
 
-        self.list_of_detinfo_sources = []
+        #self.list_of_detinfo_sources = []
         self.list_of_sources         = []
         self.list_of_types           = []
 
@@ -105,7 +102,7 @@ class BatchLogScanParser():
             src  = detinfo_src[pos1:pos2] # if pos2 != -1 elsw detinfo_src[pos1:]  # CxiDg2.0:Cspad2x2.0
             #print 'type:%s  src:%s' % (type, src)
 
-            self.list_of_detinfo_sources.append(detinfo_src)
+            #self.list_of_detinfo_sources.append(detinfo_src)
             self.list_of_types.append(type_old)
             self.list_of_sources.append(src)
 
@@ -118,7 +115,7 @@ class BatchLogScanParser():
     def txt_list_of_types_and_sources(self):
 
         self.parse_batch_log_peds_scan()
-        msg   = 'log file: %s \nExpecting data for detector(s): %s' % (self.path, self.det_name.value())
+        msg = 'log file: %s' % self.path
         state = 'Sources found in scan:'
         if self.list_of_sources == []:
             msg += '\nLog file %s' % self.dict_exists[self.scan_log_exists()] # is available or not
@@ -141,7 +138,7 @@ class BatchLogScanParser():
         return os.path.exists(fnm.path_peds_scan_batch_log())
 
 
-    def get_list_of_sources (self):
+    def get_list_of_sources(self):
         if self.scan_log_exists():
             self.parse_batch_log_peds_scan()
             return self.list_of_sources
@@ -149,7 +146,7 @@ class BatchLogScanParser():
         return ru.list_of_sources_in_run(cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value()))
 
 
-    def get_list_of_types (self):
+    def get_list_of_types(self):
         self.parse_batch_log_peds_scan()
         return self.list_of_types
 
