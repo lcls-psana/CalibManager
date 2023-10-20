@@ -15,13 +15,10 @@ import CalibManager.GlobalUtils as gu
 import CalibManager.FileDeployer as fdmets
 from CalibManager.FileNameManager import fnm
 from CalibManager.ConfigParametersForApp import cp
-from CalibManager.BatchLogScanParser import blsp # Just in order to instatiate it
 import Detector.UtilsCalib as uc
-
 
 def dsnamex_is_xtc_file(dsnamex):
     return dsnamex is not None and dsnamex[0] != ':'
-
 
 def str_replace_fields(s, insets={}):
     """1. splits string fields separated by spaces.
@@ -30,10 +27,7 @@ def str_replace_fields(s, insets={}):
     """
     return ' '.join([insets.get(f,f) for f in s.split(' ')])
 
-
 def load_text_with_insets(fname, insets={}):
-    """
-    """
     logger.debug('load_text_with_insets - load_text_file: %s\n  insets: %s' % (fname, str(insets)))
     txt = ''
     fin = open(fname, 'r')
@@ -41,7 +35,6 @@ def load_text_with_insets(fname, insets={}):
         txt += str_replace_fields(s, insets)
     fin.close()
     return txt
-
 
 def str_filename_with_source(fname, src):
     """
@@ -53,7 +46,6 @@ def str_filename_with_source(fname, src):
        logger.info('str_filename_with_source - no extension found in file name: %s' % str(fname))
        return None
     return '%s-%s.%s' % (flds[0], src, flds[1])
-
 
 def str_geo_segment_rayonix_v2(shape=(3840,3840), nbins_max=3840, pixsize_um=44.5):
     """In highest resolution mode Rayonix has 3840x3840 pixels of 44.5 um size.
@@ -71,18 +63,10 @@ def str_geo_segment_rayonix_v2(shape=(3840,3840), nbins_max=3840, pixsize_um=44.
     fmt += ':%.0f' if npix_in_col%2==0 else ':%.1f'
     return fmt % (nrows, ncols, pixsize_um*npix_in_row, pixsize_um*npix_in_col)
 
-
-def pattern_in_sources(ptrn='rayonix'):
-    lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
-    lst_bool = [(ptrn.lower() in s.lower()) for s in lst_of_srcs]
-    logger.debug('pattern_in_sources - all sources: %s conditions: %s' % (str(lst_of_srcs),str(lst_bool)))
-    return any(lst_bool)
-
-
 def print_list_of_detectors(sep='--'):
     msg = sep + 'List of detectors:'
     for det, par in zip(cp.list_of_dets_lower, cp.det_cbx_states_list):
-        msg += '\n%s %s' % (det.ljust(10), par.value())
+        msg += '\n%s %s' % (det.ljust(12), par.value())
     logger.info(msg)
 
 def print_list_of_xtc_files(title='List of xtc files'):
@@ -95,19 +79,21 @@ def print_list_of_xtc_files(title='List of xtc files'):
         lst_for_run = [path for path in lst if pattern in os.path.basename(path)]
         logger.info(title + '\n'.join(lst_for_run))
 
+def txt_of_sources_in_run(self):
+     import CalibManager.RegDBUtils as ru
+     return ru.txt_of_sources_in_run(cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value()))
 
 def print_list_of_sources_from_regdb(sep='--'):
     txt = sep + 'Sources from DB:'
-    try: txt += cp.blsp.txt_of_sources_in_run()
+    #try: txt += cp.blsp.txt_of_sources_in_run()
+    try: txt += self.txt_of_sources_in_run()
     except: txt += 'N/A'
     logger.info(txt)
-
 
 def get_list_of_files_dark_in_work_dir():
     path_prexix = fnm.path_prefix_dark()
     dir, prefix = os.path.split(path_prexix)
     return gu.get_list_of_files_in_dir_for_part_fname(dir, pattern=prefix)
-
 
 def print_list_of_files_dark_in_work_dir(sep='--'):
     lst = get_list_of_files_dark_in_work_dir()
@@ -115,7 +101,6 @@ def print_list_of_files_dark_in_work_dir(sep='--'):
     if lst == []: msg += ' is empty'
     else        : msg += ':\n' + '\n'.join(lst)
     logger.info(msg)
-
 
 def print_dark_ave_log(sep='--'):
     path = fnm.path_peds_aver_log()
@@ -128,47 +113,11 @@ def print_dark_ave_log(sep='--'):
         + 'End of psana log file %s' % path
     logger.info(txt)
 
-
-#def str_command_for_peds_scan():
-#    """Returns str command for scan, for example:
-#       event_keys -d exp=mecj5515:run=102:stream=0-79:smd -n 10 -s 0 -m 1 -p EventKey # for regular dataset directory
-#       or
-#       event_keys -d /sdf/group/lcls/ds/ana/detector/data_test/xtc/xppn4116-e851-r0137-s00-c00.xtc -n 10 -s -1 -m 1 -p EventKey # for separate xtc file
-#    """
-#    dsnamex = cp.dsnamex.value()
-#    dsname = dsnamex if dsnamex_is_xtc_file(dsnamex) else cp.dsname.value()  # fnm.path_to_data_files() # exp=mecj5515:run=102:stream=0-79:smd
-#    evskip = cp.bat_dark_start.value() - 1
-#    events = cp.bat_dark_scan.value() # 10
-#    logscn = fnm.path_peds_scan_log() # log file name for scan
-#    command = 'event_keys -d %s -n %s -s %s -m 1 -p EventKey' % (dsname, str(events), str(evskip))
-#    msg = 'Scan xtc file(s) using command:\n%s' % command \
-#        + '\nand save results in the log-file: %s' % logscn
-#    logger.info(msg)
-#    return command
-#
-#
-#def command_for_peds_scan():
-#    str_run_number = cp.str_run_number.value()
-#    command = str_command_for_peds_scan()
-#    logname = fnm.path_peds_scan_log() # log file name for scan
-#    err = gu.subproc_in_log(command.split(), logname) # , shell=True)
-#    err = str(err) # convert byte to str for py3
-#    if err != '':
-#        if 'ERR' in err:
-#            logger.error('\nERROR message from scan:\n%s' % (err))
-#            #self.stop_auto_processing(is_stop_on_button_click=False)
-#            logger.warning('Autoprocessing for run %s is stopped due to error at execution of the scan command'\
-#                           % str_run_number)
-#            return False
-#        else:
-#            logger.debug('Message from scan: %s' % (err))
-#    logger.info('Scan for run %s is completed' % str_run_number)
-#    return True
-
-
-def scan_event_keys():
+def scan_event_keys(pattern='EventKey(type=psana.'):
+    """scan DataSource(dsname) for evt.key() and create set of (str) EventKey(...
+       returns set of (str) evt.keys()
+    """
     import psana
-    pattern = 'EventKey'
     dsnamex = cp.dsnamex.value()
     dsname = dsnamex if dsnamex_is_xtc_file(dsnamex) else cp.dsname.value()  # fnm.path_to_data_files() # exp=mecj5515:run=102:stream=0-79:smd
     logscn = fnm.path_peds_scan_log() # log file name for scan
@@ -179,35 +128,64 @@ def scan_event_keys():
     for i, evt in enumerate(ds.events()):
         if i<SKIP: continue
         if not i<EVENTS: break
+        if i>1: break
         print('scan event %2d' % i)#, end='\r')
         for k in evt.keys():
             s = str(k)  # EventKey(type=psana.Epix.ElementV3, src='DetInfo(XppGon.0:Epix100a.1)', alias='epix')
-            if pattern in str(s):
+            if pattern in s:
                 sset.add(s)
     s = 'scan_event_keys'\
       + '\ndsname       : %s' % dsname\
       + '\nfirst event  : %s' % SKIP\
       + '\nlast event   : %s' % EVENTS\
       + '\npattern      : %s' % pattern\
-      + '\n'.join(sset)
-    logger.debug(s)
+      + '\n' + '\n'.join(sset)
+    logger.info(s)
     gu.save_textfile(s, logscn, mode='w') #, accmode=0o664, group='ps-users')
     logger.debug('saved evt.keys() in temporary file: %s' % logscn)
+    return sset
 
+def parse_str_event_key(s, pattern='EventKey(type=psana.'):
+    """ parse (str) like: EventKey(type=psana.CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2')"""
+    pos1 = s.find(pattern) + len(pattern)
+    pos2 = s.rfind(')')
+    s1 = s[pos1:pos2]
+    fields = s1.split(',') # splits: CsPad2x2.ElementV1, src='DetInfo(CxiDg2.0:Cspad2x2.0)', alias='Dg2CsPad2x2'
+    #print fields
 
-def str_of_sources():
-    """Returns comma separated sources. For example
-       'CxiDg2.0:Cspad2x2.0,CxiEndstation.0:Opal4000.1'
-    """
-    list_of_all_srcs = []
-    #print('XXX str_of_sources():cp.list_of_dets_selected():', cp.list_of_dets_selected())
-    for det_name in cp.list_of_dets_selected():
-        lst_types, lst_srcs, lst_ctypes = cp.blsp.list_of_types_and_sources_for_detector(det_name)
-        list_of_all_srcs += lst_srcs
-    return ','.join(list_of_all_srcs)
+    type = fields[0]                            # CsPad2x2.ElementV1
+    if type.find('ConfigV') != -1: return None  # remove ConfigV from lists
+    #print 'type: ', type
+    tparts = type.split('.')
+    type_old = '%s::%s' % (tparts[0],tparts[1]) if len(tparts) == 2 else type # CsPad2x2.ElementV1 -> CsPad2x2::ElementV1
 
+    if len(fields)<2: return None
+    patt = 'src='
+    pos1 = fields[1].find(patt) + len(patt)
+    detinfo_src = fields[1][pos1:].strip('"\'') # DetInfo(CxiDg2.0:Cspad2x2.0)
+    #print 'detinfo_src: ', detinfo_src
 
-def str_command_for_peds_aver():
+    pos1 = detinfo_src.find('(') + 1
+    pos2 = detinfo_src.rfind(')')
+    src  = detinfo_src[pos1:pos2] # if pos2 != -1 elsw detinfo_src[pos1:]  # CxiDg2.0:Cspad2x2.0
+    #print 'type:%s  src:%s' % (type, src)
+    return type_old, src
+
+def make_list_of_types_and_sources(set_of_str_event_keys):
+    list_of_types = []
+    list_of_sources = []
+    for s in set_of_str_event_keys:
+        resp = parse_str_event_key(s)
+        if resp is None: continue
+        list_of_types.append(resp[0])
+        list_of_sources.append(resp[1])
+    return list_of_types, list_of_sources
+
+def print_list_of_types_and_sources(list_of_types, list_of_sources, title='Data Types and Sources from xtc file scan:\n'):
+    """replacement for cp.blsp.txt_list_of_types_and_sources()"""
+    logger.info(title + '\n'+ '\n'.join(['  %30s: %s'%(t, s) for t, s in zip(list_of_types, list_of_sources)]))
+
+def str_command_for_peds_aver(str_sources):
     """Returns str command for dark run average, for example:
        det_ndarr_raw_proc -d exp=mecj5515:run=102:stream=0-79:smd -s MecTargetChamber.0:Cspad.0\
                           -n 6 -m 0 -f ./work/clb-#exp-#run-peds-#type-#src.txt
@@ -215,8 +193,8 @@ def str_command_for_peds_aver():
     dsname = cp.dsname.value()    # fnm.path_to_data_files()       # 'exp=mecj5515:run=102:stream=0-79:smd'
     evskip = cp.bat_dark_start.value() - 1
     events = cp.bat_dark_end.value()
-    fntmpl = fnm.path_peds_template()       # './work/clb-#exp-#run-peds-#type-#src.txt'
-    srcs   = str_of_sources()               # 'MecTargetChamber.0:Cspad.0,MecTargetChamber.0:Cspad.1'
+    fntmpl = fnm.path_peds_template()         # './work/clb-#exp-#run-peds-#type-#src.txt'
+    srcs   = str_sources  # str_of_sources()  # 'MecTargetChamber.0:Cspad.0,MecTargetChamber.0:Cspad.1'
     logave = fnm.path_peds_aver_log() # log file name for averaging
     int_lo = cp.mask_min_thr.value()
     int_hi = cp.mask_max_thr.value()
@@ -258,7 +236,6 @@ def str_command_for_peds_aver():
             + ' --nrecs1 %d' % nrecs1\
             + ' --expname %s' % exp_name
 
-
     if evcode != 'None': command += ' -c %s'   % evcode
 
     msg = 'Avereging xtc file(s) using command:\n%s' % command \
@@ -267,9 +244,8 @@ def str_command_for_peds_aver():
 
     return command
 
-
-def command_for_peds_aver():
-    command = str_command_for_peds_aver()
+def command_for_peds_aver(str_sources):
+    command = str_command_for_peds_aver(str_sources)
     if command is None: return False
     logname = fnm.path_peds_aver_log() # log file name for averaging
     err = gu.subproc_in_log(command.split(), logname) # , shell=True)
@@ -280,34 +256,17 @@ def command_for_peds_aver():
         logger.info('Avereging for run %s is completed' % cp.str_run_number.value())
         return True
 
-
-def proc_dark_run_interactively(sep='--'):
-    #command_for_peds_scan()
-    scan_event_keys()
-    #sys.exit('TEST EXIT')
-
-    logger.info(sep + 'Data Types and Sources from xtc scan of the\n' + cp.blsp.txt_list_of_types_and_sources())
-    if not command_for_peds_aver():
-        msg = sep + 'Subprocess for averaging is completed with warning/error message(s);'\
-              +'\nsee details in the logfile(s).'
-        logger.critical(msg)
-    print_dark_ave_log(sep)
-
-
 def remove_subprocess_logs():
     for fname in (fnm.path_peds_aver_log(), fnm.path_peds_scan_log()):
         logger.debug('remove subprocess log file %s' % fname)
         os.remove(fname)
     logger.info('See log file: %s' % cp.logname.value())
 
-
 def exit_for_missing_parameter(s= '--run or -r'):
     sys.exit('MISSING PARAMETER %s NEEDS TO BE SPECIFIED' % s)
 
-
 class CommandLineCalib():
-    """module for dark run processing CLI
-    """
+    """module for dark run processing CLI"""
     sep = '\n' + 30*'-' + '\n'
 
     def __init__(self, **kwargs):
@@ -322,38 +281,35 @@ class CommandLineCalib():
         gu.create_directory(fnm.dir_results(), mode=self.dirmode)
 
         if self.process:
-            proc_dark_run_interactively(self.sep)
+            self.proc_dark_run_interactively(self.sep)
         else:
             logger.critical(self.sep + '\nDARK PROCESSING OPTION IS TURNED OFF...'\
                             + '\nAdd option "-P" in the command line to process files\n')
             return
 
-        if pattern_in_sources(ptrn='rayonix'): # rayonix_is_in_list
+        if self.pattern_in_sources(ptrn='rayonix'): # rayonix_is_in_list
             self.add_files_for_rayonix()
 
         self.deploy_calib_files()
         remove_subprocess_logs()
 
-
     def set_pars(self, **kwa):
-
         cp.commandlinecalib = self
         self.count_msg = 0
+        self.set_of_str_event_keys = None
 
-        if kwa['run'] is None: exit_for_missing_parameter('--run  or -r')
+        if kwa['run'] is None: exit_for_missing_parameter('--run or -r')
         self.run = kwa['run']
         self.runnum = int(self.run.split(',')[0].split('-')[0])  # grabs the 1-st run number from string like '2,4-7'
         self.str_run_number = '%04d' % self.runnum
         self.str_run_range = '%s-end' % self.runnum if kwa['runrange'] is None else kwa['runrange']
 
-        if kwa['exp'] is None: exit_for_missing_parameter('--exp  or -e')
+        if kwa['exp'] is None: exit_for_missing_parameter('--exp or -e')
         self.exp_name = kwa['exp']
 
-        if kwa['detector'] is None: exit_for_missing_parameter('--detector  or -d')
+        if kwa['detector'] is None: exit_for_missing_parameter('--detector or -d')
         self.det_name = kwa['detector'].replace(","," ")
-
-        list_of_dets_sel = self.det_name.split()
-        list_of_dets_sel_lower = [det.lower() for det in list_of_dets_sel]
+        list_of_dets_sel_lower = [det.lower() for det in self.det_name.split()]
 
         #print('XXX list_of_dets_sel_lower', list_of_dets_sel_lower)
         #msg = self.sep + 'List of detectors:'
@@ -406,7 +362,7 @@ class CommandLineCalib():
         if kwa['calibdir'] is None:
             self.calibdir = fnm.path_to_calib_dir_default()
 
-        cp.det_name        .setValue(self.det_name)
+        #cp.det_name        .setValue(self.det_name)
         cp.dsname          .setValue(self.dsname)
         cp.dsnamex         .setValue(self.dsnamex)
         cp.calib_dir       .setValue(self.calibdir)
@@ -426,7 +382,6 @@ class CommandLineCalib():
         cp.logname         .setValue(self.logname)
 
         return True
-
 
     def print_local_pars(self):
         msg = self.sep \
@@ -463,6 +418,100 @@ class CommandLineCalib():
 
         logger.info(msg)
 
+    def proc_dark_run_interactively(self, sep='--'):
+        #command_for_peds_scan()
+        self.set_of_str_event_keys = scan_event_keys()
+        self.list_of_types, self.list_of_sources = make_list_of_types_and_sources(self.set_of_str_event_keys)
+        print_list_of_types_and_sources(self.list_of_types, self.list_of_sources)
+        str_sources = self.str_of_sources()
+        logger.debug('use string sources: %s' % str_sources)
+        #sys.exit('TEST EXIT')
+
+        if not command_for_peds_aver(str_sources):
+            msg = sep + 'Subprocess for averaging is completed with warning/error message(s);'\
+                  +'\nsee details in the logfile(s).'
+            logger.critical(msg)
+        print_dark_ave_log(sep)
+
+    def get_list_of_type_sources(self):
+        if self.set_of_str_event_keys is None: self.proc_dark_run_interactively()
+        return list(zip(self.list_of_types, self.list_of_sources))
+
+    def list_of_types_and_sources_for_detector(self, det_name):
+
+        #if not self.scan_log_exists(): # Use RegDB
+        #    ins, exp, run_number = cp.instr_name.value(), cp.exp_name.value(), int(cp.str_run_number.value())
+        #    lst_srcs = ru.list_of_sources_in_run_for_selected_detector(ins, exp, run_number, det_name)
+        #    dtype = cp.dict_of_det_data_types[det_name]
+        #    ctype = cp.dict_of_det_calib_types[det_name]
+        #    lst_dtypes = [dtype for src in lst_srcs]
+        #    lst_ctypes = [ctype for src in lst_srcs]
+        #    #print 'lst_ctypes::: ', lst_ctypes
+        #    #print 'lst_dtypes::: ', lst_dtypes
+        #    #print 'lst_srcs  ::: ', lst_srcs
+        #    return lst_dtypes, lst_srcs, lst_ctypes
+
+        pattern_det = det_name.lower() + '.'
+        pattern_type = cp.dict_of_det_data_types[det_name]
+        ##print 'XXX: pattern_type, pattern_det', pattern_type, pattern_det
+
+        list_of_ctypes_for_det=[]
+        list_of_dtypes_for_det=[]
+        list_of_srcs_for_det=[]
+        for t,s in self.get_list_of_type_sources():
+            #print('XXX:   type, src: %24s  %s' % (t,s))
+            if t.find(pattern_type)       == -1: continue
+            if s.lower().find(pattern_det) == -1: continue
+            list_of_ctypes_for_det.append(cp.dict_of_det_calib_types[det_name])
+            list_of_dtypes_for_det.append(t)
+            list_of_srcs_for_det.append(s)
+        #print 'list of types and sources for detector %s:\n  %s\n  %s' \
+        #      % (det_name, str(list_of_types_for_det), str(list_of_srcs_for_det))
+        return list_of_dtypes_for_det, list_of_srcs_for_det, list_of_ctypes_for_det
+
+    def list_of_types_and_sources_for_selected_detectors(self):
+        """Returns the list of data types, sources, and calib types in run for selected detector.
+        For example, for CSPAD returns
+        ['CsPad::DataV2',    'CsPad::DataV2'],
+        ['CxiDs1.0::Cspad.0', 'CxiDs2.0::Cspad.0']
+        ['CsPad::CalibV1',   'CsPad::CalibV1'],
+        """
+        lst_ctypes = []
+        lst_types  = []
+        lst_srcs   = []
+        for det_name in cp.list_of_dets_selected():
+            lst_t, lst_s, lst_c = self.list_of_types_and_sources_for_detector(det_name)
+            #print 'lst_t: ', lst_t
+            #print 'lst_s: ', lst_s
+            #print 'lst_c: ', lst_c
+            lst_ctypes += lst_c
+            lst_types += lst_t
+            lst_srcs += lst_s
+        return lst_types, lst_srcs, lst_ctypes
+
+    def str_of_sources(self):
+        """Returns comma separated sources. For example
+           'CxiDg2.0:Cspad2x2.0,CxiEndstation.0:Opal4000.1'
+        """
+        list_of_all_srcs = []
+        #print('XXX str_of_sources():cp.list_of_dets_selected():', cp.list_of_dets_selected())
+        for det_name in cp.list_of_dets_selected():
+            #lst_types, lst_srcs, lst_ctypes = cp.blsp.list_of_types_and_sources_for_detector(det_name)
+            lst_types, lst_srcs, lst_ctypes = self.list_of_types_and_sources_for_detector(det_name)
+            list_of_all_srcs += lst_srcs
+        return ','.join(list_of_all_srcs)
+
+    def list_of_sources_for_selected_detectors(self):
+        """Returns the list of sources in run for selected detectors."""
+        lst_types, lst_srcs, lst_ctypes = self.list_of_types_and_sources_for_selected_detectors()
+        return lst_srcs
+
+    def pattern_in_sources(self, ptrn='rayonix'):
+        #lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
+        lst_of_srcs = self.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
+        lst_bool = [(ptrn.lower() in s.lower()) for s in lst_of_srcs]
+        logger.debug('pattern_in_sources - all sources: %s conditions: %s' % (str(lst_of_srcs),str(lst_bool)))
+        return any(lst_bool)
 
     def deploy_calib_files(self):
 
@@ -473,7 +522,7 @@ class CommandLineCalib():
 
             s = fdmets.deploy_calib_files(self.str_run_number, self.str_run_range, mode='calibrun-dark', ask_confirm=False,\
                                           zeropeds=self.zeropeds, deploygeo=self.deploygeo,\
-                                          dirmode=self.dirmode, filemode=self.filemode, group=self.group)
+                                          dirmode=self.dirmode, filemode=self.filemode, group=self.group, mets_from=self)
             if s:
                 logger.warning('Problem with deployment of calibration files...')
             else:
@@ -481,7 +530,6 @@ class CommandLineCalib():
         else:
             logger.critical(self.sep + 'FILE DEPLOYMENT OPTION IS TURNED OFF...'\
                      +'\nAdd option "-D" in the command line to deploy files\n')
-
 
     def add_files_for_rayonix(self):
         """ Using shape of array for evaluated pedestals, add in the work directory additional files for Rayonix
@@ -492,7 +540,8 @@ class CommandLineCalib():
         fname_geo  = str(apputils.AppDataPath('CalibManager/scripts/geometry-rayonix.template').path())
         logger.info('\n%s\nfname_geo: %s' % (100*'_', fname_geo))
 
-        lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
+        #lst_of_srcs = cp.blsp.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
+        lst_of_srcs = self.list_of_sources_for_selected_detectors() # ['MfxEndstation.0:Rayonix.0']
         logger.debug('all sources: %s' % str(lst_of_srcs))
 
         for s in lst_of_srcs:
