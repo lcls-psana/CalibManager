@@ -11,14 +11,20 @@ part of it, please give an appropriate acknowledgment.
 
 import os
 
-from   .ConfigParametersForApp import cp
-from   .Logger                 import logger
-from . import GlobalUtils      as     gu
+from   CalibManager.ConfigParametersForApp import cp
+import CalibManager.GlobalUtils as gu
+
+def log_file_cpo():
+    """Returns name like /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt"""
+    from CalibManager.Logger import logger
+    fname = logger.getLogFileName()     # 2016-07-19-11:53:02-log.txt
+    year, month = fname.split('-')[:2]  # 2016, 07
+    name, ext = os.path.splitext(fname) # 2016-07-19-11:53:02-log, .txt
+    return '%s/%s/%s/%s-%s-%s%s' % (cp.dir_log_cpo.value(), year, month, name, gu.get_login(), gu.get_pid(), ext)
 
 
 class FileNameManager:
-    """Dynamically generates the file names from the confoguration parameters.
-    """
+    """Dynamically generates the file names from the confoguration parameters."""
     def __init__ (self):
         pass
 
@@ -85,7 +91,6 @@ class FileNameManager:
     def path_to_calib_dir_src(self):
         if cp.calib_dir_src.value() != 'None': return self.path_to_calib_dir_src_custom()
         else                                 : return self.path_to_calib_dir_src_default()
-
 
     def path_to_xtc_dir(self):
         """Returns somthing like /reg/d/psdm/CXI/cxitut13/xtc/ or None"""
@@ -154,11 +159,7 @@ class FileNameManager:
         return cp.dir_work.value()
 
     def log_file_cpo(self):
-        """Returns name like /reg/g/psdm/logs/calibman/2016/07/2016-07-19-12:20:59-log-dubrovin-562.txt"""
-        fname = logger.getLogFileName()     # 2016-07-19-11:53:02-log.txt
-        year, month = fname.split('-')[:2]  # 2016, 07
-        name, ext = os.path.splitext(fname) # 2016-07-19-11:53:02-log, .txt
-        return '%s/%s/%s/%s-%s-%s%s' % (cp.dir_log_cpo.value(), year, month, name, gu.get_login(), gu.get_pid(), ext)
+        return log_file_cpo()
 
     def logname_base(self):
         return cp.logname.value().rsplit('.',1)[0]
