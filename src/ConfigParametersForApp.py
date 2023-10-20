@@ -15,8 +15,7 @@ import PSCalib.GlobalUtils as gu
 from CalibManager.dir_root import DIR_PSDM_DATA, DIR_REPO
 
 class ConfigParametersForApp(ConfigParameters):
-    """Is intended as a storage for configuration parameters for CorAna project.
-    """
+    """Is intended as a storage for configuration parameters for CorAna project."""
     name = 'ConfigParametersForApp'
 
     list_pars = []
