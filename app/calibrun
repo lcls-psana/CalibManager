@@ -23,7 +23,8 @@ def input_options_parser():
 
     com_ex = '\nExample: %prog -e xppi0613 -d CSPAD,OPAL1000 -c ./calib -P -D -r 173 -f 40,43'\
            + '\n         %prog -e mfxp16318 -d RAYONIX -c ./calib -r9 -P -D --zeropeds'\
-           + '\n         %prog -e xpptut15 -d RAYONIX -c calib -w work -r240 -P -D'
+           + '\n         %prog -e xpptut15 -d RAYONIX -c calib -w work -r240 -P -D'\
+           + '\n         %prog -e xppn4116 -d EPIX100A -c calib -w work -r 137 -x /sdf/home/d/dubrovin/LCLS/con-py3/xppn4116_run137_3events.xtc -P -D --nrecs1 2 -n 4 -m 4'
 
     d_exp      = None
     d_run      = None
@@ -143,7 +144,8 @@ if __name__ == "__main__":
     logname = repoman.logname('%s_%s' % (SCRNAME, gu.get_login()))
     init_logger(loglevel=kwa.loglev, logfname=logname, fmt='[%(levelname).1s] %(filename)s L%(lineno)04d %(message)s', group=kwa.group)
     logger.info('log file: %s' % logname)
-    #repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
+    if kwa.workdir != 'work':
+        repoman.save_record_at_start(SCRNAME, adddict={'logfile':logname})
     kwargs['repoman'] = repoman
     kwargs['logname'] = logname
 

@@ -8,6 +8,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-23
+2023-10-25 Mikhail Dubrovin
+- app/calibrun - for debugging add: if kwa.workdir != 'work': save_record_at_start(...)
+
 Tag: V02-00-22
 2023-10-20 Mikhail Dubrovin
   BatchLogScanParser.py - remove unused self.det_name + cosmetic
