@@ -8,6 +8,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-24
+2023-12-15 Mikhail Dubrovin
+- src/GlobalUtils.py - add/use import_pyqt5() to hide from PyQt5 import
+
 Tag: V02-00-23
 2023-10-25 Mikhail Dubrovin
 - app/calibrun - for debugging add: if kwa.workdir != 'work': save_record_at_start(...)

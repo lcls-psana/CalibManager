@@ -11,6 +11,7 @@ If you use all or part of it, please give an appropriate acknowledgment.
 #from future import standard_library
 #standard_library.install_aliases()
 
+
 import os
 import sys
 import pwd
@@ -34,7 +35,6 @@ import logging
 logger = logging.getLogger(__name__)
 #from CalibManager.Logger import logger
 
-from PyQt5 import QtCore, QtGui, QtWidgets
 from .GUIPopupCheckList import *
 from .GUIPopupRadioList import *
 
@@ -44,6 +44,11 @@ import PyCSPadImage.CSPADImageUtils    as cspadimg
 from .CalibFileFinder import *
 import PSCalib.GlobalUtils as cgu
 
+QtCore, QtGui, QtWidgets = None, None, None
+
+def import_pyqt5():
+    if QtCore is None:
+        from PyQt5 import QtCore, QtGui, QtWidgets
 
 def stringOrNone(value):
     if value is None: return 'None'
@@ -664,6 +669,7 @@ def get_gm_time_str(time_sec, fmt='%Y-%m-%d %H:%M:%S %Z'):
 
 def selectFromListInPopupMenu(list):
     """Shows the list as a pop-up menu and returns the selected item as a string or None"""
+    import_pyqt5()
     popupMenu = QtWidgets.QMenu()
     for item in list:
         popupMenu.addAction(item)
@@ -676,6 +682,7 @@ def selectFromListInPopupMenu(list):
 
 def changeCheckBoxListInPopupMenu(list, win_title='Set check boxes'):
     """Shows the list of check-boxes as a dialog pop-up menu and returns the (un)changed list"""
+    import_pyqt5()
     popupMenu = GUIPopupCheckList(None, list, win_title)
     #popupMenu.move(QtCore.QPoint(50,50))
     popupMenu.move(QtGui.QCursor.pos())
@@ -695,6 +702,7 @@ def changeCheckBoxListInPopupMenu(list, win_title='Set check boxes'):
 def selectRadioButtonInPopupMenu(dict_of_pars, win_title='Select option', do_confirm=False):
     """Popup GUI to select radio button from the list:  dict_of_pars = {'checked':'radio1', 'list':['radio0', 'radio1', 'radio2']}
     """
+    import_pyqt5()
     popupMenu = GUIPopupRadioList(None, dict_of_pars, win_title, do_confirm)
     #popupMenu.move(QtCore.QPoint(50,50))
     popupMenu.move(QtGui.QCursor.pos()-QtCore.QPoint(100,100))
@@ -795,8 +803,8 @@ def printStyleInfo(widg):
 
 
 def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
-
-    path = str( QtWidgets.QFileDialog.getSaveFileName(parent,
+    import_pyqt5()
+    path = str(QtWidgets.QFileDialog.getSaveFileName(parent,
                                                   caption   = dial_title,
                                                   directory = path0,
                                                   filter    = filter
@@ -809,6 +817,7 @@ def get_save_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 
 
 def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt'):
+    import_pyqt5()
     path = QtWidgets.QFileDialog.getOpenFileName(parent, dial_title, path0, filter=filter)[0]
     #print('XXX get_open_fname_through_dialog_box path: %s' % path)
     dname, fname = os.path.split(path)
@@ -822,47 +831,48 @@ def get_open_fname_through_dialog_box(parent, path0, dial_title, filter='*.txt')
 
 
 def confirm_dialog_box(parent=None, text='Please confirm that you aware!', title='Please acknowledge'):
-        """Pop-up MODAL box for confirmation"""
+    """Pop-up MODAL box for confirmation"""
+    import_pyqt5()
+    mesbox = QtWidgets.QMessageBox(parent, windowTitle=title,
+                                       text=text,
+                                       standardButtons=QtWidgets.QMessageBox.Ok)
 
-        mesbox = QtWidgets.QMessageBox(parent, windowTitle=title,
-                                           text=text,
-                                           standardButtons=QtWidgets.QMessageBox.Ok)
+    clicked = mesbox.exec_() # DISPLAYS THE QMessageBox HERE
 
-        clicked = mesbox.exec_() # DISPLAYS THE QMessageBox HERE
-
-        logger.info('You acknowkeged that saw the message:\n' + text, 'confirm_dialog_box')
-        return
+    logger.info('You acknowkeged that saw the message:\n' + text, 'confirm_dialog_box')
+    return
 
 
 def confirm_or_cancel_dialog_box(parent=None, text='Please confirm or cancel', title='Confirm or cancel'):
-        """Pop-up MODAL box for confirmation"""
+    """Pop-up MODAL box for confirmation"""
+    import_pyqt5()
 
-        mesbox = QtWidgets.QMessageBox(parent, windowTitle=title,
-                                           text=text,
-                                           standardButtons=QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
-               #standardButtons=QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
-        mesbox.setDefaultButton(QtWidgets.QMessageBox.Ok)
+    mesbox = QtWidgets.QMessageBox(parent, windowTitle=title,
+                                       text=text,
+                                       standardButtons=QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+           #standardButtons=QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
+    mesbox.setDefaultButton(QtWidgets.QMessageBox.Ok)
 
-        clicked = mesbox.exec_() # DISPLAYS THE QMessageBox HERE
+    clicked = mesbox.exec_() # DISPLAYS THE QMessageBox HERE
 
-        if   clicked == QtWidgets.QMessageBox.Ok    : return True
-        elif clicked == QtWidgets.QMessageBox.Cancel: return False
-        else: return False
+    if   clicked == QtWidgets.QMessageBox.Ok    : return True
+    elif clicked == QtWidgets.QMessageBox.Cancel: return False
+    else: return False
 
 
 def help_dialog_box(parent=None, text='Help message goes here', title='Help'):
-        """Pop-up NON-MODAL box for help etc."""
-
-        messbox = QtWidgets.QMessageBox(parent, windowTitle=title,
-                                           text=text,
-                                           standardButtons=QtWidgets.QMessageBox.Close)
-        #messbox.setStyleSheet (cp.styleBkgd)
-        messbox.setWindowModality (QtCore.Qt.NonModal)
-        messbox.setModal (False)
-        #clicked = messbox.exec_() # For MODAL dialog
-        clicked = messbox.show()  # For NON-MODAL dialog
-        logger.info('Help window is open' + text + 'help_dialog_box')
-        return messbox
+    """Pop-up NON-MODAL box for help etc."""
+    import_pyqt5()
+    messbox = QtWidgets.QMessageBox(parent, windowTitle=title,
+                                       text=text,
+                                       standardButtons=QtWidgets.QMessageBox.Close)
+    #messbox.setStyleSheet (cp.styleBkgd)
+    messbox.setWindowModality(QtCore.Qt.NonModal)
+    messbox.setModal(False)
+    #clicked = messbox.exec_() # For MODAL dialog
+    clicked = messbox.show()  # For NON-MODAL dialog
+    logger.info('Help window is open' + text + 'help_dialog_box')
+    return messbox
 
 
 def arr_rot_n90(arr, rot_ang_n90=0):
