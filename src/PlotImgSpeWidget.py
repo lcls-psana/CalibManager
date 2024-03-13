@@ -36,13 +36,12 @@ def arr_rot_n90(arr, rot_ang_n90=0):
     else                 : return arr
 
 
-def add_stat_text(axhi, weights, bins):
-    #mean, rms, err_mean, err_rms, neff = proc_stat(weights,bins)
+def add_stat_text(axhi, weights, bins, fmt='Mean=%.6f%s%.6f\nRMS=%.6f%s%.6f\n'):
     mean, rms, err_mean, err_rms, neff, skew, kurt, err_err, sum_w = proc_stat(weights,bins)
     pm = r'$\pm$'
-    txt  = 'Entries=%d\nMean=%.2f%s%.2f\nRMS=%.2f%s%.2f\n' % (sum_w, mean, pm, err_mean, rms, pm, err_rms)
-    txt += r'$\gamma1$=%.3f  $\gamma2$=%.3f' % (skew, kurt)
-    #txt += '\nErr of err=%8.2f' % (err_err)
+    txt = 'Entries=%d\n' % sum_w\
+        + fmt % (mean, pm, err_mean, rms, pm, err_rms)\
+        + r'$\gamma1$=%.3f  $\gamma2$=%.3f' % (skew, kurt)
     xb,xe = axhi.get_xlim()
     yb,ye = axhi.get_ylim()
     #x = xb + (xe-xb)*0.84
