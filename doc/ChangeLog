@@ -8,6 +8,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-25
+2023-03-12 Mikhail Dubrovin
+- in add_stat_text add/use parameter fmt
+
 Tag: V02-00-24
 2023-12-15 Mikhail Dubrovin
 - src/GlobalUtils.py - add/use import_pyqt5() to hide from PyQt5 import
