@@ -584,9 +584,9 @@ def geometry_constants_v0(arr_segs, arr_iorgn, nsegs_in_quad, quad_orientation_d
     nquads = nsegs // nsegs_in_quad
     nquads_tot = len(quad_orientation_deg)
 
-    arr_quads     = np.empty(shape=(nquads, nsegs_in_quad, 9), dtype=np.float)
-    arr_quads_daq = np.empty(shape=(nquads, nsegs_in_quad, 9), dtype=np.float)
-    arr_quad_center = np.empty(shape=(nquads, 2), dtype=np.float)
+    arr_quads     = np.empty(shape=(nquads, nsegs_in_quad, 9), dtype=np.float64)
+    arr_quads_daq = np.empty(shape=(nquads, nsegs_in_quad, 9), dtype=np.float64)
+    arr_quad_center = np.empty(shape=(nquads, 2), dtype=np.float64)
     #list_of_pars =[]
 
     for s in range(nsegs):
