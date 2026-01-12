@@ -1,25 +1,15 @@
 #!/usr/bin/env python
 
-#--------------------------------------------------------------------------
+#------------------------------
 # File and Version Information:
 #  $Id$
 #
 # Description:
 #  Module GUIGrabSubmitELog...
-#
-#------------------------------------------------------------------------
 
-#------------------------------
-#  Module's version from SVN --
-#------------------------------
-from __future__ import print_function
-from __future__ import absolute_import
-__version__ = "$Revision$"
-# $Source$
+#from __future__ import print_function
+#from __future__ import absolute_import
 
-#--------------------------------
-#  Imports of standard modules --
-#--------------------------------
 import sys
 import os
 #import pwd
@@ -32,11 +22,6 @@ import os
 
 from optparse import OptionParser
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
 
 def input_options_parser() :
 
@@ -54,15 +39,10 @@ def input_options_parser() :
     (opts, args) = parser.parse_args()
     return (opts, args)
 
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
 
-#---------------------------------
 # python /reg/g/pcds/pds/grabber/bin/grelog.py -i AMO -e amodaq09 -u amoopr -p pcds -w https://pswww.slac.stanford.edu/ws-auth
 # grelog.py -i AMO -e amodaq09 -u amoopr -w https://pswww.slac.stanford.edu/ws-auth
-#---------------------------------
+
 from .LogBookWebService import LogBookWebService
 
 def run_GUIGrabSubmitELog() :
@@ -71,7 +51,6 @@ def run_GUIGrabSubmitELog() :
     #print 'opts:\n', opts
     #print 'args:\n', args
 
-    #-----------------------------
     print('File name for I/O configuration parameters:', str(opts.cfname))
 
     sta = ''
@@ -81,41 +60,38 @@ def run_GUIGrabSubmitELog() :
         ins = opts.inssta[:pos]
         if len(opts.inssta[pos:]) > 1 : sta = opts.inssta[pos+1:]
 
-    #-----------------------------
-    pars = { 'ins'    : ins, 
-             'sta'    : sta, 
-             'exp'    : opts.exp, 
-             'url'    : opts.url, 
-             'usr'    : opts.usr, 
+    pars = { 'ins'    : ins,
+             'sta'    : sta,
+             'exp'    : opts.exp,
+             'url'    : opts.url,
+             'usr'    : opts.usr,
              'pas'    : opts.pas,
              'cmd'    : opts.cmd
            }
 
     print('Start grabber for ELog with input parameters:')
     for k,v in pars.items():
-        if k is not 'pas' : print('%9s : %s' % (k,v))
+        if k != 'pas' : print('%9s : %s' % (k,v))
 
     lbws = LogBookWebService(**pars)
     #lbws.print_experiments()
 
-    #-----------------------------
-    pars2 ={ 'ins'    : 'NEH', 
-             'sta'    : sta, 
-             'exp'    : ins + ' Instrument', 
-             'url'    : opts.url, 
-             'usr'    : opts.usr, 
+    pars2 ={ 'ins'    : 'NEH',
+             'sta'    : sta,
+             'exp'    : ins + ' Instrument',
+             'url'    : opts.url,
+             'usr'    : opts.usr,
              'pas'    : opts.pas,
              'cmd'    : opts.cmd
            }
 
     print('Open web service for copy messages in the instrumental ELog:')
     for k,v in pars2.items():
-        if k is not 'pas' : print('%9s : %s' % (k,v))
+        if k != 'pas' : print('%9s : %s' % (k,v))
 
     lbws2 = LogBookWebService(**pars2)
     #lbws2.print_experiments()
 
-    #-----------------------------
     app = QtGui.QApplication(sys.argv)
     #w  = GUIGrabSubmitELog.py(**pars)
     w = GUIGrabSubmitELog(cfname=opts.cfname, lbws=lbws, lbws2=lbws2)
@@ -128,11 +104,7 @@ def run_GUIGrabSubmitELog() :
     #app.closeAllWindows()
     #QtGui.qApp=None
     print('Exit application...')
-    
-#-----------------------------
-#-----------------------------
-#-----------------------------
-#-----------------------------
+
 
 if __name__ == "__main__" :
 
@@ -140,7 +112,7 @@ if __name__ == "__main__" :
 
     #test_test_Logger()
     #test_ConfigParametersForApp()
-    #test_GUILogger() 
+    #test_GUILogger()
     #test_GUIImage()
     #test_GUIGrabSubmitELog()
 
@@ -150,5 +122,4 @@ if __name__ == "__main__" :
     #except SystemExit as err :
     #    print 'Xo-xo'
 
-#-----------------------------
-#-----------------------------
+# EOF

@@ -8,6 +8,10 @@ Please describe any modifications that you made to the package in the reverse ti
 
 #-----------------------------
 
+Tag: V02-00-28
+2026-01-12 Mikhail Dubrovin
+- src/InputParser.py - fix if k is not 'pas' > != and cosmetics.
+
 Tag: V02-00-27
 2024-11-21 Mikhail Dubrovin
 - src/OpticAlignmentUtils.py - np.float > np.float64
